@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kinetic — Team Docs</title>
+  <style>
+    :root {
+      --bg: #0f0f0f;
+      --surface: #1a1a1a;
+      --surface-2: #222222;
+      --border: #2e2e2e;
+      --text: #e5e5e5;
+      --text-muted: #737373;
+      --text-dim: #a3a3a3;
+      --accent: #34d399;
+      --accent-soft: rgba(52,211,153,0.1);
+      --accent-border: rgba(52,211,153,0.25);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      padding: 40px 20px 80px;
+    }
+
+    .container { max-width: 720px; margin: 0 auto; }
+
+    /* Header */
+    .header {
+      display: flex; align-items: center; gap: 20px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 32px; margin-bottom: 48px;
+    }
+
+    .logo {
+      width: 48px; height: 48px; border-radius: 12px;
+      background: var(--accent-soft); border: 1px solid var(--accent-border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px; flex-shrink: 0;
+    }
+
+    .header-text h1 {
+      font-size: 26px; font-weight: 700; color: #fff; letter-spacing: -0.4px;
+    }
+
+    .header-text p { font-size: 14px; color: var(--text-muted); margin-top: 2px; }
+
+    /* Section */
+    .section { margin-bottom: 40px; }
+
+    .section-label {
+      font-size: 11px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.08em; color: var(--text-muted);
+      margin-bottom: 12px; padding-left: 4px;
+    }
+
+    /* Doc card */
+    .doc-card {
+      display: flex; align-items: center; gap: 16px;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 10px; padding: 16px 20px;
+      text-decoration: none; margin-bottom: 10px;
+      transition: border-color 0.15s, background 0.15s;
+    }
+
+    .doc-card:hover {
+      border-color: var(--accent-border);
+      background: var(--surface-2);
+    }
+
+    .doc-icon {
+      width: 36px; height: 36px; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; flex-shrink: 0;
+    }
+
+    .doc-info { flex: 1; }
+
+    .doc-title {
+      font-size: 15px; font-weight: 600; color: #fff;
+      display: block; margin-bottom: 2px;
+    }
+
+    .doc-desc { font-size: 13px; color: var(--text-muted); }
+
+    .doc-arrow { color: var(--text-muted); font-size: 16px; flex-shrink: 0; }
+    .doc-card:hover .doc-arrow { color: var(--accent); }
+
+    /* Tag */
+    .doc-tag {
+      font-size: 10px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.05em; padding: 2px 7px; border-radius: 3px;
+      flex-shrink: 0;
+    }
+    .tag-product  { background: rgba(52,211,153,0.1);  color: #34d399; border: 1px solid rgba(52,211,153,0.25); }
+    .tag-design   { background: rgba(129,140,248,0.1); color: #818cf8; border: 1px solid rgba(129,140,248,0.25); }
+    .tag-tech     { background: rgba(251,146,60,0.1);  color: #fb923c; border: 1px solid rgba(251,146,60,0.25); }
+    .tag-planning { background: rgba(34,211,238,0.1);  color: #22d3ee; border: 1px solid rgba(34,211,238,0.25); }
+
+    /* Footer */
+    .footer {
+      border-top: 1px solid var(--border); padding-top: 24px;
+      font-size: 13px; color: var(--text-muted); text-align: center;
+    }
+    .footer a { color: var(--text-muted); text-decoration: none; }
+    .footer a:hover { color: var(--accent); }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="logo">⚡</div>
+    <div class="header-text">
+      <h1>Kinetic — Team Docs</h1>
+      <p>Product · Design · Engineering · Data — all in one place</p>
+    </div>
+  </div>
+
+  <!-- Product -->
+  <div class="section">
+    <div class="section-label">Product</div>
+
+    <a class="doc-card" href="Kinetic_PRD.html">
+      <div class="doc-icon" style="background:rgba(52,211,153,0.1)">📋</div>
+      <div class="doc-info">
+        <span class="doc-title">Product Requirements Document</span>
+        <span class="doc-desc">Problem, solution, goals, success metrics, target users, MVP scope</span>
+      </div>
+      <span class="doc-tag tag-product">PRD</span>
+      <span class="doc-arrow">→</span>
+    </a>
+
+    <a class="doc-card" href="Kinetic_User_Stories.html">
+      <div class="doc-icon" style="background:rgba(167,139,250,0.1)">🗂</div>
+      <div class="doc-info">
+        <span class="doc-title">User Stories v1.0</span>
+        <span class="doc-desc">15 stories across 7 epics — colour-coded by epic with acceptance criteria</span>
+      </div>
+      <span class="doc-tag tag-product">Stories</span>
+      <span class="doc-arrow">→</span>
+    </a>
+
+    <a class="doc-card" href="landmark_quality_framework.html">
+      <div class="doc-icon" style="background:rgba(251,191,36,0.1)">🎯</div>
+      <div class="doc-info">
+        <span class="doc-title">Landmark Quality Framework</span>
+        <span class="doc-desc">Quality benchmarks and evaluation criteria</span>
+      </div>
+      <span class="doc-tag tag-product">Quality</span>
+      <span class="doc-arrow">→</span>
+    </a>
+  </div>
+
+  <!-- Planning -->
+  <div class="section">
+    <div class="section-label">Planning</div>
+
+    <a class="doc-card" href="Kinetic_Roadmap.html">
+      <div class="doc-icon" style="background:rgba(34,211,238,0.1)">🗓</div>
+      <div class="doc-info">
+        <span class="doc-title">Squad Roadmap — Weeks 5–10</span>
+        <span class="doc-desc">3-squad breakdown with user story tags, design deliverables, and Thursday merge targets</span>
+      </div>
+      <span class="doc-tag tag-planning">Roadmap</span>
+      <span class="doc-arrow">→</span>
+    </a>
+
+    <a class="doc-card" href="roadmap_visual.html">
+      <div class="doc-icon" style="background:rgba(34,211,238,0.1)">📅</div>
+      <div class="doc-info">
+        <span class="doc-title">Roadmap Visual</span>
+        <span class="doc-desc">Visual timeline of milestones and key deliverables</span>
+      </div>
+      <span class="doc-tag tag-planning">Visual</span>
+      <span class="doc-arrow">→</span>
+    </a>
+
+    <a class="doc-card" href="clickup_week5_tasks.html">
+      <div class="doc-icon" style="background:rgba(34,211,238,0.1)">✅</div>
+      <div class="doc-info">
+        <span class="doc-title">Week 5 Tasks</span>
+        <span class="doc-desc">Detailed task breakdown for Week 5 across all squads</span>
+      </div>
+      <span class="doc-tag tag-planning">Tasks</span>
+      <span class="doc-arrow">→</span>
+    </a>
+  </div>
+
+  <!-- Engineering -->
+  <div class="section">
+    <div class="section-label">Engineering</div>
+
+    <a class="doc-card" href="technical_data_schema.html">
+      <div class="doc-icon" style="background:rgba(251,146,60,0.1)">🗄</div>
+      <div class="doc-info">
+        <span class="doc-title">Technical Data Schema</span>
+        <span class="doc-desc">Database schema — users, sessions, exercises, form scores, workout logs</span>
+      </div>
+      <span class="doc-tag tag-tech">Schema</span>
+      <span class="doc-arrow">→</span>
+    </a>
+
+    <a class="doc-card" href="tech_flow_compare.html">
+      <div class="doc-icon" style="background:rgba(251,146,60,0.1)">⚙️</div>
+      <div class="doc-info">
+        <span class="doc-title">Tech Flow Comparison</span>
+        <span class="doc-desc">Pipeline architecture options and technical trade-offs</span>
+      </div>
+      <span class="doc-tag tag-tech">Tech</span>
+      <span class="doc-arrow">→</span>
+    </a>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <a href="https://github.com/amritabalaji-11/kinetic-docs">github.com/amritabalaji-11/kinetic-docs</a>
+    &nbsp;·&nbsp; Last updated May 7, 2026
+  </div>
+
+</div>
+</body>
+</html>
