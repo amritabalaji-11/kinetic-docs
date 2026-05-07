@@ -356,10 +356,13 @@ Kinetic is a web app where users log their workouts (exercise, sets, reps, weigh
 
 ### User Stories
 
-1. As an intermediate gym-goer, I want to upload my Goblet Squat video with my weight, so I can get specific feedback on what I'm doing wrong and whether it's safe to increase weight
-2. As a user stuck at the same weight due to knee pain, I want to know exactly which joint angle is causing the issue, so I can fix it confidently and progress
-3. As a regular user, I want to see how my form score has changed across weights over time, so I can see that I'm actually improving — not just going through the motions
-4. As a user who trains alone, I want a single app that logs my workouts and analyses my form, so I don't have to switch between tools during my session
+Full user stories have been documented separately — 15 stories across 7 epics with acceptance criteria, colour-coded by epic.
+
+- **Document:** [Kinetic_User_Stories.md](./Kinetic_User_Stories.md)
+- **Visual version:** [Kinetic_User_Stories.html](./Kinetic_User_Stories.html)
+- **GitHub Pages:** [https://amritabalaji-11.github.io/kinetic-docs/Kinetic_User_Stories.html](https://amritabalaji-11.github.io/kinetic-docs/Kinetic_User_Stories.html)
+
+**Epics covered:** Account & Onboarding · Video Upload · Analysis Processing · Analysis Results · Dashboard & History · Workout Planning & Tracking · Profile & Settings
 
 ### Open Questions
 
