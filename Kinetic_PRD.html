@@ -1089,6 +1089,20 @@ h3:first-child { margin-top: 0; }
       </div>
     </div>
 
+    <h3>Technical Decisions</h3>
+    <table class="risk-table">
+      <tr>
+        <th>Decision</th>
+        <th>Choice</th>
+        <th>Rationale</th>
+      </tr>
+      <tr>
+        <td><strong>Video upload + progress stream architecture</strong></td>
+        <td>Option A for demo day → Option B before beta</td>
+        <td><strong>Option A (demo day):</strong> Single POST endpoint handles upload + streams SSE progress back on same connection. Simpler to build, sufficient for demo day in a controlled WiFi environment.<br><br><strong>Option B (before beta):</strong> Upload returns <code>analysis_id</code>, frontend opens a separate SSE connection for progress updates — adds reconnection support essential for real users on mobile/gym networks. Scoped as first infrastructure task before beta rollout.</td>
+      </tr>
+    </table>
+
     <h3>Technical Risks</h3>
     <table class="risk-table">
       <tr>
