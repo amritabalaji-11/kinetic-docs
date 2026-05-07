@@ -327,18 +327,25 @@
     <div class="task task-sq2"><span class="task-id">S2-W5-02</span>Provision GCP project, S3/Cloud Storage, API Gateway</div>
     <div class="task task-sq2"><span class="task-id">S2-W5-03</span>Scaffold Python API: routes, services, models</div>
     <div class="task task-sq2 task-dep"><span class="task-id">S2-W5-06</span><div class="dep-tag">OUTPUTS →</div> Define full structured DB schema: users, user_profiles, exercises, form_sessions, form_analysis_results, workout_plans, workout_plan_exercises, workout_sessions, workout_session_logs</div>
-    <div class="task task-sq2 task-dep"><span class="task-id">S2-W5-07</span><div class="dep-tag">OUTPUTS →</div> Stub /upload + /analyze endpoints for Squad 1</div>
+    <div class="task task-sq2 task-dep"><span class="task-id">S2-W5-07a</span><div class="dep-tag">OUTPUTS →</div> Stub /upload: accept multipart video, save to GCS, write DB session record (status: processing), return { analysis_id } — no streaming</div>
+    <div class="task task-sq2 task-dep"><span class="task-id">S2-W5-07b</span><div class="dep-tag">NEEDS 07a</div> Stub SSE stream: GET /analysis/{analysis_id}/stream — fake pipeline events with delays: upload_received → mediapipe → nemotron → rag → claude → analysis_complete</div>
     <div class="task task-sq2 task-dep"><span class="task-id">S2-W5-08</span><div class="dep-tag">NEEDS S2-W5-06</div> Provision Supabase — create project, run migrations, configure RLS, seed exercises table</div>
+    <div class="task task-sq2 task-dep" style="border-left-color:#f87171;background:#1a0a0a;"><span class="task-id" style="color:#f87171;">S2-W5-09</span><div class="new-tag">NEW ⚠️ URGENT</div><div class="dep-tag">OUTPUTS →</div> Provision NVIDIA NIM API access for Nemotron — hello world call confirmed from Python backend, multimodal input format documented. Must complete by Thu — blocks all W6 Nemotron work</div>
+    <div class="task task-sq2 task-dep"><span class="task-id">S2-W5-10</span><div class="new-tag">NEW</div><div class="dep-tag">NEEDS S2-W5-09</div> Define Nemotron test plan (Scenarios A/B/C) — write test scripts, confirm joint overlay video format, sample biomechanics JSON ready. Execute W6.</div>
   </div>
 
   <!-- S2 W6 -->
   <div class="cell sq2">
-    <div class="task task-sq2"><span class="task-id">S2-W6-01</span>Implement video upload endpoint: receive video, store to GCS/S3, return SSE stream</div>
-    <div class="task task-sq2"><span class="task-id">S2-W6-02</span>On upload: write form_sessions record — form_video_id, exercise_name, weight_used, user_id, timestamp</div>
-    <div class="task task-sq2"><span class="task-id">S2-W6-03</span>Integrate MediaPipe for Goblet Squat: extract keypoints, compute angles, segment reps</div>
-    <div class="task task-sq2 task-dep"><span class="task-id">S2-W6-04</span><div class="dep-tag">OUTPUTS →</div> Return real biomechanics JSON from /analyze</div>
-    <div class="task task-sq2"><span class="task-id">S2-W6-05</span>Begin Nemotron 3 Nano Omni integration: raw video + biomechanics JSON → structured JSON + CoT</div>
+    <div style="font-size:8.5px;font-weight:700;color:#4ade80;text-transform:uppercase;letter-spacing:0.5px;padding:2px 0 4px 0;">▶ Main Track — MediaPipe</div>
+    <div class="task task-sq2"><span class="task-id">S2-W6-01</span>Video upload endpoint: receive video, store to GCS, return SSE stream</div>
+    <div class="task task-sq2"><span class="task-id">S2-W6-02</span>On upload: write form_sessions record to DB</div>
+    <div class="task task-sq2"><span class="task-id">S2-W6-03</span>Complete MediaPipe pipeline: frame selection + video quality gate (bad angle → retake message) + biomechanics script using PT-01 params</div>
+    <div class="task task-sq2 task-dep"><span class="task-id">S2-W6-04</span><div class="dep-tag">OUTPUTS →</div> Return real biomechanics JSON (knee angle, hip angle, rep count, rep time, tempo)</div>
     <div class="task task-sq2 task-dep"><span class="task-id">S2-W6-06</span><div class="dep-tag">OUTPUTS →</div> Emit correct SSE events at each pipeline stage</div>
+    <div style="font-size:8.5px;font-weight:700;color:#22d3ee;text-transform:uppercase;letter-spacing:0.5px;padding:4px 0 4px 0;border-top:1px dashed #0e7490;margin-top:2px;">▶ Parallel Track — Nemotron Input Tests</div>
+    <div class="task task-sq2" style="border-left-color:#22d3ee;background:#041e1e;color:#a5f3fc;"><span class="task-id" style="color:#22d3ee;">S2-W6-T-A</span>Test A: Joint overlay video only → Nemotron. Log output quality + response time</div>
+    <div class="task task-sq2" style="border-left-color:#22d3ee;background:#041e1e;color:#a5f3fc;"><span class="task-id" style="color:#22d3ee;">S2-W6-T-B</span>Test B: Biomechanics JSON only → Nemotron. Log output quality + response time</div>
+    <div class="task task-sq2" style="border-left-color:#22d3ee;background:#041e1e;color:#a5f3fc;"><span class="task-id" style="color:#22d3ee;">S2-W6-T-C</span>Test C: Both together → Nemotron. Is output meaningfully better than B alone? Feed findings to PM → informs W7 architecture</div>
   </div>
 
   <!-- S2 W7 -->
@@ -364,7 +371,7 @@
 
   <!-- S2 W9 -->
   <div class="cell sq2 gate">
-    <div class="task task-sq2"><span class="task-id">S2-W9-01</span>End-to-end latency optimisation: profile pipeline, target &lt;30s</div>
+    <div class="task task-sq2"><span class="task-id">S2-W9-01</span>End-to-end latency optimisation: profile pipeline, target &lt;35s. If &gt;35s by Thu W9: build mock pipeline instance as demo-day backup</div>
     <div class="task task-sq2 task-dep"><span class="task-id">S2-W9-02</span><div class="dep-tag">RECEIVES ←</div> Refine prompt + RAG from Squad 3 accuracy validation</div>
     <div class="task task-sq2"><span class="task-id">S2-W9-03</span>Confidence thresholding: flag low-certainty outputs</div>
     <div class="task task-sq2"><span class="task-id">S2-W9-04</span>Load test API endpoints</div>
@@ -513,8 +520,8 @@
 
   <!-- TEST W9 -->
   <div class="cell-test">
-    <div class="task-test pf"><span class="task-id">TST-W9-01</span><div class="test-tag tt-e2e">E2E · ACCURACY</div><div class="test-tag tt-pf">P/F</div> Formal accuracy validation: run 20–30 labeled Goblet Squat videos through full pipeline. Target ≥80% expert agreement on form scores.<div class="test-owner">Owner: Squad 3 → findings fed to Squad 2</div></div>
-    <div class="task-test pf"><span class="task-id">TST-W9-02</span><div class="test-tag tt-e2e">E2E · LATENCY</div><div class="test-tag tt-pf">P/F</div> End-to-end latency measurement across all 20–30 test runs. Pass: p95 latency &lt;30s. Log per-stage breakdown.<div class="test-owner">Owner: Squad 2</div></div>
+    <div class="task-test pf"><span class="task-id">TST-W9-01</span><div class="test-tag tt-e2e">E2E · ACCURACY</div><div class="test-tag tt-pf">P/F</div> Accuracy validation: run 3–5 labeled Goblet Squat videos through full pipeline (demo day bar). PT Experts 1+2 review — form score + progression recommendation. Pass: expert agreement on all 3–5 videos. Beta bar: 20–30 videos, ≥80% agreement (post-launch).<div class="test-owner">Owner: Squad 3 + PT Experts → findings fed to Squad 2</div></div>
+    <div class="task-test pf"><span class="task-id">TST-W9-02</span><div class="test-tag tt-e2e">E2E · LATENCY</div><div class="test-tag tt-pf">P/F</div> End-to-end latency measurement across 3–5 test runs. Pass: p95 latency &lt;35s. Fail: build mock pipeline instance as demo-day backup. Log per-stage breakdown.<div class="test-owner">Owner: Squad 2</div></div>
     <div class="task-test pf"><span class="task-id">TST-W9-03</span><div class="test-tag tt-cla">CLAUDE · T3</div><div class="test-tag tt-pf">P/F</div> Confidence thresholding validation: does low-certainty flag trigger correctly on ambiguous inputs? Pass: 0 false "safe to progress" on bad form videos.<div class="test-owner">Owner: Squad 2</div></div>
   </div>
 

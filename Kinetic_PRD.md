@@ -263,7 +263,7 @@ Kinetic is a web app where users log their workouts (exercise, sets, reps, weigh
 
 | Decision | Choice | Rationale |
 |----------|--------|-----------|
-| **Video upload + progress stream architecture** | Option A for demo day → Option B before beta | Option A: single POST endpoint handles upload + streams SSE progress back on same connection. Simpler, sufficient for demo day in a controlled WiFi environment. Option B: upload returns `analysis_id`, frontend opens a separate SSE connection for progress — adds reconnection support essential for real users on mobile/gym networks. Option B scoped as first infrastructure task before beta rollout. |
+| **Video upload + progress stream architecture** | **Option B — two endpoints, from Week 5** | POST `/upload` saves video to GCS, writes the session record to DB, and returns `{ analysis_id }`. Frontend then opens a separate SSE connection to `GET /analysis/{analysis_id}/stream` for live pipeline progress. Option A (single POST that uploads and streams on the same connection) was originally planned for demo day but was dropped: the stub tasks (S2-W5-07a, S2-W5-07b) were designed as two endpoints from the start, and the frontend SSE client (S1-W5-06b) was built against that contract. The split also gives reconnection support — if the SSE connection drops (common on mobile/gym networks), the frontend can reopen `/analysis/{id}/stream` without re-uploading the video. |
 
 ---
 
@@ -275,8 +275,8 @@ Kinetic is a web app where users log their workouts (exercise, sets, reps, weigh
 2. **Model hallucination on form advice** — Incorrect advice could cause injury (highest-severity risk)
    - Mitigation: Dual-input to Nemotron 3 Nano Omni (raw video + MediaPipe biomechanics) reduces reliance on visual interpretation alone; all outputs grounded in RAG corpus; expert validation pass before launch; confidence threshold to flag low-certainty outputs rather than fabricate
 
-3. **End-to-end latency >30s** — Video processing + RAG + LLM generation chain may degrade UX
-   - Mitigation: Async processing with clear progress indicator; dedicated optimisation sprint Week 9
+3. **End-to-end latency >35s** — Video processing + RAG + LLM generation chain may degrade UX
+   - Mitigation: Async processing with SSE progress narration (presenter talks through pipeline stages during demo); target <35s by Week 9; mock pipeline instance built as demo-day backup if target not met
 
 4. **Progression recommendation logic accuracy** — Insufficient history data or wrong thresholds could recommend unsafe weight increases
    - Mitigation: Require minimum 2 sessions before surfacing recommendations; expert review of recommendation logic; conservative initial thresholds

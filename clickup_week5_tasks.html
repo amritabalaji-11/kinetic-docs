@@ -132,7 +132,7 @@ h1 { font-size: 22px; font-weight: 800; color: #f8fafc; letter-spacing: -0.5px; 
       <div class="squad-title">Squad 1 — Front End &amp; Testing</div>
       <div class="squad-meta">PM: Chaitanya &nbsp;·&nbsp; Design: John (Lead), Tsion (0.7), Why'et (0.7) &nbsp;·&nbsp; Dev: Allex, Karthik (0.3)</div>
     </div>
-    <div class="squad-pill sq1-pill">6 tasks</div>
+    <div class="squad-pill sq1-pill">8 tasks</div>
   </div>
 
   <!-- S1-W5-01 -->
@@ -278,21 +278,21 @@ h1 { font-size: 22px; font-weight: 800; color: #f8fafc; letter-spacing: -0.5px; 
     </div>
   </div>
 
-  <!-- S1-W5-06 -->
+  <!-- S1-W5-06a -->
   <div class="task-card">
     <div class="task-card-header">
-      <span class="task-id-badge sq1-id">S1-W5-06</span>
-      <div class="task-title">SSE skeleton — define processing states + deliver event contract to Squad 2</div>
+      <span class="task-id-badge sq1-id">S1-W5-06a</span>
+      <div class="task-title">Define SSE event contract — event names, payloads, UI state mapping</div>
     </div>
     <div class="task-card-body">
       <div class="dep-block">
-        <div class="dep-block-label">Dependencies</div>
-        <div class="dep-row-item"><span class="dep-dir">Needs →</span> S1-W5-03 (SSE event schema must be agreed first)</div>
-        <div class="dep-row-item"><span class="dep-dir">Unblocks →</span> S2-W6-06 (Squad 2 emits correct SSE events), S1-W6-03 (wire SSE to real pipeline states)</div>
+        <div class="dep-block-label">Sequence &nbsp;·&nbsp; <span style="color:#64748b;font-weight:400;">06a writes the contract → 07b implements it → 06b consumes it</span></div>
+        <div class="dep-row-item"><span class="dep-dir">Needs →</span> S1-W5-03 (JSON schema agreed — SSE payload shapes follow from this)</div>
+        <div class="dep-row-item"><span class="dep-dir">Unblocks →</span> S2-W5-07b (Squad 2 cannot build SSE stub without agreed event names + payloads), S1-W5-06b (client must know what events to listen for). Deliver by <strong>Wednesday</strong>.</div>
       </div>
       <div>
         <div class="desc-label">Description</div>
-        <div class="desc-text">Build the frontend SSE client and define the full set of UI processing states the upload flow moves through: idle → uploading → mediapipe_processing → nemotron_processing → rag_retrieval → claude_processing → complete / error. For each state, define the UI treatment — loading message copy, progress indicator style, and error handling. Deliver a written SSE event contract to Squad 2 specifying every expected event name and exact data payload shape, so the backend emits precisely what the frontend consumes with no guessing.</div>
+        <div class="desc-text">Document task — no code. Write the SSE event contract that Squad 2 implements in S2-W5-07b and Squad 1 consumes in S1-W5-06b. Defines every event the pipeline emits: name, payload fields, the UI message to show, and progress %. Must be committed and signed off by both squads before S2-W5-07b begins.</div>
       </div>
       <div>
         <div class="desc-label">Implementation — SSE Client (browser EventSource API)</div>
@@ -378,8 +378,101 @@ es.onerror = () =&gt; &#123;
               </tbody>
             </table>
           </li>
-          <li class="ac-item"><span class="ac-check">✓</span> Written SSE event contract delivered to Squad 2 (Liwei / Nicole) by Thursday of Week 5</li>
-          <li class="ac-item"><span class="ac-check">✓</span> Contract reviewed and confirmed by Squad 2 before Thursday merge</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Contract doc committed to repo by Wednesday</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Covers all 10 pipeline events + error event</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Every event has: name, exact payload fields (typed), UI message copy, progress %</li>
+          <li class="ac-item"><span class="ac-check">✓</span> <code style="background:#1e293b;padding:1px 5px;border-radius:3px;">analysis_id</code> present in every event payload</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Reviewed and confirmed by Squad 2 (Nicole) by Wednesday — Squad 2 signs off before starting S2-W5-07b</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- S1-W5-06b -->
+  <div class="task-card">
+    <div class="task-card-header">
+      <span class="task-id-badge sq1-id">S1-W5-06b</span>
+      <div class="task-title">Build frontend upload + SSE client skeleton</div>
+    </div>
+    <div class="task-card-body">
+      <div class="dep-block">
+        <div class="dep-block-label">Sequence &nbsp;·&nbsp; <span style="color:#64748b;font-weight:400;">06a + 07a + 07b must all be done → then build this</span></div>
+        <div class="dep-row-item"><span class="dep-dir">Needs →</span> S1-W5-06a (event contract), S2-W5-07a (upload stub deployed), S2-W5-07b (SSE stream stub deployed)</div>
+        <div class="dep-row-item"><span class="dep-dir">Unblocks →</span> S1-W6-03 (W6: swap stub SSE for real pipeline events), S1-W6-07 (W6: swap stub upload for real endpoint)</div>
+      </div>
+      <div>
+        <div class="desc-label">Description</div>
+        <div class="desc-text">Two connected pieces. (1) POST /upload with video + exercise + weight → receive <code style="background:#1e293b;padding:1px 5px;border-radius:3px;">{ analysis_id }</code>. (2) Open EventSource to <code style="background:#1e293b;padding:1px 5px;border-radius:3px;">/analysis/{analysis_id}/stream</code> → map each event to a UI state update. Wire against the S2-W5-07a and S2-W5-07b stubs.</div>
+      </div>
+      <div>
+        <div class="desc-label">Implementation</div>
+        <div style="background:#070a0f;border:1px solid #1e2433;border-radius:8px;padding:14px 16px;font-size:11px;color:#94a3b8;line-height:1.8;">
+          <pre style="background:#0d1117;border-radius:6px;padding:10px 12px;margin:4px 0;overflow-x:auto;font-size:10.5px;color:#e2e8f0;line-height:1.6;">// Step 1 — POST upload, get analysis_id
+const res = await fetch('/api/upload', {
+  method: 'POST',
+  body: formData   // video file + exercise + weight
+})
+const { analysis_id } = await res.json()
+
+// Step 2 — open SSE stream using analysis_id
+const es = new EventSource(`/api/analysis/${analysis_id}/stream`)
+
+es.onmessage = (e) => {
+  const { event, ...payload } = JSON.parse(e.data)
+  dispatch(updatePipelineStage({ event, payload }))
+  if (event === 'analysis_complete') es.close()
+}
+
+es.onerror = () => {
+  dispatch(setPipelineError({ retryable: true }))
+  es.close()   // never auto-reconnect mid-pipeline
+}</pre>
+          <strong style="color:#f59e0b;">Note on URL:</strong> EventSource uses <code style="background:#0d1117;padding:1px 5px;border-radius:3px;color:#fde68a;">/api/analysis/${analysis_id}/stream</code> — path param, not a query string. Match S2-W5-07b's route definition exactly.
+        </div>
+      </div>
+      <div class="ac-block">
+        <div class="ac-label">Acceptance Criteria</div>
+        <ul class="ac-list">
+          <li class="ac-item"><span class="ac-check">✓</span> POST /upload sends multipart form with video file, exercise, and weight</li>
+          <li class="ac-item"><span class="ac-check">✓</span> <code style="background:#1e293b;padding:1px 5px;border-radius:3px;">analysis_id</code> received from 07a stub and stored in component state</li>
+          <li class="ac-item"><span class="ac-check">✓</span> EventSource opens to <code style="background:#1e293b;padding:1px 5px;border-radius:3px;">/api/analysis/{analysis_id}/stream</code> — path param, not query param</li>
+          <li class="ac-item"><span class="ac-check">✓</span> All 10 events from the 06a contract map to correct UI state updates</li>
+          <li class="ac-item"><span class="ac-check">✓</span> <code style="background:#1e293b;padding:1px 5px;border-radius:3px;">es.close()</code> called on <code style="background:#1e293b;padding:1px 5px;border-radius:3px;">analysis_complete</code></li>
+          <li class="ac-item"><span class="ac-check">✓</span> <code style="background:#1e293b;padding:1px 5px;border-radius:3px;">es.close()</code> called in <code style="background:#1e293b;padding:1px 5px;border-radius:3px;">onerror</code> — no browser auto-reconnect</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Full flow tested end-to-end against W5 stubs before Thursday merge</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- S1-W5-08 -->
+  <div class="task-card">
+    <div class="task-card-header">
+      <span class="task-id-badge sq1-id">S1-W5-08</span>
+      <div class="task-title">Build Upload screen — exercise selector, weight input, file picker, submit <span class="new-badge">MOVED FROM W6</span></div>
+    </div>
+    <div class="task-card-body">
+      <div class="dep-block">
+        <div class="dep-block-label">Dependencies</div>
+        <div class="dep-row-item"><span class="dep-dir">Needs →</span> S1-W5-01 (Upload screen design handed off from designer), S1-W5-02 (React scaffold), S1-W5-03 (JSON schema agreed — form POST shape defined), S1-W5-04 (dummy fixtures to test against)</div>
+        <div class="dep-row-item"><span class="dep-dir">Unblocks →</span> S1-W5-06b (SSE client needs upload form to exist), S1-W6-07 (W6: replace stub /upload with real endpoint)</div>
+      </div>
+      <div>
+        <div class="desc-label">Description</div>
+        <div class="desc-text">Build the full Upload screen — the entry point for the entire E2E flow. Four elements: exercise selector, weight input, video file picker, and submit. Filming tips is a lightweight inline component only — embed a Google image or short video showing the correct camera angle for Goblet Squat, plus 3–4 brief copy tips (distance, height, angle). No custom filming required, no separate modal screen. Submit button stays inactive until all three fields (exercise, weight, video) are complete. Build against dummy data from S1-W5-04 — real /upload endpoint wires in W6.</div>
+      </div>
+      <div class="ac-block">
+        <div class="ac-label">Acceptance Criteria</div>
+        <ul class="ac-list">
+          <li class="ac-item"><span class="ac-check">✓</span> Exercise selector shows Goblet Squat (only option for MVP)</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Weight input accepts numeric value — unit label (kg) visible</li>
+          <li class="ac-item"><span class="ac-check">✓</span> File picker opens device's native picker on mobile (photo library + files)</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Selected video shows filename confirmation so user knows correct file was chosen</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Submit button inactive until exercise + weight + video are all filled</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Unsupported format or file too large: clear inline error with guidance on what's accepted</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Filming tips component visible inline: Google image/video + 3–4 camera angle tips. No separate screen, no custom filming.</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Screen matches approved Figma design from S1-W5-01</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Mobile-responsive — all inputs thumb-reachable, no horizontal scroll</li>
         </ul>
       </div>
     </div>
@@ -424,7 +517,7 @@ es.onerror = () =&gt; &#123;
       <div class="squad-title">Squad 2 — Back End Pipeline</div>
       <div class="squad-meta">PM: Liwei, Amrita (0.5) &nbsp;·&nbsp; Design: Tsion (0.3) &nbsp;·&nbsp; Dev: Nicole (0.8), Valentin, Karthik (0.7)</div>
     </div>
-    <div class="squad-pill sq2-pill">6 tasks</div>
+    <div class="squad-pill sq2-pill">9 tasks</div>
   </div>
 
   <!-- S2-W5-01 -->
@@ -548,75 +641,117 @@ es.onerror = () =&gt; &#123;
     </div>
   </div>
 
-  <!-- S2-W5-07 -->
+  <!-- S2-W5-07a -->
   <div class="task-card">
     <div class="task-card-header">
-      <span class="task-id-badge sq2-id">S2-W5-07</span>
-      <div class="task-title">Stub /upload + /analyze endpoints for Squad 1</div>
+      <span class="task-id-badge sq2-id">S2-W5-07a</span>
+      <div class="task-title">Stub POST /upload — save video to GCS, write session to DB, return { analysis_id }</div>
     </div>
     <div class="task-card-body">
       <div class="dep-block">
-        <div class="dep-block-label">Dependencies</div>
-        <div class="dep-row-item"><span class="dep-dir">Needs →</span> S2-W5-03 (API scaffold), S1-W5-03 (JSON schema must be agreed so stubs return the correct shape)</div>
-        <div class="dep-row-item"><span class="dep-dir">Unblocks →</span> S1-W6-07 (Squad 1 replaces dummy upload with real endpoint), S1-W6-03 (SSE wiring against real events)</div>
+        <div class="dep-block-label">Sequence &nbsp;·&nbsp; <span style="color:#64748b;font-weight:400;">07a → 07b (analysis_id needed by stream endpoint) → 06b (Squad 1 integrates)</span></div>
+        <div class="dep-row-item"><span class="dep-dir">Needs →</span> S2-W5-03 (API scaffold), S2-W5-02 (GCS bucket), S2-W5-08 (DB live for session write), S1-W5-03 (schema agreed)</div>
+        <div class="dep-row-item"><span class="dep-dir">Unblocks →</span> S2-W5-07b (analysis_id concept), S1-W5-06b (Squad 1 calls this endpoint)</div>
       </div>
       <div>
         <div class="desc-label">Description</div>
-        <div class="desc-text">Implement stub versions of the two core endpoints Squad 1 needs in order to build and test their full UI flow before the real pipeline is ready. /upload: accepts a multipart video file POST, generates a session_id, and immediately streams a fake SSE event sequence with realistic time delays between each pipeline stage (upload_received → mediapipe_started → mediapipe_complete → nemotron_started → ... → analysis_complete). /analyze: returns a hardcoded form analysis JSON response that exactly matches the agreed schema — include at least 2 form issues with severity labels and scores, and a "hold" progression recommendation. Both stubs must be deployed to the Cloud Run dev environment and accessible to Squad 1 by Thursday.</div>
+        <div class="desc-text">Three things: accept the video, save it, return an ID. No SSE on this endpoint — streaming is handled separately in S2-W5-07b.</div>
       </div>
       <div>
-        <div class="desc-label">Implementation — SSE Stream (FastAPI StreamingResponse)</div>
+        <div class="desc-label">Implementation</div>
         <div style="background:#070a0f;border:1px solid #1e2433;border-radius:8px;padding:14px 16px;font-size:11px;color:#94a3b8;line-height:1.8;">
-          <strong style="color:#cbd5e1;">How SSE works on the backend:</strong> FastAPI returns a <code style="background:#0d1117;padding:1px 5px;border-radius:3px;color:#93c5fd;">StreamingResponse</code> with <code style="background:#0d1117;padding:1px 5px;border-radius:3px;color:#86efac;">media_type="text/event-stream"</code>. An async generator function <code style="background:#0d1117;padding:1px 5px;border-radius:3px;color:#86efac;">yield</code>s each event as a pipeline stage completes. The connection stays open until the final event is yielded.<br><br>
-          <strong style="color:#cbd5e1;">Event format:</strong> Every yielded string must follow the SSE spec exactly — <code style="background:#0d1117;padding:1px 5px;border-radius:3px;color:#fde68a;">data: {json}\n\n</code> — the double newline is required to signal the end of one event to the browser.<br><br>
-          <strong style="color:#cbd5e1;">FastAPI stub implementation:</strong>
-          <pre style="background:#0d1117;border-radius:6px;padding:10px 12px;margin:8px 0;overflow-x:auto;font-size:10.5px;color:#e2e8f0;line-height:1.6;">from fastapi.responses import StreamingResponse
-from fastapi import UploadFile
-from uuid import uuid4
-import asyncio, json
-
-async def pipeline_stream(analysis_id: str):
-    yield f"data: {json.dumps({'event': 'upload_received',     'analysis_id': analysis_id})}\n\n"
-    await asyncio.sleep(0.5)
-    yield f"data: {json.dumps({'event': 'mediapipe_started',   'analysis_id': analysis_id})}\n\n"
-    await asyncio.sleep(1.5)
-    yield f"data: {json.dumps({'event': 'mediapipe_complete',  'analysis_id': analysis_id, 'rep_count': 8})}\n\n"
-    await asyncio.sleep(0.5)
-    yield f"data: {json.dumps({'event': 'nemotron_started',    'analysis_id': analysis_id})}\n\n"
-    await asyncio.sleep(2.0)
-    yield f"data: {json.dumps({'event': 'nemotron_complete',   'analysis_id': analysis_id, 'overall_score': 72})}\n\n"
-    await asyncio.sleep(0.5)
-    yield f"data: {json.dumps({'event': 'rag_started',         'analysis_id': analysis_id})}\n\n"
-    await asyncio.sleep(1.0)
-    yield f"data: {json.dumps({'event': 'rag_complete',        'analysis_id': analysis_id, 'passages_retrieved': 8})}\n\n"
-    await asyncio.sleep(0.5)
-    yield f"data: {json.dumps({'event': 'claude_started',      'analysis_id': analysis_id})}\n\n"
-    await asyncio.sleep(1.5)
-    yield f"data: {json.dumps({'event': 'claude_complete',     'analysis_id': analysis_id})}\n\n"
-    yield f"data: {json.dumps({'event': 'analysis_complete',   'analysis_id': analysis_id})}\n\n"
-
-@app.post("/upload")
-async def upload(file: UploadFile):
+          <pre style="background:#0d1117;border-radius:6px;padding:10px 12px;margin:4px 0;overflow-x:auto;font-size:10.5px;color:#e2e8f0;line-height:1.6;">@app.post("/upload")
+async def upload(file: UploadFile, exercise: str, weight: float):
     analysis_id = str(uuid4())
-    return StreamingResponse(
-        pipeline_stream(analysis_id),
-        media_type="text/event-stream",
-        headers=&#123;"Cache-Control": "no-cache", "X-Accel-Buffering": "no"&#125;
-    )</pre>
-          <strong style="color:#f59e0b;">⚠ Critical — X-Accel-Buffering: no:</strong> Without this header, nginx (used by Cloud Run) buffers the entire stream and delivers all events in a single batch at the end — the progressive UI never updates mid-analysis. This header disables that buffering.<br><br>
-          <strong style="color:#f59e0b;">⚠ Critical — Cache-Control: no-cache:</strong> Required by the SSE spec. Without it, some proxies and browsers cache the response instead of keeping the connection live.<br><br>
-          <strong style="color:#cbd5e1;">Every event payload must carry <code style="background:#0d1117;padding:1px 5px;border-radius:3px;color:#86efac;">analysis_id</code></strong> — this is what lets the frontend match events to the correct upload when a user submits multiple sessions.
+
+    # Save video to GCS (stub: log path if GCS not yet wired)
+    gcs_path = f"videos/{analysis_id}/{file.filename}"
+    await save_to_gcs(file, gcs_path)
+
+    # Write session record to DB
+    await db.execute("""
+        INSERT INTO form_sessions
+          (session_id, user_id, exercise_name, weight_used, status, video_gcs_path)
+        VALUES (:id, :uid, :exercise, :weight, 'processing', :path)
+    """, {"id": analysis_id, "uid": "stub_user", "exercise": exercise,
+          "weight": weight, "path": gcs_path})
+
+    return {"analysis_id": analysis_id}   # JSON only — no streaming</pre>
         </div>
       </div>
       <div class="ac-block">
         <div class="ac-label">Acceptance Criteria</div>
         <ul class="ac-list">
-          <li class="ac-item"><span class="ac-check">✓</span> POST /upload accepts multipart video file and returns session_id immediately</li>
-          <li class="ac-item"><span class="ac-check">✓</span> /upload streams all SSE events in correct order with realistic delays (≥500ms between stages)</li>
-          <li class="ac-item"><span class="ac-check">✓</span> GET /analyze returns valid JSON matching agreed schema — no missing fields</li>
-          <li class="ac-item"><span class="ac-check">✓</span> Response includes ≥2 form issues with both severity label and severity_score fields</li>
-          <li class="ac-item"><span class="ac-check">✓</span> Both endpoints deployed to Cloud Run dev environment and URL shared with Squad 1 (Allex) by Thursday</li>
-          <li class="ac-item"><span class="ac-check">✓</span> Squad 1 confirms SSE stream is consumable by their frontend client before Thursday merge</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Accepts multipart POST: video file + exercise (string) + weight (float)</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Video saved to GCS — stub: log gcs_path to console if not yet wired</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Session record written to DB: session_id, exercise_name, weight_used, status: processing, video_gcs_path</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Returns <code style="background:#1e293b;padding:1px 5px;border-radius:3px;">{"analysis_id": "&lt;uuid&gt;"}</code> — no SSE, no streaming</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Deployed to Cloud Run dev env, URL shared with Squad 1 by Thursday</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- S2-W5-07b -->
+  <div class="task-card">
+    <div class="task-card-header">
+      <span class="task-id-badge sq2-id">S2-W5-07b</span>
+      <div class="task-title">Stub GET /analysis/{id}/stream — stream fake pipeline events over SSE</div>
+    </div>
+    <div class="task-card-body">
+      <div class="dep-block">
+        <div class="dep-block-label">Sequence &nbsp;·&nbsp; <span style="color:#64748b;font-weight:400;">06a (contract) + 07a (analysis_id) → 07b → 06b (Squad 1 consumes)</span></div>
+        <div class="dep-row-item"><span class="dep-dir">Needs →</span> S1-W5-06a (SSE event contract must be agreed — event names + payloads defined there), S2-W5-07a (analysis_id pattern)</div>
+        <div class="dep-row-item"><span class="dep-dir">Unblocks →</span> S1-W5-06b (Squad 1 opens EventSource to this endpoint)</div>
+      </div>
+      <div>
+        <div class="desc-label">Description</div>
+        <div class="desc-text">GET endpoint that accepts <code style="background:#1e293b;padding:1px 5px;border-radius:3px;">analysis_id</code> as a path param, opens an SSE connection, and streams fake pipeline events with realistic delays. Squad 1 uses this stub to build the full processing UI before the real pipeline exists. Event names and payloads must match the S1-W5-06a contract exactly.</div>
+      </div>
+      <div>
+        <div class="desc-label">Implementation</div>
+        <div style="background:#070a0f;border:1px solid #1e2433;border-radius:8px;padding:14px 16px;font-size:11px;color:#94a3b8;line-height:1.8;">
+          <strong style="color:#94a3b8;">SSE format:</strong> every yielded string must be <code style="background:#0d1117;padding:1px 5px;border-radius:3px;color:#fde68a;">data: {json}\n\n</code> — double newline required.<br><br>
+          <pre style="background:#0d1117;border-radius:6px;padding:10px 12px;margin:8px 0;overflow-x:auto;font-size:10.5px;color:#e2e8f0;line-height:1.6;">async def pipeline_stream(analysis_id: str):
+    yield f"data: {json.dumps({'event': 'upload_received',    'analysis_id': analysis_id})}\n\n"
+    await asyncio.sleep(0.5)
+    yield f"data: {json.dumps({'event': 'mediapipe_started',  'analysis_id': analysis_id})}\n\n"
+    await asyncio.sleep(1.5)
+    yield f"data: {json.dumps({'event': 'mediapipe_complete', 'analysis_id': analysis_id, 'rep_count': 8})}\n\n"
+    await asyncio.sleep(0.5)
+    yield f"data: {json.dumps({'event': 'nemotron_started',   'analysis_id': analysis_id})}\n\n"
+    await asyncio.sleep(2.0)
+    yield f"data: {json.dumps({'event': 'nemotron_complete',  'analysis_id': analysis_id, 'overall_score': 72})}\n\n"
+    await asyncio.sleep(0.5)
+    yield f"data: {json.dumps({'event': 'rag_started',        'analysis_id': analysis_id})}\n\n"
+    await asyncio.sleep(1.0)
+    yield f"data: {json.dumps({'event': 'rag_complete',       'analysis_id': analysis_id, 'passages_retrieved': 8})}\n\n"
+    await asyncio.sleep(0.5)
+    yield f"data: {json.dumps({'event': 'claude_started',     'analysis_id': analysis_id})}\n\n"
+    await asyncio.sleep(1.5)
+    yield f"data: {json.dumps({'event': 'claude_complete',    'analysis_id': analysis_id})}\n\n"
+    yield f"data: {json.dumps({'event': 'analysis_complete',  'analysis_id': analysis_id})}\n\n"
+
+@app.get("/analysis/{analysis_id}/stream")
+async def stream(analysis_id: str):
+    return StreamingResponse(
+        pipeline_stream(analysis_id),
+        media_type="text/event-stream",
+        headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"}
+    )</pre>
+          <strong style="color:#f59e0b;">⚠ X-Accel-Buffering: no</strong> — without this, nginx on Cloud Run batches all events and delivers them at once. The UI never updates mid-analysis.<br>
+          <strong style="color:#f59e0b;">⚠ Cache-Control: no-cache</strong> — required by SSE spec. Proxies will cache the response without it.
+        </div>
+      </div>
+      <div class="ac-block">
+        <div class="ac-label">Acceptance Criteria</div>
+        <ul class="ac-list">
+          <li class="ac-item"><span class="ac-check">✓</span> GET /analysis/{analysis_id}/stream opens SSE connection</li>
+          <li class="ac-item"><span class="ac-check">✓</span> All 10 events fire in sequence: upload_received → mediapipe_started → mediapipe_complete → nemotron_started → nemotron_complete → rag_started → rag_complete → claude_started → claude_complete → analysis_complete</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Delays ≥500ms between stages — events do not all arrive instantly</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Every event payload includes <code style="background:#1e293b;padding:1px 5px;border-radius:3px;">analysis_id</code></li>
+          <li class="ac-item"><span class="ac-check">✓</span> Response headers include Cache-Control: no-cache and X-Accel-Buffering: no</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Deployed to Cloud Run dev env — Squad 1 confirms stream consumable before Thursday merge</li>
         </ul>
       </div>
     </div>
@@ -648,6 +783,81 @@ async def upload(file: UploadFile):
           <li class="ac-item"><span class="ac-check">✓</span> DATABASE_URL (service role connection string) added to Cloud Run env vars — FastAPI app connects successfully on startup</li>
           <li class="ac-item"><span class="ac-check">✓</span> exercises table seeded: goblet_squat row present with exercise_id = ex_gob_squat_001 and is_active = true</li>
           <li class="ac-item"><span class="ac-check">✓</span> Migration script committed to repo — any team member can recreate the schema from scratch by running it</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <!-- S2-W5-09 -->
+  <div class="task-card">
+    <div class="task-card-header">
+      <span class="task-id-badge sq2-id">S2-W5-09</span>
+      <div class="task-title">Provision NVIDIA Nemotron API access — confirm hello world call <span class="new-badge">NEW</span></div>
+    </div>
+    <div class="task-card-body">
+      <div class="dep-block">
+        <div class="dep-block-label">Dependencies</div>
+        <div class="dep-row-item"><span class="dep-dir">Needs →</span> S2-W5-03 (Python API scaffold — API call runs from the backend service)</div>
+        <div class="dep-row-item"><span class="dep-dir">Unblocks →</span> S2-W5-10 (test scenarios require working API), W6 Nemotron integration and parallel input testing</div>
+      </div>
+      <div>
+        <div class="desc-label">Description</div>
+        <div class="desc-text">Provision NVIDIA NIM API access for Nemotron 3 Nano Omni and confirm the integration works before Week 6 build begins. This is a prerequisite for the Week 6 parallel Nemotron input testing track — if API access isn't working this week, the first Nemotron call slips to Week 7. Steps: (1) Create or access NVIDIA AI Enterprise / NIM account and generate API key. (2) Understand and document the multimodal input format — how Nemotron accepts video + structured JSON together in a single request. (3) Understand video format and size constraints (codec, resolution, max file size). (4) Make a basic hello world call from the Python backend using a small sample video and dummy JSON payload. (5) Record the response time for the test call — first latency signal for the &lt;35s pipeline target. (6) Document the full API call structure (endpoint, headers, payload format) so the team can build against it in Week 6.</div>
+      </div>
+      <div class="ac-block">
+        <div class="ac-label">Acceptance Criteria</div>
+        <ul class="ac-list">
+          <li class="ac-item"><span class="ac-check">✓</span> NVIDIA NIM API key provisioned and stored securely in Cloud Run environment variables (never committed to repo)</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Hello world call made from Python backend — Nemotron returns a response without error</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Multimodal input format confirmed and documented: how to pass video + JSON as dual inputs in one request</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Video format and size constraints documented (codec, max resolution, max file size)</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Response time for the hello world call recorded — logged in the task comments</li>
+          <li class="ac-item"><span class="ac-check">✓</span> API call structure (endpoint, headers, payload shape) committed to repo as a code comment or docs file</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Completed by Thursday Week 5 — no Nemotron work in Week 6 can start without this</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- S2-W5-10 -->
+  <div class="task-card">
+    <div class="task-card-header">
+      <span class="task-id-badge sq2-id">S2-W5-10</span>
+      <div class="task-title">Define Nemotron input test plan — Scenarios A, B, C ready to execute in Week 6 <span class="new-badge">NEW</span></div>
+    </div>
+    <div class="task-card-body">
+      <div class="dep-block">
+        <div class="dep-block-label">Dependencies</div>
+        <div class="dep-row-item"><span class="dep-dir">Needs →</span> S2-W5-09 (API must be provisioned and confirmed working), PT-01 Phase 1 (Nemotron output schema must be defined — test must measure against the agreed schema)</div>
+        <div class="dep-row-item"><span class="dep-dir">Unblocks →</span> W6 parallel Nemotron testing track — all three scenarios can be executed as soon as the biomechanics JSON is available in W6</div>
+      </div>
+      <div>
+        <div class="desc-label">Description</div>
+        <div class="desc-text">Define the three Nemotron input test scenarios this week so they can be executed in Week 6 as soon as the MediaPipe biomechanics JSON is ready — running parallel to the main MediaPipe pipeline completion. The goal is to identify the best input combination (output quality vs. latency) before committing to the final pipeline architecture. Use the existing joint overlay video (already produced) and a sample biomechanics JSON (dummy data matching the agreed schema from PT-01). Each scenario measures two things: (1) output quality — does the response include the fields from the agreed Nemotron schema? is the reasoning sensible? (2) processing time — how long does each input combination take end-to-end?<br><br>
+        <strong style="color:#e2e8f0;">Test A — Video with joint overlay only</strong><br>
+        Input: Joint overlay video (no JSON). Prompt asks Nemotron to return the agreed output schema (overall score, rep scores, issues, coaching tips, confidence).<br><br>
+        <strong style="color:#e2e8f0;">Test B — Biomechanics JSON only</strong><br>
+        Input: Structured JSON (knee angle, hip angle, rep count, rep time, tempo) — no video. Same output schema requested.<br><br>
+        <strong style="color:#e2e8f0;">Test C — Both inputs together</strong><br>
+        Input: Joint overlay video + biomechanics JSON as dual inputs. Same output schema requested. This is the intended production architecture — test whether it produces meaningfully better output than B alone.</div>
+      </div>
+      <div class="ac-block">
+        <div class="ac-label">Acceptance Criteria — W5 (Plan)</div>
+        <ul class="ac-list">
+          <li class="ac-item"><span class="ac-check">✓</span> Test plan document committed to repo: scenario definitions, input files identified, output schema to measure against, what "pass" looks like for each scenario</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Sample biomechanics JSON (dummy data) written and committed — matches the agreed Nemotron input schema from PT-01</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Joint overlay video confirmed accessible and in the correct format for the Nemotron API (from S2-W5-09)</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Test scripts scaffolded (Python) — ready to run in W6 with a single command per scenario</li>
+        </ul>
+      </div>
+      <div class="ac-block" style="margin-top:10px;">
+        <div class="ac-label">Acceptance Criteria — W6 (Execution)</div>
+        <ul class="ac-list">
+          <li class="ac-item"><span class="ac-check">✓</span> All three scenarios run against the Nemotron API and results logged</li>
+          <li class="ac-item"><span class="ac-check">✓</span> For each scenario: response time recorded, output schema fields checked (present / missing / malformed)</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Comparison summary committed: which input combination gives the best output quality? which is fastest? is Test C meaningfully better than Test B alone?</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Finding fed back to PM — informs final pipeline architecture decision before W7 full pipeline build</li>
         </ul>
       </div>
     </div>

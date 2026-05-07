@@ -60,8 +60,10 @@
 - [ ] Scope MediaPipe integration for Goblet Squat: identify required keypoints, joint angle computations, rep segmentation approach
 - [ ] Define structured DB schema: `users`, `sessions`, `exercises`, `workout_logs` (exercise, sets, reps, weight), `form_scores` — share with Squad 3
 - [ ] Stub `/upload` and `/analyze` endpoints (accept video, return hardcoded biomechanics JSON) so Squad 1 can start integrating
+- [ ] **[S2-W5-09 — NEW ⚠️ URGENT]** Provision NVIDIA NIM API access for Nemotron 3 Nano Omni — confirm hello world call from Python backend, document multimodal input format (video + JSON), record response time. Must complete by Thu — blocks all W6 Nemotron work
+- [ ] **[S2-W5-10 — NEW]** Define Nemotron input test plan (Scenarios A, B, C) — write test scripts + sample JSON, confirm joint overlay video is in correct format. Execute in W6 parallel track
 
-**Thursday merge:** GCP infra live + API scaffold + stubbed endpoints + schema docs committed
+**Thursday merge:** GCP infra live + API scaffold + stubbed endpoints + schema docs + Nemotron API confirmed + test plan committed
 
 ---
 
@@ -94,13 +96,22 @@
 ---
 
 ### Squad 2 — Backend
-- [ ] Implement **video upload endpoint**: receive video, store to S3/GCS, return upload confirmation + SSE stream
-- [ ] Integrate **MediaPipe** for Goblet Squat: extract joint keypoints, compute angles (knee, hip, torso), rep segmentation, stability + posture metrics
-- [ ] Return structured **biomechanics JSON** from `/analyze` endpoint (real MediaPipe output, not stub)
-- [ ] Begin **Nemotron 3 Nano Omni integration**: send raw video + biomechanics JSON as dual input, receive structured JSON output + chain-of-thought paragraphs
-- [ ] Emit correct **SSE events** at each pipeline stage (`mediapipe_complete`, `nemotron_complete`, etc.)
 
-**Thursday merge (E2E slice):** Upload video → MediaPipe runs → biomechanics JSON returned → SSE events firing → Squad 1 renders real data on Results screen
+**Main track — MediaPipe completion:**
+- [ ] Implement **video upload endpoint**: receive video, store to GCS, return upload confirmation + SSE stream
+- [ ] Complete **MediaPipe pipeline**: frame selection logic + video quality gate (bad angle / joint undetectable → retake message to user)
+- [ ] Write **biomechanics script**: convert raw MediaPipe keypoints → knee angle, hip angle, rep count, rep time, tempo (using parameters from PT-01 Phase 1)
+- [ ] Return structured **biomechanics JSON** from `/analyze` endpoint
+- [ ] Emit correct **SSE events** at each pipeline stage
+
+**Parallel track — Nemotron input testing (S2-W5-10 execution):**
+- [ ] **Test A:** Joint overlay video only → Nemotron → record output quality + response time
+- [ ] **Test B:** Biomechanics JSON only → Nemotron → record output quality + response time
+- [ ] **Test C:** Both inputs together → Nemotron → record output quality + response time
+- [ ] Log comparison findings: which combination gives best output? does video add meaningful value over JSON alone?
+- [ ] **Feed findings to PM** — informs final pipeline architecture before W7 full build
+
+**Thursday merge (E2E slice):** Upload video → video stored in GCS → MediaPipe runs → biomechanics JSON returned → SSE events firing → Squad 1 renders real data on Results screen. Nemotron test results committed alongside.
 
 ---
 
