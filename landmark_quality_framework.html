@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kinetic — Landmark Quality Framework · MediaPipe → Biomechanics Contract</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0a0d14; color: #e2e8f0; padding: 32px; min-width: 900px; }
+
+/* ─── Header ─── */
+.top-bar { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:32px; flex-wrap:wrap; gap:12px; }
+h1 { font-size:20px; font-weight:700; color:#f8fafc; }
+.sub { font-size:12px; color:#64748b; margin-top:4px; }
+.badge-row { display:flex; gap:8px; margin-top:10px; flex-wrap:wrap; }
+.badge { font-size:10px; padding:3px 10px; border-radius:6px; font-weight:600; }
+.badge-s3 { background:#1a1205; color:#fb923c; border:1px solid #431407; }
+.badge-s2 { background:#0a1f12; color:#4ade80; border:1px solid #14532d; }
+.badge-ref { background:#0d1a2e; color:#60a5fa; border:1px solid #1e3a5f; }
+
+/* ─── Section ─── */
+.section { margin-bottom:36px; }
+.section-title { font-size:14px; font-weight:800; color:#f1f5f9; letter-spacing:0.3px; margin-bottom:4px; display:flex; align-items:center; gap:10px; }
+.section-title::after { content:''; flex:1; height:1px; background:#1e2433; }
+.section-sub { font-size:11px; color:#64748b; margin-bottom:16px; }
+
+/* ─── Cards ─── */
+.card { background:#0d1117; border:1.5px solid #1e2433; border-radius:12px; padding:18px 20px; margin-bottom:14px; }
+.card-title { font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:0.7px; color:#475569; margin-bottom:12px; }
+
+/* ─── Landmark table ─── */
+.lm-table { width:100%; border-collapse:collapse; font-size:11px; }
+.lm-table th { text-align:left; padding:7px 10px; color:#64748b; font-weight:700; font-size:10px; text-transform:uppercase; letter-spacing:0.4px; border-bottom:1.5px solid #1e2433; }
+.lm-table td { padding:6px 10px; border-bottom:1px solid #111827; color:#cbd5e1; vertical-align:middle; }
+.lm-table td:first-child { font-family:'SF Mono',monospace; font-size:10px; color:#94a3b8; }
+.lm-table tr:last-child td { border-bottom:none; }
+.lm-table tr:hover td { background:#0f1520; }
+
+/* category row label */
+.cat-row td { background:#0a0d14; padding:4px 10px; }
+.cat-label { font-size:9px; font-weight:800; text-transform:uppercase; letter-spacing:0.6px; }
+
+/* criticality pills */
+.crit-pill { display:inline-block; font-size:9.5px; padding:2px 8px; border-radius:5px; font-weight:700; }
+.crit-critical  { background:#2d0a0a; color:#f87171; border:1px solid #7f1d1d; }
+.crit-important { background:#1a1205; color:#fb923c; border:1px solid #431407; }
+.crit-least     { background:#0d1a2e; color:#60a5fa; border:1px solid #1e3a5f; }
+.crit-none      { background:#111827; color:#475569; border:1px solid #1e2433; }
+
+/* use pill */
+.use-pill { display:inline-block; font-size:9px; padding:2px 7px; border-radius:4px; }
+.use-include { background:#0a2015; color:#86efac; border:1px solid #14532d; }
+.use-optional { background:#150d24; color:#c4b5fd; border:1px solid #4c1d95; }
+.use-exclude { background:#111827; color:#475569; border:1px solid #1e2433; }
+
+/* weight pill */
+.wt-pill { font-family:'SF Mono',monospace; font-size:10px; color:#fdba74; }
+
+/* ─── Formula block ─── */
+.formula { background:#070a0f; border:1px solid #1e2433; border-radius:8px; padding:14px 16px; font-family:'SF Mono',monospace; font-size:11.5px; line-height:1.9; color:#e2e8f0; }
+.f-comment { color:#475569; font-style:italic; font-size:10px; }
+.f-key { color:#93c5fd; }
+.f-val { color:#fdba74; }
+.f-op  { color:#f9a8d4; }
+
+/* ─── Score threshold table ─── */
+.thresh-table { width:100%; border-collapse:collapse; font-size:11px; }
+.thresh-table th { text-align:left; padding:7px 10px; color:#64748b; font-weight:700; font-size:10px; text-transform:uppercase; letter-spacing:0.4px; border-bottom:1.5px solid #1e2433; }
+.thresh-table td { padding:8px 10px; border-bottom:1px solid #111827; }
+.thresh-table tr:last-child td { border-bottom:none; }
+
+.score-good     { color:#86efac; font-weight:700; font-family:monospace; }
+.score-ok       { color:#fde68a; font-weight:700; font-family:monospace; }
+.score-poor     { color:#f87171; font-weight:700; font-family:monospace; }
+
+.status-good { display:inline-block; background:#0a2015; color:#86efac; border:1px solid #14532d; border-radius:5px; font-size:9.5px; padding:2px 8px; font-weight:700; }
+.status-flag { display:inline-block; background:#2c1a00; color:#fbbf24; border:1px solid #78350f; border-radius:5px; font-size:9.5px; padding:2px 8px; font-weight:700; }
+.status-poor { display:inline-block; background:#2d0a0a; color:#f87171; border:1px solid #7f1d1d; border-radius:5px; font-size:9.5px; padding:2px 8px; font-weight:700; }
+
+/* ─── Frame selection steps ─── */
+.step-list { display:flex; flex-direction:column; gap:0; }
+.frame-step { display:flex; gap:0; }
+.step-spine { display:flex; flex-direction:column; align-items:center; width:36px; flex-shrink:0; }
+.step-circle { width:24px; height:24px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:800; flex-shrink:0; background:#1e2433; color:#94a3b8; border:1.5px solid #2d3a4a; }
+.step-line { width:2px; background:#1e2433; flex:1; margin:3px auto; min-height:16px; }
+.step-body { padding:0 0 20px 4px; flex:1; }
+.step-heading { font-size:12px; font-weight:700; color:#f1f5f9; margin-bottom:6px; margin-top:1px; }
+.step-desc { font-size:11px; color:#94a3b8; line-height:1.6; }
+.step-desc code { font-family:'SF Mono',monospace; font-size:10.5px; color:#c4b5fd; background:#150d24; padding:1px 5px; border-radius:3px; }
+.step-rule { margin-top:8px; background:#070a0f; border:1px solid #1e2433; border-radius:7px; padding:10px 12px; font-family:'SF Mono',monospace; font-size:10.5px; color:#e2e8f0; line-height:1.7; }
+.rule-comment { color:#475569; font-style:italic; }
+.rule-pass { color:#86efac; }
+.rule-fail { color:#f87171; }
+.rule-tag  { color:#fdba74; }
+
+/* ─── Weight summary bar ─── */
+.weight-bar { display:flex; height:12px; border-radius:6px; overflow:hidden; margin-bottom:8px; }
+.wb-critical  { background:#991b1b; flex:0.50; }
+.wb-important { background:#9a3412; flex:0.35; }
+.wb-least     { background:#1e3a5f; flex:0.15; }
+
+.weight-legend { display:flex; gap:16px; flex-wrap:wrap; }
+.wl-item { display:flex; align-items:center; gap:6px; font-size:10.5px; color:#94a3b8; }
+.wl-dot  { width:10px; height:10px; border-radius:3px; flex-shrink:0; }
+
+/* ─── Payload JSON preview ─── */
+.json-block { background:#070a0f; border:1px solid #1e2433; border-radius:8px; padding:14px 16px; font-family:'SF Mono',monospace; font-size:10.5px; line-height:1.75; overflow-x:auto; }
+.jk  { color:#93c5fd; }
+.js  { color:#86efac; }
+.jn  { color:#fdba74; }
+.jb  { color:#f9a8d4; }
+.jc  { color:#475569; font-style:italic; }
+.jp  { color:#64748b; }
+
+/* ─── Callout ─── */
+.callout { border-radius:8px; padding:12px 14px; font-size:11px; line-height:1.6; display:flex; gap:10px; }
+.callout-warn { background:#1c1000; border:1px solid #78350f; color:#fde68a; }
+.callout-info { background:#0d1a2e; border:1px solid #1e3a5f; color:#93c5fd; }
+.callout-icon { font-size:14px; flex-shrink:0; margin-top:1px; }
+
+/* ─── Task ref ─── */
+.task-ref { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+.tid { font-family:'SF Mono',monospace; font-size:9.5px; font-weight:700; padding:2px 7px; border-radius:5px; }
+.tid-s2 { background:#0a1f12; color:#4ade80; border:1px solid #14532d; }
+.tid-s3 { background:#1a1205; color:#fb923c; border:1px solid #431407; }
+.tid-role { font-size:10px; color:#64748b; }
+</style>
+</head>
+<body>
+
+<!-- ─── Header ─── -->
+<div class="top-bar">
+  <div>
+    <h1>Landmark Quality Framework</h1>
+    <div class="sub">MediaPipe → Biomechanics Data Contract · Goblet Squat MVP</div>
+    <div class="badge-row">
+      <span class="badge badge-s3">Squad 3 · implements</span>
+      <span class="badge badge-s2">Squad 2 · consumes</span>
+      <span class="badge badge-ref">Ref: S3-W5-06 · S3-W5-07</span>
+    </div>
+  </div>
+</div>
+
+<div class="callout callout-info" style="margin-bottom:20px;">
+  <span class="callout-icon">ℹ</span>
+  <span>This document defines the quality gate that S3-W5-06 (MediaPipe processing) applies before passing frame data to S3-W5-07 (biomechanics computation). Both tasks should be read alongside this spec. The landmark weights and score thresholds here are starting values — update this doc when tuned against real video data.</span>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     RATIONALE SECTION
+     ══════════════════════════════════════════════════════ -->
+<div class="section" style="margin-bottom:32px;">
+  <div class="section-title">Why All Eligible Frames — Design Rationale</div>
+  <div class="section-sub">Read this before implementing. It explains the core design decision that shapes everything in this document.</div>
+
+  <div class="card">
+    <div style="font-size:12px;color:#f1f5f9;font-weight:700;margin-bottom:10px;">Biomechanics computation needs trajectory data, not snapshots.</div>
+    <div style="font-size:11.5px;color:#94a3b8;line-height:1.8;margin-bottom:14px;">
+      To compute metrics like range of motion, knee angle progression through a rep, depth reached, or whether the descent was controlled — biomechanics must see how values <em>change over time</em>. A single frame at the bottom position tells you the angle at that moment. The full trajectory of frames tells you how the person got there, how fast, and whether the pattern is consistent across reps. Top and bottom frames are selected for the LLM (coaching), not for biomechanics.
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">
+      <div style="background:#070a0f;border:1px solid #14532d;border-radius:8px;padding:12px 14px;">
+        <div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:0.6px;color:#4ade80;margin-bottom:8px;">What biomechanics receives</div>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:6px;">
+          <li style="display:flex;gap:8px;align-items:flex-start;font-size:11px;color:#94a3b8;"><span style="color:#4ade80;margin-top:1px;flex-shrink:0;">✓</span> All reliable frames within each rep — full trajectory</li>
+          <li style="display:flex;gap:8px;align-items:flex-start;font-size:11px;color:#94a3b8;"><span style="color:#4ade80;margin-top:1px;flex-shrink:0;">✓</span> World landmarks (3D metric, hip-centred) — better for angle math than normalised screen coords</li>
+          <li style="display:flex;gap:8px;align-items:flex-start;font-size:11px;color:#94a3b8;"><span style="color:#4ade80;margin-top:1px;flex-shrink:0;">✓</span> Raw visibility + presence scores on every landmark in every eligible frame</li>
+          <li style="display:flex;gap:8px;align-items:flex-start;font-size:11px;color:#94a3b8;"><span style="color:#4ade80;margin-top:1px;flex-shrink:0;">✓</span> Frame index + timestamp_ms on every frame</li>
+          <li style="display:flex;gap:8px;align-items:flex-start;font-size:11px;color:#94a3b8;"><span style="color:#4ade80;margin-top:1px;flex-shrink:0;">✓</span> Landmarks with no form impact excluded — not all 33</li>
+        </ul>
+      </div>
+      <div style="background:#070a0f;border:1px solid #7f1d1d;border-radius:8px;padding:12px 14px;">
+        <div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:0.6px;color:#f87171;margin-bottom:8px;">What biomechanics does NOT receive</div>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:6px;">
+          <li style="display:flex;gap:8px;align-items:flex-start;font-size:11px;color:#94a3b8;"><span style="color:#f87171;margin-top:1px;flex-shrink:0;">✗</span> Key frames only (top / bottom / error frames) — those are for the LLM, not biomechanics</li>
+          <li style="display:flex;gap:8px;align-items:flex-start;font-size:11px;color:#94a3b8;"><span style="color:#f87171;margin-top:1px;flex-shrink:0;">✗</span> All 33 landmarks — no-impact landmarks (mouth, wrist, fingers, eye inner/outer) are stripped before passing</li>
+          <li style="display:flex;gap:8px;align-items:flex-start;font-size:11px;color:#94a3b8;"><span style="color:#f87171;margin-top:1px;flex-shrink:0;">✗</span> Frames outside rep segments — setup and rest frames are excluded</li>
+          <li style="display:flex;gap:8px;align-items:flex-start;font-size:11px;color:#94a3b8;"><span style="color:#f87171;margin-top:1px;flex-shrink:0;">✗</span> Frames where any critical landmark fails visibility ≥ 0.70 — unreliable frames are filtered out before passing</li>
+        </ul>
+      </div>
+    </div>
+
+    <div style="background:#0a0d14;border:1px solid #2d3a4a;border-radius:8px;padding:12px 14px;">
+      <div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:0.6px;color:#475569;margin-bottom:8px;">Why pass raw visibility scores — not just pre-filtered frames</div>
+      <div style="font-size:11px;color:#94a3b8;line-height:1.7;">
+        Pre-filtering removes frames where critical landmarks fail entirely (≥ 0.70 gate). But among frames that pass, reliability still varies — a frame where the left knee scores 0.72 should carry less weight in angle calculations than a frame where it scores 0.95. Passing the raw scores lets biomechanics computation <strong style="color:#cbd5e1;">weight frames by confidence</strong> rather than treating all eligible frames as equally trustworthy. The filtering gate keeps noise out; the scores let the downstream logic be precise about uncertainty.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     SECTION 1 — LANDMARK CATEGORISATION
+     ══════════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-title">1 &nbsp; Landmark Categorisation — Goblet Squat</div>
+  <div class="section-sub">All 33 MediaPipe Pose landmarks ranked by their impact on Goblet Squat form analysis. The "Biomechanics Use" column defines what Squad 3 passes downstream.</div>
+
+  <div class="card">
+    <table class="lm-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Landmark Name</th>
+          <th>Criticality</th>
+          <th>Form Relevance</th>
+          <th>Biomechanics Use</th>
+          <th>Score Weight</th>
+        </tr>
+      </thead>
+      <tbody>
+
+        <!-- CRITICAL -->
+        <tr class="cat-row"><td colspan="6"><span class="cat-label crit-critical" style="color:#f87171;">▸ Critical — primary form metrics, pass/fail depends on these</span></td></tr>
+        <tr>
+          <td>23, 24</td>
+          <td>Left / Right Hip</td>
+          <td><span class="crit-pill crit-critical">Critical</span></td>
+          <td>Squat depth detection, hip hinge angle, pelvis tilt</td>
+          <td><span class="use-pill use-include">Include</span></td>
+          <td><span class="wt-pill">0.083 each</span></td>
+        </tr>
+        <tr>
+          <td>25, 26</td>
+          <td>Left / Right Knee</td>
+          <td><span class="crit-pill crit-critical">Critical</span></td>
+          <td>Knee angle at depth, valgus / varus tracking, knee-over-toe alignment</td>
+          <td><span class="use-pill use-include">Include</span></td>
+          <td><span class="wt-pill">0.083 each</span></td>
+        </tr>
+        <tr>
+          <td>29, 30</td>
+          <td>Left / Right Heel</td>
+          <td><span class="crit-pill crit-critical">Critical</span></td>
+          <td>Heel lift detection — key fault indicator for ankle mobility issues</td>
+          <td><span class="use-pill use-include">Include</span></td>
+          <td><span class="wt-pill">0.083 each</span></td>
+        </tr>
+
+        <!-- IMPORTANT -->
+        <tr class="cat-row"><td colspan="6"><span class="cat-label crit-important" style="color:#fb923c;">▸ Important — secondary form markers, contribute to coaching feedback</span></td></tr>
+        <tr>
+          <td>11, 12</td>
+          <td>Left / Right Shoulder</td>
+          <td><span class="crit-pill crit-important">Important</span></td>
+          <td>Torso uprightness, forward lean angle (shoulder–hip vector)</td>
+          <td><span class="use-pill use-include">Include</span></td>
+          <td><span class="wt-pill">0.044 each</span></td>
+        </tr>
+        <tr>
+          <td>27, 28</td>
+          <td>Left / Right Ankle</td>
+          <td><span class="crit-pill crit-important">Important</span></td>
+          <td>Dorsiflexion angle, foot-to-ankle relationship, ankle stability</td>
+          <td><span class="use-pill use-include">Include</span></td>
+          <td><span class="wt-pill">0.044 each</span></td>
+        </tr>
+        <tr>
+          <td>31, 32</td>
+          <td>Left / Right Foot Index</td>
+          <td><span class="crit-pill crit-important">Important</span></td>
+          <td>Foot turn-out angle, knee tracking over toe, toe direction</td>
+          <td><span class="use-pill use-include">Include</span></td>
+          <td><span class="wt-pill">0.044 each</span></td>
+        </tr>
+        <tr>
+          <td>7, 8</td>
+          <td>Left / Right Ear</td>
+          <td><span class="crit-pill crit-important">Important</span></td>
+          <td>Full spinal plumb line — ear → shoulder → hip alignment for back angle assessment</td>
+          <td><span class="use-pill use-include">Include</span></td>
+          <td><span class="wt-pill">0.044 each</span></td>
+        </tr>
+
+        <!-- LEAST IMPACT -->
+        <tr class="cat-row"><td colspan="6"><span class="cat-label crit-least" style="color:#60a5fa;">▸ Least Impact — edge-case coaching cues, contextual only</span></td></tr>
+        <tr>
+          <td>0</td>
+          <td>Nose</td>
+          <td><span class="crit-pill crit-least">Least Impact</span></td>
+          <td>Head position, chin tuck cue</td>
+          <td><span class="use-pill use-optional">Optional</span></td>
+          <td><span class="wt-pill">0.030</span></td>
+        </tr>
+        <tr>
+          <td>13, 14</td>
+          <td>Left / Right Elbow</td>
+          <td><span class="crit-pill crit-least">Least Impact</span></td>
+          <td>Goblet hold quality — "elbows up" cue affects centre of mass in goblet-specific way</td>
+          <td><span class="use-pill use-optional">Optional</span></td>
+          <td><span class="wt-pill">0.030 each</span></td>
+        </tr>
+        <tr>
+          <td>2, 5</td>
+          <td>Left / Right Eye</td>
+          <td><span class="crit-pill crit-least">Least Impact</span></td>
+          <td>Gaze direction, head alignment (ear usually sufficient)</td>
+          <td><span class="use-pill use-optional">Optional</span></td>
+          <td><span class="wt-pill">0.030 each</span></td>
+        </tr>
+
+        <!-- NO IMPACT -->
+        <tr class="cat-row"><td colspan="6"><span class="cat-label crit-none" style="color:#475569;">▸ No Impact — excluded from biomechanics computation entirely</span></td></tr>
+        <tr>
+          <td>1, 3</td>
+          <td>Left Eye Inner / Outer</td>
+          <td><span class="crit-pill crit-none">No Impact</span></td>
+          <td>—</td>
+          <td><span class="use-pill use-exclude">Exclude</span></td>
+          <td><span class="wt-pill" style="color:#334155;">0</span></td>
+        </tr>
+        <tr>
+          <td>4, 6</td>
+          <td>Right Eye Inner / Outer</td>
+          <td><span class="crit-pill crit-none">No Impact</span></td>
+          <td>—</td>
+          <td><span class="use-pill use-exclude">Exclude</span></td>
+          <td><span class="wt-pill" style="color:#334155;">0</span></td>
+        </tr>
+        <tr>
+          <td>9, 10</td>
+          <td>Mouth Left / Right</td>
+          <td><span class="crit-pill crit-none">No Impact</span></td>
+          <td>—</td>
+          <td><span class="use-pill use-exclude">Exclude</span></td>
+          <td><span class="wt-pill" style="color:#334155;">0</span></td>
+        </tr>
+        <tr>
+          <td>15, 16</td>
+          <td>Left / Right Wrist</td>
+          <td><span class="crit-pill crit-none">No Impact</span></td>
+          <td>—</td>
+          <td><span class="use-pill use-exclude">Exclude</span></td>
+          <td><span class="wt-pill" style="color:#334155;">0</span></td>
+        </tr>
+        <tr>
+          <td>17–22</td>
+          <td>Pinky / Index / Thumb (both sides)</td>
+          <td><span class="crit-pill crit-none">No Impact</span></td>
+          <td>—</td>
+          <td><span class="use-pill use-exclude">Exclude</span></td>
+          <td><span class="wt-pill" style="color:#334155;">0</span></td>
+        </tr>
+
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout callout-info" style="margin-top:8px;">
+    <span class="callout-icon">ℹ</span>
+    <span><strong>Optional landmarks</strong> (Least Impact) are available in the payload but S3-W5-07 may choose to ignore them. They contribute to the video reliability score but are never required to pass the frame selection gate.</span>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════
+     SECTION 2 — VISIBILITY SCORING FRAMEWORK
+     ══════════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-title">2 &nbsp; Visibility Scoring Framework</div>
+  <div class="section-sub">A three-layer quality gate. All three layers run before any frame data is passed to biomechanics.</div>
+
+  <!-- Layer 1 -->
+  <div class="card">
+    <div class="card-title">Layer 1 — Per-Landmark Reliability Rate</div>
+    <div class="formula">
+      <span class="f-comment"># For each tracked landmark across all frames in the video:</span><br>
+      reliability(lm) &nbsp;<span class="f-op">=</span>&nbsp; <span class="f-key">count</span>(frames where visibility(lm) <span class="f-op">≥</span> <span class="f-val">0.70</span> <span class="f-op">AND</span> presence(lm) <span class="f-op">≥</span> <span class="f-val">0.70</span>)<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="f-op">÷</span>&nbsp; total_frames<br><br>
+      <span class="f-comment"># Output: one score per landmark, range 0 → 1</span><br>
+      <span class="f-comment"># e.g. left_knee: 0.88 means reliable in 88% of frames</span>
+    </div>
+    <div style="margin-top:10px;font-size:11px;color:#64748b;">MediaPipe provides both <code style="font-family:monospace;color:#c4b5fd;background:#150d24;padding:1px 5px;border-radius:3px;">visibility</code> (occlusion probability 0–1) and <code style="font-family:monospace;color:#c4b5fd;background:#150d24;padding:1px 5px;border-radius:3px;">presence</code> (in-frame probability 0–1) as separate scores. Both must pass — a landmark can be in-frame but occluded.</div>
+  </div>
+
+  <!-- Layer 2 -->
+  <div class="card">
+    <div class="card-title">Layer 2 — Weighted Composite Video Score</div>
+
+    <div style="margin-bottom:14px;">
+      <div class="weight-bar">
+        <div class="wb-critical"></div>
+        <div class="wb-important"></div>
+        <div class="wb-least"></div>
+      </div>
+      <div class="weight-legend">
+        <div class="wl-item"><div class="wl-dot" style="background:#991b1b;"></div>Critical 50%</div>
+        <div class="wl-item"><div class="wl-dot" style="background:#9a3412;"></div>Important 35%</div>
+        <div class="wl-item"><div class="wl-dot" style="background:#1e3a5f;"></div>Least Impact 15%</div>
+      </div>
+    </div>
+
+    <div class="formula">
+      <span class="f-comment"># Weight allocation — sums to 1.0</span><br>
+      Critical &nbsp;&nbsp;&nbsp;(6 landmarks): &nbsp;0.50 ÷ 6 <span class="f-op">=</span> <span class="f-val">0.083</span> per landmark<br>
+      Important &nbsp;(8 landmarks): &nbsp;0.35 ÷ 8 <span class="f-op">=</span> <span class="f-val">0.044</span> per landmark<br>
+      Least Impact (5 landmarks): &nbsp;0.15 ÷ 5 <span class="f-op">=</span> <span class="f-val">0.030</span> per landmark<br><br>
+      <span class="f-comment"># Composite score</span><br>
+      video_score <span class="f-op">=</span> <span class="f-key">Σ</span> weight(lm) <span class="f-op">×</span> reliability(lm) &nbsp;<span class="f-comment">for all tracked landmarks</span><br><br>
+      <span class="f-comment"># Output: 0 → 1  (e.g. 0.82 = Acceptable)</span>
+    </div>
+  </div>
+
+  <!-- Layer 3 — Hard Floor -->
+  <div class="card">
+    <div class="card-title">Layer 3 — Hard Floor Rule (Critical Landmarks)</div>
+    <div style="font-size:11px;color:#94a3b8;margin-bottom:10px;">The composite score can mask a catastrophic failure. A single critical landmark with 40% reliability makes biomechanics for that joint unreliable — even if the overall score looks fine.</div>
+    <div class="formula">
+      <span class="f-comment"># Applied per critical landmark, independent of composite score</span><br>
+      <span class="f-key">for</span> lm <span class="f-key">in</span> [left_hip, right_hip, left_knee, right_knee, left_heel, right_heel]:<br>
+      &nbsp;&nbsp;<span class="f-key">if</span> reliability(lm) <span class="f-op">&lt;</span> <span class="f-val">0.60</span>:<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;flag <span class="f-op">=</span> <span class="f-key">CRITICAL_OCCLUSION</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;reason <span class="f-op">=</span> <span class="js">f"{lm} visible in only {reliability(lm)*100:.0f}% of frames"</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span class="rule-fail">→ reject video or surface warning before biomechanics runs</span>
+    </div>
+    <div class="callout callout-warn" style="margin-top:10px;">
+      <span class="callout-icon">⚠</span>
+      <span>The 0.60 hard floor is a starting value. Tune upward once real video data is available — if knees are reliably visible in fewer than 60% of frames, biomechanics output will be noisy regardless of the composite score.</span>
+    </div>
+  </div>
+
+  <!-- Thresholds -->
+  <div class="card">
+    <div class="card-title">Score Thresholds</div>
+    <table class="thresh-table">
+      <thead>
+        <tr>
+          <th>Composite Score</th>
+          <th>Status</th>
+          <th>Action</th>
+          <th>Typical cause</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="score-good">≥ 0.85</span></td>
+          <td><span class="status-good">GOOD</span></td>
+          <td style="font-size:11px;color:#94a3b8;">Proceed with full analysis, no flags</td>
+          <td style="font-size:11px;color:#64748b;">Good camera angle, unobstructed view</td>
+        </tr>
+        <tr>
+          <td><span class="score-ok">0.70 – 0.84</span></td>
+          <td><span class="status-flag">ACCEPTABLE</span></td>
+          <td style="font-size:11px;color:#94a3b8;">Compute biomechanics; flag output as lower confidence</td>
+          <td style="font-size:11px;color:#64748b;">Baggy clothing, slight angle issues, background clutter</td>
+        </tr>
+        <tr>
+          <td><span class="score-poor">&lt; 0.70</span></td>
+          <td><span class="status-poor">POOR</span></td>
+          <td style="font-size:11px;color:#94a3b8;">Warn user — camera setup or occlusion issue likely</td>
+          <td style="font-size:11px;color:#64748b;">Filming from behind, heavy obstruction, poor lighting</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════
+     SECTION 3 — FRAME SELECTION CRITERIA
+     ══════════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-title">3 &nbsp; Frame Selection Criteria for Biomechanics</div>
+  <div class="section-sub">Four sequential gates. A frame must pass all applicable gates to be included in the biomechanics payload. Applied per-rep, not globally.</div>
+
+  <div class="step-list">
+
+    <!-- Step 1 -->
+    <div class="frame-step">
+      <div class="step-spine">
+        <div class="step-circle">1</div>
+        <div class="step-line"></div>
+      </div>
+      <div class="step-body">
+        <div class="step-heading">Reliability Gate — per-frame check on critical landmarks</div>
+        <div class="step-desc">Every critical landmark must pass the visibility + presence threshold in this specific frame. A frame where the left knee dips to 0.62 visibility is excluded from biomechanics — even if it was reliable in most other frames.</div>
+        <div class="step-rule">
+          <span class="rule-comment"># Per frame — check all critical landmarks</span><br>
+          frame_reliable <span style="color:#f9a8d4;">=</span> <span style="color:#f9a8d4;">all</span>(<br>
+          &nbsp;&nbsp;lm.visibility <span style="color:#f9a8d4;">≥</span> <span style="color:#fdba74;">0.70</span> <span style="color:#f9a8d4;">and</span> lm.presence <span style="color:#f9a8d4;">≥</span> <span style="color:#fdba74;">0.70</span><br>
+          &nbsp;&nbsp;<span style="color:#f9a8d4;">for</span> lm <span style="color:#f9a8d4;">in</span> critical_landmarks(frame)<br>
+          )<br>
+          <span style="color:#475569;font-style:italic;"># If False → exclude frame entirely, do not pass to biomechanics</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 2 -->
+    <div class="frame-step">
+      <div class="step-spine">
+        <div class="step-circle">2</div>
+        <div class="step-line"></div>
+      </div>
+      <div class="step-body">
+        <div class="step-heading">Rep Membership — frame must belong to an active rep segment</div>
+        <div class="step-desc">Frames outside rep segments — setup, rest between reps, end of video — are excluded. Rep segment boundaries are provided by the rep segmentation logic in S3-W5-07. Each passing frame is tagged with its <code>rep_index</code>.</div>
+        <div class="step-rule">
+          <span class="rule-comment"># rep_segments: list of (start_frame, end_frame) per rep — from S3-W5-07</span><br>
+          rep_index <span style="color:#f9a8d4;">=</span> find_rep(frame_index, rep_segments)<br>
+          <span style="color:#f9a8d4;">if</span> rep_index <span style="color:#f9a8d4;">is None</span>:<br>
+          &nbsp;&nbsp;<span style="color:#475569;font-style:italic;"># Frame is between reps or outside rep window → exclude</span><br>
+          &nbsp;&nbsp;<span class="rule-fail">skip frame</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 3 -->
+    <div class="frame-step">
+      <div class="step-spine">
+        <div class="step-circle">3</div>
+        <div class="step-line"></div>
+      </div>
+      <div class="step-body">
+        <div class="step-heading">Key Position Tagging — top and bottom position frames per rep</div>
+        <div class="step-desc">Within each rep, identify the frame at the top position (standing, hip at highest world y) and the frame at the bottom position (maximum squat depth, hip at lowest world y). These frames are tagged and apply a <strong>higher reliability bar (≥ 0.85)</strong> across both critical and important landmarks — because they are the primary frames sent to the LLM for coaching analysis.</div>
+        <div class="step-rule">
+          <span class="rule-comment"># Using world landmarks — metric coordinates, hip-centred</span><br>
+          top_frame &nbsp;&nbsp;= frame with <span style="color:#f9a8d4;">min</span>(avg(left_hip.y, right_hip.y)) within rep<br>
+          bottom_frame = frame with <span style="color:#f9a8d4;">max</span>(avg(left_hip.y, right_hip.y)) within rep<br><br>
+          <span class="rule-comment"># Higher reliability gate for key position frames</span><br>
+          key_frame_reliable = <span style="color:#f9a8d4;">all</span>(<br>
+          &nbsp;&nbsp;lm.visibility <span style="color:#f9a8d4;">≥</span> <span style="color:#fdba74;">0.85</span> <span style="color:#f9a8d4;">and</span> lm.presence <span style="color:#f9a8d4;">≥</span> <span style="color:#fdba74;">0.85</span><br>
+          &nbsp;&nbsp;<span style="color:#f9a8d4;">for</span> lm <span style="color:#f9a8d4;">in</span> critical_landmarks(frame) <span style="color:#f9a8d4;">+</span> important_landmarks(frame)<br>
+          )<br>
+          <span class="rule-comment"># Tag: position_tag = "top" | "bottom" | None</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 4 -->
+    <div class="frame-step">
+      <div class="step-spine">
+        <div class="step-circle">4</div>
+        <!-- no line after last step -->
+      </div>
+      <div class="step-body">
+        <div class="step-heading">Payload Construction — what gets sent per frame</div>
+        <div class="step-desc">Only critical + important landmarks are included in the biomechanics payload. Least-impact landmarks are available optionally. No-impact landmarks are never passed. World coordinates are the primary coordinate system; normalised x/y are included for screen-space checks (e.g. knee tracking relative to toe position).</div>
+        <div class="json-block">
+<span class="jp">{</span><br>
+&nbsp;&nbsp;<span class="jk">"frame_index"</span><span class="jp">:</span> <span class="jn">142</span><span class="jp">,</span><br>
+&nbsp;&nbsp;<span class="jk">"timestamp_ms"</span><span class="jp">:</span> <span class="jn">4733</span><span class="jp">,</span><br>
+&nbsp;&nbsp;<span class="jk">"rep_index"</span><span class="jp">:</span> <span class="jn">2</span><span class="jp">,</span><br>
+&nbsp;&nbsp;<span class="jk">"position_tag"</span><span class="jp">:</span> <span class="js">"bottom"</span><span class="jp">,</span> &nbsp;<span class="jc">// "top" | "bottom" | null — set by S3-W5-06</span><br>
+&nbsp;&nbsp;<span class="jc">// error_flags and error_values are NOT in this payload —</span><br>
+&nbsp;&nbsp;<span class="jc">// Points of Max Error are identified by S3-W5-07 after biomechanics computation (see Section 4)</span><br>
+&nbsp;&nbsp;<span class="jk">"frame_reliability"</span><span class="jp">:</span> <span class="jn">0.91</span><span class="jp">,</span> &nbsp;<span class="jc">// lowest visibility score among critical landmarks this frame</span><br>
+&nbsp;&nbsp;<span class="jk">"world_landmarks"</span><span class="jp">: {</span> &nbsp;<span class="jc">// 3D metric coords, origin at hip midpoint — primary for angle math</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="jk">"left_hip"</span><span class="jp">:</span>  <span class="jp">{</span> <span class="jk">"x"</span><span class="jp">:</span> <span class="jn">-0.08</span><span class="jp">,</span> <span class="jk">"y"</span><span class="jp">:</span> <span class="jn">0.21</span><span class="jp">,</span> <span class="jk">"z"</span><span class="jp">:</span> <span class="jn">0.01</span><span class="jp">,</span> <span class="jk">"visibility"</span><span class="jp">:</span> <span class="jn">0.94</span><span class="jp">,</span> <span class="jk">"presence"</span><span class="jp">:</span> <span class="jn">0.96</span> <span class="jp">},</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="jk">"right_hip"</span><span class="jp">:</span> <span class="jp">{</span> <span class="jk">"x"</span><span class="jp">:</span> <span class="jn">0.07</span><span class="jp">,</span>  <span class="jk">"y"</span><span class="jp">:</span> <span class="jn">0.20</span><span class="jp">,</span> <span class="jk">"z"</span><span class="jp">:</span> <span class="jn">0.00</span><span class="jp">,</span> <span class="jk">"visibility"</span><span class="jp">:</span> <span class="jn">0.93</span><span class="jp">,</span> <span class="jk">"presence"</span><span class="jp">:</span> <span class="jn">0.95</span> <span class="jp">},</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="jk">"left_knee"</span><span class="jp">:</span> <span class="jp">{</span> <span class="jk">"x"</span><span class="jp">:</span> <span class="jn">-0.11</span><span class="jp">,</span> <span class="jk">"y"</span><span class="jp">:</span> <span class="jn">0.48</span><span class="jp">,</span> <span class="jk">"z"</span><span class="jp">:</span> <span class="jn">0.03</span><span class="jp">,</span> <span class="jk">"visibility"</span><span class="jp">:</span> <span class="jn">0.91</span><span class="jp">,</span> <span class="jk">"presence"</span><span class="jp">:</span> <span class="jn">0.92</span> <span class="jp">},</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="jc">// ... all critical + important landmarks</span><br>
+&nbsp;&nbsp;<span class="jp">},</span><br>
+&nbsp;&nbsp;<span class="jk">"screen_landmarks"</span><span class="jp">: {</span> &nbsp;<span class="jc">// normalised x/y (0–1) for screen-space checks only</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="jk">"left_knee"</span><span class="jp">:</span>      <span class="jp">{</span> <span class="jk">"x"</span><span class="jp">:</span> <span class="jn">0.41</span><span class="jp">,</span> <span class="jk">"y"</span><span class="jp">:</span> <span class="jn">0.63</span> <span class="jp">},</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="jk">"left_foot_index"</span><span class="jp">:</span> <span class="jp">{</span> <span class="jk">"x"</span><span class="jp">:</span> <span class="jn">0.39</span><span class="jp">,</span> <span class="jk">"y"</span><span class="jp">:</span> <span class="jn">0.88</span> <span class="jp">},</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="jc">// ... critical + important landmarks</span><br>
+&nbsp;&nbsp;<span class="jp">}</span><br>
+<span class="jp">}</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     SECTION 4 — POINTS OF MAX ERROR (S3-W5-07)
+     ══════════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-title">4 &nbsp; Points of Max Error <span style="font-size:11px;font-weight:400;color:#475569;margin-left:8px;">— implemented by S3-W5-07 after biomechanics computation</span></div>
+  <div class="section-sub">These frames are identified after S3-W5-07 has run the angle computations — not at the MediaPipe stage. They use the same biomechanics math that S3-W5-07 already computes, so there is no duplication. S3-W5-07 annotates the relevant frames with <code style="font-family:monospace;color:#c4b5fd;background:#150d24;padding:1px 5px;border-radius:3px;">error_flags</code> and <code style="font-family:monospace;color:#c4b5fd;background:#150d24;padding:1px 5px;border-radius:3px;">error_values</code> and passes the annotated frames to the LLM stage.</div>
+
+  <div class="callout callout-warn" style="margin-bottom:16px;">
+    <span class="callout-icon">⚠</span>
+    <span>Error frame detection requires rep segmentation boundaries and computed joint angles — both of which are S3-W5-07 outputs. Attempting to detect these in S3-W5-06 would require running the same angle math twice. Do not implement Points of Max Error in S3-W5-06.</span>
+  </div>
+
+  <!-- A: Max Depth Error -->
+  <div style="margin-bottom:10px;border:1px solid #2d1a00;border-radius:8px;overflow:hidden;">
+    <div style="background:#1c1000;padding:8px 14px;display:flex;align-items:center;gap:10px;">
+      <span style="font-size:11px;font-weight:800;color:#fbbf24;text-transform:uppercase;letter-spacing:0.5px;">A</span>
+      <span style="font-size:12px;font-weight:700;color:#fde68a;">Max Depth Error — "Half-Squat"</span>
+      <span style="font-size:10px;color:#78350f;margin-left:auto;">error_flag: <code style="color:#fdba74;">depth_insufficient</code></span>
+    </div>
+    <div style="padding:12px 14px;">
+      <div style="font-size:11px;color:#94a3b8;margin-bottom:8px;line-height:1.6;"><strong style="color:#cbd5e1;">When:</strong> Computed at the bottom frame only (tagged by S3-W5-06). <strong style="color:#cbd5e1;">Landmark basis:</strong> Hip (23/24), Knee (25/26), Ankle (27/28) — world coordinates. <strong style="color:#cbd5e1;">Research threshold:</strong> Schoenfeld (2010) — parallel depth is reached when the hip crease is below the knee. Knee angle &gt; 100° at bottom = insufficient depth.</div>
+      <div class="step-rule">
+        <span class="rule-comment"># Knee angle = angle at the knee joint — S3-W5-07 computes this as part of standard biomechanics</span><br>
+        hip_vec &nbsp;&nbsp;= hip_midpoint &nbsp;− knee_midpoint &nbsp;&nbsp;<span class="rule-comment"># vector from knee toward hip</span><br>
+        ankle_vec = ankle_midpoint − knee_midpoint &nbsp;&nbsp;<span class="rule-comment"># vector from knee toward ankle</span><br><br>
+        cos_angle = dot(hip_vec, ankle_vec) / (|hip_vec| × |ankle_vec|)<br>
+        knee_angle_deg = degrees(arccos(cos_angle))<br><br>
+        <span class="rule-comment"># Applied at the frame tagged position_tag="bottom" by S3-W5-06</span><br>
+        <span style="color:#f9a8d4;">if</span> knee_angle_deg <span style="color:#f9a8d4;">&gt;</span> <span style="color:#fdba74;">100</span>:<br>
+        &nbsp;&nbsp;bottom_frame[<span style="color:#86efac;">"error_flags"</span>].append(<span style="color:#86efac;">"depth_insufficient"</span>)<br>
+        &nbsp;&nbsp;bottom_frame[<span style="color:#86efac;">"error_values"</span>][<span style="color:#86efac;">"knee_angle_at_depth"</span>] = knee_angle_deg
+      </div>
+    </div>
+  </div>
+
+  <!-- B: Max Knee Valgus -->
+  <div style="margin-bottom:10px;border:1px solid #0d2d1a;border-radius:8px;overflow:hidden;">
+    <div style="background:#041a0d;padding:8px 14px;display:flex;align-items:center;gap:10px;">
+      <span style="font-size:11px;font-weight:800;color:#4ade80;text-transform:uppercase;letter-spacing:0.5px;">B</span>
+      <span style="font-size:12px;font-weight:700;color:#86efac;">Max Knee Valgus — "Knee Cave"</span>
+      <span style="font-size:10px;color:#14532d;margin-left:auto;">error_flag: <code style="color:#4ade80;">max_knee_valgus</code></span>
+    </div>
+    <div style="padding:12px 14px;">
+      <div style="font-size:11px;color:#94a3b8;margin-bottom:8px;line-height:1.6;"><strong style="color:#cbd5e1;">When:</strong> First 10–20% of the concentric phase (start of the ascent from bottom). Load is heaviest here — where valgus collapse most commonly occurs. <strong style="color:#cbd5e1;">Why S3-W5-07:</strong> Concentric phase boundary detection is part of rep segmentation, which S3-W5-07 owns. <strong style="color:#cbd5e1;">Landmark basis:</strong> Left Knee (25) and Right Knee (26) — screen x coordinates (normalised). Screen x is correct here: valgus is a lateral collapse visible in the camera plane, not a depth change.</div>
+      <div class="step-rule">
+        <span class="rule-comment"># concentric_start comes from S3-W5-07 rep segmentation — not available in S3-W5-06</span><br>
+        concentric_start = frame after bottom_frame where hip_y begins decreasing<br>
+        concentric_window_end = concentric_start + 0.20 × (top_frame − bottom_frame)<br><br>
+        <span class="rule-comment"># Minimum inter-knee x-distance within the concentric window</span><br>
+        knee_x_dist(frame) = abs(left_knee.screen_x − right_knee.screen_x)<br><br>
+        valgus_frame = <span style="color:#f9a8d4;">argmin</span>(knee_x_dist, frames[concentric_start : concentric_window_end])<br>
+        valgus_frame[<span style="color:#86efac;">"error_flags"</span>].append(<span style="color:#86efac;">"max_knee_valgus"</span>)<br>
+        valgus_frame[<span style="color:#86efac;">"error_values"</span>][<span style="color:#86efac;">"knee_x_distance"</span>] = knee_x_dist(valgus_frame)
+      </div>
+    </div>
+  </div>
+
+  <!-- C: Max Butt Wink -->
+  <div style="margin-bottom:10px;border:1px solid #0d1a2e;border-radius:8px;overflow:hidden;">
+    <div style="background:#060d1a;padding:8px 14px;display:flex;align-items:center;gap:10px;">
+      <span style="font-size:11px;font-weight:800;color:#60a5fa;text-transform:uppercase;letter-spacing:0.5px;">C</span>
+      <span style="font-size:12px;font-weight:700;color:#93c5fd;">Max Butt Wink — Posterior Pelvic Tilt</span>
+      <span style="font-size:10px;color:#1e3a5f;margin-left:auto;">error_flag: <code style="color:#60a5fa;">butt_wink</code></span>
+    </div>
+    <div style="padding:12px 14px;">
+      <div style="font-size:11px;color:#94a3b8;margin-bottom:8px;line-height:1.6;"><strong style="color:#cbd5e1;">When:</strong> Deepest point of the squat (near or at bottom frame). <strong style="color:#cbd5e1;">Why S3-W5-07:</strong> Torso–pelvis angle is the same calculation as torso lean — already a standard biomechanics metric. <strong style="color:#cbd5e1;">Landmark basis:</strong> Shoulder midpoint (11/12), Hip midpoint (23/24), Knee midpoint (25/26) — world coordinates. MediaPipe has no spine landmarks; torso–pelvis angle is the best available proxy for lumbar flexion.</div>
+      <div class="step-rule">
+        <span class="rule-comment"># Both vectors already computed by S3-W5-07 biomechanics — no extra work</span><br>
+        torso_vec(frame) &nbsp;= hip_midpoint &nbsp;− shoulder_midpoint<br>
+        pelvis_vec(frame) = knee_midpoint − hip_midpoint<br><br>
+        torso_pelvis_angle(frame) = degrees(arccos(<br>
+        &nbsp;&nbsp;dot(torso_vec, pelvis_vec) / (|torso_vec| × |pelvis_vec|)<br>
+        ))<br><br>
+        <span class="rule-comment"># Baseline at top_frame (standing) — already computed for top position</span><br>
+        baseline_angle = torso_pelvis_angle(top_frame)<br><br>
+        <span class="rule-comment"># Search ±10 frames around bottom for maximum deviation</span><br>
+        wink_frame = <span style="color:#f9a8d4;">argmax</span>(torso_pelvis_angle(f) − baseline_angle, frames near bottom)<br><br>
+        <span style="color:#f9a8d4;">if</span> (torso_pelvis_angle(wink_frame) − baseline_angle) <span style="color:#f9a8d4;">&gt;</span> <span style="color:#fdba74;">15</span>:<br>
+        &nbsp;&nbsp;wink_frame[<span style="color:#86efac;">"error_flags"</span>].append(<span style="color:#86efac;">"butt_wink"</span>)<br>
+        &nbsp;&nbsp;wink_frame[<span style="color:#86efac;">"error_values"</span>][<span style="color:#86efac;">"pelvic_deviation_deg"</span>] = deviation
+      </div>
+      <div style="margin-top:8px;background:#0a0d14;border:1px solid #1e2433;border-radius:6px;padding:8px 12px;font-size:10.5px;color:#64748b;line-height:1.6;">
+        <strong style="color:#475569;">Proxy limitation:</strong> Captures relative torso–pelvis rotation, not lumbar curvature directly. Accurate butt wink detection would require sacrum/L5 landmarks. Flag this when testing against real video data.
+      </div>
+    </div>
+  </div>
+
+  <!-- Annotated output payload -->
+  <div class="card" style="margin-top:6px;">
+    <div class="card-title">Annotated Frame Output — what S3-W5-07 passes to the LLM stage</div>
+    <div style="font-size:11px;color:#64748b;margin-bottom:10px;">S3-W5-07 takes the frame payload from S3-W5-06 (Section 3 Step 4) and adds <code style="font-family:monospace;color:#c4b5fd;background:#150d24;padding:1px 4px;border-radius:3px;">error_flags</code> and <code style="font-family:monospace;color:#c4b5fd;background:#150d24;padding:1px 4px;border-radius:3px;">error_values</code> before handing off to the LLM.</div>
+    <div class="json-block">
+<span class="jp">{</span><br>
+&nbsp;&nbsp;<span class="jk">"frame_index"</span><span class="jp">:</span> <span class="jn">142</span><span class="jp">,</span><br>
+&nbsp;&nbsp;<span class="jk">"timestamp_ms"</span><span class="jp">:</span> <span class="jn">4733</span><span class="jp">,</span><br>
+&nbsp;&nbsp;<span class="jk">"rep_index"</span><span class="jp">:</span> <span class="jn">2</span><span class="jp">,</span><br>
+&nbsp;&nbsp;<span class="jk">"position_tag"</span><span class="jp">:</span> <span class="js">"bottom"</span><span class="jp">,</span> &nbsp;<span class="jc">// set by S3-W5-06</span><br>
+&nbsp;&nbsp;<span class="jk">"error_flags"</span><span class="jp">:</span> <span class="jp">[</span><span class="js">"depth_insufficient"</span><span class="jp">,</span> <span class="js">"butt_wink"</span><span class="jp">],</span> &nbsp;<span class="jc">// added by S3-W5-07 — [] if no errors</span><br>
+&nbsp;&nbsp;<span class="jk">"error_values"</span><span class="jp">: {</span> &nbsp;<span class="jc">// computed metrics for LLM context — added by S3-W5-07</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="jk">"knee_angle_at_depth"</span><span class="jp">:</span> <span class="jn">112</span><span class="jp">,</span> &nbsp;<span class="jc">// present only if depth_insufficient flagged</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="jk">"pelvic_deviation_deg"</span><span class="jp">:</span> <span class="jn">18.4</span> &nbsp;<span class="jc">// present only if butt_wink flagged</span><br>
+&nbsp;&nbsp;<span class="jp">},</span><br>
+&nbsp;&nbsp;<span class="jk">"frame_reliability"</span><span class="jp">:</span> <span class="jn">0.91</span><span class="jp">,</span> &nbsp;<span class="jc">// from S3-W5-06</span><br>
+&nbsp;&nbsp;<span class="jk">"world_landmarks"</span><span class="jp">: {</span> <span class="jc">/* ... */</span> <span class="jp">},</span><br>
+&nbsp;&nbsp;<span class="jk">"screen_landmarks"</span><span class="jp">: {</span> <span class="jc">/* ... */</span> <span class="jp">}</span><br>
+<span class="jp">}</span>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     SECTION 5 — TASK OWNERSHIP
+     ══════════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-title">5 &nbsp; Task Ownership</div>
+  <div class="section-sub">Who implements vs. who consumes each part of this framework.</div>
+
+  <div class="card">
+    <table class="thresh-table">
+      <thead>
+        <tr><th>Framework Component</th><th>Implemented by</th><th>Consumed by</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="font-size:11px;color:#cbd5e1;">Landmark categorisation + SQUAT_LANDMARKS dict</td>
+          <td><span class="tid tid-s3">S3-W5-06</span></td>
+          <td><span class="tid tid-s3">S3-W5-07</span></td>
+        </tr>
+        <tr>
+          <td style="font-size:11px;color:#cbd5e1;">Per-landmark reliability rate (Layer 1)</td>
+          <td><span class="tid tid-s3">S3-W5-06</span></td>
+          <td><span class="tid tid-s3">S3-W5-07</span> &nbsp;<span class="tid tid-s2">S2-W5-07</span></td>
+        </tr>
+        <tr>
+          <td style="font-size:11px;color:#cbd5e1;">Weighted composite video score (Layer 2)</td>
+          <td><span class="tid tid-s3">S3-W5-06</span></td>
+          <td><span class="tid tid-s2">S2-W5-07</span> (SSE event payload)</td>
+        </tr>
+        <tr>
+          <td style="font-size:11px;color:#cbd5e1;">Hard floor / CRITICAL_OCCLUSION flag (Layer 3)</td>
+          <td><span class="tid tid-s3">S3-W5-06</span></td>
+          <td><span class="tid tid-s2">S2-W5-07</span> (pipeline gate)</td>
+        </tr>
+        <tr>
+          <td style="font-size:11px;color:#cbd5e1;">Rep segment boundaries (start/end frame per rep)</td>
+          <td><span class="tid tid-s3">S3-W5-07</span></td>
+          <td><span class="tid tid-s3">S3-W5-06</span> (Step 2 gate input)</td>
+        </tr>
+        <tr>
+          <td style="font-size:11px;color:#cbd5e1;">Top + bottom position frame selection (Step 3)</td>
+          <td><span class="tid tid-s3">S3-W5-06</span></td>
+          <td>LLM stage (Nemotron / Claude)</td>
+        </tr>
+        <tr>
+          <td style="font-size:11px;color:#cbd5e1;">Top + bottom position tagging (Section 3, Step 3)</td>
+          <td><span class="tid tid-s3">S3-W5-06</span></td>
+          <td><span class="tid tid-s3">S3-W5-07</span> (baseline reference) + LLM stage</td>
+        </tr>
+        <tr>
+          <td style="font-size:11px;color:#cbd5e1;">Max Depth Error — knee angle at bottom (Section 4A)</td>
+          <td><span class="tid tid-s3">S3-W5-07</span></td>
+          <td>LLM stage (Nemotron / Claude)</td>
+        </tr>
+        <tr>
+          <td style="font-size:11px;color:#cbd5e1;">Max Knee Valgus — min inter-knee x-dist in early concentric (Section 4B)</td>
+          <td><span class="tid tid-s3">S3-W5-07</span></td>
+          <td>LLM stage (Nemotron / Claude)</td>
+        </tr>
+        <tr>
+          <td style="font-size:11px;color:#cbd5e1;">Max Butt Wink — torso–pelvis deviation from baseline (Section 4C)</td>
+          <td><span class="tid tid-s3">S3-W5-07</span></td>
+          <td>LLM stage (Nemotron / Claude)</td>
+        </tr>
+        <tr>
+          <td style="font-size:11px;color:#cbd5e1;">Score thresholds (0.70 / 0.85 / 0.60 hard floor / 100° depth / 15° wink)</td>
+          <td colspan="2" style="font-size:11px;color:#fbbf24;">Owned here — update this doc when tuned against real data</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div style="text-align:center;font-size:10px;color:#334155;margin-top:40px;padding-top:20px;border-top:1px solid #1e2433;">
+  Kinetic · Landmark Quality Framework · Last updated 2026-05-07 · Ref: S3-W5-06, S3-W5-07
+</div>
+
+</body>
+</html>

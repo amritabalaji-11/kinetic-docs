@@ -1,0 +1,1553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kinetic — Product Requirements Document</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #0a0d14;
+  --surface: #0d1117;
+  --surface2: #111827;
+  --border: #1e2433;
+  --border2: #243048;
+  --text: #e2e8f0;
+  --muted: #94a3b8;
+  --dim: #64748b;
+  --blue: #3b82f6;
+  --blue-light: #93c5fd;
+  --blue-dim: #0d1a2e;
+  --green: #22c55e;
+  --green-light: #86efac;
+  --green-dim: #0a2015;
+  --orange: #f97316;
+  --orange-light: #fdba74;
+  --orange-dim: #1a1003;
+  --red: #ef4444;
+  --red-light: #fca5a5;
+  --red-dim: #2d0a0a;
+  --yellow: #eab308;
+  --yellow-light: #fde047;
+  --purple: #a855f7;
+  --purple-light: #d8b4fe;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  display: flex;
+}
+
+/* ─── Sidebar Nav ─── */
+.sidebar {
+  width: 220px;
+  flex-shrink: 0;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  padding: 24px 0 40px;
+  z-index: 100;
+}
+
+.sidebar-logo {
+  padding: 0 20px 20px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 16px;
+}
+.sidebar-logo .mark { font-size: 18px; font-weight: 800; color: #f8fafc; letter-spacing: -0.5px; }
+.sidebar-logo .sub  { font-size: 10px; color: var(--dim); margin-top: 2px; }
+
+.nav-section-label {
+  font-size: 9px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--dim);
+  padding: 12px 20px 6px;
+}
+
+.nav-link {
+  display: block;
+  padding: 6px 20px;
+  font-size: 12px;
+  color: var(--muted);
+  text-decoration: none;
+  border-left: 2px solid transparent;
+  transition: all 0.15s;
+}
+.nav-link:hover { color: var(--text); background: var(--surface2); }
+.nav-link.active { color: var(--blue-light); border-left-color: var(--blue); background: var(--blue-dim); }
+
+/* ─── Main content ─── */
+.main {
+  margin-left: 220px;
+  flex: 1;
+  max-width: 900px;
+  padding: 48px 48px 80px;
+}
+
+/* ─── Header ─── */
+.doc-header {
+  margin-bottom: 40px;
+  padding-bottom: 32px;
+  border-bottom: 1px solid var(--border);
+}
+
+.product-name {
+  font-size: 32px;
+  font-weight: 800;
+  color: #f8fafc;
+  letter-spacing: -1px;
+  margin-bottom: 6px;
+}
+.product-tagline {
+  font-size: 16px;
+  color: var(--muted);
+  margin-bottom: 20px;
+  font-weight: 400;
+}
+
+.meta-row {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+.meta-item { font-size: 12px; color: var(--dim); }
+.meta-item strong { color: var(--muted); }
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 20px;
+  background: var(--orange-dim);
+  color: var(--orange-light);
+  border: 1px solid var(--orange);
+}
+.status-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--orange); }
+
+/* ─── Section headings ─── */
+.section {
+  margin-bottom: 56px;
+  scroll-margin-top: 32px;
+}
+
+h2 {
+  font-size: 20px;
+  font-weight: 700;
+  color: #f8fafc;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+h2 .section-icon { font-size: 16px; }
+
+h3 {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 12px;
+  margin-top: 24px;
+}
+
+h3:first-child { margin-top: 0; }
+
+/* ─── TL;DR card ─── */
+.tldr-card {
+  background: linear-gradient(135deg, #0d1a2e 0%, #080f1e 100%);
+  border: 1.5px solid var(--blue);
+  border-radius: 14px;
+  padding: 24px 28px;
+  margin-bottom: 24px;
+}
+.tldr-pitch {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--blue-light);
+  line-height: 1.5;
+  margin-bottom: 20px;
+}
+.tldr-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.tldr-block { }
+.tldr-label {
+  font-size: 9px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.7px;
+  color: var(--dim);
+  margin-bottom: 6px;
+}
+.tldr-block p { font-size: 13px; color: var(--muted); line-height: 1.5; }
+
+/* ─── Metrics row ─── */
+.metrics-row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 24px;
+}
+.metric-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px 18px;
+}
+.metric-card.north-star { border-color: var(--yellow); background: #0d0a00; grid-column: 1 / -1; }
+.metric-label { font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.7px; color: var(--dim); margin-bottom: 4px; }
+.metric-value { font-size: 22px; font-weight: 800; color: var(--yellow-light); }
+.metric-value.blue { color: var(--blue-light); font-size: 18px; }
+.metric-desc { font-size: 11px; color: var(--muted); margin-top: 4px; line-height: 1.4; }
+
+/* ─── Pain points ─── */
+.pain-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.pain-card {
+  background: var(--red-dim);
+  border: 1px solid #7f1d1d;
+  border-radius: 10px;
+  padding: 14px 16px;
+}
+.pain-num { font-size: 10px; font-weight: 800; color: #f87171; margin-bottom: 4px; }
+.pain-title { font-size: 12px; font-weight: 700; color: var(--red-light); margin-bottom: 4px; }
+.pain-desc { font-size: 11px; color: var(--muted); line-height: 1.4; }
+
+/* ─── Anti-metrics ─── */
+.anti-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.anti-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: var(--red-dim);
+  border: 1px solid #7f1d1d;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 12px;
+  color: var(--muted);
+}
+.anti-icon { color: #f87171; flex-shrink: 0; font-size: 13px; }
+.anti-item strong { color: var(--red-light); }
+
+/* ─── Persona card ─── */
+.persona-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px 24px;
+  margin-bottom: 16px;
+}
+.persona-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+.persona-avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--blue-dim); border: 2px solid var(--blue); display: flex; align-items: center; justify-content: center; font-size: 18px; }
+.persona-name { font-size: 14px; font-weight: 700; color: var(--blue-light); }
+.persona-role { font-size: 11px; color: var(--dim); }
+
+.persona-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.persona-block .pb-label { font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.7px; color: var(--dim); margin-bottom: 6px; }
+.persona-block ul { list-style: none; }
+.persona-block li { font-size: 12px; color: var(--muted); padding: 2px 0; display: flex; align-items: baseline; gap: 6px; }
+.persona-block li::before { content: '·'; color: var(--blue); flex-shrink: 0; }
+
+.quote-block {
+  background: var(--surface2);
+  border-left: 3px solid var(--blue);
+  padding: 12px 16px;
+  border-radius: 0 8px 8px 0;
+  margin-top: 14px;
+  font-size: 12px;
+  color: var(--muted);
+  font-style: italic;
+}
+
+/* ─── User flow ─── */
+.flow-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.flow-step {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+.flow-line {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+}
+.flow-num {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--blue-dim);
+  border: 2px solid var(--blue);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--blue-light);
+  flex-shrink: 0;
+}
+.flow-connector {
+  width: 2px;
+  flex: 1;
+  min-height: 24px;
+  background: var(--border);
+  margin: 4px 0;
+}
+.flow-content {
+  padding-bottom: 20px;
+  padding-top: 3px;
+  flex: 1;
+}
+.flow-content h4 { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+.flow-content p  { font-size: 12px; color: var(--muted); }
+.flow-step:last-child .flow-connector { display: none; }
+.flow-step:last-child .flow-content { padding-bottom: 0; }
+
+/* ─── Feature table ─── */
+.feature-section { margin-bottom: 24px; }
+.feature-tier {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  padding: 3px 10px;
+  border-radius: 20px;
+  margin-bottom: 12px;
+}
+.tier-p0     { background: var(--green-dim); color: var(--green-light); border: 1px solid var(--green); }
+.tier-p1     { background: var(--orange-dim); color: var(--orange-light); border: 1px solid var(--orange); }
+.tier-p2     { background: var(--surface2); color: var(--dim); border: 1px solid var(--border); }
+
+.feature-cards { display: flex; flex-direction: column; gap: 10px; }
+.feature-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 16px;
+}
+.feature-card.p0 { border-left: 3px solid var(--green); }
+.feature-card.p1 { border-left: 3px solid var(--orange); }
+.feature-header { display: flex; align-items: baseline; gap: 10px; margin-bottom: 6px; }
+.feature-title { font-size: 13px; font-weight: 700; color: var(--text); }
+.feature-body { font-size: 12px; color: var(--muted); line-height: 1.5; }
+.feature-ac {
+  margin-top: 8px;
+  background: var(--surface2);
+  border-radius: 6px;
+  padding: 8px 12px;
+}
+.feature-ac-label { font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: var(--dim); margin-bottom: 4px; }
+.feature-ac p { font-size: 11px; color: var(--dim); }
+
+/* ─── Tech stack ─── */
+.tech-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.tech-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 16px;
+}
+.tech-layer { font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.7px; color: var(--dim); margin-bottom: 4px; }
+.tech-name { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+.tech-desc { font-size: 11px; color: var(--muted); line-height: 1.4; }
+
+/* ─── Risks table ─── */
+.risk-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.risk-table th {
+  text-align: left;
+  padding: 8px 12px;
+  font-size: 9px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--dim);
+  border-bottom: 1px solid var(--border);
+}
+.risk-table td { padding: 10px 12px; border-bottom: 1px solid var(--surface2); color: var(--muted); vertical-align: top; }
+.risk-table tr:last-child td { border-bottom: none; }
+.risk-badge {
+  display: inline-block;
+  font-size: 9px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+.risk-high { background: var(--red-dim); color: var(--red-light); border: 1px solid #7f1d1d; }
+.risk-med  { background: var(--orange-dim); color: var(--orange-light); border: 1px solid var(--orange); }
+.risk-low  { background: var(--green-dim); color: var(--green-light); border: 1px solid var(--green); }
+
+/* ─── Timeline ─── */
+.timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  position: relative;
+}
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 80px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--border);
+}
+.timeline-item {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+  padding: 0 0 20px 0;
+  position: relative;
+}
+.timeline-week {
+  width: 80px;
+  flex-shrink: 0;
+  font-size: 10px;
+  font-weight: 800;
+  color: var(--dim);
+  text-align: right;
+  padding-top: 3px;
+}
+.timeline-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--blue);
+  border: 2px solid var(--bg);
+  flex-shrink: 0;
+  margin-top: 4px;
+  position: relative;
+  z-index: 1;
+}
+.timeline-dot.done { background: var(--green); }
+.timeline-dot.active { background: var(--yellow); }
+.timeline-content {
+  flex: 1;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 14px;
+}
+.timeline-title { font-size: 12px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+.timeline-date { font-size: 10px; color: var(--dim); margin-bottom: 6px; }
+.timeline-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+.timeline-tag {
+  font-size: 9px;
+  padding: 1px 7px;
+  border-radius: 6px;
+  background: var(--surface2);
+  color: var(--dim);
+  border: 1px solid var(--border);
+}
+
+/* ─── Launch checklist ─── */
+.launch-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.check-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 12px;
+  color: var(--muted);
+}
+.check-box {
+  width: 16px;
+  height: 16px;
+  border: 1.5px solid var(--border2);
+  border-radius: 4px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ─── GTM ─── */
+.gtm-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.gtm-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px;
+}
+.gtm-card.phase1 { border-color: var(--green); background: var(--green-dim); }
+.gtm-card.phase2 { border-color: var(--purple); background: #0d0618; }
+.gtm-card-label { font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.7px; margin-bottom: 6px; }
+.gtm-card.phase1 .gtm-card-label { color: var(--green); }
+.gtm-card.phase2 .gtm-card-label { color: var(--purple); }
+.gtm-card h4 { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+.gtm-card ul { list-style: none; display: flex; flex-direction: column; gap: 4px; }
+.gtm-card li { font-size: 12px; color: var(--muted); display: flex; gap: 6px; align-items: baseline; }
+.gtm-card li::before { content: '→'; color: var(--dim); flex-shrink: 0; }
+
+/* ─── User stories ─── */
+.story-list { display: flex; flex-direction: column; gap: 10px; }
+.story-item {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.5;
+  display: flex;
+  gap: 12px;
+  align-items: baseline;
+}
+.story-num { font-size: 10px; font-weight: 800; color: var(--blue-light); flex-shrink: 0; }
+
+/* ─── Open questions ─── */
+.oq-list { display: flex; flex-direction: column; gap: 8px; }
+.oq-item {
+  background: var(--orange-dim);
+  border: 1px solid #7c2d12;
+  border-radius: 8px;
+  padding: 12px 16px;
+}
+.oq-q { font-size: 12px; font-weight: 600; color: var(--orange-light); margin-bottom: 4px; }
+.oq-owner { font-size: 10px; color: var(--dim); }
+
+/* ─── Competitive gap callout ─── */
+.comp-callout {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 18px;
+  margin-top: 16px;
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+.comp-callout strong { color: var(--blue-light); }
+
+/* ─── Design screens ─── */
+.screen-list {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+.screen-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px;
+}
+.screen-num { font-size: 9px; font-weight: 800; color: var(--dim); margin-bottom: 4px; }
+.screen-name { font-size: 12px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+.screen-desc { font-size: 10px; color: var(--dim); line-height: 1.4; }
+
+/* ─── Out of scope ─── */
+.oos-list { display: flex; flex-direction: column; gap: 8px; }
+.oos-item {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 10px 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+.oos-label { font-size: 12px; font-weight: 700; color: var(--dim); flex-shrink: 0; min-width: 200px; }
+.oos-reason { font-size: 12px; color: var(--muted); line-height: 1.4; }
+
+/* ─── Scrollspy ─── */
+@media (max-width: 900px) {
+  .sidebar { display: none; }
+  .main { margin-left: 0; padding: 24px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ SIDEBAR ═══ -->
+<nav class="sidebar">
+  <div class="sidebar-logo">
+    <div class="mark">Kinetic</div>
+    <div class="sub">Product Requirements Document</div>
+  </div>
+
+  <div class="nav-section-label">Overview</div>
+  <a class="nav-link" href="#tldr">TL;DR</a>
+  <a class="nav-link" href="#context">Context & Why Now</a>
+
+  <div class="nav-section-label">Goals</div>
+  <a class="nav-link" href="#metrics">Success Metrics</a>
+  <a class="nav-link" href="#users">Target Users</a>
+
+  <div class="nav-section-label">Product</div>
+  <a class="nav-link" href="#solution">Solution Overview</a>
+  <a class="nav-link" href="#features">Features & Scope</a>
+  <a class="nav-link" href="#ux">Design & UX</a>
+
+  <div class="nav-section-label">Engineering</div>
+  <a class="nav-link" href="#tech">Technical Approach</a>
+  <a class="nav-link" href="#risks">Risks</a>
+
+  <div class="nav-section-label">Execution</div>
+  <a class="nav-link" href="#testing">Iterative Testing</a>
+  <a class="nav-link" href="#timeline">Timeline</a>
+  <a class="nav-link" href="#launch">Launch Criteria</a>
+  <a class="nav-link" href="#gtm">Go-to-Market</a>
+
+  <div class="nav-section-label">Appendix</div>
+  <a class="nav-link" href="#stories">User Stories</a>
+  <a class="nav-link" href="#openq">Open Questions</a>
+</nav>
+
+<!-- ═══ MAIN ═══ -->
+<main class="main">
+
+  <!-- Header -->
+  <div class="doc-header">
+    <div class="product-name">Kinetic</div>
+    <div class="product-tagline">AI Form Coach · Longitudinal Weight Tracking · PRD</div>
+    <div class="meta-row">
+      <div class="meta-item"><strong>Date</strong> May 4, 2026</div>
+      <div class="meta-item"><strong>Last Updated</strong> May 4, 2026</div>
+      <div class="meta-item"><strong>Launch Target</strong> June 15, 2026</div>
+      <div class="meta-item"><span class="status-badge"><span class="status-dot"></span>Draft</span></div>
+    </div>
+  </div>
+
+  <!-- ═══ TL;DR ═══ -->
+  <section class="section" id="tldr">
+    <h2><span class="section-icon">⚡</span> TL;DR</h2>
+    <div class="tldr-card">
+      <div class="tldr-pitch">"Kinetic is the first AI form coach that tracks you across weights — not just one rep, but your entire journey. It spots where your form breaks down as load increases, then tells you exactly how to fix it, because it knows your history."</div>
+      <div class="tldr-grid">
+        <div class="tldr-block">
+          <div class="tldr-label">Problem</div>
+          <p>Intermediate gym-goers training alone in small gyms have no reliable feedback loop on their form. They get injured, plateau, or develop bad habits for weeks — because there's nobody watching.</p>
+        </div>
+        <div class="tldr-block">
+          <div class="tldr-label">Solution</div>
+          <p>Upload a workout video with your weight. Kinetic uses computer vision and AI grounded in exercise science to score your form, identify joint-angle breakdowns, and tell you whether you're ready to progress — across your entire training history.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ CONTEXT ═══ -->
+  <section class="section" id="context">
+    <h2><span class="section-icon">🔍</span> Context & Why Now</h2>
+
+    <h3>The Four Pain Points</h3>
+    <div class="pain-grid">
+      <div class="pain-card">
+        <div class="pain-num">01</div>
+        <div class="pain-title">Fear-driven plateau</div>
+        <div class="pain-desc">A pain signal (e.g. knee pain on Goblet Squat) causes them to stay at the same weight for months, unsure if it's safe to progress.</div>
+      </div>
+      <div class="pain-card">
+        <div class="pain-num">02</div>
+        <div class="pain-title">Blind form drift</div>
+        <div class="pain-desc">Bad form goes undetected for weeks or months until a stranger at the gym happens to mention it.</div>
+      </div>
+      <div class="pain-card">
+        <div class="pain-num">03</div>
+        <div class="pain-title">Lagging soreness signal</div>
+        <div class="pain-desc">Unusual next-day soreness signals something was wrong — but the moment is already gone.</div>
+      </div>
+      <div class="pain-card">
+        <div class="pain-num">04</div>
+        <div class="pain-title">Invisible stagnation</div>
+        <div class="pain-desc">Feeling "too comfortable" with no way to know if they're actually progressing or just going through the motions.</div>
+      </div>
+    </div>
+
+    <h3>Current Workarounds</h3>
+    <div class="comp-callout">
+      Users currently watch YouTube tutorials (generic, not personalised) or self-record and watch back (raw footage, no interpretation). <strong>Apps like Gymscore, Zing, and FormAI</strong> provide snapshot form feedback — they detect symptoms in a single video. None of them track form <em>across weights over time</em> or integrate workout logging. <strong>Kinetic is the first to connect form quality to progressive overload history.</strong>
+    </div>
+  </section>
+
+  <!-- ═══ METRICS ═══ -->
+  <section class="section" id="metrics">
+    <h2><span class="section-icon">📊</span> Goals & Success Metrics</h2>
+
+    <h3>North Star Metric</h3>
+    <div class="metrics-row">
+      <div class="metric-card north-star">
+        <div class="metric-label">North Star</div>
+        <div class="metric-value">50 WAU</div>
+        <div class="metric-desc">Weekly Active Users completing ≥1 form analysis session · Target within 4 weeks of public launch · By end of June 2026</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Uploads / User / Month</div>
+        <div class="metric-value blue">≥ 4</div>
+        <div class="metric-desc">Consistent weekly usage as habit signal</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Form Analysis Accuracy</div>
+        <div class="metric-value blue">≥ 80%</div>
+        <div class="metric-desc">Expert agreement rate · 20–30 test videos · Week 9</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Trial-to-Paid Conversion</div>
+        <div class="metric-value blue">≥ 15%</div>
+        <div class="metric-desc">Of trial users convert to $15/month subscription</div>
+      </div>
+    </div>
+
+    <h3>Anti-Metrics — What We DON'T Want to Move</h3>
+    <div class="anti-list">
+      <div class="anti-item">
+        <span class="anti-icon">🚫</span>
+        <span><strong>Zero tolerance:</strong> User-reported pain or injury following a "safe to progress" recommendation</span>
+      </div>
+      <div class="anti-item">
+        <span class="anti-icon">🚫</span>
+        <span><strong>No UX inflation:</strong> Session time inflated by confusing UX — value must be delivered fast and clearly</span>
+      </div>
+      <div class="anti-item">
+        <span class="anti-icon">🚫</span>
+        <span><strong>No vague output:</strong> Churn driven by form advice users can't act on (vague or overly technical output)</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ USERS ═══ -->
+  <section class="section" id="users">
+    <h2><span class="section-icon">👤</span> Target Users</h2>
+
+    <div class="persona-card">
+      <div class="persona-header">
+        <div class="persona-avatar">🏋️</div>
+        <div>
+          <div class="persona-name">The Unsupervised Intermediate</div>
+          <div class="persona-role">Primary Persona</div>
+        </div>
+      </div>
+      <div class="persona-grid">
+        <div class="persona-block">
+          <div class="pb-label">Demographics</div>
+          <ul>
+            <li>Age 18–35</li>
+            <li>3+ months training, intermediate level</li>
+            <li>1–2x strength sessions / week minimum</li>
+            <li>Home gym, building gym, school gym</li>
+            <li>Free weights — compound movements</li>
+          </ul>
+        </div>
+        <div class="persona-block">
+          <div class="pb-label">Behaviours</div>
+          <ul>
+            <li>Uses YouTube for form tutorials</li>
+            <li>Records self or checks mirror after sets</li>
+            <li>Form uncertainty every session as weight increases</li>
+            <li>No personalised feedback loop</li>
+          </ul>
+        </div>
+      </div>
+      <div class="quote-block">
+        "[Insert direct user quote from VOC research — e.g. 'I've been stuck at the same weight for 3 months because my knee starts hurting and I don't know if I'm doing something wrong']"
+      </div>
+    </div>
+
+    <h3>Secondary Personas</h3>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+      <div class="persona-card" style="margin-bottom:0;">
+        <div class="persona-block">
+          <div class="pb-label">Future B2B — Phase 2</div>
+          <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:6px;">Online Fitness Coaches / Creators</div>
+          <p style="font-size:12px;color:var(--muted);">Want to offer form tracking as a value-add to their audience without building the tech themselves.</p>
+        </div>
+      </div>
+      <div class="persona-card" style="margin-bottom:0;">
+        <div class="persona-block">
+          <div class="pb-label">Secondary User</div>
+          <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:6px;">Injury-Returning Gym-Goers</div>
+          <p style="font-size:12px;color:var(--muted);">Cautious about reloading weight after injury; need objective form validation before progressing.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ SOLUTION ═══ -->
+  <section class="section" id="solution">
+    <h2><span class="section-icon">💡</span> Solution Overview</h2>
+
+    <p style="font-size:13px;color:var(--muted);margin-bottom:24px;line-height:1.6;">Kinetic is a web app where users log workouts and upload exercise videos. The backend runs MediaPipe to extract joint angles, queries a RAG pipeline grounded in exercise science, and generates structured coaching. Every analysis is contextualised against the user's full history — Kinetic knows what your Goblet Squat looked like at 10kg, 15kg, and 20kg.</p>
+
+    <h3>User Flow</h3>
+    <div class="flow-steps">
+      <div class="flow-step">
+        <div class="flow-line"><div class="flow-num">1</div><div class="flow-connector"></div></div>
+        <div class="flow-content">
+          <h4>Log in → Select exercise + enter weight</h4>
+          <p>User selects exercise (e.g. Goblet Squat) and enters the weight used for this session.</p>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-line"><div class="flow-num">2</div><div class="flow-connector"></div></div>
+        <div class="flow-content">
+          <h4>Upload workout video</h4>
+          <p>Upload video recorded from the session; guided by in-app filming tips for optimal analysis quality.</p>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-line"><div class="flow-num">3</div><div class="flow-connector"></div></div>
+        <div class="flow-content">
+          <h4>Kinetic processes video</h4>
+          <p>MediaPipe extracts joint keypoints · RAG retrieves biomechanics context · Nemotron 3 Nano Omni generates structured JSON · Claude Sonnet produces coaching output</p>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-line"><div class="flow-num">4</div><div class="flow-connector"></div></div>
+        <div class="flow-content">
+          <h4>User sees results</h4>
+          <p>Form score · Joint-angle corrections · Weight recommendation ("Your form at 12kg is solid. You're ready for 14kg.") · Comparison to past sessions</p>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-line"><div class="flow-num">5</div><div class="flow-connector"></div></div>
+        <div class="flow-content">
+          <h4>Session saved to history</h4>
+          <p>All data persisted to the longitudinal data layer for future progression comparisons.</p>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-line"><div class="flow-num">6</div></div>
+        <div class="flow-content">
+          <h4>Dashboard shows form score trends</h4>
+          <p>Track form scores across weights and time; habit loop drives weekly return.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ FEATURES ═══ -->
+  <section class="section" id="features">
+    <h2><span class="section-icon">🧩</span> Features & Scope</h2>
+
+    <div class="feature-section">
+      <div class="feature-tier tier-p0">● Must-Have (P0) — MVP</div>
+      <div class="feature-cards">
+        <div class="feature-card p0">
+          <div class="feature-header">
+            <div class="feature-title">1 · Video Upload & Processing Pipeline (Goblet Squat)</div>
+          </div>
+          <div class="feature-body">User uploads a video; backend runs MediaPipe pose detection and extracts rep-level biomechanical parameters (joint angles, stability, posture, rep count, rep time).</div>
+          <div class="feature-ac">
+            <div class="feature-ac-label">Acceptance Criteria</div>
+            <p>Video processed end-to-end in &lt;30 seconds · Keypoints extracted accurately across rep range · Works on consumer-filmed video with provided filming guidelines</p>
+          </div>
+        </div>
+        <div class="feature-card p0">
+          <div class="feature-header">
+            <div class="feature-title">2 · AI Form Analysis Output</div>
+          </div>
+          <div class="feature-body">RAG-enhanced Nemotron 3 Nano Omni + Claude Sonnet generates a structured report: form score, joint-angle corrections, Movement Quality / Stability / Posture ratings, rep count, rep time, and specific coaching tips.</div>
+          <div class="feature-ac">
+            <div class="feature-ac-label">Acceptance Criteria</div>
+            <p>Output includes overall score · Minimum 2 specific joint corrections · At least 1 actionable coaching tip · ≥80% expert agreement in validation testing (Week 9)</p>
+          </div>
+        </div>
+        <div class="feature-card p0">
+          <div class="feature-header">
+            <div class="feature-title">3 · Weight-Based Progression Recommendation</div>
+          </div>
+          <div class="feature-body">Kinetic compares current session form against past sessions at lower weights and outputs a clear recommendation: "Ready to progress" / "Hold at current weight" / "Drop weight and fix X first".</div>
+          <div class="feature-ac">
+            <div class="feature-ac-label">Acceptance Criteria</div>
+            <p>Recommendation generated when ≥2 sessions logged for the same exercise · Logic validated against expert assessment</p>
+          </div>
+        </div>
+        <div class="feature-card p0">
+          <div class="feature-header">
+            <div class="feature-title">4 · Workout Logging (Builder & Tracker)</div>
+          </div>
+          <div class="feature-body">Users log workouts — exercise, sets, reps, weight — linked to form analysis sessions. Creates the longitudinal data layer that powers progression recommendations.</div>
+          <div class="feature-ac">
+            <div class="feature-ac-label">Acceptance Criteria</div>
+            <p>User can create, save, and retrieve workout logs · Logs linked to form sessions in history</p>
+          </div>
+        </div>
+        <div class="feature-card p0">
+          <div class="feature-header">
+            <div class="feature-title">5 · Session History & Dashboard</div>
+          </div>
+          <div class="feature-body">Chronological view of all form sessions with score trends, weight progression, and side-by-side comparisons across sessions. Builds the habit loop.</div>
+          <div class="feature-ac">
+            <div class="feature-ac-label">Acceptance Criteria</div>
+            <p>Dashboard displays form score trend by exercise across weights and time · Filterable by exercise</p>
+          </div>
+        </div>
+        <div class="feature-card p0">
+          <div class="feature-header">
+            <div class="feature-title">6 · User Authentication & Profile</div>
+          </div>
+          <div class="feature-body">Sign-up/login, basic profile (exercise preferences, training frequency). Required to persist and personalise longitudinal data.</div>
+          <div class="feature-ac">
+            <div class="feature-ac-label">Acceptance Criteria</div>
+            <p>User can sign up, log in, and all sessions persist to their account</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="feature-section">
+      <div class="feature-tier tier-p1">◐ Stretched Goals — If Time Permits</div>
+      <div class="feature-cards">
+        <div class="feature-card p1">
+          <div class="feature-header"><div class="feature-title">In-browser Record option</div></div>
+          <div class="feature-body">Alongside "Upload from file", users can record directly in-browser using their device camera. Reduces friction — no export/transfer needed. <strong>Owner:</strong> Squad 1 (frontend only — backend pipeline identical). Only if upload pipeline is stable and latency targets are met by Week 9.</div>
+        </div>
+        <div class="feature-card p1">
+          <div class="feature-header"><div class="feature-title">Shoulder Press as 2nd exercise</div></div>
+          <div class="feature-body">Extend MediaPipe + RAG + analysis pipeline to support Shoulder Press with its own biomechanics corpus. Validates that the pipeline generalises beyond a single exercise. <strong>Owner:</strong> Squad 2 + Squad 3. Only after Goblet Squat hits ≥80% accuracy threshold (Week 9).</div>
+        </div>
+        <div class="feature-card p1">
+          <div class="feature-header"><div class="feature-title">Design enhancements</div></div>
+          <div class="feature-body">Visual polish: motion transitions between SSE processing states, score animations, improved data visualisation, micro-interactions. Only after all P0 screens are approved and UAT-ready. <strong>Owner:</strong> Squad 1 (Design + FE).</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="feature-section">
+      <div class="feature-tier tier-p2">○ Post-MVP (Future)</div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 18px;">
+        <div style="display:flex;flex-wrap:wrap;gap:8px;">
+          <span style="font-size:11px;color:var(--dim);background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:3px 12px;">Full compound lift library</span>
+          <span style="font-size:11px;color:var(--dim);background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:3px 12px;">Creator/coach portal</span>
+          <span style="font-size:11px;color:var(--dim);background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:3px 12px;">Mobile native app</span>
+          <span style="font-size:11px;color:var(--dim);background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:3px 12px;">Real-time live camera analysis</span>
+          <span style="font-size:11px;color:var(--dim);background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:3px 12px;">Side-by-side ideal form comparison</span>
+          <span style="font-size:11px;color:var(--dim);background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:3px 12px;">Annotated frame overlays</span>
+        </div>
+      </div>
+    </div>
+
+    <h3>Out of Scope</h3>
+    <div class="oos-list">
+      <div class="oos-item">
+        <div class="oos-label">Multiple exercises beyond Goblet Squat</div>
+        <div class="oos-reason">Accuracy must be validated deeply on 1 exercise first. Shoulder Press is a stretched goal only if Goblet Squat hits ≥80% by Week 9.</div>
+      </div>
+      <div class="oos-item">
+        <div class="oos-label">Real-time live camera analysis</div>
+        <div class="oos-reason">Pipeline latency (MediaPipe + Nemotron + Claude Sonnet) makes real-time infeasible. "Record" in-browser is async, not live.</div>
+      </div>
+      <div class="oos-item">
+        <div class="oos-label">Mobile native app</div>
+        <div class="oos-reason">Web-first (responsive) for POC. Mobile post-validation.</div>
+      </div>
+      <div class="oos-item">
+        <div class="oos-label">Nutrition / general fitness tracking</div>
+        <div class="oos-reason">Outside core value prop. Competitive and crowded space.</div>
+      </div>
+      <div class="oos-item">
+        <div class="oos-label">B2B creator portal</div>
+        <div class="oos-reason">Phase 2 initiative. Requires validated B2C user base first.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ UX ═══ -->
+  <section class="section" id="ux">
+    <h2><span class="section-icon">🎨</span> Design & User Experience</h2>
+
+    <h3>Key Screens</h3>
+    <div class="screen-list">
+      <div class="screen-card">
+        <div class="screen-num">01</div>
+        <div class="screen-name">Onboarding / Sign-up</div>
+        <div class="screen-desc">Account creation, exercise preferences, training frequency</div>
+      </div>
+      <div class="screen-card">
+        <div class="screen-num">02</div>
+        <div class="screen-name">Video Upload</div>
+        <div class="screen-desc">Exercise selection, weight entry, upload interface, filming tips overlay</div>
+      </div>
+      <div class="screen-card">
+        <div class="screen-num">03</div>
+        <div class="screen-name">Analysis Results</div>
+        <div class="screen-desc">Form score, joint corrections, weight recommendation, rep metrics</div>
+      </div>
+      <div class="screen-card">
+        <div class="screen-num">04</div>
+        <div class="screen-name">Dashboard (Home)</div>
+        <div class="screen-desc">Progress trends, last session summary, streak/habit tracker</div>
+      </div>
+      <div class="screen-card">
+        <div class="screen-num">05</div>
+        <div class="screen-name">History</div>
+        <div class="screen-desc">Session list with form score trends across weights</div>
+      </div>
+      <div class="screen-card">
+        <div class="screen-num">06</div>
+        <div class="screen-name">Workout Planner</div>
+        <div class="screen-desc">Log sets, reps, weight; link to form sessions</div>
+      </div>
+    </div>
+
+    <h3 style="margin-top:20px;">Design Requirements</h3>
+    <div style="display:flex;flex-direction:column;gap:8px;">
+      <div style="display:flex;gap:10px;align-items:baseline;font-size:12px;color:var(--muted);">
+        <span style="color:var(--green-light);font-weight:700;flex-shrink:0;">✓</span>
+        <span>Results must be <strong style="color:var(--text);">scannable in &lt;10 seconds</strong> — score and recommendation first, detail below</span>
+      </div>
+      <div style="display:flex;gap:10px;align-items:baseline;font-size:12px;color:var(--muted);">
+        <span style="color:var(--green-light);font-weight:700;flex-shrink:0;">✓</span>
+        <span><strong style="color:var(--text);">Weight-based recommendation visually prominent</strong> — this is the core output users come for</span>
+      </div>
+      <div style="display:flex;gap:10px;align-items:baseline;font-size:12px;color:var(--muted);">
+        <span style="color:var(--green-light);font-weight:700;flex-shrink:0;">✓</span>
+        <span><strong style="color:var(--text);">Mobile-responsive</strong> even as a web app — users will view results on their phone in the gym</span>
+      </div>
+      <div style="display:flex;gap:10px;align-items:baseline;font-size:12px;color:var(--muted);">
+        <span style="color:var(--green-light);font-weight:700;flex-shrink:0;">✓</span>
+        <span>Clean, performance-focused aesthetic — <strong style="color:var(--text);">motivating, not intimidating</strong></span>
+      </div>
+      <div style="display:flex;gap:10px;align-items:baseline;font-size:12px;color:var(--muted);">
+        <span style="color:var(--green-light);font-weight:700;flex-shrink:0;">✓</span>
+        <span>Filming tips screen accessible before upload — affects analysis quality</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ TECH ═══ -->
+  <section class="section" id="tech">
+    <h2><span class="section-icon">⚙️</span> Technical Approach</h2>
+
+    <div class="tech-grid">
+      <div class="tech-card">
+        <div class="tech-layer">Frontend</div>
+        <div class="tech-name">React + Tailwind</div>
+        <div class="tech-desc">Responsive web app. Web-first to validate the full pipeline end-to-end as a POC before native mobile investment.</div>
+      </div>
+      <div class="tech-card">
+        <div class="tech-layer">Pose Detection</div>
+        <div class="tech-name">MediaPipe (Python)</div>
+        <div class="tech-desc">Extracts 33 joint keypoints per rep. Computes joint angles (knee, hip, torso), stability, posture, rep count, rep time.</div>
+      </div>
+      <div class="tech-card">
+        <div class="tech-layer">Stage 1 AI — Video Analysis</div>
+        <div class="tech-name">Nemotron 3 Nano Omni</div>
+        <div class="tech-desc">Receives raw video AND MediaPipe biomechanics JSON as dual inputs. Cross-references visual context against computed joint data for grounded analysis.</div>
+      </div>
+      <div class="tech-card">
+        <div class="tech-layer">Stage 2 AI — Coaching</div>
+        <div class="tech-name">Claude Sonnet 4.6</div>
+        <div class="tech-desc">Receives Nemotron output + RAG context + user weight history. Produces coaching output and weight progression recommendation.</div>
+      </div>
+      <div class="tech-card">
+        <div class="tech-layer">Knowledge Layer</div>
+        <div class="tech-name">RAG — Vector DB</div>
+        <div class="tech-desc">Biomechanics corpus indexed for retrieval: research papers, YouTube transcripts, exercise tutorials, muscle anatomy images. TBD: Pinecone / Weaviate / pgvector.</div>
+      </div>
+      <div class="tech-card">
+        <div class="tech-layer">Infra & Storage</div>
+        <div class="tech-name">GCP + S3 / Cloud Storage</div>
+        <div class="tech-desc">Python API on GCP. API Gateway. GCS/S3 for video files. Structured DB for exercise logs, form scores, angles, rep data, user history.</div>
+      </div>
+    </div>
+
+    <h3>Technical Risks</h3>
+    <table class="risk-table">
+      <tr>
+        <th>Risk</th>
+        <th style="width:80px;">Probability</th>
+        <th style="width:80px;">Impact</th>
+        <th>Mitigation</th>
+      </tr>
+      <tr>
+        <td>MediaPipe accuracy on consumer-filmed video</td>
+        <td><span class="risk-badge risk-high">High</span></td>
+        <td><span class="risk-badge risk-high">High</span></td>
+        <td>Filming guidelines (Week 4) · Validate on 20–30 diverse sample videos · In-app tips before upload</td>
+      </tr>
+      <tr>
+        <td>Model hallucination on form advice (injury risk)</td>
+        <td><span class="risk-badge risk-med">Med</span></td>
+        <td><span class="risk-badge risk-high">High</span></td>
+        <td>Dual-input to Nemotron (video + MediaPipe) · RAG grounding · Expert validation · Confidence thresholds</td>
+      </tr>
+      <tr>
+        <td>End-to-end latency &gt;30 seconds</td>
+        <td><span class="risk-badge risk-med">Med</span></td>
+        <td><span class="risk-badge risk-med">Med</span></td>
+        <td>Async processing with clear progress indicator · Dedicated optimisation sprint Week 9</td>
+      </tr>
+      <tr>
+        <td>Progression recommendation triggers unsafe weight increase</td>
+        <td><span class="risk-badge risk-low">Low</span></td>
+        <td><span class="risk-badge risk-high">High</span></td>
+        <td>Require minimum 2 sessions before surfacing · Expert review of recommendation logic · Conservative initial thresholds</td>
+      </tr>
+      <tr>
+        <td>Scope creep beyond 1 exercise before accuracy validated</td>
+        <td><span class="risk-badge risk-high">High</span></td>
+        <td><span class="risk-badge risk-med">Med</span></td>
+        <td>Hard scope lock: Goblet Squat only until ≥80% accuracy achieved</td>
+      </tr>
+      <tr>
+        <td>Insufficient RAG corpus quality for Goblet Squat</td>
+        <td><span class="risk-badge risk-med">Med</span></td>
+        <td><span class="risk-badge risk-high">High</span></td>
+        <td>Dedicated data sourcing milestone (Weeks 4–5) · 20–30 source target</td>
+      </tr>
+    </table>
+  </section>
+
+  <!-- ═══ ITERATIVE TESTING ═══ -->
+  <section class="section" id="testing">
+    <h2><span class="section-icon">🧪</span> Iterative Pipeline Testing Plan</h2>
+
+    <p style="font-size:13px;color:var(--muted);margin-bottom:20px;line-height:1.6;">Rather than testing the AI pipeline only at the end (Week 9), Kinetic runs progressive tests each week — adding one input at a time to isolate where the pipeline breaks down early. Results are logged in <code style="color:var(--blue-light);">GitHub /tests/weekly-results/</code> and summarised in a shared doc each Friday.</p>
+
+    <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;">
+      <span style="font-size:11px;background:#1a1000;color:#fde68a;padding:3px 10px;border-radius:20px;border:1px solid #92400e;font-weight:700;">FF — Free-form notes</span>
+      <span style="font-size:11px;background:#062020;color:#5eead4;padding:3px 10px;border-radius:20px;border:1px solid #0e7490;font-weight:700;">P/F — Pass / Fail criteria</span>
+      <span style="font-size:11px;color:var(--dim);">Free-form in Week 6 (first contact); Pass/Fail from Week 7 once baseline is established</span>
+    </div>
+
+    <!-- Nemotron tests -->
+    <h3>Stage 1 — Nemotron 3 Nano Omni · Progressive Input Tests</h3>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:12px;">Owner: Squad 2 (Nicole/Valentin run · Liwei/Amrita review)</p>
+    <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:24px;">
+      <div style="background:var(--surface);border:1px solid var(--border);border-left:3px solid #f59e0b;border-radius:8px;padding:12px 16px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+          <span style="font-family:monospace;font-size:10px;color:var(--dim);">TST-W6-01</span>
+          <span style="font-size:9px;background:#1a1000;color:#fde68a;padding:1px 7px;border-radius:4px;font-weight:700;">WEEK 6 · FF</span>
+        </div>
+        <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;">T1 — Biomechanics JSON only → Nemotron</div>
+        <div style="font-size:12px;color:var(--muted);">Send MediaPipe-generated biomechanics JSON (joint angles, rep data) to Nemotron with no video. Does the model correctly identify form issues from structured data alone? Log what it understands and what it misses.</div>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-left:3px solid #06b6d4;border-radius:8px;padding:12px 16px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+          <span style="font-family:monospace;font-size:10px;color:var(--dim);">TST-W7-01</span>
+          <span style="font-size:9px;background:#062020;color:#5eead4;padding:1px 7px;border-radius:4px;font-weight:700;">WEEK 7 · P/F</span>
+        </div>
+        <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;">T2 — Raw video only → Nemotron</div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:6px;">Send only the raw video with no biomechanics context. What does the model detect visually without structured grounding?</div>
+        <div style="font-size:11px;background:var(--surface2);border-radius:6px;padding:8px 12px;color:var(--dim);"><strong style="color:var(--green-light);">Pass:</strong> Model detects ≥1 correct form issue &nbsp;·&nbsp; <strong style="color:var(--red-light);">Fail:</strong> Hallucinated issues or missed obvious faults</div>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-left:3px solid #06b6d4;border-radius:8px;padding:12px 16px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+          <span style="font-family:monospace;font-size:10px;color:var(--dim);">TST-W7-02</span>
+          <span style="font-size:9px;background:#062020;color:#5eead4;padding:1px 7px;border-radius:4px;font-weight:700;">WEEK 7 · P/F</span>
+        </div>
+        <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;">T3 — Biomechanics + raw video → Nemotron (combined)</div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:6px;">The intended production input. Does dual input improve accuracy over T1 or T2 alone?</div>
+        <div style="font-size:11px;background:var(--surface2);border-radius:6px;padding:8px 12px;color:var(--dim);"><strong style="color:var(--green-light);">Pass:</strong> Output more accurate than either T1 or T2 alone &nbsp;·&nbsp; <strong style="color:var(--red-light);">Fail:</strong> No meaningful improvement from dual input</div>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-left:3px solid #06b6d4;border-radius:8px;padding:12px 16px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+          <span style="font-family:monospace;font-size:10px;color:var(--dim);">TST-W8-01</span>
+          <span style="font-size:9px;background:#062020;color:#5eead4;padding:1px 7px;border-radius:4px;font-weight:700;">WEEK 8 · P/F</span>
+        </div>
+        <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;">T4 — Biomechanics + raw video + RAG retrieval → Nemotron (full input)</div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:6px;">Add RAG-retrieved biomechanics passages as context. Does grounding in research improve output quality and reduce hallucination?</div>
+        <div style="font-size:11px;background:var(--surface2);border-radius:6px;padding:8px 12px;color:var(--dim);"><strong style="color:var(--green-light);">Pass:</strong> Output quality meaningfully better than T3; document delta &nbsp;·&nbsp; <strong style="color:var(--red-light);">Fail:</strong> RAG context doesn't improve or degrades output</div>
+      </div>
+    </div>
+
+    <!-- RAG tests -->
+    <h3>Stage 2 — RAG Retrieval Quality Tests</h3>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:12px;">Owner: Squad 3 (Anusha/Ezequiel run · Blessing/Amrita sign off)</p>
+    <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:24px;">
+      <div style="background:var(--surface);border:1px solid var(--border);border-left:3px solid #f97316;border-radius:8px;padding:12px 16px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+          <span style="font-family:monospace;font-size:10px;color:var(--dim);">TST-W6-02</span>
+          <span style="font-size:9px;background:#1a1000;color:#fde68a;padding:1px 7px;border-radius:4px;font-weight:700;">WEEK 6 · FF</span>
+        </div>
+        <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;">RAG T1 — First retrieval quality check</div>
+        <div style="font-size:12px;color:var(--muted);">Query vector DB with <code style="color:var(--orange-light);">knee_valgus + goblet_squat</code> and <code style="color:var(--orange-light);">ankle_dorsiflexion + goblet_squat</code>. Are top-k results relevant? Note irrelevant passages and corpus gaps.</div>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-left:3px solid #f97316;border-radius:8px;padding:12px 16px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+          <span style="font-family:monospace;font-size:10px;color:var(--dim);">TST-W7-03</span>
+          <span style="font-size:9px;background:#062020;color:#5eead4;padding:1px 7px;border-radius:4px;font-weight:700;">WEEK 7 · P/F</span>
+        </div>
+        <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;">RAG T2 — Enhanced corpus re-test (audio + image sources added)</div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:6px;">Re-run same queries from RAG T1 after adding audio transcripts and anatomy images.</div>
+        <div style="font-size:11px;background:var(--surface2);border-radius:6px;padding:8px 12px;color:var(--dim);"><strong style="color:var(--green-light);">Pass:</strong> Retrieval improves on ≥2 previously weak queries &nbsp;·&nbsp; <strong style="color:var(--red-light);">Fail:</strong> No improvement or new irrelevant results surface</div>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-left:3px solid #f97316;border-radius:8px;padding:12px 16px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+          <span style="font-family:monospace;font-size:10px;color:var(--dim);">TST-W8-02</span>
+          <span style="font-size:9px;background:#062020;color:#5eead4;padding:1px 7px;border-radius:4px;font-weight:700;">WEEK 8 · P/F</span>
+        </div>
+        <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;">RAG T3 — Full RAG → Claude Sonnet flow</div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:6px;">Does retrieval context demonstrably improve coaching specificity vs. a no-RAG baseline run?</div>
+        <div style="font-size:11px;background:var(--surface2);border-radius:6px;padding:8px 12px;color:var(--dim);"><strong style="color:var(--green-light);">Pass:</strong> Coaching output contains specific, sourced corrections &nbsp;·&nbsp; <strong style="color:var(--red-light);">Fail:</strong> Coaching is generic and no better than no-RAG</div>
+      </div>
+    </div>
+
+    <!-- Claude Sonnet tests -->
+    <h3>Stage 3 — Claude Sonnet Coaching Output Tests</h3>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:12px;">Owner: Squad 2 (Liwei/Amrita review)</p>
+    <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:24px;">
+      <div style="background:var(--surface);border:1px solid var(--border);border-left:3px solid #a855f7;border-radius:8px;padding:12px 16px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+          <span style="font-family:monospace;font-size:10px;color:var(--dim);">TST-W7-04</span>
+          <span style="font-size:9px;background:#062020;color:#5eead4;padding:1px 7px;border-radius:4px;font-weight:700;">WEEK 7 · P/F</span>
+        </div>
+        <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;">Claude T1 — First coaching output review</div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:6px;">First full pipeline run (Nemotron → RAG → Claude Sonnet). Is the coaching paragraph actionable and the progression recommendation defensible?</div>
+        <div style="font-size:11px;background:var(--surface2);border-radius:6px;padding:8px 12px;color:var(--dim);"><strong style="color:var(--green-light);">Pass:</strong> Coaching is specific + actionable; recommendation matches expert expectation &nbsp;·&nbsp; <strong style="color:var(--red-light);">Fail:</strong> Vague advice, wrong recommendation, or hallucinated cues</div>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-left:3px solid #a855f7;border-radius:8px;padding:12px 16px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+          <span style="font-family:monospace;font-size:10px;color:var(--dim);">TST-W8-03</span>
+          <span style="font-size:9px;background:#062020;color:#5eead4;padding:1px 7px;border-radius:4px;font-weight:700;">WEEK 8 · P/F</span>
+        </div>
+        <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;">Claude T2 — Progression recommendation review</div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:6px;">Test hold/progress/drop logic on 3 defined test cases (one per recommendation type).</div>
+        <div style="font-size:11px;background:var(--surface2);border-radius:6px;padding:8px 12px;color:var(--dim);"><strong style="color:var(--green-light);">Pass:</strong> All 3 recommendations match expert expectation &nbsp;·&nbsp; <strong style="color:var(--red-light);">Fail:</strong> Any "safe to progress" on bad form video</div>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-left:3px solid #a855f7;border-radius:8px;padding:12px 16px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+          <span style="font-family:monospace;font-size:10px;color:var(--dim);">TST-W9-03</span>
+          <span style="font-size:9px;background:#062020;color:#5eead4;padding:1px 7px;border-radius:4px;font-weight:700;">WEEK 9 · P/F</span>
+        </div>
+        <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;">Claude T3 — Confidence threshold validation</div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:6px;">Does the low-certainty flag trigger correctly on ambiguous inputs (poor video quality, unusual filming angle)?</div>
+        <div style="font-size:11px;background:var(--surface2);border-radius:6px;padding:8px 12px;color:var(--dim);"><strong style="color:var(--green-light);">Pass:</strong> Zero false "safe to progress" on bad form videos; flag triggers on ≥80% of ambiguous inputs</div>
+      </div>
+    </div>
+
+    <!-- E2E tests -->
+    <h3>Stage 4 — Full End-to-End Tests</h3>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:12px;">Owner: All squads · Friday integration sessions</p>
+    <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:8px;">
+      <div style="background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--green);border-radius:8px;padding:12px 16px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+          <span style="font-family:monospace;font-size:10px;color:var(--dim);">TST-W7-05</span>
+          <span style="font-size:9px;background:#062020;color:#5eead4;padding:1px 7px;border-radius:4px;font-weight:700;">WEEK 7 · P/F</span>
+        </div>
+        <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;">E2E T1 — First thin end-to-end slice</div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:6px;">Upload video → coaching results on screen without manual intervention. Measure total latency.</div>
+        <div style="font-size:11px;background:var(--surface2);border-radius:6px;padding:8px 12px;color:var(--dim);"><strong style="color:var(--green-light);">Pass:</strong> Pipeline completes automatically; latency measured as baseline</div>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--green);border-radius:8px;padding:12px 16px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+          <span style="font-family:monospace;font-size:10px;color:var(--dim);">TST-W9-01</span>
+          <span style="font-size:9px;background:#062020;color:#5eead4;padding:1px 7px;border-radius:4px;font-weight:700;">WEEK 9 · P/F</span>
+        </div>
+        <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;">E2E T2 — Formal accuracy validation (20–30 labeled videos)</div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:6px;">Run labeled Goblet Squat test videos through full pipeline. Compare AI form scores against expert ground truth.</div>
+        <div style="font-size:11px;background:var(--surface2);border-radius:6px;padding:8px 12px;color:var(--dim);"><strong style="color:var(--green-light);">Pass:</strong> ≥80% expert agreement on form scores; p95 latency &lt;30s &nbsp;·&nbsp; <strong style="color:var(--red-light);">Fail:</strong> Either threshold missed → prompt/RAG refinement required</div>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--green);border-radius:8px;padding:12px 16px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+          <span style="font-family:monospace;font-size:10px;color:var(--dim);">TST-W10-01</span>
+          <span style="font-size:9px;background:#062020;color:#5eead4;padding:1px 7px;border-radius:4px;font-weight:700;">WEEK 10 · P/F</span>
+        </div>
+        <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;">E2E T3 — UAT with real users (VOC participants)</div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:6px;">Full user journey: sign up → upload → coaching report → log workout → history. Zero critical bugs required for launch.</div>
+        <div style="font-size:11px;background:var(--surface2);border-radius:6px;padding:8px 12px;color:var(--dim);"><strong style="color:var(--green-light);">Pass:</strong> All launch criteria checked; zero high-severity bugs</div>
+      </div>
+    </div>
+
+    <!-- Documentation callout -->
+    <div style="margin-top:16px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:14px 18px;display:flex;gap:24px;flex-wrap:wrap;">
+      <div>
+        <div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:0.7px;color:var(--dim);margin-bottom:4px;">GitHub</div>
+        <div style="font-size:12px;color:var(--muted);"><code style="color:var(--blue-light);">/tests/weekly-results/week-X-results.md</code><br>One file per week · version-controlled · linked in PRs</div>
+      </div>
+      <div>
+        <div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:0.7px;color:var(--dim);margin-bottom:4px;">Shared Doc (Friday)</div>
+        <div style="font-size:12px;color:var(--muted);">Weekly summary surfaced for PMs and designers<br>after each Friday integration session</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ TIMELINE ═══ -->
+  <section class="section" id="timeline">
+    <h2><span class="section-icon">📅</span> Timeline & Milestones</h2>
+
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-week">W1–2</div>
+        <div class="timeline-dot done"></div>
+        <div class="timeline-content">
+          <div class="timeline-title">Product idea · Designer pitch</div>
+          <div class="timeline-date">Apr 6–13, 2026</div>
+          <div class="timeline-tags">
+            <span class="timeline-tag">Product</span>
+            <span class="timeline-tag">Design</span>
+          </div>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-week">W3–4</div>
+        <div class="timeline-dot done"></div>
+        <div class="timeline-content">
+          <div class="timeline-title">VOC research (qual + quant) · Dev pitch · Design mockups · Tech requirements</div>
+          <div class="timeline-date">Apr 20–27, 2026</div>
+          <div class="timeline-tags">
+            <span class="timeline-tag">All teams</span>
+          </div>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-week">W4–5</div>
+        <div class="timeline-dot done"></div>
+        <div class="timeline-content">
+          <div class="timeline-title">RAG data sourcing · Blueprint (user flow/screens) · Design system finalised</div>
+          <div class="timeline-date">Apr 27 – May 4, 2026</div>
+          <div class="timeline-tags">
+            <span class="timeline-tag">Design</span>
+            <span class="timeline-tag">Data</span>
+          </div>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-week">W5–6</div>
+        <div class="timeline-dot active"></div>
+        <div class="timeline-content">
+          <div class="timeline-title">Infra setup · MediaPipe exploration · Video pipeline + RAG setup · Nemotron integration · Prompt engineering v1</div>
+          <div class="timeline-date">May 4–17, 2026</div>
+          <div class="timeline-tags">
+            <span class="timeline-tag">Engineering</span>
+          </div>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-week">W7</div>
+        <div class="timeline-dot"></div>
+        <div class="timeline-content">
+          <div class="timeline-title">Enhanced RAG + DB setup · Form comparison prompt engineering · Exercise Builder frontend · Sample videos defined</div>
+          <div class="timeline-date">May 18, 2026</div>
+          <div class="timeline-tags">
+            <span class="timeline-tag">Engineering</span>
+            <span class="timeline-tag">Design</span>
+          </div>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-week">W8</div>
+        <div class="timeline-dot"></div>
+        <div class="timeline-content">
+          <div class="timeline-title">DB schema refinement · RAG audio/image sources · Prompt engineering refined · Prototype screens for devs</div>
+          <div class="timeline-date">May 25, 2026</div>
+          <div class="timeline-tags">
+            <span class="timeline-tag">Engineering</span>
+            <span class="timeline-tag">Design</span>
+          </div>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-week">W9</div>
+        <div class="timeline-dot"></div>
+        <div class="timeline-content">
+          <div class="timeline-title">Accuracy validation testing · Prompt/RAG refinement · End-to-end latency optimisation</div>
+          <div class="timeline-date">Jun 1, 2026</div>
+          <div class="timeline-tags">
+            <span class="timeline-tag">Engineering</span>
+          </div>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-week">W10</div>
+        <div class="timeline-dot"></div>
+        <div class="timeline-content">
+          <div class="timeline-title">UAT + E2E testing · Final pitch preparation</div>
+          <div class="timeline-date">Jun 8, 2026</div>
+          <div class="timeline-tags">
+            <span class="timeline-tag">All teams</span>
+          </div>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-week">W11 🚀</div>
+        <div class="timeline-dot" style="background:var(--green);border-color:var(--green);box-shadow:0 0 8px var(--green);"></div>
+        <div class="timeline-content" style="border-color:var(--green);background:var(--green-dim);">
+          <div class="timeline-title" style="color:var(--green-light);">Final pitch / Launch</div>
+          <div class="timeline-date">June 15, 2026</div>
+          <div class="timeline-tags">
+            <span class="timeline-tag">All teams</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ LAUNCH ═══ -->
+  <section class="section" id="launch">
+    <h2><span class="section-icon">🚀</span> Launch Criteria</h2>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:16px;">All boxes must be checked before we ship.</p>
+    <div class="launch-grid">
+      <div class="check-item"><div class="check-box"></div>Goblet Squat pipeline working end-to-end</div>
+      <div class="check-item"><div class="check-box"></div>≥80% expert agreement on form scoring (20–30 test videos)</div>
+      <div class="check-item"><div class="check-box"></div>Weight progression recommendation validated by expert</div>
+      <div class="check-item"><div class="check-box"></div>End-to-end latency &lt;30 seconds</div>
+      <div class="check-item"><div class="check-box"></div>All P0 features complete and functional</div>
+      <div class="check-item"><div class="check-box"></div>Design prototype approved by team</div>
+      <div class="check-item"><div class="check-box"></div>UAT passed (Week 10)</div>
+      <div class="check-item"><div class="check-box"></div>Metrics instrumented (uploads, scores, recommendations, retention)</div>
+      <div class="check-item"><div class="check-box"></div>Filming guidelines published in-app</div>
+      <div class="check-item"><div class="check-box"></div>Zero high-severity bugs in E2E test suite</div>
+      <div class="check-item"><div class="check-box"></div>Privacy policy in place for video data storage</div>
+    </div>
+  </section>
+
+  <!-- ═══ GTM ═══ -->
+  <section class="section" id="gtm">
+    <h2><span class="section-icon">📣</span> Go-to-Market</h2>
+    <div class="gtm-row">
+      <div class="gtm-card phase1">
+        <div class="gtm-card-label">Phase 1 — Launch</div>
+        <h4>B2C Free Trial → Subscription</h4>
+        <ul>
+          <li>14–30 day free trial · 2–3 form analyses/week</li>
+          <li>Convert to $15/month subscription</li>
+          <li>Demo day pitch June 15, 2026</li>
+          <li>VOC participants as first cohort (warm, pre-engaged)</li>
+          <li>Closed beta → VOC users → open access</li>
+        </ul>
+      </div>
+      <div class="gtm-card phase2">
+        <div class="gtm-card-label">Phase 2 — Post-Validation</div>
+        <h4>B2B Creator Partnerships</h4>
+        <ul>
+          <li>Partner with online coaches and creators</li>
+          <li>Integrate their plans into Kinetic</li>
+          <li>$10/month pricing for their audience</li>
+          <li>Creator distribution removes CAC</li>
+          <li>Kinetic provides the tech layer they don't want to build</li>
+        </ul>
+      </div>
+    </div>
+    <h3>Target Audience for Launch</h3>
+    <div style="display:flex;flex-direction:column;gap:8px;">
+      <div style="display:flex;gap:10px;align-items:baseline;font-size:12px;color:var(--muted);">
+        <span style="color:var(--blue-light);font-weight:700;flex-shrink:0;">1st</span>
+        <span><strong style="color:var(--text);">VOC interview participants</strong> — First 20–30 users. High intent, already engaged with the problem.</span>
+      </div>
+      <div style="display:flex;gap:10px;align-items:baseline;font-size:12px;color:var(--muted);">
+        <span style="color:var(--blue-light);font-weight:700;flex-shrink:0;">2nd</span>
+        <span><strong style="color:var(--text);">Online communities</strong> — Reddit r/fitness, fitness Discord servers for broader launch.</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ USER STORIES ═══ -->
+  <section class="section" id="stories">
+    <h2><span class="section-icon">📝</span> User Stories</h2>
+    <div class="story-list">
+      <div class="story-item">
+        <span class="story-num">US1</span>
+        As an intermediate gym-goer, I want to upload my Goblet Squat video with my weight, so I can get specific feedback on what I'm doing wrong and whether it's safe to increase weight.
+      </div>
+      <div class="story-item">
+        <span class="story-num">US2</span>
+        As a user stuck at the same weight due to knee pain, I want to know exactly which joint angle is causing the issue, so I can fix it confidently and progress.
+      </div>
+      <div class="story-item">
+        <span class="story-num">US3</span>
+        As a regular user, I want to see how my form score has changed across weights over time, so I can see that I'm actually improving — not just going through the motions.
+      </div>
+      <div class="story-item">
+        <span class="story-num">US4</span>
+        As a user who trains alone, I want a single app that logs my workouts and analyses my form, so I don't have to switch between tools during my session.
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ OPEN QUESTIONS ═══ -->
+  <section class="section" id="openq">
+    <h2><span class="section-icon">❓</span> Open Questions</h2>
+    <div class="oq-list">
+      <div class="oq-item">
+        <div class="oq-q">Which specific joint parameters define a "good" Goblet Squat?</div>
+        <div class="oq-owner">Owner: Research Lead — Biomechanics research must define ideal angle ranges for knee, hip, and torso before accuracy can be validated</div>
+      </div>
+      <div class="oq-item">
+        <div class="oq-q">What is the minimum number of sessions before a progression recommendation is surfaced?</div>
+        <div class="oq-owner">Owner: Engineering + Product — Too few sessions = unreliable; too many = frustrating delay</div>
+      </div>
+      <div class="oq-item">
+        <div class="oq-q">Who are the human experts validating form scores?</div>
+        <div class="oq-owner">Owner: Founder — Certified PT, physiotherapist, or sports scientist? Must be confirmed before Week 9</div>
+      </div>
+      <div class="oq-item">
+        <div class="oq-q">How are user videos stored and for how long?</div>
+        <div class="oq-owner">Owner: Engineering + Legal — Videos contain biometric data; retention policy and privacy compliance needed before launch</div>
+      </div>
+      <div class="oq-item">
+        <div class="oq-q">What confidence threshold triggers a "low certainty" flag vs. full analysis output?</div>
+        <div class="oq-owner">Owner: Engineering — Needs calibration from validation testing</div>
+      </div>
+      <div class="oq-item">
+        <div class="oq-q">Freemium limit: 2 or 3 uploads per week during trial?</div>
+        <div class="oq-owner">Owner: Product — Affects activation rate vs. conversion incentive trade-off</div>
+      </div>
+    </div>
+
+    <div style="margin-top:32px;padding-top:24px;border-top:1px solid var(--border);font-size:11px;color:var(--dim);">
+      <strong style="color:var(--muted);">Changelog</strong><br>
+      May 4, 2026: Initial draft — created from founder interviews and project roadmap<br>
+      May 4, 2026: Added stretched goals (Record option, Shoulder Press, Design enhancements); updated Out of Scope; fixed AI pipeline references (Nemotron + Claude Sonnet)
+    </div>
+  </section>
+
+</main>
+
+<script>
+// Scrollspy — highlight active nav link
+const sections = document.querySelectorAll('.section');
+const navLinks = document.querySelectorAll('.nav-link');
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      navLinks.forEach(l => l.classList.remove('active'));
+      const active = document.querySelector(`.nav-link[href="#${e.target.id}"]`);
+      if (active) active.classList.add('active');
+    }
+  });
+}, { rootMargin: '-30% 0px -60% 0px' });
+
+sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>

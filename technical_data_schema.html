@@ -1,0 +1,1827 @@
+<!DOCTYPE html>
+<html lang="en" data-scheme="a">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kinetic — Tech Design Flow · Frame 2 · Detailed Outputs</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0a0d14; color: #e2e8f0; padding: 32px; min-width: 1100px; }
+
+/* ─── Toggle ─── */
+.top-bar { display:flex; align-items:center; justify-content:space-between; margin-bottom:28px; flex-wrap:wrap; gap:12px; }
+h1 { font-size:20px; font-weight:700; color:#f8fafc; }
+.sub { font-size:12px; color:#64748b; margin-top:3px; }
+.toggle-wrap { display:flex; gap:0; border-radius:10px; overflow:hidden; border:1px solid #1e2433; flex-shrink:0; }
+.toggle-btn { padding:8px 18px; font-size:11px; font-weight:700; letter-spacing:0.5px; cursor:pointer; border:none; transition:background 0.2s, color 0.2s; }
+.toggle-btn.a { background:#1e3a5f; color:#93c5fd; }
+.toggle-btn.b { background:#111827; color:#475569; }
+[data-scheme="b"] .toggle-btn.a { background:#111827; color:#475569; }
+[data-scheme="b"] .toggle-btn.b { background:#3b1f6e; color:#d8b4fe; }
+
+/* ─── Legend ─── */
+.legend { display:flex; gap:14px; flex-wrap:wrap; margin-bottom:24px; }
+.legend-item { display:flex; align-items:center; gap:6px; font-size:11px; color:#94a3b8; }
+.legend-dot { width:11px; height:11px; border-radius:3px; flex-shrink:0; transition:background 0.2s; }
+
+/* ─── Pipeline ─── */
+.pipeline { display:flex; flex-direction:column; gap:0; }
+.connector { display:flex; justify-content:center; align-items:center; height:28px; color:#2d3a4a; font-size:20px; position:relative; }
+.connector::before { content:''; position:absolute; left:50%; top:0; bottom:0; width:2px; background:#1e2433; z-index:0; }
+.connector span { background:#0a0d14; padding:0 6px; z-index:1; position:relative; }
+
+/* ─── Merge connector (RAG + UserDB → Claude) ─── */
+.merge-section { display:grid; grid-template-columns:1fr 28px 1fr; gap:0; align-items:stretch; margin:0; }
+.merge-col { display:flex; flex-direction:column; gap:0; }
+.merge-spine { display:flex; flex-direction:column; align-items:center; justify-content:center; }
+.merge-line { width:2px; background:#1e2433; flex:1; margin:0 auto; }
+.merge-arrow { color:#2d3a4a; font-size:20px; text-align:center; }
+
+/* ─── Step card ─── */
+.step { border-radius:12px; border:1.5px solid; overflow:hidden; }
+.step-header { display:flex; align-items:center; gap:12px; padding:12px 16px; }
+.step-num { width:24px; height:24px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:800; flex-shrink:0; }
+.step-icon { font-size:20px; }
+.step-title { font-size:13px; font-weight:700; }
+.step-squad { font-size:10px; opacity:0.7; margin-top:1px; }
+.step-body { padding:14px 16px; display:flex; flex-direction:column; gap:12px; }
+
+/* ─── Sub-sections inside step ─── */
+.sub-section { display:flex; flex-direction:column; gap:6px; }
+.sub-label { font-size:9px; font-weight:800; text-transform:uppercase; letter-spacing:0.7px; color:#475569; margin-bottom:2px; }
+
+/* ─── SSE pills ─── */
+.sse-row { display:flex; gap:6px; flex-wrap:wrap; }
+.sse-pill { font-size:9.5px; padding:3px 9px; border-radius:10px; background:#150d24; border:1px solid #4c1d95; color:#c4b5fd; font-family:monospace; }
+
+/* ─── DB write rows ─── */
+.db-table { width:100%; border-collapse:collapse; font-size:10px; }
+.db-table th { text-align:left; padding:4px 8px; color:#64748b; font-weight:600; border-bottom:1px solid #1e2433; }
+.db-table td { padding:4px 8px; color:#cbd5e1; border-bottom:1px solid #111827; }
+.db-table td:first-child { font-family:monospace; color:#94a3b8; }
+.db-table td .type { color:#475569; font-size:9px; margin-left:4px; }
+.db-table td .example { color:#64748b; font-size:9px; }
+
+/* ─── JSON block ─── */
+.json-block { background:#070a0f; border:1px solid #1e2433; border-radius:8px; padding:12px; font-family:'SF Mono',monospace; font-size:10px; line-height:1.7; overflow-x:auto; }
+.jk  { color:#93c5fd; }   /* key */
+.js  { color:#86efac; }   /* string value */
+.jn  { color:#fdba74; }   /* number value */
+.jb  { color:#f9a8d4; }   /* bool */
+.jc  { color:#475569; font-style:italic; }  /* comment */
+.jp  { color:#64748b; }   /* punctuation */
+
+/* ─── Task ID mapping ─── */
+.task-map { background: #08090f; border: 1px solid #1e2433; border-radius: 8px; padding: 10px 12px; display: flex; flex-direction: column; gap: 8px; }
+.task-map-label { font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.7px; color: #334155; margin-bottom: 2px; }
+.task-map-row { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.task-map-role { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; width: 78px; flex-shrink: 0; }
+.role-defines  { color: #f59e0b; }
+.role-implements { color: #22c55e; }
+.role-consumes { color: #60a5fa; }
+.role-tests    { color: #22d3ee; }
+.tid { font-family: 'SF Mono', monospace; font-size: 9.5px; font-weight: 700; padding: 2px 7px; border-radius: 5px; }
+.tid-s1  { background: #0d1a2e; color: #60a5fa; border: 1px solid #1e3a5f; }
+.tid-s2  { background: #0a1f12; color: #4ade80; border: 1px solid #14532d; }
+.tid-s3  { background: #1a1205; color: #fb923c; border: 1px solid #431407; }
+.tid-tst { background: #041e1e; color: #67e8f9; border: 1px solid #0e7490; }
+
+/* ─── Input/Output pills ─── */
+.io-row { display:flex; gap:6px; flex-wrap:wrap; }
+.io-pill { font-size:10px; padding:3px 9px; border-radius:6px; }
+.io-in  { background:#0c1a2e; border:1px solid #1e3a5f; color:#93c5fd; }
+.io-out { background:#0a2015; border:1px solid #14532d; color:#86efac; }
+
+/* ─── Frame extraction visual ─── */
+.frame-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
+.frame-card { background:#0d1117; border:1px solid #1e2433; border-radius:8px; padding:10px; }
+.frame-thumb { width:100%; height:60px; background:#111827; border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:10px; color:#475569; margin-bottom:6px; border:1px dashed #1e2433; }
+.frame-meta { font-size:9.5px; color:#64748b; line-height:1.5; }
+.frame-badge { display:inline-block; font-size:8.5px; padding:1px 6px; border-radius:4px; margin-bottom:4px; }
+.fb-issue { background:#2d0a0a; color:#f87171; border:1px solid #7f1d1d; }
+.fb-ok    { background:#0a2010; color:#86efac; border:1px solid #14532d; }
+
+/* ─── Annotation overlay items ─── */
+.annotation-list { display:flex; flex-direction:column; gap:4px; }
+.annotation-item { display:flex; align-items:center; gap:8px; font-size:10px; color:#cbd5e1; }
+.ann-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+
+/* ─── Thin card for side pipelines ─── */
+.side-step { border-radius:10px; border:1.5px solid; padding:12px 14px; }
+.side-title { font-size:11px; font-weight:700; margin-bottom:8px; display:flex; align-items:center; gap:8px; }
+
+/* ══════════════════════════════════
+   PIPELINE MINI-MAP
+   ══════════════════════════════════ */
+.minimap-panel {
+  background:#0d1117; border:1px solid #1e2433; border-radius:12px;
+  padding:16px 20px; margin-bottom:28px; overflow-x:auto;
+}
+.minimap-title {
+  font-size:9px; font-weight:800; text-transform:uppercase;
+  letter-spacing:0.7px; color:#475569; margin-bottom:14px;
+  display:flex; align-items:center; gap:8px;
+}
+.minimap-title::after {
+  content:''; flex:1; height:1px; background:#1e2433;
+}
+/* main row wrapper */
+.mm-flow { display:flex; flex-direction:column; gap:8px; min-width:max-content; }
+.mm-main-row { display:flex; align-items:flex-start; gap:0; }
+.mm-branch-row { display:flex; align-items:flex-start; gap:0; padding-left:0; }
+
+/* each column: node + sse pills */
+.mm-col { display:flex; flex-direction:column; align-items:center; gap:5px; }
+.mm-arrow {
+  color:#334155; font-size:15px; padding:0 3px; flex-shrink:0;
+  display:flex; align-items:center; margin-top:22px;
+}
+.mm-down-arrow {
+  font-size:12px; color:#1e2d3d; text-align:center; line-height:1;
+}
+
+/* node box */
+.mm-node {
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  text-align:center; padding:7px 9px; border-radius:8px; border:1.5px solid;
+  min-width:82px; max-width:96px; cursor:default; transition:opacity 0.2s;
+}
+.mm-node:hover { opacity:0.85; }
+.mm-stepnum {
+  font-size:8px; font-weight:800; letter-spacing:0.3px;
+  opacity:0.55; margin-bottom:1px; align-self:flex-start;
+}
+.mm-icon { font-size:15px; margin-bottom:3px; }
+.mm-title { font-size:9px; font-weight:700; line-height:1.3; }
+.mm-owner { font-size:7.5px; opacity:0.55; margin-top:2px; }
+
+/* sse pills below node */
+.mm-sse-col { display:flex; flex-direction:column; align-items:center; gap:3px; }
+.mm-sse {
+  font-size:7.5px; font-family:monospace; padding:1px 6px; border-radius:8px;
+  background:#150d24; border:1px solid #4c1d95; color:#c4b5fd;
+  white-space:nowrap;
+}
+.mm-sse.mm-sse-error {
+  background:#1a0500; border-color:#7f1d1d; color:#f87171;
+}
+.mm-no-sse { font-size:7.5px; color:#1e2d3d; font-style:italic; }
+
+/* branch label + spacer */
+.mm-branch-label {
+  font-size:8px; color:#334155; font-style:italic;
+  margin-top:2px; text-align:center; white-space:nowrap;
+}
+.mm-spacer { flex-shrink:0; }
+.mm-vert {
+  display:flex; flex-direction:column; align-items:center; gap:2px;
+}
+
+/* ─── Mini-map node colors — Option A (Squad ownership) ─── */
+[data-scheme="a"] .mm-node.mm-fe   { background:#0d1a2e; border-color:#3b82f6; }
+[data-scheme="a"] .mm-node.mm-fe   .mm-title  { color:#93c5fd; }
+[data-scheme="a"] .mm-node.mm-fe   .mm-stepnum, [data-scheme="a"] .mm-node.mm-fe .mm-owner { color:#3b82f6; }
+
+[data-scheme="a"] .mm-node.mm-be   { background:#0a2015; border-color:#22c55e; }
+[data-scheme="a"] .mm-node.mm-be   .mm-title  { color:#86efac; }
+[data-scheme="a"] .mm-node.mm-be   .mm-stepnum, [data-scheme="a"] .mm-node.mm-be .mm-owner { color:#22c55e; }
+
+[data-scheme="a"] .mm-node.mm-s3   { background:#1a1003; border-color:#f97316; }
+[data-scheme="a"] .mm-node.mm-s3   .mm-title  { color:#fdba74; }
+[data-scheme="a"] .mm-node.mm-s3   .mm-stepnum, [data-scheme="a"] .mm-node.mm-s3 .mm-owner { color:#f97316; }
+
+/* ─── Mini-map node colors — Option B (Pipeline layers) ─── */
+[data-scheme="b"] .mm-node.mm-fe   { background:#180b2e; border-color:#a855f7; }
+[data-scheme="b"] .mm-node.mm-fe   .mm-title  { color:#d8b4fe; }
+[data-scheme="b"] .mm-node.mm-fe   .mm-stepnum, [data-scheme="b"] .mm-node.mm-fe .mm-owner { color:#a855f7; }
+
+/* storage */
+[data-scheme="b"] .mm-node.mm-be.mm-stor { background:#111827; border-color:#64748b; }
+[data-scheme="b"] .mm-node.mm-be.mm-stor .mm-title  { color:#cbd5e1; }
+[data-scheme="b"] .mm-node.mm-be.mm-stor .mm-stepnum, [data-scheme="b"] .mm-node.mm-be.mm-stor .mm-owner { color:#64748b; }
+
+/* process / compute */
+[data-scheme="b"] .mm-node.mm-be.mm-proc { background:#051e26; border-color:#06b6d4; }
+[data-scheme="b"] .mm-node.mm-be.mm-proc .mm-title  { color:#67e8f9; }
+[data-scheme="b"] .mm-node.mm-be.mm-proc .mm-stepnum, [data-scheme="b"] .mm-node.mm-be.mm-proc .mm-owner { color:#06b6d4; }
+
+/* AI models */
+[data-scheme="b"] .mm-node.mm-be.mm-ai   { background:#2d0a1e; border-color:#ec4899; }
+[data-scheme="b"] .mm-node.mm-be.mm-ai   .mm-title  { color:#f9a8d4; }
+[data-scheme="b"] .mm-node.mm-be.mm-ai   .mm-stepnum, [data-scheme="b"] .mm-node.mm-be.mm-ai .mm-owner { color:#ec4899; }
+
+/* DB write */
+[data-scheme="b"] .mm-node.mm-be.mm-db   { background:#111a05; border-color:#84cc16; }
+[data-scheme="b"] .mm-node.mm-be.mm-db   .mm-title  { color:#bef264; }
+[data-scheme="b"] .mm-node.mm-be.mm-db   .mm-stepnum, [data-scheme="b"] .mm-node.mm-be.mm-db .mm-owner { color:#84cc16; }
+
+/* RAG / vector */
+[data-scheme="b"] .mm-node.mm-s3         { background:#1a1200; border-color:#f59e0b; }
+[data-scheme="b"] .mm-node.mm-s3         .mm-title  { color:#fcd34d; }
+[data-scheme="b"] .mm-node.mm-s3         .mm-stepnum, [data-scheme="b"] .mm-node.mm-s3 .mm-owner { color:#f59e0b; }
+
+/* output */
+[data-scheme="b"] .mm-node.mm-fe.mm-out  { background:#042520; border-color:#14b8a6; }
+[data-scheme="b"] .mm-node.mm-fe.mm-out  .mm-title  { color:#5eead4; }
+[data-scheme="b"] .mm-node.mm-fe.mm-out  .mm-stepnum, [data-scheme="b"] .mm-node.mm-fe.mm-out .mm-owner { color:#14b8a6; }
+
+/* ══════════════════════════════════
+   OPTION A — SQUAD COLORS
+   ══════════════════════════════════ */
+[data-scheme="a"] .step.frontend  { border-color:#3b82f6; background:#080f1e; }
+[data-scheme="a"] .step.frontend .step-header { background:#0d1a2e; }
+[data-scheme="a"] .step.frontend .step-num    { background:#1e3a5f; color:#93c5fd; }
+[data-scheme="a"] .step.frontend .step-title  { color:#93c5fd; }
+[data-scheme="a"] .step.frontend .step-squad  { color:#3b82f6; }
+
+[data-scheme="a"] .step.backend   { border-color:#22c55e; background:#060f09; }
+[data-scheme="a"] .step.backend .step-header  { background:#0a2015; }
+[data-scheme="a"] .step.backend .step-num     { background:#14532d; color:#86efac; }
+[data-scheme="a"] .step.backend .step-title   { color:#86efac; }
+[data-scheme="a"] .step.backend .step-squad   { color:#22c55e; }
+
+[data-scheme="a"] .step.data      { border-color:#f97316; background:#0d0803; }
+[data-scheme="a"] .step.data .step-header     { background:#1a1003; }
+[data-scheme="a"] .step.data .step-num        { background:#431407; color:#fdba74; }
+[data-scheme="a"] .step.data .step-title      { color:#fdba74; }
+[data-scheme="a"] .step.data .step-squad      { color:#f97316; }
+
+[data-scheme="a"] .side-step.data   { border-color:#f97316; background:#0d0803; }
+[data-scheme="a"] .side-step.data .side-title { color:#fdba74; }
+[data-scheme="a"] .side-step.backend { border-color:#22c55e; background:#060f09; }
+[data-scheme="a"] .side-step.backend .side-title { color:#86efac; }
+
+[data-scheme="a"] .ld-frontend { background:#3b82f6; }
+[data-scheme="a"] .ld-backend  { background:#22c55e; }
+[data-scheme="a"] .ld-data     { background:#f97316; }
+[data-scheme="a"] .ld-sse      { background:#a855f7; }
+[data-scheme="a"] .ld-db       { background:#eab308; }
+[data-scheme="a"] .ld-frame    { background:#ec4899; }
+
+/* ══════════════════════════════════
+   OPTION B — PIPELINE LAYER COLORS
+   ══════════════════════════════════ */
+[data-scheme="b"] .step.frontend  { border-color:#a855f7; background:#0d0618; }
+[data-scheme="b"] .step.frontend .step-header { background:#180b2e; }
+[data-scheme="b"] .step.frontend .step-num    { background:#3b0764; color:#d8b4fe; }
+[data-scheme="b"] .step.frontend .step-title  { color:#d8b4fe; }
+[data-scheme="b"] .step.frontend .step-squad  { color:#a855f7; }
+
+[data-scheme="b"] .step.backend.storage  { border-color:#64748b; background:#0b0d11; }
+[data-scheme="b"] .step.backend.storage .step-header { background:#111827; }
+[data-scheme="b"] .step.backend.storage .step-num    { background:#1e293b; color:#cbd5e1; }
+[data-scheme="b"] .step.backend.storage .step-title  { color:#cbd5e1; }
+[data-scheme="b"] .step.backend.storage .step-squad  { color:#64748b; }
+
+[data-scheme="b"] .step.backend.process  { border-color:#06b6d4; background:#030f14; }
+[data-scheme="b"] .step.backend.process .step-header { background:#051e26; }
+[data-scheme="b"] .step.backend.process .step-num    { background:#0c3344; color:#67e8f9; }
+[data-scheme="b"] .step.backend.process .step-title  { color:#67e8f9; }
+[data-scheme="b"] .step.backend.process .step-squad  { color:#06b6d4; }
+
+[data-scheme="b"] .step.backend.ai       { border-color:#ec4899; background:#120510; }
+[data-scheme="b"] .step.backend.ai .step-header { background:#2d0a1e; }
+[data-scheme="b"] .step.backend.ai .step-num    { background:#831843; color:#f9a8d4; }
+[data-scheme="b"] .step.backend.ai .step-title  { color:#f9a8d4; }
+[data-scheme="b"] .step.backend.ai .step-squad  { color:#ec4899; }
+
+[data-scheme="b"] .step.data             { border-color:#f59e0b; background:#0d0900; }
+[data-scheme="b"] .step.data .step-header { background:#1a1200; }
+[data-scheme="b"] .step.data .step-num   { background:#451a03; color:#fcd34d; }
+[data-scheme="b"] .step.data .step-title { color:#fcd34d; }
+[data-scheme="b"] .step.data .step-squad { color:#f59e0b; }
+
+[data-scheme="b"] .step.backend.db       { border-color:#84cc16; background:#080d02; }
+[data-scheme="b"] .step.backend.db .step-header { background:#111a05; }
+[data-scheme="b"] .step.backend.db .step-num    { background:#1a2e05; color:#bef264; }
+[data-scheme="b"] .step.backend.db .step-title  { color:#bef264; }
+[data-scheme="b"] .step.backend.db .step-squad  { color:#84cc16; }
+
+[data-scheme="b"] .step.output           { border-color:#14b8a6; background:#030f0d; }
+[data-scheme="b"] .step.output .step-header { background:#042520; }
+[data-scheme="b"] .step.output .step-num    { background:#0d3d37; color:#5eead4; }
+[data-scheme="b"] .step.output .step-title  { color:#5eead4; }
+[data-scheme="b"] .step.output .step-squad  { color:#14b8a6; }
+
+[data-scheme="b"] .side-step.data    { border-color:#f59e0b; background:#0d0900; }
+[data-scheme="b"] .side-step.data .side-title { color:#fcd34d; }
+[data-scheme="b"] .side-step.backend { border-color:#84cc16; background:#080d02; }
+[data-scheme="b"] .side-step.backend .side-title { color:#bef264; }
+
+[data-scheme="b"] .ld-frontend { background:#a855f7; }
+[data-scheme="b"] .ld-backend  { background:#06b6d4; }
+[data-scheme="b"] .ld-data     { background:#f59e0b; }
+[data-scheme="b"] .ld-sse      { background:#a855f7; }
+[data-scheme="b"] .ld-db       { background:#84cc16; }
+[data-scheme="b"] .ld-frame    { background:#ec4899; }
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <div>
+    <h1>Kinetic — Tech Design Flow &nbsp;<span style="font-size:13px;color:#475569;font-weight:400">Frame 2 · Detailed Outputs</span></h1>
+    <div class="sub">Full pipeline · JSON schemas · SSE events · DB writes · Frame extraction</div>
+  </div>
+  <div class="toggle-wrap">
+    <button class="toggle-btn a" onclick="setScheme('a')">Option A — Squad Ownership</button>
+    <button class="toggle-btn b" onclick="setScheme('b')">Option B — Pipeline Layers</button>
+  </div>
+</div>
+
+<div class="legend">
+  <div class="legend-item"><div class="legend-dot ld-frontend"></div><span id="ld-fe">Squad 1 — Frontend</span></div>
+  <div class="legend-item"><div class="legend-dot ld-backend"></div><span id="ld-be">Squad 2 — Backend</span></div>
+  <div class="legend-item"><div class="legend-dot ld-data"></div><span id="ld-da">Squad 3 — Data</span></div>
+  <div class="legend-item"><div class="legend-dot ld-sse"></div> SSE Event</div>
+  <div class="legend-item"><div class="legend-dot ld-db"></div> DB / S3 Write</div>
+  <div class="legend-item"><div class="legend-dot ld-frame"></div> Frame Extraction</div>
+</div>
+
+<!-- ════════════════════════════════════════
+     PIPELINE MINI-MAP OVERVIEW
+     ════════════════════════════════════════ -->
+<div class="minimap-panel">
+  <div class="minimap-title">Pipeline Overview — Steps · Squad Ownership · SSE Events</div>
+
+  <div class="mm-flow">
+
+    <!-- ── Main flow row ── -->
+    <div class="mm-main-row">
+
+      <!-- Step 1: User Upload -->
+      <div class="mm-col">
+        <div class="mm-node mm-fe">
+          <div class="mm-stepnum">Step 1</div>
+          <div class="mm-icon">📱</div>
+          <div class="mm-title">User Upload</div>
+          <div class="mm-owner">S1 · Frontend</div>
+        </div>
+        <div class="mm-sse-col"><span class="mm-no-sse">no SSE</span></div>
+      </div>
+      <div class="mm-arrow">→</div>
+
+      <!-- Step 2: GCS Storage -->
+      <div class="mm-col">
+        <div class="mm-node mm-be mm-stor">
+          <div class="mm-stepnum">Step 2</div>
+          <div class="mm-icon">🪣</div>
+          <div class="mm-title">GCS Storage</div>
+          <div class="mm-owner">S2 · Backend</div>
+        </div>
+        <div class="mm-sse-col">
+          <span class="mm-sse">upload_received</span>
+        </div>
+      </div>
+      <div class="mm-arrow">→</div>
+
+      <!-- Step 3: MediaPipe -->
+      <div class="mm-col">
+        <div class="mm-node mm-be mm-proc">
+          <div class="mm-stepnum">Step 3</div>
+          <div class="mm-icon">🦴</div>
+          <div class="mm-title">MediaPipe</div>
+          <div class="mm-owner">S2 · Backend</div>
+        </div>
+        <div class="mm-sse-col">
+          <span class="mm-sse">mediapipe_started</span>
+          <span class="mm-sse">mediapipe_complete</span>
+        </div>
+      </div>
+      <div class="mm-arrow">→</div>
+
+      <!-- Step 4: Biomechanics -->
+      <div class="mm-col">
+        <div class="mm-node mm-be mm-proc">
+          <div class="mm-stepnum">Step 4</div>
+          <div class="mm-icon">🐍</div>
+          <div class="mm-title">Biomechanics Script</div>
+          <div class="mm-owner">S2 · Backend</div>
+        </div>
+        <div class="mm-sse-col">
+          <span class="mm-sse">biomechanics_complete</span>
+          <span class="mm-no-sse">% only · no message</span>
+        </div>
+      </div>
+      <div class="mm-arrow">→</div>
+
+      <!-- Step 5: Nemotron -->
+      <div class="mm-col">
+        <div class="mm-node mm-be mm-ai">
+          <div class="mm-stepnum">Step 5</div>
+          <div class="mm-icon">🤖</div>
+          <div class="mm-title">Nemotron</div>
+          <div class="mm-owner">S2 · Backend · NVIDIA API</div>
+        </div>
+        <div class="mm-sse-col">
+          <span class="mm-sse">nemotron_started</span>
+          <span class="mm-sse">nemotron_complete</span>
+        </div>
+      </div>
+      <div class="mm-arrow">→</div>
+
+      <!-- Step 5b: OpenCV -->
+      <div class="mm-col">
+        <div class="mm-node mm-be mm-proc">
+          <div class="mm-stepnum">Step 5b</div>
+          <div class="mm-icon">🎞️</div>
+          <div class="mm-title">OpenCV Frame Extraction</div>
+          <div class="mm-owner">S2 · Backend</div>
+        </div>
+        <div class="mm-sse-col">
+          <span class="mm-sse">frames_extracting</span>
+          <span class="mm-sse">frames_ready</span>
+        </div>
+      </div>
+      <div class="mm-arrow">→</div>
+
+      <!-- Step 7: Claude (RAG feeds in — shown in branch row) -->
+      <div class="mm-col">
+        <div class="mm-node mm-be mm-ai">
+          <div class="mm-stepnum">Step 7</div>
+          <div class="mm-icon">💡</div>
+          <div class="mm-title">Claude Sonnet 4.6</div>
+          <div class="mm-owner">S2 · Backend · Anthropic API</div>
+        </div>
+        <div class="mm-sse-col">
+          <span class="mm-sse">claude_started</span>
+          <span class="mm-sse">claude_complete</span>
+        </div>
+      </div>
+      <div class="mm-arrow">→</div>
+
+      <!-- Step 8: Results -->
+      <div class="mm-col">
+        <div class="mm-node mm-fe mm-out">
+          <div class="mm-stepnum">Step 8</div>
+          <div class="mm-icon">📊</div>
+          <div class="mm-title">Coaching Output</div>
+          <div class="mm-owner">S1 · Frontend</div>
+        </div>
+        <div class="mm-sse-col">
+          <span class="mm-sse">analysis_complete</span>
+        </div>
+      </div>
+
+    </div><!-- end mm-main-row -->
+
+    <!-- ── Branch row: Save Record + RAG + error ── -->
+    <div style="display:flex; align-items:flex-start; gap:0; margin-top:4px; padding-left:0;">
+
+      <!-- spacers to align under correct steps -->
+      <!-- Steps 1–4 spacer (4 nodes + 4 arrows) -->
+      <div class="mm-spacer" style="width:calc(4*90px + 4*26px);"></div>
+
+      <!-- Branch off Step 5 / 5b: Save Record -->
+      <div style="display:flex; flex-direction:column; align-items:center; gap:3px; min-width:90px; max-width:96px;">
+        <div style="font-size:10px; color:#334155;">↓ writes after 5b</div>
+        <div class="mm-node mm-be mm-db" style="min-width:82px; max-width:96px;">
+          <div class="mm-stepnum">Step 6</div>
+          <div class="mm-icon">💾</div>
+          <div class="mm-title">Save Record</div>
+          <div class="mm-owner">S2 · Backend · DB</div>
+        </div>
+        <div class="mm-sse-col"><span class="mm-no-sse">no SSE</span></div>
+      </div>
+
+      <!-- spacer between Step 5b and Step 7 -->
+      <div class="mm-spacer" style="width:26px;"></div>
+
+      <!-- Branch into Step 7: RAG -->
+      <div style="display:flex; flex-direction:column; align-items:center; gap:3px; min-width:90px; max-width:96px;">
+        <div style="font-size:10px; color:#334155;">↑ feeds into Step 7</div>
+        <div class="mm-node mm-s3" style="min-width:82px; max-width:96px;">
+          <div class="mm-stepnum">RAG</div>
+          <div class="mm-icon">🗄️</div>
+          <div class="mm-title">Vector DB Retrieval</div>
+          <div class="mm-owner">S3 · Data</div>
+        </div>
+        <div class="mm-sse-col">
+          <span class="mm-sse">rag_started</span>
+          <span class="mm-sse">rag_complete</span>
+        </div>
+      </div>
+
+      <!-- spacer then error node (any step) -->
+      <div class="mm-spacer" style="width:40px; display:flex; align-items:center; justify-content:center; padding-top:20px; color:#334155; font-size:11px;"></div>
+      <div style="display:flex; flex-direction:column; align-items:center; gap:3px; min-width:90px; max-width:96px; margin-left:16px;">
+        <div style="font-size:10px; color:#7f1d1d;">⚡ any step</div>
+        <div style="background:#1a0500; border:1.5px solid #7f1d1d; border-radius:8px; padding:7px 9px; min-width:82px; max-width:96px; text-align:center;">
+          <div class="mm-stepnum" style="color:#f87171; opacity:1;">error</div>
+          <div class="mm-icon">🚨</div>
+          <div class="mm-title" style="color:#f87171;">Pipeline Error</div>
+          <div class="mm-owner" style="color:#7f1d1d; opacity:1;">any stage</div>
+        </div>
+        <div class="mm-sse-col">
+          <span class="mm-sse mm-sse-error">error</span>
+        </div>
+      </div>
+
+    </div><!-- end branch row -->
+
+  </div><!-- end mm-flow -->
+
+  <!-- legend note -->
+  <div style="margin-top:14px; padding-top:10px; border-top:1px solid #1e2433; display:flex; gap:20px; flex-wrap:wrap;">
+    <div style="font-size:8.5px; color:#475569;"><span style="color:#c4b5fd; font-family:monospace; font-size:8px;">SSE event</span> — fired from Cloud Run → Load Balancer → Browser (not via API Gateway)</div>
+    <div style="font-size:8.5px; color:#475569;"><span style="color:#334155;">internal</span> — pipeline step, no user-facing event fired</div>
+    <div style="font-size:8.5px; color:#475569;"><span style="color:#f87171;">error</span> — carries <code style="font-size:8px; background:#0d1117; padding:0 3px; border-radius:3px;">error_code</code> · <code style="font-size:8px; background:#0d1117; padding:0 3px; border-radius:3px;">error_stage</code> · <code style="font-size:8px; background:#0d1117; padding:0 3px; border-radius:3px;">retryable</code> — see Error Taxonomy below</div>
+    <div style="font-size:8.5px; color:#475569;">Toggle <strong style="color:#93c5fd;">Option A / B</strong> above to switch between squad ownership and pipeline layer colour schemes</div>
+  </div>
+
+</div><!-- end minimap-panel -->
+
+<div class="pipeline">
+
+  <!-- ═══ STEP 1: USER UPLOAD ═══ -->
+  <div class="step frontend">
+    <div class="step-header">
+      <div class="step-num">1</div>
+      <div class="step-icon">📱</div>
+      <div><div class="step-title">User Uploads Video</div><div class="step-squad" id="sq-1">Squad 1 — Frontend</div></div>
+    </div>
+    <div class="step-body">
+      <div class="sub-section">
+        <div class="sub-label">User Inputs</div>
+        <div class="io-row">
+          <span class="io-pill io-in">Video file (.mp4 / .mov)</span>
+          <span class="io-pill io-in">Exercise name (e.g. goblet_squat)</span>
+          <span class="io-pill io-in">Weight used (value + unit: kg or lb)</span>
+        </div>
+      </div>
+      <div class="sub-section">
+        <div class="sub-label">SSE Events Fired</div>
+        <div class="sse-row">
+          <span class="sse-pill">upload_received → { analysis_id, session_id, user_id, filename, size_mb, created_at }</span>
+        </div>
+      </div>
+      <div class="sub-section">
+        <div class="sub-label">POST Body Sent to Backend — multipart/form-data</div>
+        <div class="json-block">
+<span class="jp">{</span><br>
+  <span class="jk">"video"</span><span class="jp">:</span>        <span class="js">File</span>  <span class="jc">// the video file — multipart/form-data</span><br>
+  <span class="jk">"exercise_id"</span><span class="jp">:</span> <span class="js">"ex_gob_squat_001"</span>  <span class="jc">// UUID from exercises reference table</span><br>
+  <span class="jk">"weight_value"</span><span class="jp">:</span> <span class="jn">12.0</span><span class="jp">,</span><br>
+  <span class="jk">"weight_unit"</span><span class="jp">:</span>  <span class="js">"kg"</span>  <span class="jc">// "kg" | "lb"</span><br>
+  <span class="jc">// user_id is NOT sent in the body — extracted from the JWT auth token by the backend</span><br>
+  <span class="jc">// analysis_id and session_id are NOT sent — both generated by the backend</span><br>
+<span class="jp">}</span></div>
+      </div>
+
+      <div class="sub-section">
+        <div class="sub-label">What the Frontend POSTs — and Where Each Field Goes</div>
+        <table class="db-table">
+          <tr><th>Field</th><th>Sent by frontend?</th><th>Goes to GCS?</th><th>Goes to DB (form_analyses)?</th><th style="color:#64748b;font-size:10px;">Notes</th></tr>
+          <tr>
+            <td>video (file)</td>
+            <td style="color:#86efac;font-size:10px;">Yes</td>
+            <td style="color:#86efac;font-size:10px;">Yes — the file itself</td>
+            <td style="color:#f87171;font-size:10px;">No</td>
+            <td style="font-size:10px;color:#64748b;">Only the constructed GCS URI is saved to DB, not the file</td>
+          </tr>
+          <tr>
+            <td>exercise_id</td>
+            <td style="color:#86efac;font-size:10px;">Yes</td>
+            <td style="color:#f87171;font-size:10px;">No</td>
+            <td style="color:#86efac;font-size:10px;">Yes</td>
+            <td style="font-size:10px;color:#64748b;">FK → exercises reference table</td>
+          </tr>
+          <tr>
+            <td>weight_value</td>
+            <td style="color:#86efac;font-size:10px;">Yes</td>
+            <td style="color:#f87171;font-size:10px;">No</td>
+            <td style="color:#86efac;font-size:10px;">Yes</td>
+            <td style="font-size:10px;color:#64748b;">Stored as-is in user's unit</td>
+          </tr>
+          <tr>
+            <td>weight_unit</td>
+            <td style="color:#86efac;font-size:10px;">Yes</td>
+            <td style="color:#f87171;font-size:10px;">No</td>
+            <td style="color:#86efac;font-size:10px;">Yes</td>
+            <td style="font-size:10px;color:#64748b;">"kg" or "lb"</td>
+          </tr>
+          <tr>
+            <td>user_id</td>
+            <td style="color:#fbbf24;font-size:10px;">From JWT — not body</td>
+            <td style="color:#f87171;font-size:10px;">No</td>
+            <td style="color:#86efac;font-size:10px;">Yes</td>
+            <td style="font-size:10px;color:#64748b;">Backend extracts from auth token — never trust client-sent user_id</td>
+          </tr>
+          <tr>
+            <td>session_id</td>
+            <td style="color:#fbbf24;font-size:10px;">From JWT — not body</td>
+            <td style="color:#f87171;font-size:10px;">No</td>
+            <td style="color:#86efac;font-size:10px;">Yes</td>
+            <td style="font-size:10px;color:#64748b;">Supabase auth session — extracted from JWT, stored for analytics grouping</td>
+          </tr>
+          <tr>
+            <td>analysis_id</td>
+            <td style="color:#f87171;font-size:10px;">No — backend generates</td>
+            <td style="color:#f87171;font-size:10px;">No</td>
+            <td style="color:#86efac;font-size:10px;">Yes — PK</td>
+            <td style="font-size:10px;color:#64748b;">uuid4() generated at request time — carried in every SSE event</td>
+          </tr>
+          <tr>
+            <td>weight_kg_normalised</td>
+            <td style="color:#f87171;font-size:10px;">No — backend computes</td>
+            <td style="color:#f87171;font-size:10px;">No</td>
+            <td style="color:#86efac;font-size:10px;">Yes</td>
+            <td style="font-size:10px;color:#64748b;">If lb: value × 0.453592, else value as-is. Always in kg for progression logic</td>
+          </tr>
+          <tr>
+            <td>video_url</td>
+            <td style="color:#f87171;font-size:10px;">No — backend constructs</td>
+            <td style="color:#f87171;font-size:10px;">No</td>
+            <td style="color:#86efac;font-size:10px;">Yes</td>
+            <td style="font-size:10px;color:#64748b;">Backend constructs GCS URI after upload: gs://kinetic-videos/videos/{user_id}/{analysis_id}/original.mp4</td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="sub-section">
+        <div class="sub-label">Roadmap Task IDs</div>
+        <div class="task-map">
+          <div class="task-map-row"><span class="task-map-role role-defines">Defines</span><span class="tid tid-s1">S1-W5-03</span><span style="font-size:10px;color:#475569;">FE JSON schema — upload POST body structure + SSE event shapes</span></div>
+          <div class="task-map-row"><span class="task-map-role role-defines">Defines</span><span class="tid tid-s2">S2-W5-07</span><span style="font-size:10px;color:#475569;">Stub /upload endpoint — agrees expected POST format with Squad 1</span></div>
+          <div class="task-map-row"><span class="task-map-role role-implements">Implements</span><span class="tid tid-s1">S1-W6-02</span><span style="font-size:10px;color:#475569;">Build Upload screen — sends this POST body to backend</span></div>
+          <div class="task-map-row"><span class="task-map-role role-defines">SSE contract</span><span class="tid tid-s1">S1-W5-06</span><span style="font-size:10px;color:#475569;">SSE skeleton — defines upload_received event shape delivered to Squad 2</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="connector"><span>↓</span></div>
+
+  <!-- ═══ STEP 2: GCS STORAGE ═══ -->
+  <div class="step backend storage">
+    <div class="step-header">
+      <div class="step-num">2</div>
+      <div class="step-icon">🪣</div>
+      <div><div class="step-title">GCS Storage + DB Write</div><div class="step-squad" id="sq-2">Squad 2 — Backend</div></div>
+    </div>
+    <div class="step-body">
+
+      <div class="sub-section">
+        <div class="sub-label">Where Each ID Comes From</div>
+        <table class="db-table">
+          <tr><th>ID</th><th>Generated by</th><th>When</th><th style="color:#64748b;font-size:10px;">Notes</th></tr>
+          <tr>
+            <td>user_id</td>
+            <td style="font-size:10px;color:#cbd5e1;">Supabase Auth</td>
+            <td style="font-size:10px;color:#94a3b8;">At account creation — permanent</td>
+            <td style="font-size:10px;color:#64748b;">Extracted from JWT on every request. Never sent in the POST body.</td>
+          </tr>
+          <tr>
+            <td>session_id</td>
+            <td style="font-size:10px;color:#cbd5e1;">Supabase Auth</td>
+            <td style="font-size:10px;color:#94a3b8;">When user opens the app — one per sitting</td>
+            <td style="font-size:10px;color:#64748b;">Extracted from JWT. Stable across multiple uploads in one session. Stored on form_analyses for analytics grouping. No separate sessions table for MVP.</td>
+          </tr>
+          <tr>
+            <td>analysis_id</td>
+            <td style="font-size:10px;color:#cbd5e1;">Backend (Python)</td>
+            <td style="font-size:10px;color:#94a3b8;">At upload request time — one per video upload</td>
+            <td style="font-size:10px;color:#64748b;"><code style="color:#c4b5fd;background:#150d24;padding:1px 4px;border-radius:3px;">uuid4()</code> generated as the first line of the upload handler, before GCS or DB. Carried in every SSE event. PK of form_analyses.</td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="sub-section">
+        <div class="sub-label">What Happens — Backend Sequence</div>
+        <div style="font-size:11px;color:#94a3b8;line-height:1.9;">
+          1. Extract <code style="color:#c4b5fd;background:#150d24;padding:1px 4px;border-radius:3px;">user_id</code> and <code style="color:#c4b5fd;background:#150d24;padding:1px 4px;border-radius:3px;">session_id</code> from JWT &nbsp;→&nbsp;
+          2. Generate <code style="color:#c4b5fd;background:#150d24;padding:1px 4px;border-radius:3px;">analysis_id = uuid4()</code> &nbsp;→&nbsp;
+          3. Compute <code style="color:#c4b5fd;background:#150d24;padding:1px 4px;border-radius:3px;">weight_kg_normalised</code> &nbsp;→&nbsp;
+          4. Upload video to GCS at <code style="color:#c4b5fd;background:#150d24;padding:1px 4px;border-radius:3px;">videos/{user_id}/{analysis_id}/original.mp4</code> &nbsp;→&nbsp;
+          5. Construct <code style="color:#c4b5fd;background:#150d24;padding:1px 4px;border-radius:3px;">video_url = gs://kinetic-videos/videos/{user_id}/{analysis_id}/original.mp4</code> &nbsp;→&nbsp;
+          6. INSERT into <code style="color:#c4b5fd;background:#150d24;padding:1px 4px;border-radius:3px;">form_analyses</code> &nbsp;→&nbsp;
+          7. Fire SSE event <code style="color:#c4b5fd;background:#150d24;padding:1px 4px;border-radius:3px;">upload_received</code> &nbsp;→&nbsp;
+          8. Begin pipeline
+        </div>
+      </div>
+
+      <div class="sub-section">
+        <div class="sub-label">DB Write — form_analyses</div>
+        <table class="db-table">
+          <tr><th>Field</th><th>Type</th><th>Example</th><th style="color:#64748b;font-size:10px;">Source</th><th style="color:#64748b;font-size:10px;">Notes</th></tr>
+          <tr><td>analysis_id</td><td><span class="type">uuid (PK)</span></td><td><span class="example">550e8400-e29b-41d4...</span></td><td style="font-size:10px;color:#fbbf24;">Backend — uuid4()</td><td style="font-size:10px;color:#64748b;">Generated at request time. Carried in every SSE event and all downstream pipeline stages.</td></tr>
+          <tr><td>session_id</td><td><span class="type">uuid</span></td><td><span class="example">a1b2-c3d4-...</span></td><td style="font-size:10px;color:#fbbf24;">JWT — Supabase Auth</td><td style="font-size:10px;color:#64748b;">One session can have multiple analyses. Stored for analytics — no separate sessions table.</td></tr>
+          <tr><td>user_id</td><td><span class="type">uuid</span></td><td><span class="example">u9x8-y7z6-...</span></td><td style="font-size:10px;color:#fbbf24;">JWT — Supabase Auth</td><td style="font-size:10px;color:#64748b;">Permanent account ID. Never sent by frontend in POST body.</td></tr>
+          <tr><td>exercise_id</td><td><span class="type">uuid (FK → exercises)</span></td><td><span class="example">ex_gob_squat_001</span></td><td style="font-size:10px;color:#86efac;">Frontend POST</td><td style="font-size:10px;color:#64748b;">References exercises reference table. Exercise name derived from this FK — not stored separately.</td></tr>
+          <tr><td>weight_value</td><td><span class="type">float</span></td><td><span class="example">12.0</span></td><td style="font-size:10px;color:#86efac;">Frontend POST</td><td style="font-size:10px;color:#64748b;">Stored in the unit the user selected</td></tr>
+          <tr><td>weight_unit</td><td><span class="type">enum (kg / lb)</span></td><td><span class="example">kg</span></td><td style="font-size:10px;color:#86efac;">Frontend POST</td><td style="font-size:10px;color:#64748b;">Frontend displays in this unit throughout session history</td></tr>
+          <tr><td>weight_kg_normalised</td><td><span class="type">float</span></td><td><span class="example">12.0</span></td><td style="font-size:10px;color:#fbbf24;">Backend — computed</td><td style="font-size:10px;color:#64748b;">Always in kg. If lb: value × 0.453592. Used for cross-session progression comparisons.</td></tr>
+          <tr><td>video_url</td><td><span class="type">string (GCS URI)</span></td><td><span class="example">gs://kinetic-videos/videos/{user_id}/{analysis_id}/original.mp4</span></td><td style="font-size:10px;color:#fbbf24;">Backend — constructed</td><td style="font-size:10px;color:#64748b;">GCS does not return a URL — backend constructs it from bucket name + object path after upload.</td></tr>
+          <tr><td>created_at</td><td><span class="type">timestamp</span></td><td><span class="example">2026-05-04T10:32:00Z</span></td><td style="font-size:10px;color:#fbbf24;">Backend</td><td style="font-size:10px;color:#64748b;"></td></tr>
+          <tr><td>status</td><td><span class="type">enum</span></td><td><span class="example">uploaded</span></td><td style="font-size:10px;color:#fbbf24;">Backend</td><td style="font-size:10px;color:#64748b;">uploaded → processing → complete → failed</td></tr>
+        </table>
+      </div>
+
+      <div class="sub-section">
+        <div class="sub-label">Reference Table — exercises</div>
+        <div style="font-size:11px;color:#94a3b8;margin-bottom:6px;">Seed table — static list of exercises the app supports. exercise_id is the FK used in form_analyses and form_analysis_results. Frontend uses exercise_slug for routing and display_name for rendering.</div>
+        <table class="db-table">
+          <tr><th>Field</th><th>Type</th><th>Example</th><th style="color:#64748b;font-size:10px;">Notes</th></tr>
+          <tr><td>exercise_id</td><td><span class="type">uuid (PK)</span></td><td><span class="example">ex_gob_squat_001</span></td><td style="font-size:10px;color:#64748b;">Stable ID referenced by form_analyses + form_analysis_results</td></tr>
+          <tr><td>exercise_slug</td><td><span class="type">string (unique)</span></td><td><span class="example">goblet_squat</span></td><td style="font-size:10px;color:#64748b;">Used by backend + ML pipeline — never changes once set</td></tr>
+          <tr><td>display_name</td><td><span class="type">string</span></td><td><span class="example">Goblet Squat</span></td><td style="font-size:10px;color:#64748b;">Rendered on frontend — exercise picker, results screen, history</td></tr>
+          <tr><td>category</td><td><span class="type">string</span></td><td><span class="example">strength</span></td><td style="font-size:10px;color:#64748b;">e.g. strength / mobility / cardio — used for filtering in exercise picker</td></tr>
+          <tr><td>muscle_groups</td><td><span class="type">jsonb array</span></td><td><span class="example">["quads", "glutes", "core"]</span></td><td style="font-size:10px;color:#64748b;">Primary muscles targeted — shown on exercise detail screen</td></tr>
+          <tr><td colspan="4" style="background:#0a0f1a;color:#475569;font-size:10px;padding:4px 10px;font-style:italic;">── Reference media + guidance (stored in GCS) ──</td></tr>
+          <tr><td>form_image_url</td><td><span class="type">string (GCS URI)</span></td><td><span class="example">gs://kinetic-assets/exercises/goblet_squat/form_reference.jpg</span></td><td style="font-size:10px;color:#64748b;">Static reference image of correct form — shown on exercise detail + upload screen before filming</td></tr>
+          <tr><td>form_video_url</td><td><span class="type">string (GCS URI)</span></td><td><span class="example">gs://kinetic-assets/exercises/goblet_squat/form_reference.mp4</span></td><td style="font-size:10px;color:#64748b;">Short demo video of correct form — optional, shown alongside form_image_url if available</td></tr>
+          <tr><td>form_tips</td><td><span class="type">jsonb array</span></td><td><span class="example">["Keep chest tall throughout the movement", "Drive knees out over toes on descent", "Reach full depth — hip crease below knee"]</span></td><td style="font-size:10px;color:#64748b;">Ordered list of key form cues — rendered as a checklist on exercise detail screen before upload</td></tr>
+          <tr><td>camera_angle_tips</td><td><span class="type">jsonb array</span></td><td><span class="example">["Film from the side (sagittal view) — camera at hip height", "Ensure full body is in frame from head to feet", "Avoid front-on or diagonal angles — knee tracking will be inaccurate"]</span></td><td style="font-size:10px;color:#64748b;">Shown on upload screen before filming starts — drives video quality and ML accuracy</td></tr>
+          <tr><td>is_active</td><td><span class="type">bool</span></td><td><span class="example">true</span></td><td style="font-size:10px;color:#64748b;">false = not yet live in app — controls frontend exercise picker visibility</td></tr>
+        </table>
+        <div style="margin-top:8px;font-size:10px;color:#475569;background:#070a0f;border:1px solid #1e2433;border-radius:6px;padding:8px 12px;">
+          <strong style="color:#cbd5e1;">MVP seed data (Week 5):</strong><br>
+          <code style="color:#fb923c;">ex_gob_squat_001</code> · goblet_squat · "Goblet Squat" · strength · is_active: true<br>
+          form_image_url + camera_angle_tips must be populated before S1-W6-02 (Upload screen build) — frontend renders both on the pre-upload guidance screen.<br>
+          All future exercises added here before any backend or frontend work begins — exercise_id is agreed cross-squad before task assignment.
+        </div>
+      </div>
+      <div class="sub-section">
+        <div class="sub-label">SSE Events Fired</div>
+        <div class="sse-row">
+          <span class="sse-pill">upload_received → { analysis_id, session_id, user_id, video_url, created_at }</span>
+        </div>
+      </div>
+      <div class="sub-section">
+        <div class="sub-label">Roadmap Task IDs</div>
+        <div class="task-map">
+          <div class="task-map-row"><span class="task-map-role role-defines">Defines</span><span class="tid tid-s2">S2-W5-06</span><span style="font-size:10px;color:#475569;">Defines form_analyses DB schema — all fields in this write</span></div>
+          <div class="task-map-row"><span class="task-map-role role-implements">Implements</span><span class="tid tid-s2">S2-W6-01</span><span style="font-size:10px;color:#475569;">Video upload endpoint — receives POST, generates analysis_id, stores to GCS, writes form_analyses record, opens SSE stream</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="connector"><span>↓</span></div>
+
+  <!-- ═══ STEP 3: MEDIAPIPE ═══ -->
+  <div class="step backend process">
+    <div class="step-header">
+      <div class="step-num">3</div>
+      <div class="step-icon">🦴</div>
+      <div><div class="step-title">MediaPipe — Joint Keypoint Extraction</div><div class="step-squad">Squad 2 — Backend</div></div>
+    </div>
+    <div class="step-body">
+      <div class="sub-section">
+        <div class="sub-label">Input</div>
+        <div class="io-row"><span class="io-pill io-in">Video file from S3</span></div>
+      </div>
+      <div class="sub-section">
+        <div class="sub-label">MediaPipe Raw Output (per frame)</div>
+        <div class="json-block">
+<span class="jp">{</span>
+  <span class="jk">"frame_index"</span><span class="jp">:</span> <span class="jn">42</span><span class="jp">,</span>
+  <span class="jk">"timestamp_ms"</span><span class="jp">:</span> <span class="jn">1400</span><span class="jp">,</span>
+  <span class="jk">"keypoints"</span><span class="jp">:</span> <span class="jp">{</span>
+    <span class="jk">"left_knee"</span><span class="jp">:</span>  <span class="jp">{</span> <span class="jk">"x"</span><span class="jp">:</span> <span class="jn">0.42</span><span class="jp">,</span> <span class="jk">"y"</span><span class="jp">:</span> <span class="jn">0.71</span><span class="jp">,</span> <span class="jk">"z"</span><span class="jp">:</span> <span class="jn">-0.03</span><span class="jp">,</span> <span class="jk">"confidence"</span><span class="jp">:</span> <span class="jn">0.94</span> <span class="jp">},</span>
+    <span class="jk">"right_knee"</span><span class="jp">:</span> <span class="jp">{</span> <span class="jk">"x"</span><span class="jp">:</span> <span class="jn">0.58</span><span class="jp">,</span> <span class="jk">"y"</span><span class="jp">:</span> <span class="jn">0.72</span><span class="jp">,</span> <span class="jk">"z"</span><span class="jp">:</span> <span class="jn">0.01</span><span class="jp">,</span>  <span class="jk">"confidence"</span><span class="jp">:</span> <span class="jn">0.92</span> <span class="jp">},</span>
+    <span class="jk">"left_hip"</span><span class="jp">:</span>   <span class="jp">{</span> <span class="jk">"x"</span><span class="jp">:</span> <span class="jn">0.40</span><span class="jp">,</span> <span class="jk">"y"</span><span class="jp">:</span> <span class="jn">0.52</span><span class="jp">,</span> <span class="jk">"z"</span><span class="jp">:</span> <span class="jn">-0.01</span><span class="jp">,</span> <span class="jk">"confidence"</span><span class="jp">:</span> <span class="jn">0.96</span> <span class="jp">},</span>
+    <span class="jc">// ... 33 keypoints total</span>
+  <span class="jp">},</span>
+  <span class="jk">"pose_world_landmarks"</span><span class="jp">:</span> <span class="jp">[...]</span>
+<span class="jp">}</span></div>
+      </div>
+      <div class="sub-section">
+        <div class="sub-label">SSE Events Fired</div>
+        <div class="sse-row">
+          <span class="sse-pill">mediapipe_started → { session_id }</span>
+          <span class="sse-pill">mediapipe_complete → { session_id, rep_count, fps, keypoints_detected: 33, frames_processed: 1356 }</span>
+        </div>
+      </div>
+      <div class="sub-section">
+        <div class="sub-label">Roadmap Task IDs</div>
+        <div class="task-map">
+          <div class="task-map-row"><span class="task-map-role role-defines">Defines</span><span class="tid tid-s3">S3-W5-06</span><span style="font-size:10px;color:#475569;">Scope MediaPipe for Goblet Squat — defines keypoints, angle computations, rep segmentation</span></div>
+          <div class="task-map-row"><span class="task-map-role role-implements">Implements</span><span class="tid tid-s2">S2-W6-03</span><span style="font-size:10px;color:#475569;">Integrate MediaPipe — extracts keypoints, computes angles, segments reps</span></div>
+          <div class="task-map-row"><span class="task-map-role role-defines">SSE contract</span><span class="tid tid-s1">S1-W5-06</span><span style="font-size:10px;color:#475569;">mediapipe_started / mediapipe_complete event shapes agreed in SSE skeleton</span></div>
+          <div class="task-map-row"><span class="task-map-role role-implements">Emits SSE</span><span class="tid tid-s2">S2-W6-06</span><span style="font-size:10px;color:#475569;">Emits mediapipe_started and mediapipe_complete SSE events</span></div>
+          <div class="task-map-row"><span class="task-map-role role-tests">Tests</span><span class="tid tid-tst">TST-W5-01</span><span style="font-size:10px;color:#475569;">MediaPipe T1 — runs squat videos through pipeline, logs keypoint accuracy</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="connector"><span>↓</span></div>
+
+  <!-- ═══ STEP 4: BIOMECHANICS SCRIPT ═══ -->
+  <div class="step backend process">
+    <div class="step-header">
+      <div class="step-num">4</div>
+      <div class="step-icon">🐍</div>
+      <div><div class="step-title">Python Biomechanics Script</div><div class="step-squad">Squad 2 — Backend</div></div>
+    </div>
+    <div class="step-body">
+      <div class="sub-section">
+        <div class="sub-label">About this script</div>
+        <div style="background:#070a0f; border:1px solid #1e2433; border-radius:8px; padding:12px 14px; font-size:11px; color:#94a3b8; line-height:1.7;">
+          <strong style="color:#f1f5f9;">There is no plug-in library for this.</strong> This is custom Python code Squad 3 writes in <span style="color:#4ade80;">S3-W5-06</span> (scope) and <span style="color:#4ade80;">S2-W6-03</span> (implement). MediaPipe gives you raw pose landmarks — normalised x/y/z coordinates for 33 body keypoints per frame. This script consumes every frame's keypoints and computes meaningful biomechanics metrics from them.<br><br>
+          <strong style="color:#cbd5e1;">Core calculation — joint angle:</strong><br>
+          Given three keypoints A (proximal), B (joint), C (distal), the joint angle at B is:<br>
+          <code style="background:#0d1117; padding:2px 6px; border-radius:4px; color:#86efac; font-size:10.5px;">θ = arccos( dot(BA, BC) / (|BA| × |BC|) )</code><br>
+          e.g. knee angle uses hip → knee → ankle keypoints. Hip angle uses shoulder → hip → knee.<br><br>
+          <strong style="color:#cbd5e1;">What the script produces per rep:</strong>
+          <ul style="margin:6px 0 0 16px; display:flex; flex-direction:column; gap:3px;">
+            <li>Min/max joint angles per joint per rep (from all frames in that rep's time window)</li>
+            <li>Rep segmentation — detects rep boundaries from vertical velocity of hip keypoint</li>
+            <li>Descent / ascent timing in milliseconds</li>
+            <li>Ankle dorsiflexion angle — distance between ankle and toe keypoints projected onto vertical axis</li>
+            <li>Torso lean — angle of shoulder-to-hip vector relative to vertical</li>
+            <li>Tracking confidence — average across all 33 keypoints, count of low-confidence frames</li>
+          </ul><br>
+          <strong style="color:#f59e0b;">Note:</strong> There are community scripts (e.g. on GitHub under <code style="background:#0d1117;padding:1px 4px;border-radius:3px;color:#fde68a;font-size:10px;">mediapipe-pose-angles</code>) that show angle calculation patterns, but they are not exercise-specific. Squad 3 must adapt them for the Goblet Squat joint set, rep segmentation logic, and the specific output JSON schema defined in <span style="color:#fb923c;">S3-W5-07</span>.
+        </div>
+      </div>
+      <div class="sub-section">
+        <div class="sub-label">Input</div>
+        <div class="io-row"><span class="io-pill io-in">MediaPipe keypoints (all frames)</span></div>
+      </div>
+      <div class="sub-section">
+        <div class="sub-label">Biomechanics Output JSON — passed to Nemotron</div>
+        <div class="json-block">
+<span class="jp">{</span>
+  <span class="jk">"session_id"</span><span class="jp">:</span> <span class="js">"uuid"</span><span class="jp">,</span>
+  <span class="jk">"exercise"</span><span class="jp">:</span> <span class="js">"goblet_squat"</span><span class="jp">,</span>
+  <span class="jk">"rep_count"</span><span class="jp">:</span> <span class="jn">8</span><span class="jp">,</span>
+  <span class="jk">"avg_rep_duration_s"</span><span class="jp">:</span> <span class="jn">2.8</span><span class="jp">,</span>
+  <span class="jk">"reps"</span><span class="jp">:</span> <span class="jp">[</span>
+    <span class="jp">{</span>
+      <span class="jk">"rep_number"</span><span class="jp">:</span> <span class="jn">1</span><span class="jp">,</span>
+      <span class="jk">"start_ms"</span><span class="jp">:</span> <span class="jn">1200</span><span class="jp">,</span> <span class="jk">"end_ms"</span><span class="jp">:</span> <span class="jn">4000</span><span class="jp">,</span>
+      <span class="jk">"descent_s"</span><span class="jp">:</span> <span class="jn">1.4</span><span class="jp">,</span> <span class="jk">"ascent_s"</span><span class="jp">:</span> <span class="jn">1.2</span><span class="jp">,</span>
+      <span class="jk">"joint_angles"</span><span class="jp">:</span> <span class="jp">{</span>
+        <span class="jk">"knee_left_min"</span><span class="jp">:</span> <span class="jn">88</span><span class="jp">,</span>  <span class="jk">"knee_left_max"</span><span class="jp">:</span> <span class="jn">165</span><span class="jp">,</span>
+        <span class="jk">"knee_right_min"</span><span class="jp">:</span> <span class="jn">92</span><span class="jp">,</span> <span class="jk">"knee_right_max"</span><span class="jp">:</span> <span class="jn">168</span><span class="jp">,</span>
+        <span class="jk">"hip_min"</span><span class="jp">:</span> <span class="jn">45</span><span class="jp">,</span>          <span class="jk">"hip_max"</span><span class="jp">:</span> <span class="jn">160</span><span class="jp">,</span>
+        <span class="jk">"torso_lean_max"</span><span class="jp">:</span> <span class="jn">38</span><span class="jp">,</span>
+        <span class="jk">"ankle_dorsiflexion"</span><span class="jp">:</span> <span class="jn">18</span>
+      <span class="jp">}</span>
+    <span class="jp">},</span>
+    <span class="jc">// ... reps 2–8</span>
+  <span class="jp">],</span>
+  <span class="jk">"tracking_confidence_avg"</span><span class="jp">:</span> <span class="jn">0.87</span><span class="jp">,</span>
+  <span class="jk">"low_confidence_frames"</span><span class="jp">:</span> <span class="jn">14</span>
+<span class="jp">}</span></div>
+      </div>
+      <div class="sub-section">
+        <div class="sub-label">SSE Events Fired</div>
+        <div class="sse-row">
+          <span class="sse-pill">biomechanics_complete → { analysis_id, rep_count, joints_computed, avg_confidence }</span>
+        </div>
+        <div style="font-size:10px;color:#475569;margin-top:4px;">Silent event — no user-facing message change. % bar advances from 30% → 33%. Used by developers to confirm the script ran without errors before Nemotron starts.</div>
+      </div>
+      <div class="sub-section">
+        <div class="sub-label">Roadmap Task IDs</div>
+        <div class="task-map">
+          <div class="task-map-row"><span class="task-map-role role-defines">Defines</span><span class="tid tid-s3">S3-W5-07</span><span style="font-size:10px;color:#475569;">Defines biomechanics output JSON format — joint angles, rep count, stability, posture fields</span></div>
+          <div class="task-map-row"><span class="task-map-role role-implements">Implements</span><span class="tid tid-s2">S2-W6-03</span><span style="font-size:10px;color:#475569;">Integrates MediaPipe — computes angles and segments reps from keypoints</span></div>
+          <div class="task-map-row"><span class="task-map-role role-implements">Implements</span><span class="tid tid-s2">S2-W6-04</span><span style="font-size:10px;color:#475569;">Returns real biomechanics JSON from /analyze (replaces stub)</span></div>
+          <div class="task-map-row"><span class="task-map-role role-consumes">Consumes</span><span class="tid tid-s2">S2-W6-05</span><span style="font-size:10px;color:#475569;">Begin Nemotron integration — biomechanics JSON is first input to Nemotron</span></div>
+          <div class="task-map-row"><span class="task-map-role role-tests">Tests</span><span class="tid tid-tst">TST-W6-01</span><span style="font-size:10px;color:#475569;">Nemotron T1 — sends biomechanics JSON only into Nemotron, logs what model understands</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="connector"><span>↓</span></div>
+
+  <!-- ═══ STEP 5: NEMOTRON ═══ -->
+  <div class="step backend ai">
+    <div class="step-header">
+      <div class="step-num">5</div>
+      <div class="step-icon">🤖</div>
+      <div><div class="step-title">Nemotron 3 Nano Omni — Video Analysis</div><div class="step-squad">Squad 2 — Backend</div></div>
+    </div>
+    <div class="step-body">
+      <div class="sub-section">
+        <div class="sub-label">Dual Inputs</div>
+        <div class="io-row">
+          <span class="io-pill io-in">Raw video (from S3)</span>
+          <span class="io-pill io-in">Biomechanics JSON (from Step 4)</span>
+        </div>
+      </div>
+      <div class="sub-section">
+        <div class="sub-label">Nemotron Output JSON</div>
+        <div class="json-block">
+<span class="jp">{</span>
+  <span class="jk">"session_id"</span><span class="jp">:</span> <span class="js">"uuid"</span><span class="jp">,</span>
+  <span class="jk">"exercise"</span><span class="jp">:</span> <span class="js">"goblet_squat"</span><span class="jp">,</span>
+  <span class="jk">"weight_kg"</span><span class="jp">:</span> <span class="jn">12</span><span class="jp">,</span>
+  <span class="jk">"processed_at"</span><span class="jp">:</span> <span class="js">"2026-05-04T10:32:00Z"</span><span class="jp">,</span>
+
+  <span class="jk">"summary"</span><span class="jp">:</span> <span class="jp">{</span>
+    <span class="jk">"overall_form_score"</span><span class="jp">:</span> <span class="jn">72</span><span class="jp">,</span>         <span class="jc">// 0–100</span>
+    <span class="jk">"movement_quality_score"</span><span class="jp">:</span> <span class="jn">68</span><span class="jp">,</span>
+    <span class="jk">"stability_score"</span><span class="jp">:</span> <span class="jn">75</span><span class="jp">,</span>
+    <span class="jk">"posture_score"</span><span class="jp">:</span> <span class="jn">73</span><span class="jp">,</span>
+    <span class="jk">"rep_count"</span><span class="jp">:</span> <span class="jn">8</span><span class="jp">,</span>
+    <span class="jk">"avg_rep_duration_s"</span><span class="jp">:</span> <span class="jn">2.8</span><span class="jp">,</span>
+    <span class="jk">"chain_of_thought"</span><span class="jp">:</span> <span class="js">"Athlete shows good depth but consistent knee valgus on ascent from rep 3..."</span>
+  <span class="jp">},</span>
+
+  <span class="jk">"reps"</span><span class="jp">:</span> <span class="jp">[{</span>
+    <span class="jk">"rep_number"</span><span class="jp">:</span> <span class="jn">1</span><span class="jp">,</span>
+    <span class="jk">"start_ms"</span><span class="jp">:</span> <span class="jn">1200</span><span class="jp">,</span> <span class="jk">"end_ms"</span><span class="jp">:</span> <span class="jn">4000</span><span class="jp">,</span>
+    <span class="jk">"form_score"</span><span class="jp">:</span> <span class="jn">85</span><span class="jp">,</span>
+    <span class="jk">"joint_angles"</span><span class="jp">:</span> <span class="jp">{</span>
+      <span class="jk">"knee_left"</span><span class="jp">:</span>  <span class="jp">{</span> <span class="jk">"value"</span><span class="jp">:</span> <span class="jn">88</span><span class="jp">,</span> <span class="jk">"ideal_min"</span><span class="jp">:</span> <span class="jn">85</span><span class="jp">,</span> <span class="jk">"ideal_max"</span><span class="jp">:</span> <span class="jn">170</span><span class="jp">,</span> <span class="jk">"status"</span><span class="jp">:</span> <span class="js">"good"</span> <span class="jp">},</span>
+      <span class="jk">"torso_lean"</span><span class="jp">:</span> <span class="jp">{</span> <span class="jk">"value"</span><span class="jp">:</span> <span class="jn">38</span><span class="jp">,</span> <span class="jk">"ideal_min"</span><span class="jp">:</span> <span class="jn">10</span><span class="jp">,</span> <span class="jk">"ideal_max"</span><span class="jp">:</span> <span class="jn">40</span><span class="jp">,</span>  <span class="jk">"status"</span><span class="jp">:</span> <span class="js">"good"</span> <span class="jp">},</span>
+      <span class="jk">"ankle_dorsiflexion"</span><span class="jp">:</span> <span class="jp">{</span> <span class="jk">"value"</span><span class="jp">:</span> <span class="jn">18</span><span class="jp">,</span> <span class="jk">"ideal_min"</span><span class="jp">:</span> <span class="jn">20</span><span class="jp">,</span> <span class="jk">"status"</span><span class="jp">:</span> <span class="js">"warning"</span> <span class="jp">}</span>
+    <span class="jp">},</span>
+    <span class="jk">"issues"</span><span class="jp">:</span> <span class="jp">[]</span>
+  <span class="jp">}],</span>
+
+  <span class="jk">"form_issues"</span><span class="jp">:</span> <span class="jp">[{</span>
+    <span class="jk">"issue_id"</span><span class="jp">:</span> <span class="js">"issue_001"</span><span class="jp">,</span>
+    <span class="jk">"type"</span><span class="jp">:</span> <span class="js">"knee_valgus"</span><span class="jp">,</span>
+    <span class="jk">"severity"</span><span class="jp">:</span> <span class="js">"moderate"</span><span class="jp">,</span>         <span class="jc">// low | moderate | high</span>
+    <span class="jk">"severity_score"</span><span class="jp">:</span> <span class="jn">58</span><span class="jp">,</span>             <span class="jc">// 0–100 for gradient styling</span>
+    <span class="jk">"joint"</span><span class="jp">:</span> <span class="js">"knee_left"</span><span class="jp">,</span>
+    <span class="jk">"description"</span><span class="jp">:</span> <span class="js">"Left knee collapses inward during ascent"</span><span class="jp">,</span>
+    <span class="jk">"affected_reps"</span><span class="jp">:</span> <span class="jp">[</span><span class="jn">3</span><span class="jp">,</span><span class="jn">4</span><span class="jp">,</span><span class="jn">5</span><span class="jp">,</span><span class="jn">6</span><span class="jp">,</span><span class="jn">7</span><span class="jp">,</span><span class="jn">8</span><span class="jp">],</span>
+    <span class="jk">"first_detected_ms"</span><span class="jp">:</span> <span class="jn">8400</span><span class="jp">,</span>
+    <span class="jk">"measured_angle"</span><span class="jp">:</span> <span class="jn">12</span><span class="jp">,</span>
+    <span class="jk">"ideal_angle"</span><span class="jp">:</span> <span class="jn">0</span><span class="jp">,</span>
+    <span class="jk">"key_frames"</span><span class="jp">:</span> <span class="jp">[{</span>
+      <span class="jk">"timestamp_ms"</span><span class="jp">:</span> <span class="jn">8400</span><span class="jp">,</span>
+      <span class="jk">"rep_number"</span><span class="jp">:</span> <span class="jn">3</span><span class="jp">,</span>
+      <span class="jk">"phase"</span><span class="jp">:</span> <span class="js">"ascent"</span><span class="jp">,</span>
+      <span class="jk">"frame_url"</span><span class="jp">:</span> <span class="js">"gs://kinetic-videos/videos/{user_id}/{analysis_id}/frames/issue_001_rep3.jpg"</span><span class="jp">,</span>
+      <span class="jk">"overlay_annotations"</span><span class="jp">:</span> <span class="jp">[</span>
+        <span class="jp">{</span> <span class="jk">"type"</span><span class="jp">:</span> <span class="js">"angle_arc"</span><span class="jp">,</span>       <span class="jk">"joint"</span><span class="jp">:</span> <span class="js">"knee_left"</span><span class="jp">,</span> <span class="jk">"measured"</span><span class="jp">:</span> <span class="jn">12</span><span class="jp">,</span> <span class="jk">"ideal"</span><span class="jp">:</span> <span class="jn">0</span><span class="jp">,</span> <span class="jk">"color"</span><span class="jp">:</span> <span class="js">"#ef4444"</span> <span class="jp">},</span>
+        <span class="jp">{</span> <span class="jk">"type"</span><span class="jp">:</span> <span class="js">"arrow"</span><span class="jp">,</span>            <span class="jk">"label"</span><span class="jp">:</span> <span class="js">"Knee caving inward"</span><span class="jp">,</span> <span class="jk">"color"</span><span class="jp">:</span> <span class="js">"#ef4444"</span> <span class="jp">},</span>
+        <span class="jp">{</span> <span class="jk">"type"</span><span class="jp">:</span> <span class="js">"joint_highlight"</span><span class="jp">,</span> <span class="jk">"joints"</span><span class="jp">:</span> <span class="jp">[</span><span class="js">"knee_left"</span><span class="jp">],</span> <span class="jk">"color"</span><span class="jp">:</span> <span class="js">"#ef4444"</span> <span class="jp">}</span>
+      <span class="jp">]</span>
+    <span class="jp">}],</span>
+    <span class="jk">"word_timestamps"</span><span class="jp">:</span> <span class="jp">[</span>
+      <span class="jp">{</span> <span class="jk">"word"</span><span class="jp">:</span> <span class="js">"Left"</span><span class="jp">,</span>      <span class="jk">"start_ms"</span><span class="jp">:</span> <span class="jn">0</span><span class="jp">,</span>   <span class="jk">"end_ms"</span><span class="jp">:</span> <span class="jn">180</span> <span class="jp">},</span>
+      <span class="jp">{</span> <span class="jk">"word"</span><span class="jp">:</span> <span class="js">"knee"</span><span class="jp">,</span>      <span class="jk">"start_ms"</span><span class="jp">:</span> <span class="jn">180</span><span class="jp">,</span> <span class="jk">"end_ms"</span><span class="jp">:</span> <span class="jn">420</span> <span class="jp">},</span>
+      <span class="jp">{</span> <span class="jk">"word"</span><span class="jp">:</span> <span class="js">"collapses"</span><span class="jp">,</span> <span class="jk">"start_ms"</span><span class="jp">:</span> <span class="jn">420</span><span class="jp">,</span> <span class="jk">"end_ms"</span><span class="jp">:</span> <span class="jn">780</span> <span class="jp">}</span>
+    <span class="jp">]</span>
+  <span class="jp">}],</span>
+
+  <span class="jk">"frame_extraction"</span><span class="jp">:</span> <span class="jp">{</span>
+    <span class="jk">"method"</span><span class="jp">:</span> <span class="js">"opencv_timestamp"</span><span class="jp">,</span>
+    <span class="jk">"frames_extracted"</span><span class="jp">:</span> <span class="jn">12</span><span class="jp">,</span>
+    <span class="jk">"frames"</span><span class="jp">:</span> <span class="jp">[{</span>
+      <span class="jk">"frame_id"</span><span class="jp">:</span> <span class="js">"f_001"</span><span class="jp">,</span>
+      <span class="jk">"timestamp_ms"</span><span class="jp">:</span> <span class="jn">8400</span><span class="jp">,</span>
+      <span class="jk">"rep_number"</span><span class="jp">:</span> <span class="jn">3</span><span class="jp">,</span>
+      <span class="jk">"phase"</span><span class="jp">:</span> <span class="js">"ascent"</span><span class="jp">,</span>
+      <span class="jk">"trigger"</span><span class="jp">:</span> <span class="js">"issue_detected"</span><span class="jp">,</span>
+      <span class="jk">"issue_ref"</span><span class="jp">:</span> <span class="js">"issue_001"</span><span class="jp">,</span>
+      <span class="jk">"raw_frame_url"</span><span class="jp">:</span>        <span class="js">"gs://kinetic-videos/videos/{user_id}/{analysis_id}/frames/raw/f_001.jpg"</span><span class="jp">,</span>
+      <span class="jk">"annotated_frame_url"</span><span class="jp">:</span> <span class="js">"gs://kinetic-videos/videos/{user_id}/{analysis_id}/frames/annotated/f_001.jpg"</span>
+    <span class="jp">}]</span>
+  <span class="jp">},</span>
+
+  <span class="jk">"mediapipe_meta"</span><span class="jp">:</span> <span class="jp">{</span>
+    <span class="jk">"keypoints_count"</span><span class="jp">:</span> <span class="jn">33</span><span class="jp">,</span>
+    <span class="jk">"avg_tracking_confidence"</span><span class="jp">:</span> <span class="jn">0.87</span><span class="jp">,</span>
+    <span class="jk">"frames_processed"</span><span class="jp">:</span> <span class="jn">1356</span><span class="jp">,</span>
+    <span class="jk">"fps"</span><span class="jp">:</span> <span class="jn">30</span>
+  <span class="jp">}</span>
+<span class="jp">}</span></div>
+      </div>
+      <div class="sub-section">
+        <div class="sub-label">SSE Events Fired</div>
+        <div class="sse-row">
+          <span class="sse-pill">nemotron_started → { session_id }</span>
+          <span class="sse-pill">nemotron_complete → { session_id, overall_score: 72, issues_count: 2 }</span>
+          <span class="sse-pill">frames_extracting → { session_id, frames_total: 12 }</span>
+          <span class="sse-pill">frames_ready → { session_id, frame_urls: [...] }</span>
+        </div>
+      </div>
+      <div class="sub-section">
+        <div class="sub-label">Roadmap Task IDs</div>
+        <div class="task-map">
+          <div class="task-map-row"><span class="task-map-role role-implements">Implements</span><span class="tid tid-s2">S2-W6-05</span><span style="font-size:10px;color:#475569;">Begin Nemotron integration — dual input (video + biomechanics JSON) → structured JSON + CoT</span></div>
+          <div class="task-map-row"><span class="task-map-role role-implements">Implements</span><span class="tid tid-s2">S2-W7-01</span><span style="font-size:10px;color:#475569;">Complete Nemotron integration — full JSON output, word-level timestamps, chain-of-thought</span></div>
+          <div class="task-map-row"><span class="task-map-role role-implements">Emits SSE</span><span class="tid tid-s2">S2-W6-06</span><span style="font-size:10px;color:#475569;">Emits nemotron_started, nemotron_complete, frames_extracting, frames_ready SSE events</span></div>
+          <div class="task-map-row"><span class="task-map-role role-consumes">Consumes (FE)</span><span class="tid tid-s1">S1-W7-02</span><span style="font-size:10px;color:#475569;">Replace dummy data on Results screen with real Nemotron pipeline output</span></div>
+          <div class="task-map-row"><span class="task-map-role role-tests">Tests</span><span class="tid tid-tst">TST-W6-01</span><span style="font-size:10px;color:#475569;">Nemotron T1 — biomechanics JSON only baseline</span></div>
+          <div class="task-map-row"><span class="task-map-role role-tests">Tests</span><span class="tid tid-tst">TST-W7-01</span><span style="font-size:10px;color:#475569;">Nemotron T2 — raw video only</span></div>
+          <div class="task-map-row"><span class="task-map-role role-tests">Tests</span><span class="tid tid-tst">TST-W7-02</span><span style="font-size:10px;color:#475569;">Nemotron T3 — combined biomechanics + video</span></div>
+          <div class="task-map-row"><span class="task-map-role role-tests">Tests</span><span class="tid tid-tst">TST-W8-01</span><span style="font-size:10px;color:#475569;">Nemotron T4 — combined + RAG retrieval (full production input)</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="connector"><span>↓ Nemotron output contains issue timestamps → passed to OpenCV</span></div>
+
+  <!-- ═══ STEP 5b: OPENCV FRAME EXTRACTION ═══ -->
+  <div class="step backend process">
+    <div class="step-header">
+      <div class="step-num">5b</div>
+      <div class="step-icon">🎞️</div>
+      <div><div class="step-title">OpenCV Frame Extraction + Annotation</div><div class="step-squad">Squad 2 — Backend</div></div>
+    </div>
+    <div class="step-body">
+      <div class="sub-section">
+        <div class="sub-label">Why this step exists</div>
+        <div style="background:#070a0f; border:1px solid #1e2433; border-radius:8px; padding:12px 14px; font-size:11px; color:#94a3b8; line-height:1.7;">
+          Nemotron identifies <em>when</em> form issues occur — it outputs timestamps in milliseconds (e.g. <code style="background:#0d1117;padding:1px 4px;border-radius:3px;color:#86efac;">first_detected_ms: 8400</code>). But Nemotron does not produce images. This step converts those timestamps into actual video frames the user can see.<br><br>
+          Without frame extraction, the analysis is purely text and numbers — "your left knee collapsed on reps 3–8." With it, the user sees a <strong style="color:#f1f5f9;">frozen frame at the exact moment of failure</strong>, with angle arcs, joint highlights, and arrows drawn on it. This is what makes the coaching believable and actionable for a non-expert user — it's the X-ray that proves the diagnosis.
+        </div>
+      </div>
+      <div class="sub-section">
+        <div class="sub-label">Input — from Nemotron output</div>
+        <div class="io-row">
+          <span class="io-pill io-in">Issue timestamps (ms) from Nemotron form_issues[].key_frames[]</span>
+          <span class="io-pill io-in">Original video file (GCS URI from form_analyses.video_url)</span>
+        </div>
+      </div>
+      <div class="sub-section">
+        <div class="sub-label">Process</div>
+        <div style="background:#070a0f; border:1px solid #1e2433; border-radius:8px; padding:12px 14px; font-size:11px; color:#94a3b8; line-height:1.8;">
+          <strong style="color:#cbd5e1;">1. Seek to timestamp</strong> — OpenCV opens the video file from GCS and seeks to each <code style="background:#0d1117;padding:1px 4px;border-radius:3px;color:#86efac;">timestamp_ms</code> in Nemotron's output using <code style="background:#0d1117;padding:1px 4px;border-radius:3px;color:#fde68a;">cv2.VideoCapture.set(cv2.CAP_PROP_POS_MSEC, timestamp)</code><br>
+          <strong style="color:#cbd5e1;">2. Extract raw frame</strong> — reads the JPEG at that position, saves raw frame to GCS: <code style="background:#0d1117;padding:1px 4px;border-radius:3px;color:#fde68a;">/frames/raw/f_001.jpg</code><br>
+          <strong style="color:#cbd5e1;">3. Draw annotations</strong> — using <code style="background:#0d1117;padding:1px 4px;border-radius:3px;color:#fde68a;">cv2.ellipse()</code>, <code style="background:#0d1117;padding:1px 4px;border-radius:3px;color:#fde68a;">cv2.arrowedLine()</code>, <code style="background:#0d1117;padding:1px 4px;border-radius:3px;color:#fde68a;">cv2.circle()</code> — draws the overlay_annotations defined in Nemotron output (angle_arc, arrow, joint_highlight) in the specified colour (#ef4444 for issues, #22c55e for good)<br>
+          <strong style="color:#cbd5e1;">4. Write annotated frame</strong> — saves to GCS: <code style="background:#0d1117;padding:1px 4px;border-radius:3px;color:#fde68a;">/frames/annotated/f_001.jpg</code><br>
+          <strong style="color:#cbd5e1;">5. Repeat</strong> for every key frame across all detected issues (typically 8–15 frames per session)
+        </div>
+      </div>
+      <div class="sub-section">
+        <div class="sub-label">Output</div>
+        <div class="io-row">
+          <span class="io-pill io-out">Raw frame URLs — gs://kinetic-videos/videos/{user_id}/{analysis_id}/frames/raw/</span>
+          <span class="io-pill io-out">Annotated frame URLs — gs://kinetic-videos/videos/{user_id}/{analysis_id}/frames/annotated/</span>
+        </div>
+      </div>
+      <div class="sub-section">
+        <div class="sub-label">SSE Events Fired</div>
+        <div class="sse-row">
+          <span class="sse-pill">frames_extracting → { session_id, frames_total: 12 }</span>
+          <span class="sse-pill">frames_ready → { session_id, frame_urls: [...] }</span>
+        </div>
+      </div>
+      <div class="sub-section">
+        <div class="sub-label">Roadmap Task IDs</div>
+        <div class="task-map">
+          <div class="task-map-row"><span class="task-map-role role-defines">Defines schema</span><span class="tid tid-s3">S3-W5-07</span><span style="font-size:10px;color:#475569;">Biomechanics output JSON defines key_frames[] structure — timestamp_ms, overlay_annotations[] that this step reads</span></div>
+          <div class="task-map-row"><span class="task-map-role role-implements">Implements</span><span class="tid tid-s2">S2-W7-01</span><span style="font-size:10px;color:#475569;">Complete Nemotron integration — frame extraction runs as part of this, produces annotated_frames_urls</span></div>
+          <div class="task-map-row"><span class="task-map-role role-consumes">Consumes (FE)</span><span class="tid tid-s1">S1-W6-04</span><span style="font-size:10px;color:#475569;">Results screen renders annotated frame snapshots — the visual evidence cards shown to user</span></div>
+          <div class="task-map-row"><span class="task-map-role role-consumes">Consumes (FE)</span><span class="tid tid-s1">S1-W7-02</span><span style="font-size:10px;color:#475569;">Wires real annotated_frame_url from pipeline into Results screen issue cards</span></div>
+          <div class="task-map-row"><span class="task-map-role role-tests">Tests</span><span class="tid tid-tst">TST-W5-01</span><span style="font-size:10px;color:#475569;">MediaPipe T1 — indirectly validates keypoint quality that determines which frames get extracted</span></div>
+          <div class="task-map-row"><span class="task-map-role role-tests">Tests</span><span class="tid tid-tst">TST-W7-05</span><span style="font-size:10px;color:#475569;">E2E T1 — confirms annotated frames appear on Results screen in full pipeline run</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="connector"><span>↓ annotated frame URLs + Nemotron output saved to DB</span></div>
+
+  <!-- ═══ STEP 6: SAVE RECORD ═══ -->
+  <div class="step backend storage">
+    <div class="step-header">
+      <div class="step-num">6</div>
+      <div class="step-icon">💾</div>
+      <div><div class="step-title">Save Analysis Record</div><div class="step-squad">Squad 2 — Backend</div></div>
+    </div>
+    <div class="step-body">
+      <div class="sub-section">
+        <div class="sub-label">What is Saved</div>
+        <div style="font-size:11px;color:#94a3b8;">Annotated frames written to S3. Full Nemotron output JSON stored. form_analysis_results record written to Structured DB.</div>
+      </div>
+      <div class="sub-section">
+        <div class="sub-label">DB Write — <strong style="color:#f1f5f9;">form_analysis_results</strong> &nbsp;<span style="font-size:10px;font-weight:400;color:#f59e0b;background:#1c1309;border:1px solid #3b1f05;border-radius:4px;padding:2px 6px;">Phase 1 of 2 — written at Step 6 (Nemotron complete)</span></div>
+        <div style="font-size:11px;color:#64748b;margin-bottom:8px;">This INSERT creates the row. <code>coaching_output</code> and <code>progression_recommendation</code> are null at this point — they are filled in by the Claude step (Phase 2), which does an UPDATE on this same row.</div>
+        <table class="db-table">
+          <tr><th>Field</th><th>Type</th><th>Example</th></tr>
+          <tr><td>analysis_id</td><td><span class="type">uuid (PK)</span></td><td><span class="example">550e8400-e29b-41d4...</span></td></tr>
+          <tr><td>session_id</td><td><span class="type">uuid (FK → form_analyses)</span></td><td><span class="example">a1b2-c3d4</span></td></tr>
+          <tr><td>user_id</td><td><span class="type">uuid (FK → users)</span></td><td><span class="example">u_001</span></td></tr>
+          <tr><td>exercise_id</td><td><span class="type">uuid (FK → exercises)</span></td><td><span class="example">ex_gob_squat_001</span></td></tr>
+          <tr><td>weight_value</td><td><span class="type">float</span></td><td><span class="example">12.0</span></td></tr>
+          <tr><td>weight_unit</td><td><span class="type">enum (kg / lb)</span></td><td><span class="example">kg</span></td></tr>
+          <tr><td>weight_kg_normalised</td><td><span class="type">float</span></td><td><span class="example">12.0</span></td></tr>
+          <tr><td colspan="3" style="background:#0a0f1a;color:#475569;font-size:10px;padding:4px 10px;font-style:italic;">── Session-level scores (averaged across all reps) ──</td></tr>
+          <tr><td>overall_form_score</td><td><span class="type">int</span></td><td><span class="example">72</span></td></tr>
+          <tr><td>movement_quality_score</td><td><span class="type">int</span></td><td><span class="example">68</span></td></tr>
+          <tr><td>stability_score</td><td><span class="type">int</span></td><td><span class="example">75</span></td></tr>
+          <tr><td>posture_score</td><td><span class="type">int</span></td><td><span class="example">73</span></td></tr>
+          <tr><td colspan="3" style="background:#0a0f1a;color:#475569;font-size:10px;padding:4px 10px;font-style:italic;">── Rep-level scores (per-rep breakdown) ──</td></tr>
+          <tr><td>rep_scores</td><td><span class="type">jsonb array</span></td><td><span class="example">[{ "rep": 1, "form_score": 74, "movement_quality_score": 70, "stability_score": 78, "posture_score": 72 }, { "rep": 2, "form_score": 68, "movement_quality_score": 65, "stability_score": 72, "posture_score": 69 }]</span></td></tr>
+          <tr><td>rep_count</td><td><span class="type">int</span></td><td><span class="example">8</span></td></tr>
+          <tr><td>issue_tags</td><td><span class="type">text[] + GIN index</span></td><td><span class="example">["knee_valgus", "ankle_dorsiflexion"]</span></td></tr>
+          <tr><td colspan="3" style="background:#070a0f;color:#475569;font-size:10px;padding:5px 10px;line-height:1.6;">
+            <strong style="color:#cbd5e1;">Queryable tag vocabulary (fixed set):</strong>&nbsp;
+            <code style="color:#fb923c;">knee_valgus</code> &nbsp;·&nbsp;
+            <code style="color:#fb923c;">ankle_dorsiflexion</code> &nbsp;·&nbsp;
+            <code style="color:#fb923c;">depth</code> &nbsp;·&nbsp;
+            <code style="color:#fb923c;">torso_lean</code> &nbsp;·&nbsp;
+            <code style="color:#fb923c;">hip_hinge</code><br>
+            Extracted from <code>issues_json[].type</code> at write time and stored flat for fast filtering.
+            GIN index enables: <code style="color:#86efac;">WHERE 'knee_valgus' = ANY(issue_tags)</code> &nbsp;·&nbsp;
+            <code style="color:#86efac;">WHERE issue_tags @&gt; ARRAY['knee_valgus','depth']</code>
+          </td></tr>
+          <tr><td>issues_json</td><td><span class="type">jsonb</span></td><td><span class="example">[ { "issue_id": "issue_001", "type": "knee_valgus", "severity": "moderate", "reps_affected": [3,4], "key_frames": [...] } ]</span></td></tr>
+          <tr><td>nemotron_output_url</td><td><span class="type">string (GCS URI)</span></td><td><span class="example">gs://kinetic-videos/videos/{user_id}/{analysis_id}/nemotron_out.json</span></td></tr>
+          <tr><td>annotated_frames_urls</td><td><span class="type">jsonb array (GCS URIs)</span></td><td><span class="example">["gs://kinetic-videos/…/frames/annotated/f_001.jpg"]</span></td></tr>
+          <tr><td>chain_of_thought</td><td><span class="type">text</span></td><td><span class="example">"Athlete shows good depth but..."</span></td></tr>
+          <tr><td>coaching_output</td><td><span class="type">jsonb</span></td><td><span class="example">null (set after Claude step)</span></td></tr>
+          <tr><td>progression_recommendation</td><td><span class="type">enum</span></td><td><span class="example">null (set after Claude step)</span></td></tr>
+        </table>
+      </div>
+      <div class="sub-section">
+        <div class="sub-label">Roadmap Task IDs</div>
+        <div class="task-map">
+          <div class="task-map-row"><span class="task-map-role role-defines">Defines</span><span class="tid tid-s2">S2-W5-06</span><span style="font-size:10px;color:#475569;">Defines form_analysis_results DB schema — all fields including coaching_output + progression_recommendation</span></div>
+          <div class="task-map-row"><span class="task-map-role role-implements">Implements write</span><span class="tid tid-s2">S2-W7-01</span><span style="font-size:10px;color:#475569;">Saves Nemotron output, annotated frames URLs, chain_of_thought — coaching_output/progression fields null at this point</span></div>
+          <div class="task-map-row"><span class="task-map-role role-implements">Updates fields</span><span class="tid tid-s2">S2-W7-04</span><span style="font-size:10px;color:#475569;">After Claude step: sets coaching_output (jsonb) + progression_recommendation enum</span></div>
+          <div class="task-map-row"><span class="task-map-role role-implements">Updates fields</span><span class="tid tid-s2">S2-W8-01</span><span style="font-size:10px;color:#475569;">Progression recommendation logic — determines hold/progress/drop, writes final recommendation</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="connector"><span>↓ feeds into Claude Sonnet (alongside RAG + User Data below)</span></div>
+
+  <!-- ═══ MERGE: RAG + USER DATA ═══ -->
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:0;">
+
+    <div class="side-step data">
+      <div class="side-title">🗄️ <span>RAG Retrieval — Vector DB</span></div>
+      <div class="sub-label" style="margin-bottom:6px;">SSE Events</div>
+      <div class="sse-row" style="margin-bottom:10px;">
+        <span class="sse-pill">rag_started → { session_id }</span>
+        <span class="sse-pill">rag_complete → { session_id, passages_retrieved: 8 }</span>
+      </div>
+      <div class="sub-label" style="margin-bottom:6px;">Query Sent to Vector DB</div>
+      <div class="json-block" style="font-size:9.5px;">
+<span class="jp">{</span>
+  <span class="jk">"exercise"</span><span class="jp">:</span> <span class="js">"goblet_squat"</span><span class="jp">,</span>
+  <span class="jk">"issues"</span><span class="jp">:</span> <span class="jp">[</span><span class="js">"knee_valgus"</span><span class="jp">,</span> <span class="js">"ankle_dorsiflexion"</span><span class="jp">],</span>
+  <span class="jk">"top_k"</span><span class="jp">:</span> <span class="jn">8</span>
+<span class="jp">}</span></div>
+      <div class="sub-label" style="margin-top:10px; margin-bottom:6px;">RAG Response</div>
+      <div class="json-block" style="font-size:9.5px;">
+<span class="jp">[{</span>
+  <span class="jk">"passage_id"</span><span class="jp">:</span> <span class="js">"p_042"</span><span class="jp">,</span>
+  <span class="jk">"source"</span><span class="jp">:</span> <span class="js">"biomechanics_paper_2024"</span><span class="jp">,</span>
+  <span class="jk">"exercise"</span><span class="jp">:</span> <span class="js">"goblet_squat"</span><span class="jp">,</span>
+  <span class="jk">"issue_tags"</span><span class="jp">:</span> <span class="jp">[</span><span class="js">"knee_valgus"</span><span class="jp">],</span>
+  <span class="jk">"text"</span><span class="jp">:</span> <span class="js">"Knee valgus during squat ascent is associated with weak hip abductors..."</span><span class="jp">,</span>
+  <span class="jk">"relevance_score"</span><span class="jp">:</span> <span class="jn">0.94</span>
+<span class="jp">}]</span></div>
+      <div style="margin-top:10px;">
+        <div class="sub-label" style="margin-bottom:4px;">Roadmap Task IDs</div>
+        <div class="task-map">
+          <div class="task-map-row"><span class="task-map-role role-defines">Defines schema</span><span class="tid tid-s3">S3-W5-02</span><span style="font-size:10px;color:#475569;">Vector DB schema — doc structure, metadata (exercise, source type, angle params), embedding strategy</span></div>
+          <div class="task-map-row"><span class="task-map-role role-implements">Ingests corpus</span><span class="tid tid-s3">S3-W6-01</span><span style="font-size:10px;color:#475569;">Ingest Goblet Squat corpus — chunk, embed, store with metadata</span></div>
+          <div class="task-map-row"><span class="task-map-role role-implements">Implements</span><span class="tid tid-s3">S3-W6-02</span><span style="font-size:10px;color:#475569;">Implement + test RAG retrieval — biomechanics query → top-k passages</span></div>
+          <div class="task-map-row"><span class="task-map-role role-implements">Exposes endpoint</span><span class="tid tid-s3">S3-W6-04</span><span style="font-size:10px;color:#475569;">RAG retrieval endpoint live for Squad 2 to call</span></div>
+          <div class="task-map-row"><span class="task-map-role role-consumes">Calls endpoint</span><span class="tid tid-s2">S2-W7-02</span><span style="font-size:10px;color:#475569;">Squad 2 calls RAG endpoint after Nemotron output received</span></div>
+          <div class="task-map-row"><span class="task-map-role role-tests">Tests</span><span class="tid tid-tst">TST-W6-02</span><span style="font-size:10px;color:#475569;">RAG T1 — first retrieval quality check (free-form)</span></div>
+          <div class="task-map-row"><span class="task-map-role role-tests">Tests</span><span class="tid tid-tst">TST-W7-03</span><span style="font-size:10px;color:#475569;">RAG T2 — enhanced corpus re-check (P/F)</span></div>
+          <div class="task-map-row"><span class="task-map-role role-tests">Tests</span><span class="tid tid-tst">TST-W8-02</span><span style="font-size:10px;color:#475569;">RAG T3 — full RAG → Claude coaching quality check (P/F)</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-step backend db">
+      <div class="side-title">🗃️ <span>User Data Query — Structured DB</span></div>
+      <div class="sub-label" style="margin-bottom:6px;">Data Retrieved</div>
+      <div class="json-block" style="font-size:9.5px;">
+<span class="jp">{</span>
+  <span class="jk">"user_profile"</span><span class="jp">:</span> <span class="jp">{</span>
+    <span class="jk">"fitness_goals"</span><span class="jp">:</span> <span class="js">"build strength"</span><span class="jp">,</span>
+    <span class="jk">"past_injuries"</span><span class="jp">:</span> <span class="jp">[</span><span class="js">"left knee strain 2024"</span><span class="jp">],</span>
+    <span class="jk">"training_frequency"</span><span class="jp">:</span> <span class="js">"3x per week"</span>
+  <span class="jp">},</span>
+  <span class="jk">"current_session"</span><span class="jp">:</span> <span class="jp">{</span>
+    <span class="jk">"weight_kg"</span><span class="jp">:</span> <span class="jn">12</span><span class="jp">,</span>
+    <span class="jk">"exercise"</span><span class="jp">:</span> <span class="js">"goblet_squat"</span>
+  <span class="jp">},</span>
+  <span class="jk">"past_sessions"</span><span class="jp">:</span> <span class="jp">[</span>
+    <span class="jp">{</span> <span class="jk">"weight_kg"</span><span class="jp">:</span> <span class="jn">8</span><span class="jp">,</span>  <span class="jk">"score"</span><span class="jp">:</span> <span class="jn">88</span><span class="jp">,</span> <span class="jk">"date"</span><span class="jp">:</span> <span class="js">"2026-04-14"</span><span class="jp">,</span> <span class="jk">"issues"</span><span class="jp">:</span> <span class="jp">[]</span> <span class="jp">},</span>
+    <span class="jp">{</span> <span class="jk">"weight_kg"</span><span class="jp">:</span> <span class="jn">10</span><span class="jp">,</span> <span class="jk">"score"</span><span class="jp">:</span> <span class="jn">79</span><span class="jp">,</span> <span class="jk">"date"</span><span class="jp">:</span> <span class="js">"2026-04-21"</span><span class="jp">,</span> <span class="jk">"issues"</span><span class="jp">:</span> <span class="jp">[</span><span class="js">"knee_valgus"</span><span class="jp">]</span> <span class="jp">},</span>
+    <span class="jp">{</span> <span class="jk">"weight_kg"</span><span class="jp">:</span> <span class="jn">12</span><span class="jp">,</span> <span class="jk">"score"</span><span class="jp">:</span> <span class="jn">72</span><span class="jp">,</span> <span class="jk">"date"</span><span class="jp">:</span> <span class="js">"2026-05-04"</span><span class="jp">,</span> <span class="jk">"issues"</span><span class="jp">:</span> <span class="jp">[</span><span class="js">"knee_valgus"</span><span class="jp">]</span> <span class="jp">}</span>
+  <span class="jp">]</span>
+<span class="jp">}</span></div>
+      <div style="margin-top:10px;">
+        <div class="sub-label" style="margin-bottom:4px;">Roadmap Task IDs</div>
+        <div class="task-map">
+          <div class="task-map-row"><span class="task-map-role role-defines">Defines schema</span><span class="tid tid-s2">S2-W5-06</span><span style="font-size:10px;color:#475569;">Defines users, user_profiles, form_analyses, form_analysis_results — all queried here</span></div>
+          <div class="task-map-row"><span class="task-map-role role-implements">Implements query</span><span class="tid tid-s2">S2-W7-03</span><span style="font-size:10px;color:#475569;">Query structured DB — retrieve user weight history + past form sessions for Claude</span></div>
+          <div class="task-map-row"><span class="task-map-role role-implements">Writes user_profiles</span><span class="tid tid-s2">S2-W7-06</span><span style="font-size:10px;color:#475569;">POST /users/profile endpoint — writes training_frequency, fitness_goals, preferred_exercises</span></div>
+          <div class="task-map-row"><span class="task-map-role role-implements">Writes users</span><span class="tid tid-s2">S2-W7-05</span><span style="font-size:10px;color:#475569;">POST /auth/signup — creates users record, hashed password</span></div>
+          <div class="task-map-row"><span class="task-map-role role-consumes">FE writes data</span><span class="tid tid-s1">S1-W7-03</span><span style="font-size:10px;color:#475569;">Onboarding screen wired to auth + user_profiles endpoint — populates data queried here</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="connector"><span>↓ all 3 inputs merged into Claude Sonnet</span></div>
+
+  <!-- ═══ STEP 7: CLAUDE SONNET ═══ -->
+  <div class="step backend ai">
+    <div class="step-header">
+      <div class="step-num">7</div>
+      <div class="step-icon">💡</div>
+      <div><div class="step-title">Claude Sonnet 4.6 — Reasoning &amp; Coaching</div><div class="step-squad">Squad 2 — Backend</div></div>
+    </div>
+    <div class="step-body">
+      <div class="sub-section">
+        <div class="sub-label">3 Inputs</div>
+        <div class="io-row">
+          <span class="io-pill io-in">Nemotron output JSON</span>
+          <span class="io-pill io-in">RAG passages (top-k)</span>
+          <span class="io-pill io-in">User history + weight</span>
+        </div>
+      </div>
+      <div class="sub-section">
+        <div class="sub-label">Claude Sonnet Output JSON — Option C (Structured + Paragraph)</div>
+        <div class="json-block">
+<span class="jp">{</span>
+  <span class="jk">"session_id"</span><span class="jp">:</span> <span class="js">"uuid"</span><span class="jp">,</span>
+  <span class="jk">"generated_at"</span><span class="jp">:</span> <span class="js">"2026-05-04T10:32:44Z"</span><span class="jp">,</span>
+
+  <span class="jk">"progression"</span><span class="jp">:</span> <span class="jp">{</span>
+    <span class="jk">"recommendation"</span><span class="jp">:</span> <span class="js">"hold"</span><span class="jp">,</span>            <span class="jc">// "progress" | "hold" | "drop_weight"</span>
+    <span class="jk">"recommendation_score"</span><span class="jp">:</span> <span class="jn">45</span><span class="jp">,</span>           <span class="jc">// 0–100 confidence in recommendation</span>
+    <span class="jk">"current_weight_kg"</span><span class="jp">:</span> <span class="jn">12</span><span class="jp">,</span>
+    <span class="jk">"suggested_weight_kg"</span><span class="jp">:</span> <span class="jn">12</span><span class="jp">,</span>             <span class="jc">// same = hold; higher = progress</span>
+    <span class="jk">"reasoning"</span><span class="jp">:</span> <span class="js">"Knee valgus in 6/8 reps. Increasing load will reinforce poor pattern."</span>
+  <span class="jp">},</span>
+
+  <span class="jk">"coaching"</span><span class="jp">:</span> <span class="jp">{</span>
+    <span class="jk">"summary_paragraph"</span><span class="jp">:</span> <span class="js">"Your Goblet Squat at 12kg shows solid depth and good hip hinge, but your left knee consistently collapses inward from rep 3. This has appeared across your last 2 sessions — the weight isn't the problem, the movement pattern needs attention first."</span><span class="jp">,</span>
+    <span class="jk">"positive_feedback"</span><span class="jp">:</span> <span class="js">"Squat depth is consistently at or below parallel — keep that."</span><span class="jp">,</span>
+    <span class="jk">"session_tags"</span><span class="jp">:</span> <span class="jp">[</span><span class="js">"knee_valgus"</span><span class="jp">,</span> <span class="js">"fatigue_pattern"</span><span class="jp">,</span> <span class="js">"hip_abductor_weakness"</span><span class="jp">],</span>
+    <span class="jk">"issues"</span><span class="jp">:</span> <span class="jp">[{</span>
+      <span class="jk">"issue_ref"</span><span class="jp">:</span> <span class="js">"issue_001"</span><span class="jp">,</span>
+      <span class="jk">"priority"</span><span class="jp">:</span> <span class="jn">1</span><span class="jp">,</span>
+      <span class="jk">"title"</span><span class="jp">:</span> <span class="js">"Knee Valgus — Left"</span><span class="jp">,</span>
+      <span class="jk">"cue"</span><span class="jp">:</span> <span class="js">"Push your left knee out in line with your pinky toe as you drive up"</span><span class="jp">,</span>
+      <span class="jk">"drill"</span><span class="jp">:</span> <span class="js">"Banded Goblet Squat — resistance band above knees to cue outward drive"</span><span class="jp">,</span>
+      <span class="jk">"context_from_history"</span><span class="jp">:</span> <span class="js">"First appeared 2 sessions ago at 10kg. Reps affected: 2→6 of 8."</span><span class="jp">,</span>
+      <span class="jk">"annotated_frame_url"</span><span class="jp">:</span> <span class="js">"gs://kinetic-videos/videos/{user_id}/{analysis_id}/frames/annotated/f_001.jpg"</span>
+    <span class="jp">}]</span>
+  <span class="jp">},</span>
+
+  <span class="jk">"history_context"</span><span class="jp">:</span> <span class="jp">{</span>
+    <span class="jk">"sessions_analysed"</span><span class="jp">:</span> <span class="jn">3</span><span class="jp">,</span>
+    <span class="jk">"trend"</span><span class="jp">:</span> <span class="js">"declining"</span><span class="jp">,</span>
+    <span class="jk">"trend_note"</span><span class="jp">:</span> <span class="js">"Score drops ~8pts per 2kg — consistent with stabiliser limitation"</span><span class="jp">,</span>
+    <span class="jk">"weight_progression"</span><span class="jp">:</span> <span class="jp">[</span>
+      <span class="jp">{</span> <span class="jk">"weight_kg"</span><span class="jp">:</span> <span class="jn">8</span><span class="jp">,</span>  <span class="jk">"avg_score"</span><span class="jp">:</span> <span class="jn">88</span><span class="jp">,</span> <span class="jk">"date"</span><span class="jp">:</span> <span class="js">"2026-04-14"</span> <span class="jp">},</span>
+      <span class="jp">{</span> <span class="jk">"weight_kg"</span><span class="jp">:</span> <span class="jn">10</span><span class="jp">,</span> <span class="jk">"avg_score"</span><span class="jp">:</span> <span class="jn">79</span><span class="jp">,</span> <span class="jk">"date"</span><span class="jp">:</span> <span class="js">"2026-04-21"</span> <span class="jp">},</span>
+      <span class="jp">{</span> <span class="jk">"weight_kg"</span><span class="jp">:</span> <span class="jn">12</span><span class="jp">,</span> <span class="jk">"avg_score"</span><span class="jp">:</span> <span class="jn">72</span><span class="jp">,</span> <span class="jk">"date"</span><span class="jp">:</span> <span class="js">"2026-05-04"</span> <span class="jp">}</span>
+    <span class="jp">]</span>
+  <span class="jp">}</span>
+<span class="jp">}</span></div>
+      </div>
+      <div class="sub-section">
+        <div class="sub-label">SSE Events Fired</div>
+        <div class="sse-row">
+          <span class="sse-pill">claude_started → { session_id }</span>
+          <span class="sse-pill">claude_complete → { session_id, recommendation: "hold" }</span>
+          <span class="sse-pill">analysis_complete → { session_id, full_result_url }</span>
+        </div>
+      </div>
+      <div class="sub-section">
+        <div class="sub-label">DB Update — <strong style="color:#f1f5f9;">form_analysis_results</strong> &nbsp;<span style="font-size:10px;font-weight:400;color:#f59e0b;background:#1c1309;border:1px solid #3b1f05;border-radius:4px;padding:2px 6px;">Phase 2 of 2 — UPDATE on same row created at Step 6</span></div>
+        <div style="font-size:11px;color:#64748b;margin-bottom:8px;">UPDATE WHERE analysis_id = [current] — fills in the fields left null at Step 6.</div>
+        <table class="db-table">
+          <tr><th>Field Updated</th><th>Value</th></tr>
+          <tr><td>coaching_output</td><td><span class="example">Full Claude Sonnet JSON (jsonb)</span></td></tr>
+          <tr><td>progression_recommendation</td><td><span class="example">hold</span></td></tr>
+          <tr><td>session_tags</td><td><span class="example">["knee_valgus","fatigue_pattern"]</span></td></tr>
+        </table>
+      </div>
+      <div class="sub-section">
+        <div class="sub-label">DB Update — <strong style="color:#f1f5f9;">form_analyses</strong> &nbsp;<span style="font-size:10px;font-weight:400;color:#475569;background:#0a0f1a;border:1px solid #1e2433;border-radius:4px;padding:2px 6px;">separate table — written at same time as Phase 2</span></div>
+        <table class="db-table">
+          <tr><th>Field Updated</th><th>Value</th></tr>
+          <tr><td>status</td><td><span class="example">complete</span></td></tr>
+        </table>
+      </div>
+      <div class="sub-section">
+        <div class="sub-label">Roadmap Task IDs</div>
+        <div class="task-map">
+          <div class="task-map-row"><span class="task-map-role role-implements">Implements</span><span class="tid tid-s2">S2-W7-04</span><span style="font-size:10px;color:#475569;">Wires Claude Sonnet — Nemotron output + RAG + user history → coaching output</span></div>
+          <div class="task-map-row"><span class="task-map-role role-implements">Refines prompt</span><span class="tid tid-s2">S2-W8-05</span><span style="font-size:10px;color:#475569;">Claude Sonnet prompt engineering — specific, actionable coaching language</span></div>
+          <div class="task-map-row"><span class="task-map-role role-implements">Progression logic</span><span class="tid tid-s2">S2-W8-01</span><span style="font-size:10px;color:#475569;">Progression recommendation logic — hold/progress/drop based on form scores across weights</span></div>
+          <div class="task-map-row"><span class="task-map-role role-implements">Emits SSE</span><span class="tid tid-s2">S2-W6-06</span><span style="font-size:10px;color:#475569;">Emits claude_started, claude_complete, analysis_complete SSE events</span></div>
+          <div class="task-map-row"><span class="task-map-role role-consumes">Consumes (FE)</span><span class="tid tid-s1">S1-W7-02</span><span style="font-size:10px;color:#475569;">Results screen wired to real pipeline output — renders coaching.* and progression.* fields</span></div>
+          <div class="task-map-row"><span class="task-map-role role-consumes">Consumes (FE)</span><span class="tid tid-s1">S1-W8-02</span><span style="font-size:10px;color:#475569;">Display progression recommendation prominently on Results screen</span></div>
+          <div class="task-map-row"><span class="task-map-role role-tests">Tests</span><span class="tid tid-tst">TST-W7-04</span><span style="font-size:10px;color:#475569;">Claude T1 — first coaching output review (P/F)</span></div>
+          <div class="task-map-row"><span class="task-map-role role-tests">Tests</span><span class="tid tid-tst">TST-W8-03</span><span style="font-size:10px;color:#475569;">Claude T2 — progression recommendation review (P/F)</span></div>
+          <div class="task-map-row"><span class="task-map-role role-tests">Tests</span><span class="tid tid-tst">TST-W9-03</span><span style="font-size:10px;color:#475569;">Claude T3 — confidence thresholding validation (P/F)</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="connector"><span>↓</span></div>
+
+  <!-- ═══ STEP 8: FRONTEND OUTPUT ═══ -->
+  <div class="step frontend output">
+    <div class="step-header">
+      <div class="step-num">8</div>
+      <div class="step-icon">📊</div>
+      <div><div class="step-title">Frontend — Analysis Results Screen</div><div class="step-squad">Squad 1 — Frontend</div></div>
+    </div>
+    <div class="step-body">
+      <div class="sub-section">
+        <div class="sub-label">SSE Event Consumed</div>
+        <div class="sse-row"><span class="sse-pill">analysis_complete → full result rendered</span></div>
+      </div>
+      <div class="sub-section">
+        <div class="sub-label">What the User Sees (from combined Nemotron + Claude output)</div>
+        <table class="db-table">
+          <tr><th>UI Component</th><th>Data Source</th><th>Field</th></tr>
+          <tr><td>Overall form score ring</td><td>Nemotron</td><td><span class="example">summary.overall_form_score</span></td></tr>
+          <tr><td>Sub-scores (Quality/Stability/Posture)</td><td>Nemotron</td><td><span class="example">summary.*_score</span></td></tr>
+          <tr><td>Rep count + avg duration</td><td>Nemotron</td><td><span class="example">summary.rep_count, avg_rep_duration_s</span></td></tr>
+          <tr><td>Issue cards with severity badge</td><td>Nemotron</td><td><span class="example">form_issues[].severity + severity_score</span></td></tr>
+          <tr><td>Annotated frame snapshots</td><td>Nemotron → S3</td><td><span class="example">form_issues[].key_frames[].annotated_frame_url</span></td></tr>
+          <tr><td>Angle overlay on frame</td><td>Nemotron</td><td><span class="example">key_frames[].overlay_annotations[]</span></td></tr>
+          <tr><td>Coaching paragraph</td><td>Claude Sonnet</td><td><span class="example">coaching.summary_paragraph</span></td></tr>
+          <tr><td>Per-issue cue + drill</td><td>Claude Sonnet</td><td><span class="example">coaching.issues[].cue + .drill</span></td></tr>
+          <tr><td>History context callout</td><td>Claude Sonnet</td><td><span class="example">coaching.issues[].context_from_history</span></td></tr>
+          <tr><td>Weight recommendation chip</td><td>Claude Sonnet</td><td><span class="example">progression.recommendation + suggested_weight_kg</span></td></tr>
+          <tr><td>Score trend chart</td><td>Claude Sonnet</td><td><span class="example">history_context.weight_progression[]</span></td></tr>
+        </table>
+      </div>
+      <div class="sub-section">
+        <div class="sub-label">Frame Snapshot Cards — How Overlays Work</div>
+        <div class="frame-grid">
+          <div class="frame-card">
+            <div class="frame-thumb">🎬 Rep 3 · 8.4s · Ascent</div>
+            <div class="frame-badge fb-issue">Knee Valgus — Moderate</div>
+            <div class="frame-meta">Angle arc drawn on knee_left<br>Arrow: "Knee caving inward"<br>Joint highlight: red dot</div>
+          </div>
+          <div class="frame-card">
+            <div class="frame-thumb">🎬 Rep 1 · 2.5s · Bottom</div>
+            <div class="frame-badge fb-ok">Good Form</div>
+            <div class="frame-meta">No issue overlay<br>Label: "Depth achieved ✓"<br>Joint highlight: green dot</div>
+          </div>
+          <div class="frame-card">
+            <div class="frame-thumb">🎬 Rep 8 · 31.2s · Ascent</div>
+            <div class="frame-badge fb-issue">Torso Lean — Low</div>
+            <div class="frame-meta">Angle arc on torso<br>Arrow: "Leaning forward"<br>severity_score: 28 → yellow</div>
+          </div>
+        </div>
+        <div style="font-size:10px;color:#475569;margin-top:8px;">Frontend renders overlays from <code style="color:#93c5fd">overlay_annotations[]</code> using Canvas API, or displays pre-rendered <code style="color:#93c5fd">annotated_frame_url</code> from S3. Toggle allows user to show/hide angle numbers.</div>
+      </div>
+      <div class="sub-section">
+        <div class="sub-label">Roadmap Task IDs</div>
+        <div class="task-map">
+          <div class="task-map-row"><span class="task-map-role role-defines">Defines contract</span><span class="tid tid-s1">S1-W5-03</span><span style="font-size:10px;color:#475569;">Defines JSON schema for all FE responses — this UI component → field mapping is the source of truth</span></div>
+          <div class="task-map-row"><span class="task-map-role role-implements">Implements (dummy)</span><span class="tid tid-s1">S1-W6-04</span><span style="font-size:10px;color:#475569;">Build Results screen using dummy data — score ring, corrections, coaching tips</span></div>
+          <div class="task-map-row"><span class="task-map-role role-implements">Wires real data</span><span class="tid tid-s1">S1-W7-02</span><span style="font-size:10px;color:#475569;">Replace all dummy data with real Nemotron + Claude Sonnet pipeline output</span></div>
+          <div class="task-map-row"><span class="task-map-role role-implements">Wires progression</span><span class="tid tid-s1">S1-W8-02</span><span style="font-size:10px;color:#475569;">Display weight-based progression recommendation chip prominently on Results</span></div>
+          <div class="task-map-row"><span class="task-map-role role-consumes">SSE consumed</span><span class="tid tid-s1">S1-W6-03</span><span style="font-size:10px;color:#475569;">Wire SSE to real processing states — analysis_complete fires → full result rendered</span></div>
+          <div class="task-map-row"><span class="task-map-role role-tests">Tests E2E</span><span class="tid tid-tst">TST-W7-05</span><span style="font-size:10px;color:#475569;">E2E T1 — upload video → results screen, pipeline completes without intervention</span></div>
+          <div class="task-map-row"><span class="task-map-role role-tests">Tests E2E</span><span class="tid tid-tst">TST-W9-01</span><span style="font-size:10px;color:#475569;">E2E Accuracy — 20–30 labeled videos, ≥80% expert agreement</span></div>
+          <div class="task-map-row"><span class="task-map-role role-tests">Tests E2E</span><span class="tid tid-tst">TST-W10-01</span><span style="font-size:10px;color:#475569;">E2E UAT — real users, full flow, all launch criteria</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ─── SSE Timeline Summary ─── -->
+<div style="margin-top:24px; background:#080d14; border:1px solid #1e2433; border-radius:12px; padding:16px 20px;">
+  <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:0.7px;color:#475569;margin-bottom:12px;">Complete SSE Event Timeline</div>
+  <div style="display:flex; gap:0; align-items:center; flex-wrap:wrap;">
+    <div style="display:flex;flex-direction:column;align-items:center;gap:3px;padding:0 6px;">
+      <div class="sse-pill">upload_received</div>
+      <div style="font-size:8.5px;color:#475569;">Step 1–2</div>
+    </div>
+    <div style="color:#334155;font-size:14px;padding:0 2px;">→</div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:3px;padding:0 6px;">
+      <div class="sse-pill">mediapipe_started</div>
+      <div style="font-size:8.5px;color:#475569;">Step 3</div>
+    </div>
+    <div style="color:#334155;font-size:14px;padding:0 2px;">→</div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:3px;padding:0 6px;">
+      <div class="sse-pill">mediapipe_complete</div>
+      <div style="font-size:8.5px;color:#475569;">Step 3</div>
+    </div>
+    <div style="color:#334155;font-size:14px;padding:0 2px;">→</div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:3px;padding:0 6px;">
+      <div class="sse-pill">nemotron_started</div>
+      <div style="font-size:8.5px;color:#475569;">Step 5</div>
+    </div>
+    <div style="color:#334155;font-size:14px;padding:0 2px;">→</div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:3px;padding:0 6px;">
+      <div class="sse-pill">nemotron_complete</div>
+      <div style="font-size:8.5px;color:#475569;">Step 5</div>
+    </div>
+    <div style="color:#334155;font-size:14px;padding:0 2px;">→</div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:3px;padding:0 6px;">
+      <div class="sse-pill">frames_extracting</div>
+      <div style="font-size:8.5px;color:#475569;">Step 5</div>
+    </div>
+    <div style="color:#334155;font-size:14px;padding:0 2px;">→</div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:3px;padding:0 6px;">
+      <div class="sse-pill">frames_ready</div>
+      <div style="font-size:8.5px;color:#475569;">Step 5</div>
+    </div>
+    <div style="color:#334155;font-size:14px;padding:0 2px;">→</div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:3px;padding:0 6px;">
+      <div class="sse-pill">rag_started</div>
+      <div style="font-size:8.5px;color:#475569;">RAG</div>
+    </div>
+    <div style="color:#334155;font-size:14px;padding:0 2px;">→</div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:3px;padding:0 6px;">
+      <div class="sse-pill">rag_complete</div>
+      <div style="font-size:8.5px;color:#475569;">RAG</div>
+    </div>
+    <div style="color:#334155;font-size:14px;padding:0 2px;">→</div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:3px;padding:0 6px;">
+      <div class="sse-pill">claude_started</div>
+      <div style="font-size:8.5px;color:#475569;">Step 7</div>
+    </div>
+    <div style="color:#334155;font-size:14px;padding:0 2px;">→</div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:3px;padding:0 6px;">
+      <div class="sse-pill">claude_complete</div>
+      <div style="font-size:8.5px;color:#475569;">Step 7</div>
+    </div>
+    <div style="color:#334155;font-size:14px;padding:0 2px;">→</div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:3px;padding:0 6px;">
+      <div class="sse-pill" style="background:#0a2010;border-color:#14532d;color:#86efac;">analysis_complete</div>
+      <div style="font-size:8.5px;color:#475569;">Step 7–8</div>
+    </div>
+    <div style="color:#334155;font-size:14px;padding:0 2px;">|</div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:3px;padding:0 6px;">
+      <div class="sse-pill" style="background:#2d0a0a;border-color:#7f1d1d;color:#f87171;">error</div>
+      <div style="font-size:8.5px;color:#475569;">Any step</div>
+    </div>
+  </div>
+  <div style="margin-top:14px; border-top:1px solid #1e2433; padding-top:12px;">
+    <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:0.7px;color:#475569;margin-bottom:10px;">SSE Events — Platform Execution Table</div>
+    <div style="font-size:10px;color:#64748b;margin-bottom:10px;">Transport route: <code style="background:#0d1117;padding:1px 5px;border-radius:4px;color:#a5f3fc;">Cloud Run → HTTPS Load Balancer → Browser</code> &nbsp;·&nbsp; <span style="color:#f97316;">Does NOT route through API Gateway</span> — buffering breaks SSE streaming (see S2-W5-02)</div>
+    <table style="width:100%;border-collapse:collapse;font-size:11px;margin-bottom:20px;">
+      <tr style="border-bottom:1px solid #1e2433;">
+        <th style="text-align:left;padding:6px 10px;color:#64748b;font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:0.5px;">SSE Event</th>
+        <th style="text-align:left;padding:6px 10px;color:#64748b;font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:0.5px;">Fired by</th>
+        <th style="text-align:left;padding:6px 10px;color:#64748b;font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:0.5px;">Platform</th>
+        <th style="text-align:left;padding:6px 10px;color:#64748b;font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:0.5px;">Consumed by</th>
+        <th style="text-align:left;padding:6px 10px;color:#64748b;font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:0.5px;">Step</th>
+        <th style="text-align:left;padding:6px 10px;color:#64748b;font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:0.5px;">Payload</th>
+      </tr>
+      <tr style="border-bottom:1px solid #111827;background:#080d12;">
+        <td style="padding:6px 10px;font-family:monospace;color:#c4b5fd;">upload_received</td>
+        <td style="padding:6px 10px;color:#4ade80;">FastAPI /upload handler</td>
+        <td style="padding:6px 10px;color:#94a3b8;">GCP Cloud Run</td>
+        <td style="padding:6px 10px;color:#93c5fd;">React SSE client (Browser)</td>
+        <td style="padding:6px 10px;color:#94a3b8;">1–2</td>
+        <td style="padding:6px 10px;font-family:monospace;font-size:9.5px;color:#64748b;">{ analysis_id, session_id, user_id, filename, size_mb, created_at }</td>
+      </tr>
+      <tr style="border-bottom:1px solid #111827;">
+        <td style="padding:6px 10px;font-family:monospace;color:#c4b5fd;">mediapipe_started</td>
+        <td style="padding:6px 10px;color:#4ade80;">MediaPipe worker</td>
+        <td style="padding:6px 10px;color:#94a3b8;">Cloud Run (same process)</td>
+        <td style="padding:6px 10px;color:#93c5fd;">React SSE client</td>
+        <td style="padding:6px 10px;color:#94a3b8;">3</td>
+        <td style="padding:6px 10px;font-family:monospace;font-size:9.5px;color:#64748b;">{ session_id }</td>
+      </tr>
+      <tr style="border-bottom:1px solid #111827;background:#080d12;">
+        <td style="padding:6px 10px;font-family:monospace;color:#c4b5fd;">mediapipe_complete</td>
+        <td style="padding:6px 10px;color:#4ade80;">MediaPipe worker</td>
+        <td style="padding:6px 10px;color:#94a3b8;">Cloud Run</td>
+        <td style="padding:6px 10px;color:#93c5fd;">React SSE client</td>
+        <td style="padding:6px 10px;color:#94a3b8;">3</td>
+        <td style="padding:6px 10px;font-family:monospace;font-size:9.5px;color:#64748b;">{ session_id, rep_count, fps, keypoints_detected, frames_processed }</td>
+      </tr>
+      <tr style="border-bottom:1px solid #111827;background:#080d12;">
+        <td style="padding:6px 10px;font-family:monospace;color:#c4b5fd;">biomechanics_complete <span style="font-size:9px;color:#334155;font-family:sans-serif;">· % only</span></td>
+        <td style="padding:6px 10px;color:#4ade80;">Biomechanics Python script</td>
+        <td style="padding:6px 10px;color:#94a3b8;">Cloud Run (same process)</td>
+        <td style="padding:6px 10px;color:#93c5fd;">React SSE client — % bar only</td>
+        <td style="padding:6px 10px;color:#94a3b8;">4</td>
+        <td style="padding:6px 10px;font-family:monospace;font-size:9.5px;color:#64748b;">{ analysis_id, rep_count, joints_computed, avg_confidence }</td>
+      </tr>
+      <tr style="border-bottom:1px solid #111827;">
+        <td style="padding:6px 10px;font-family:monospace;color:#c4b5fd;">nemotron_started</td>
+        <td style="padding:6px 10px;color:#4ade80;">FastAPI — before Nemotron API call</td>
+        <td style="padding:6px 10px;color:#94a3b8;">Cloud Run → NVIDIA API</td>
+        <td style="padding:6px 10px;color:#93c5fd;">React SSE client</td>
+        <td style="padding:6px 10px;color:#94a3b8;">5</td>
+        <td style="padding:6px 10px;font-family:monospace;font-size:9.5px;color:#64748b;">{ session_id }</td>
+      </tr>
+      <tr style="border-bottom:1px solid #111827;background:#080d12;">
+        <td style="padding:6px 10px;font-family:monospace;color:#c4b5fd;">nemotron_complete</td>
+        <td style="padding:6px 10px;color:#4ade80;">FastAPI — on Nemotron response</td>
+        <td style="padding:6px 10px;color:#94a3b8;">Cloud Run</td>
+        <td style="padding:6px 10px;color:#93c5fd;">React SSE client</td>
+        <td style="padding:6px 10px;color:#94a3b8;">5</td>
+        <td style="padding:6px 10px;font-family:monospace;font-size:9.5px;color:#64748b;">{ session_id, overall_score, issues_count }</td>
+      </tr>
+      <tr style="border-bottom:1px solid #111827;">
+        <td style="padding:6px 10px;font-family:monospace;color:#c4b5fd;">frames_extracting</td>
+        <td style="padding:6px 10px;color:#4ade80;">OpenCV frame extractor</td>
+        <td style="padding:6px 10px;color:#94a3b8;">Cloud Run</td>
+        <td style="padding:6px 10px;color:#93c5fd;">React SSE client</td>
+        <td style="padding:6px 10px;color:#94a3b8;">5</td>
+        <td style="padding:6px 10px;font-family:monospace;font-size:9.5px;color:#64748b;">{ session_id, frames_total }</td>
+      </tr>
+      <tr style="border-bottom:1px solid #111827;background:#080d12;">
+        <td style="padding:6px 10px;font-family:monospace;color:#c4b5fd;">frames_ready</td>
+        <td style="padding:6px 10px;color:#4ade80;">FastAPI — after frames written to GCS</td>
+        <td style="padding:6px 10px;color:#94a3b8;">Cloud Run</td>
+        <td style="padding:6px 10px;color:#93c5fd;">React SSE client</td>
+        <td style="padding:6px 10px;color:#94a3b8;">5</td>
+        <td style="padding:6px 10px;font-family:monospace;font-size:9.5px;color:#64748b;">{ session_id, frame_urls: [...] }</td>
+      </tr>
+      <tr style="border-bottom:1px solid #111827;">
+        <td style="padding:6px 10px;font-family:monospace;color:#c4b5fd;">rag_started</td>
+        <td style="padding:6px 10px;color:#4ade80;">FastAPI — before calling Squad 3 RAG endpoint</td>
+        <td style="padding:6px 10px;color:#94a3b8;">Cloud Run → Squad 3 service</td>
+        <td style="padding:6px 10px;color:#93c5fd;">React SSE client</td>
+        <td style="padding:6px 10px;color:#94a3b8;">RAG</td>
+        <td style="padding:6px 10px;font-family:monospace;font-size:9.5px;color:#64748b;">{ session_id }</td>
+      </tr>
+      <tr style="border-bottom:1px solid #111827;background:#080d12;">
+        <td style="padding:6px 10px;font-family:monospace;color:#c4b5fd;">rag_complete</td>
+        <td style="padding:6px 10px;color:#4ade80;">FastAPI — on RAG response received</td>
+        <td style="padding:6px 10px;color:#94a3b8;">Cloud Run</td>
+        <td style="padding:6px 10px;color:#93c5fd;">React SSE client</td>
+        <td style="padding:6px 10px;color:#94a3b8;">RAG</td>
+        <td style="padding:6px 10px;font-family:monospace;font-size:9.5px;color:#64748b;">{ session_id, passages_retrieved: 8 }</td>
+      </tr>
+      <tr style="border-bottom:1px solid #111827;">
+        <td style="padding:6px 10px;font-family:monospace;color:#c4b5fd;">claude_started</td>
+        <td style="padding:6px 10px;color:#4ade80;">FastAPI — before Claude Sonnet API call</td>
+        <td style="padding:6px 10px;color:#94a3b8;">Cloud Run → Anthropic API</td>
+        <td style="padding:6px 10px;color:#93c5fd;">React SSE client</td>
+        <td style="padding:6px 10px;color:#94a3b8;">7</td>
+        <td style="padding:6px 10px;font-family:monospace;font-size:9.5px;color:#64748b;">{ session_id }</td>
+      </tr>
+      <tr style="border-bottom:1px solid #111827;background:#080d12;">
+        <td style="padding:6px 10px;font-family:monospace;color:#c4b5fd;">claude_complete</td>
+        <td style="padding:6px 10px;color:#4ade80;">FastAPI — on Claude response received</td>
+        <td style="padding:6px 10px;color:#94a3b8;">Cloud Run</td>
+        <td style="padding:6px 10px;color:#93c5fd;">React SSE client</td>
+        <td style="padding:6px 10px;color:#94a3b8;">7</td>
+        <td style="padding:6px 10px;font-family:monospace;font-size:9.5px;color:#64748b;">{ session_id, recommendation: "hold" }</td>
+      </tr>
+      <tr style="border-bottom:1px solid #111827;">
+        <td style="padding:6px 10px;font-family:monospace;color:#86efac;font-weight:700;">analysis_complete</td>
+        <td style="padding:6px 10px;color:#4ade80;">FastAPI — DB updated, all stages done</td>
+        <td style="padding:6px 10px;color:#94a3b8;">Cloud Run</td>
+        <td style="padding:6px 10px;color:#93c5fd;font-weight:600;">React — triggers full Results render</td>
+        <td style="padding:6px 10px;color:#94a3b8;">7→8</td>
+        <td style="padding:6px 10px;font-family:monospace;font-size:9.5px;color:#64748b;">{ session_id, full_result_url }</td>
+      </tr>
+      <tr style="background:#1a0500;">
+        <td style="padding:6px 10px;font-family:monospace;color:#f87171;font-weight:700;">error</td>
+        <td style="padding:6px 10px;color:#4ade80;">FastAPI — any failed pipeline stage</td>
+        <td style="padding:6px 10px;color:#94a3b8;">Cloud Run</td>
+        <td style="padding:6px 10px;color:#93c5fd;">React — renders error state UI</td>
+        <td style="padding:6px 10px;color:#f87171;">Any</td>
+        <td style="padding:6px 10px;font-family:monospace;font-size:9.5px;color:#64748b;">{ analysis_id, error_code, error_stage, retryable, message }</td>
+      </tr>
+    </table>
+    <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:0.7px;color:#475569;margin:20px 0 10px;">User-Facing Frontend Messages — per SSE Event</div>
+    <div style="font-size:10px;color:#64748b;margin-bottom:10px;">6 distinct messages · <code style="background:#0d1117;padding:1px 4px;border-radius:3px;font-size:9px;">biomechanics_complete</code> and remaining events advance % bar only · copy defined in <span style="color:#60a5fa;">S1-W5-06</span></div>
+    <table style="width:100%;border-collapse:collapse;font-size:11px;margin-bottom:20px;">
+      <tr style="border-bottom:1px solid #1e2433;">
+        <th style="text-align:left;padding:6px 10px;color:#64748b;font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:0.5px;">SSE Event(s)</th>
+        <th style="text-align:left;padding:6px 10px;color:#64748b;font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:0.5px;">User-facing message</th>
+        <th style="text-align:center;padding:6px 10px;color:#64748b;font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:0.5px;">% Range</th>
+        <th style="text-align:left;padding:6px 10px;color:#64748b;font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:0.5px;">Note</th>
+      </tr>
+      <tr style="border-bottom:1px solid #111827;background:#080d12;">
+        <td style="padding:8px 10px;font-family:monospace;font-size:9.5px;color:#c4b5fd;">upload_received</td>
+        <td style="padding:8px 10px;color:#f1f5f9;font-weight:600;">"Video received. Preparing your session..."</td>
+        <td style="padding:8px 10px;text-align:center;color:#94a3b8;">5%</td>
+        <td style="padding:8px 10px;color:#64748b;font-size:10px;">First user feedback — confirms upload succeeded</td>
+      </tr>
+      <tr style="border-bottom:1px solid #111827;">
+        <td style="padding:8px 10px;font-family:monospace;font-size:9.5px;color:#c4b5fd;">mediapipe_started<br><span style="color:#334155;">mediapipe_complete</span></td>
+        <td style="padding:8px 10px;color:#f1f5f9;font-weight:600;">"Reading your movement patterns..."</td>
+        <td style="padding:8px 10px;text-align:center;color:#94a3b8;">10% → 30%</td>
+        <td style="padding:8px 10px;color:#64748b;font-size:10px;">Message stays on mediapipe_complete — % bar advances only</td>
+      </tr>
+      <tr style="border-bottom:1px solid #111827;background:#080d12;">
+        <td style="padding:8px 10px;font-family:monospace;font-size:9.5px;color:#c4b5fd;">biomechanics_complete</td>
+        <td style="padding:8px 10px;color:#475569;font-style:italic;">No message change</td>
+        <td style="padding:8px 10px;text-align:center;color:#94a3b8;">33%</td>
+        <td style="padding:8px 10px;color:#64748b;font-size:10px;">Silent event — % bar nudges only. Confirms script ran. Useful for developer debugging; invisible to user.</td>
+      </tr>
+      <tr style="border-bottom:1px solid #111827;">
+        <td style="padding:8px 10px;font-family:monospace;font-size:9.5px;color:#c4b5fd;">nemotron_started</td>
+        <td style="padding:8px 10px;color:#f1f5f9;font-weight:600;">"Analysing your form frame by frame..."</td>
+        <td style="padding:8px 10px;text-align:center;color:#94a3b8;">35%</td>
+        <td style="padding:8px 10px;color:#64748b;font-size:10px;">Longest step — "frame by frame" implies precision without surfacing AI jargon</td>
+      </tr>
+      <tr style="border-bottom:1px solid #111827;">
+        <td style="padding:8px 10px;font-family:monospace;font-size:9.5px;color:#c4b5fd;">nemotron_complete<br><span style="color:#334155;">frames_extracting · frames_ready<br>rag_started · rag_complete</span></td>
+        <td style="padding:8px 10px;color:#f1f5f9;font-weight:600;">"Form patterns identified. Building your report..."</td>
+        <td style="padding:8px 10px;text-align:center;color:#94a3b8;">65% → 85%</td>
+        <td style="padding:8px 10px;color:#64748b;font-size:10px;">4 events share this message — internal steps (OpenCV, RAG) not surfaced to user</td>
+      </tr>
+      <tr style="border-bottom:1px solid #111827;background:#080d12;">
+        <td style="padding:8px 10px;font-family:monospace;font-size:9.5px;color:#c4b5fd;">claude_started<br><span style="color:#334155;">claude_complete</span></td>
+        <td style="padding:8px 10px;color:#f1f5f9;font-weight:600;">"Writing your personalised coaching..."</td>
+        <td style="padding:8px 10px;text-align:center;color:#94a3b8;">88% → 96%</td>
+        <td style="padding:8px 10px;color:#64748b;font-size:10px;">"Personalised" signals tailored output — % advances on claude_complete</td>
+      </tr>
+      <tr style="border-bottom:1px solid #111827;">
+        <td style="padding:8px 10px;font-family:monospace;font-size:9.5px;color:#c4b5fd;">claude_complete</td>
+        <td style="padding:8px 10px;color:#f1f5f9;font-weight:600;">"Almost there. Finalising your results..."</td>
+        <td style="padding:8px 10px;text-align:center;color:#94a3b8;">96%</td>
+        <td style="padding:8px 10px;color:#64748b;font-size:10px;">Builds anticipation before Results screen reveal</td>
+      </tr>
+      <tr style="border-bottom:1px solid #111827;background:#080d12;">
+        <td style="padding:8px 10px;font-family:monospace;font-size:9.5px;color:#86efac;font-weight:700;">analysis_complete</td>
+        <td style="padding:8px 10px;color:#86efac;font-weight:700;">"Your analysis is ready."</td>
+        <td style="padding:8px 10px;text-align:center;color:#86efac;font-weight:700;">100%</td>
+        <td style="padding:8px 10px;color:#64748b;font-size:10px;">Short, confident — then auto-navigate to Results screen</td>
+      </tr>
+      <tr style="background:#1a0500;">
+        <td style="padding:8px 10px;font-family:monospace;font-size:9.5px;color:#f87171;font-weight:700;">error</td>
+        <td style="padding:8px 10px;color:#fca5a5;font-weight:600;">Message varies by <code style="background:#2d0a0a;padding:1px 4px;border-radius:3px;font-size:10px;">error_code</code> — see Error Taxonomy below</td>
+        <td style="padding:8px 10px;text-align:center;color:#f87171;">—</td>
+        <td style="padding:8px 10px;color:#64748b;font-size:10px;"><code style="background:#1a0500;padding:1px 4px;border-radius:3px;font-size:9px;">retryable: true</code> → "Try again" CTA &nbsp;|&nbsp; <code style="background:#1a0500;padding:1px 4px;border-radius:3px;font-size:9px;">retryable: false</code> → "Re-film and upload" CTA</td>
+      </tr>
+    </table>
+
+    <!-- Error Taxonomy -->
+    <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:0.7px;color:#475569;margin:20px 0 10px;">Error Taxonomy — error_code Reference</div>
+    <div style="font-size:10px;color:#64748b;margin-bottom:12px;">Frontend reads <code style="background:#0d1117;padding:1px 5px;border-radius:4px;color:#a5f3fc;">error_code</code> from the <code style="background:#0d1117;padding:1px 5px;border-radius:4px;color:#f87171;">error</code> SSE event to select the right message + CTA. <code style="background:#0d1117;padding:1px 5px;border-radius:4px;color:#4ade80;">retryable: "true"</code> = same video is fine, infrastructure failed. <code style="background:#0d1117;padding:1px 5px;border-radius:4px;color:#f87171;">retryable: "false"</code> = the video itself needs to change. <code style="background:#0d1117;padding:1px 5px;border-radius:4px;color:#fbbf24;">retryable: "partial"</code> = pipeline continues with degraded output.</div>
+
+    <!-- Payload schemas -->
+    <div style="font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#475569;margin:0 0 8px;">SSE Payload Schemas — Typed</div>
+
+    <!-- upload_received schema -->
+    <div style="font-size:9px;color:#64748b;margin-bottom:4px;font-weight:600;">upload_received</div>
+    <table style="width:100%;border-collapse:collapse;font-size:10.5px;margin-bottom:14px;">
+      <tr style="background:#1e293b;">
+        <th style="padding:5px 10px;text-align:left;color:#64748b;font-size:9.5px;font-weight:700;border:1px solid #1e2433;">Field</th>
+        <th style="padding:5px 10px;text-align:left;color:#64748b;font-size:9.5px;font-weight:700;border:1px solid #1e2433;">Type</th>
+        <th style="padding:5px 10px;text-align:left;color:#64748b;font-size:9.5px;font-weight:700;border:1px solid #1e2433;">Format / Constraints</th>
+        <th style="padding:5px 10px;text-align:left;color:#64748b;font-size:9.5px;font-weight:700;border:1px solid #1e2433;">Example</th>
+      </tr>
+      <tr style="background:#080d12;"><td style="padding:5px 10px;font-family:monospace;font-size:10px;color:#a5f3fc;border:1px solid #1e2433;">analysis_id</td><td style="padding:5px 10px;color:#86efac;border:1px solid #1e2433;">string</td><td style="padding:5px 10px;color:#94a3b8;font-size:10px;border:1px solid #1e2433;">UUID v4 · new per upload attempt incl. retries</td><td style="padding:5px 10px;font-family:monospace;font-size:9px;color:#64748b;border:1px solid #1e2433;">"550e8400-e29b-41d4-a716-446655440000"</td></tr>
+      <tr><td style="padding:5px 10px;font-family:monospace;font-size:10px;color:#a5f3fc;border:1px solid #1e2433;">session_id</td><td style="padding:5px 10px;color:#86efac;border:1px solid #1e2433;">string</td><td style="padding:5px 10px;color:#94a3b8;font-size:10px;border:1px solid #1e2433;">UUID v4 · stable across multiple uploads in one browser session</td><td style="padding:5px 10px;font-family:monospace;font-size:9px;color:#64748b;border:1px solid #1e2433;">"a1b2c3d4-0000-0000-0000-000000000000"</td></tr>
+      <tr style="background:#080d12;"><td style="padding:5px 10px;font-family:monospace;font-size:10px;color:#a5f3fc;border:1px solid #1e2433;">user_id</td><td style="padding:5px 10px;color:#86efac;border:1px solid #1e2433;">string</td><td style="padding:5px 10px;color:#94a3b8;font-size:10px;border:1px solid #1e2433;">UUID v4 · permanent auth account ID</td><td style="padding:5px 10px;font-family:monospace;font-size:9px;color:#64748b;border:1px solid #1e2433;">"u9x8y7z6-0000-0000-0000-000000000000"</td></tr>
+      <tr><td style="padding:5px 10px;font-family:monospace;font-size:10px;color:#a5f3fc;border:1px solid #1e2433;">filename</td><td style="padding:5px 10px;color:#86efac;border:1px solid #1e2433;">string</td><td style="padding:5px 10px;color:#94a3b8;font-size:10px;border:1px solid #1e2433;">Original filename as uploaded</td><td style="padding:5px 10px;font-family:monospace;font-size:9px;color:#64748b;border:1px solid #1e2433;">"squat_session.mp4"</td></tr>
+      <tr style="background:#080d12;"><td style="padding:5px 10px;font-family:monospace;font-size:10px;color:#a5f3fc;border:1px solid #1e2433;">size_mb</td><td style="padding:5px 10px;color:#86efac;border:1px solid #1e2433;">float</td><td style="padding:5px 10px;color:#94a3b8;font-size:10px;border:1px solid #1e2433;">Megabytes · 2 decimal places · max 500</td><td style="padding:5px 10px;font-family:monospace;font-size:9px;color:#64748b;border:1px solid #1e2433;">43.12</td></tr>
+      <tr><td style="padding:5px 10px;font-family:monospace;font-size:10px;color:#a5f3fc;border:1px solid #1e2433;">created_at</td><td style="padding:5px 10px;color:#86efac;border:1px solid #1e2433;">string</td><td style="padding:5px 10px;color:#94a3b8;font-size:10px;border:1px solid #1e2433;">ISO 8601 UTC timestamp · set by server at upload receipt</td><td style="padding:5px 10px;font-family:monospace;font-size:9px;color:#64748b;border:1px solid #1e2433;">"2026-05-06T10:23:00.412Z"</td></tr>
+    </table>
+
+    <!-- error event schema -->
+    <div style="font-size:9px;color:#64748b;margin-bottom:4px;font-weight:600;">error</div>
+    <table style="width:100%;border-collapse:collapse;font-size:10.5px;margin-bottom:14px;">
+      <tr style="background:#1e293b;">
+        <th style="padding:5px 10px;text-align:left;color:#64748b;font-size:9.5px;font-weight:700;border:1px solid #1e2433;">Field</th>
+        <th style="padding:5px 10px;text-align:left;color:#64748b;font-size:9.5px;font-weight:700;border:1px solid #1e2433;">Type</th>
+        <th style="padding:5px 10px;text-align:left;color:#64748b;font-size:9.5px;font-weight:700;border:1px solid #1e2433;">Format / Constraints</th>
+        <th style="padding:5px 10px;text-align:left;color:#64748b;font-size:9.5px;font-weight:700;border:1px solid #1e2433;">Example</th>
+      </tr>
+      <tr style="background:#080d12;"><td style="padding:5px 10px;font-family:monospace;font-size:10px;color:#f87171;border:1px solid #1e2433;">analysis_id</td><td style="padding:5px 10px;color:#86efac;border:1px solid #1e2433;">string</td><td style="padding:5px 10px;color:#94a3b8;font-size:10px;border:1px solid #1e2433;">UUID v4 · same analysis_id that was issued at upload_received</td><td style="padding:5px 10px;font-family:monospace;font-size:9px;color:#64748b;border:1px solid #1e2433;">"550e8400-e29b-41d4-a716-446655440000"</td></tr>
+      <tr><td style="padding:5px 10px;font-family:monospace;font-size:10px;color:#f87171;border:1px solid #1e2433;">error_code</td><td style="padding:5px 10px;color:#86efac;border:1px solid #1e2433;">string (enum)</td><td style="padding:5px 10px;color:#94a3b8;font-size:10px;border:1px solid #1e2433;">One of the error_code values in the taxonomy tables below · SCREAMING_SNAKE_CASE</td><td style="padding:5px 10px;font-family:monospace;font-size:9px;color:#64748b;border:1px solid #1e2433;">"KEYPOINTS_OCCLUDED"</td></tr>
+      <tr style="background:#080d12;"><td style="padding:5px 10px;font-family:monospace;font-size:10px;color:#f87171;border:1px solid #1e2433;">error_stage</td><td style="padding:5px 10px;color:#86efac;border:1px solid #1e2433;">string (enum)</td><td style="padding:5px 10px;color:#94a3b8;font-size:10px;border:1px solid #1e2433;">"mediapipe" | "biomechanics" | "nemotron" | "frame_extraction" | "rag" | "claude" | "pipeline"<br><em style="font-size:9px;color:#475569;">mediapipe = dot-tracker failed · biomechanics = maths on dots failed</em></td><td style="padding:5px 10px;font-family:monospace;font-size:9px;color:#64748b;border:1px solid #1e2433;">"biomechanics"</td></tr>
+      <tr><td style="padding:5px 10px;font-family:monospace;font-size:10px;color:#f87171;border:1px solid #1e2433;">retryable</td><td style="padding:5px 10px;color:#86efac;border:1px solid #1e2433;">string (enum)</td><td style="padding:5px 10px;color:#94a3b8;font-size:10px;border:1px solid #1e2433;"><span style="color:#4ade80;">"true"</span> · infra failure, same video ok — show "Try again" CTA<br><span style="color:#f87171;">"false"</span> · video itself must change — show "Re-film and upload" CTA<br><span style="color:#fbbf24;">"partial"</span> · pipeline degraded but continues — show inline warning, no blocking CTA<br><em style="font-size:9px;color:#475569;">Note: tri-state enum, not boolean — use string comparison not truthiness check</em></td><td style="padding:5px 10px;font-family:monospace;font-size:9px;color:#64748b;border:1px solid #1e2433;">"false"</td></tr>
+      <tr style="background:#080d12;"><td style="padding:5px 10px;font-family:monospace;font-size:10px;color:#f87171;border:1px solid #1e2433;">message</td><td style="padding:5px 10px;color:#86efac;border:1px solid #1e2433;">string</td><td style="padding:5px 10px;color:#94a3b8;font-size:10px;border:1px solid #1e2433;">Internal log message — not shown to user. Frontend derives user-facing copy from error_code.</td><td style="padding:5px 10px;font-family:monospace;font-size:9px;color:#64748b;border:1px solid #1e2433;">"MediaPipe confidence below threshold: 0.31"</td></tr>
+    </table>
+
+    <!-- Pre-upload errors -->
+    <div style="font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#7c3aed;margin:10px 0 6px;">Pre-upload (client-side — never reaches SSE)</div>
+    <table style="width:100%;border-collapse:collapse;font-size:11px;margin-bottom:14px;">
+      <tr style="background:#1e293b;">
+        <th style="padding:6px 10px;text-align:left;color:#64748b;font-size:10px;font-weight:700;border:1px solid #1e2433;">error_code</th>
+        <th style="padding:6px 10px;text-align:left;color:#64748b;font-size:10px;font-weight:700;border:1px solid #1e2433;">Trigger</th>
+        <th style="padding:6px 10px;text-align:left;color:#64748b;font-size:10px;font-weight:700;border:1px solid #1e2433;">User-facing message</th>
+        <th style="padding:6px 10px;text-align:center;color:#64748b;font-size:10px;font-weight:700;border:1px solid #1e2433;">retryable</th>
+      </tr>
+      <tr style="background:#080d12;"><td style="padding:6px 10px;font-family:monospace;font-size:10px;color:#f87171;border:1px solid #1e2433;">FILE_TOO_LARGE</td><td style="padding:6px 10px;font-size:10px;color:#94a3b8;border:1px solid #1e2433;">&gt; 500 MB</td><td style="padding:6px 10px;font-size:10px;color:#f1f5f9;border:1px solid #1e2433;">"That video is too large (max 500 MB). Try trimming it to your working set."</td><td style="padding:6px 10px;text-align:center;border:1px solid #1e2433;color:#f87171;">false</td></tr>
+      <tr><td style="padding:6px 10px;font-family:monospace;font-size:10px;color:#f87171;border:1px solid #1e2433;">FORMAT_UNSUPPORTED</td><td style="padding:6px 10px;font-size:10px;color:#94a3b8;border:1px solid #1e2433;">Not .mp4 / .mov / .avi</td><td style="padding:6px 10px;font-size:10px;color:#f1f5f9;border:1px solid #1e2433;">"We can't read that format. Export as MP4 and try again."</td><td style="padding:6px 10px;text-align:center;border:1px solid #1e2433;color:#f87171;">false</td></tr>
+      <tr style="background:#080d12;"><td style="padding:6px 10px;font-family:monospace;font-size:10px;color:#f87171;border:1px solid #1e2433;">FILE_CORRUPT</td><td style="padding:6px 10px;font-size:10px;color:#94a3b8;border:1px solid #1e2433;">Zero bytes or unreadable header</td><td style="padding:6px 10px;font-size:10px;color:#f1f5f9;border:1px solid #1e2433;">"That file looks corrupted. Re-export from your camera roll and try again."</td><td style="padding:6px 10px;text-align:center;border:1px solid #1e2433;color:#f87171;">false</td></tr>
+      <tr><td style="padding:6px 10px;font-family:monospace;font-size:10px;color:#f87171;border:1px solid #1e2433;">UPLOAD_TIMEOUT</td><td style="padding:6px 10px;font-size:10px;color:#94a3b8;border:1px solid #1e2433;">Network drop mid-transfer</td><td style="padding:6px 10px;font-size:10px;color:#f1f5f9;border:1px solid #1e2433;">"Upload timed out. Check your connection and try again."</td><td style="padding:6px 10px;text-align:center;border:1px solid #1e2433;color:#4ade80;">true</td></tr>
+    </table>
+
+    <!-- MediaPipe errors -->
+    <div style="font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#06b6d4;margin:10px 0 4px;">MediaPipe Stage — error_stage: "mediapipe"</div>
+    <div style="font-size:9px;color:#475569;margin-bottom:6px;">Keypoint extraction failures — MediaPipe could not reliably track the body. Developer looks at: video quality, lighting, MediaPipe confidence config.</div>
+    <table style="width:100%;border-collapse:collapse;font-size:11px;margin-bottom:14px;">
+      <tr style="background:#1e293b;">
+        <th style="padding:6px 10px;text-align:left;color:#64748b;font-size:10px;font-weight:700;border:1px solid #1e2433;">error_code</th>
+        <th style="padding:6px 10px;text-align:left;color:#64748b;font-size:10px;font-weight:700;border:1px solid #1e2433;">Trigger</th>
+        <th style="padding:6px 10px;text-align:left;color:#64748b;font-size:10px;font-weight:700;border:1px solid #1e2433;">User-facing message</th>
+        <th style="padding:6px 10px;text-align:center;color:#64748b;font-size:10px;font-weight:700;border:1px solid #1e2433;">retryable</th>
+      </tr>
+      <tr style="background:#080d12;"><td style="padding:6px 10px;font-family:monospace;font-size:10px;color:#f87171;border:1px solid #1e2433;">LOW_LIGHT</td><td style="padding:6px 10px;font-size:10px;color:#94a3b8;border:1px solid #1e2433;">Keypoint confidence &lt; threshold on &gt;60% of frames</td><td style="padding:6px 10px;font-size:10px;color:#f1f5f9;border:1px solid #1e2433;">"Lighting is too low to read your joints clearly. Try somewhere brighter."</td><td style="padding:6px 10px;text-align:center;border:1px solid #1e2433;color:#f87171;">false</td></tr>
+      <tr><td style="padding:6px 10px;font-family:monospace;font-size:10px;color:#f87171;border:1px solid #1e2433;">CAMERA_ANGLE_WRONG</td><td style="padding:6px 10px;font-size:10px;color:#94a3b8;border:1px solid #1e2433;">Sagittal/coronal plane not detectable</td><td style="padding:6px 10px;font-size:10px;color:#f1f5f9;border:1px solid #1e2433;">"For best results, film from a 45° angle with your full body in frame."</td><td style="padding:6px 10px;text-align:center;border:1px solid #1e2433;color:#f87171;">false</td></tr>
+      <tr style="background:#080d12;"><td style="padding:6px 10px;font-family:monospace;font-size:10px;color:#f87171;border:1px solid #1e2433;">MULTIPLE_SUBJECTS</td><td style="padding:6px 10px;font-size:10px;color:#94a3b8;border:1px solid #1e2433;">&gt;1 person skeleton detected</td><td style="padding:6px 10px;font-size:10px;color:#f1f5f9;border:1px solid #1e2433;">"Multiple people detected. Film on your own so we can focus on your form."</td><td style="padding:6px 10px;text-align:center;border:1px solid #1e2433;color:#f87171;">false</td></tr>
+      <tr><td style="padding:6px 10px;font-family:monospace;font-size:10px;color:#f87171;border:1px solid #1e2433;">KEYPOINTS_OCCLUDED</td><td style="padding:6px 10px;font-size:10px;color:#94a3b8;border:1px solid #1e2433;">Hip/knee/ankle confidence below threshold — barbell, clothing, equipment blocking</td><td style="padding:6px 10px;font-size:10px;color:#f1f5f9;border:1px solid #1e2433;">"Key joints are hidden — possibly by a barbell, baggy clothing, or another object. Try filming with fitted clothing and clear sightlines."</td><td style="padding:6px 10px;text-align:center;border:1px solid #1e2433;color:#f87171;">false</td></tr>
+      <tr style="background:#080d12;"><td style="padding:6px 10px;font-family:monospace;font-size:10px;color:#f87171;border:1px solid #1e2433;">LOW_CONFIDENCE_OVERALL</td><td style="padding:6px 10px;font-size:10px;color:#94a3b8;border:1px solid #1e2433;">Mean confidence below threshold, no single dominant cause</td><td style="padding:6px 10px;font-size:10px;color:#f1f5f9;border:1px solid #1e2433;">"We couldn't get a reliable read on your movement. Re-film with better lighting and a clear background."</td><td style="padding:6px 10px;text-align:center;border:1px solid #1e2433;color:#f87171;">false</td></tr>
+      <tr><td style="padding:6px 10px;font-family:monospace;font-size:10px;color:#f87171;border:1px solid #1e2433;">RESOLUTION_TOO_LOW</td><td style="padding:6px 10px;font-size:10px;color:#94a3b8;border:1px solid #1e2433;">Frame resolution &lt; 480p</td><td style="padding:6px 10px;font-size:10px;color:#f1f5f9;border:1px solid #1e2433;">"Video resolution is too low. Film at 720p or higher for accurate analysis."</td><td style="padding:6px 10px;text-align:center;border:1px solid #1e2433;color:#f87171;">false</td></tr>
+    </table>
+
+    <!-- Biomechanics errors -->
+    <div style="font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#4ade80;margin:10px 0 4px;">Biomechanics Script Stage — error_stage: "biomechanics"</div>
+    <div style="font-size:9px;color:#475569;margin-bottom:6px;">Maths / logic failures — MediaPipe ran fine and produced keypoints, but the Python script could not compute valid metrics from them. Developer looks at: rep segmentation logic, angle calculation edge cases, keypoint data quality.</div>
+    <table style="width:100%;border-collapse:collapse;font-size:11px;margin-bottom:14px;">
+      <tr style="background:#1e293b;">
+        <th style="padding:6px 10px;text-align:left;color:#64748b;font-size:10px;font-weight:700;border:1px solid #1e2433;">error_code</th>
+        <th style="padding:6px 10px;text-align:left;color:#64748b;font-size:10px;font-weight:700;border:1px solid #1e2433;">Trigger</th>
+        <th style="padding:6px 10px;text-align:left;color:#64748b;font-size:10px;font-weight:700;border:1px solid #1e2433;">User-facing message</th>
+        <th style="padding:6px 10px;text-align:center;color:#64748b;font-size:10px;font-weight:700;border:1px solid #1e2433;">retryable</th>
+      </tr>
+      <tr style="background:#080d12;"><td style="padding:6px 10px;font-family:monospace;font-size:10px;color:#f87171;border:1px solid #1e2433;">VIDEO_TOO_SHORT</td><td style="padding:6px 10px;font-size:10px;color:#94a3b8;border:1px solid #1e2433;">Video &lt; 5 s — not enough frames for any rep segmentation</td><td style="padding:6px 10px;font-size:10px;color:#f1f5f9;border:1px solid #1e2433;">"We didn't catch a complete rep. Record at least one full squat and try again."</td><td style="padding:6px 10px;text-align:center;border:1px solid #1e2433;color:#f87171;">false</td></tr>
+      <tr><td style="padding:6px 10px;font-family:monospace;font-size:10px;color:#f87171;border:1px solid #1e2433;">NO_MOVEMENT_DETECTED</td><td style="padding:6px 10px;font-size:10px;color:#94a3b8;border:1px solid #1e2433;">Hip keypoint vertical velocity near zero — person is static</td><td style="padding:6px 10px;font-size:10px;color:#f1f5f9;border:1px solid #1e2433;">"The video looks still. Make sure the camera is filming your full movement."</td><td style="padding:6px 10px;text-align:center;border:1px solid #1e2433;color:#f87171;">false</td></tr>
+      <tr style="background:#080d12;"><td style="padding:6px 10px;font-family:monospace;font-size:10px;color:#f87171;border:1px solid #1e2433;">NO_REPS_DETECTED</td><td style="padding:6px 10px;font-size:10px;color:#94a3b8;border:1px solid #1e2433;">Hip velocity data exists but rep segmentation algorithm found 0 complete cycles</td><td style="padding:6px 10px;font-size:10px;color:#f1f5f9;border:1px solid #1e2433;">"We couldn't detect a full squat rep. Make sure your full body is visible and complete at least one rep."</td><td style="padding:6px 10px;text-align:center;border:1px solid #1e2433;color:#f87171;">false</td></tr>
+      <tr><td style="padding:6px 10px;font-family:monospace;font-size:10px;color:#f87171;border:1px solid #1e2433;">BIOMECHANICS_COMPUTE_ERROR</td><td style="padding:6px 10px;font-size:10px;color:#94a3b8;border:1px solid #1e2433;">Unhandled exception in Python script — e.g. division by zero in angle calculation, missing keypoint index</td><td style="padding:6px 10px;font-size:10px;color:#f1f5f9;border:1px solid #1e2433;">"Something went wrong reading your movement data. Try re-uploading."</td><td style="padding:6px 10px;text-align:center;border:1px solid #1e2433;color:#4ade80;">true</td></tr>
+    </table>
+
+    <!-- Nemotron errors -->
+    <div style="font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#a78bfa;margin:10px 0 6px;">Nemotron Stage — error_stage: "nemotron"</div>
+    <table style="width:100%;border-collapse:collapse;font-size:11px;margin-bottom:14px;">
+      <tr style="background:#1e293b;">
+        <th style="padding:6px 10px;text-align:left;color:#64748b;font-size:10px;font-weight:700;border:1px solid #1e2433;">error_code</th>
+        <th style="padding:6px 10px;text-align:left;color:#64748b;font-size:10px;font-weight:700;border:1px solid #1e2433;">Trigger</th>
+        <th style="padding:6px 10px;text-align:left;color:#64748b;font-size:10px;font-weight:700;border:1px solid #1e2433;">User-facing message</th>
+        <th style="padding:6px 10px;text-align:center;color:#64748b;font-size:10px;font-weight:700;border:1px solid #1e2433;">retryable</th>
+      </tr>
+      <tr style="background:#080d12;"><td style="padding:6px 10px;font-family:monospace;font-size:10px;color:#f87171;border:1px solid #1e2433;">NEMOTRON_TIMEOUT</td><td style="padding:6px 10px;font-size:10px;color:#94a3b8;border:1px solid #1e2433;">API call exceeds timeout</td><td style="padding:6px 10px;font-size:10px;color:#f1f5f9;border:1px solid #1e2433;">"Form analysis is taking longer than expected. We'll retry automatically — hang tight."</td><td style="padding:6px 10px;text-align:center;border:1px solid #1e2433;color:#4ade80;">true</td></tr>
+      <tr><td style="padding:6px 10px;font-family:monospace;font-size:10px;color:#f87171;border:1px solid #1e2433;">NEMOTRON_NO_OUTPUT</td><td style="padding:6px 10px;font-size:10px;color:#94a3b8;border:1px solid #1e2433;">Response empty or malformed</td><td style="padding:6px 10px;font-size:10px;color:#f1f5f9;border:1px solid #1e2433;">"The AI couldn't interpret your movement data. Try re-uploading — if it persists, let us know."</td><td style="padding:6px 10px;text-align:center;border:1px solid #1e2433;color:#4ade80;">true</td></tr>
+      <tr style="background:#080d12;"><td style="padding:6px 10px;font-family:monospace;font-size:10px;color:#f87171;border:1px solid #1e2433;">NEMOTRON_CONTEXT_OVERFLOW</td><td style="padding:6px 10px;font-size:10px;color:#94a3b8;border:1px solid #1e2433;">Video too long → token limit hit</td><td style="padding:6px 10px;font-size:10px;color:#f1f5f9;border:1px solid #1e2433;">"That video is too long for detailed analysis. Try uploading a 30–60 second clip."</td><td style="padding:6px 10px;text-align:center;border:1px solid #1e2433;color:#f87171;">false</td></tr>
+    </table>
+
+    <!-- Frame extraction errors -->
+    <div style="font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#34d399;margin:10px 0 6px;">Frame Extraction Stage — error_stage: "frame_extraction"</div>
+    <table style="width:100%;border-collapse:collapse;font-size:11px;margin-bottom:14px;">
+      <tr style="background:#1e293b;">
+        <th style="padding:6px 10px;text-align:left;color:#64748b;font-size:10px;font-weight:700;border:1px solid #1e2433;">error_code</th>
+        <th style="padding:6px 10px;text-align:left;color:#64748b;font-size:10px;font-weight:700;border:1px solid #1e2433;">Trigger</th>
+        <th style="padding:6px 10px;text-align:left;color:#64748b;font-size:10px;font-weight:700;border:1px solid #1e2433;">User-facing message</th>
+        <th style="padding:6px 10px;text-align:center;color:#64748b;font-size:10px;font-weight:700;border:1px solid #1e2433;">retryable</th>
+      </tr>
+      <tr style="background:#080d12;"><td style="padding:6px 10px;font-family:monospace;font-size:10px;color:#f87171;border:1px solid #1e2433;">FRAME_EXTRACTION_FAILED</td><td style="padding:6px 10px;font-size:10px;color:#94a3b8;border:1px solid #1e2433;">OpenCV can't seek to Nemotron timestamp</td><td style="padding:6px 10px;font-size:10px;color:#f1f5f9;border:1px solid #1e2433;">"We identified form issues but couldn't extract the frames to show you. Your text coaching is still available below."</td><td style="padding:6px 10px;text-align:center;border:1px solid #1e2433;color:#fbbf24;">partial</td></tr>
+    </table>
+
+    <!-- RAG errors -->
+    <div style="font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#fb923c;margin:10px 0 6px;">RAG Stage — error_stage: "rag"</div>
+    <table style="width:100%;border-collapse:collapse;font-size:11px;margin-bottom:14px;">
+      <tr style="background:#1e293b;">
+        <th style="padding:6px 10px;text-align:left;color:#64748b;font-size:10px;font-weight:700;border:1px solid #1e2433;">error_code</th>
+        <th style="padding:6px 10px;text-align:left;color:#64748b;font-size:10px;font-weight:700;border:1px solid #1e2433;">Trigger</th>
+        <th style="padding:6px 10px;text-align:left;color:#64748b;font-size:10px;font-weight:700;border:1px solid #1e2433;">User-facing message</th>
+        <th style="padding:6px 10px;text-align:center;color:#64748b;font-size:10px;font-weight:700;border:1px solid #1e2433;">retryable</th>
+      </tr>
+      <tr style="background:#080d12;"><td style="padding:6px 10px;font-family:monospace;font-size:10px;color:#f87171;border:1px solid #1e2433;">RAG_UNAVAILABLE</td><td style="padding:6px 10px;font-size:10px;color:#94a3b8;border:1px solid #1e2433;">Vector DB timeout or service down</td><td style="padding:6px 10px;font-size:10px;color:#f1f5f9;border:1px solid #1e2433;">"Coaching library is temporarily unavailable. Your form analysis is ready, but personalised drills may be limited."</td><td style="padding:6px 10px;text-align:center;border:1px solid #1e2433;color:#fbbf24;">partial</td></tr>
+      <tr><td style="padding:6px 10px;font-family:monospace;font-size:10px;color:#f87171;border:1px solid #1e2433;">RAG_NO_RESULTS</td><td style="padding:6px 10px;font-size:10px;color:#94a3b8;border:1px solid #1e2433;">No matching coaching context found</td><td style="padding:6px 10px;font-size:10px;color:#f1f5f9;border:1px solid #1e2433;">"We couldn't find specific drills for your movement pattern yet. General coaching below."</td><td style="padding:6px 10px;text-align:center;border:1px solid #1e2433;color:#fbbf24;">partial</td></tr>
+    </table>
+
+    <!-- Claude errors -->
+    <div style="font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#60a5fa;margin:10px 0 6px;">Claude Stage — error_stage: "claude"</div>
+    <table style="width:100%;border-collapse:collapse;font-size:11px;margin-bottom:14px;">
+      <tr style="background:#1e293b;">
+        <th style="padding:6px 10px;text-align:left;color:#64748b;font-size:10px;font-weight:700;border:1px solid #1e2433;">error_code</th>
+        <th style="padding:6px 10px;text-align:left;color:#64748b;font-size:10px;font-weight:700;border:1px solid #1e2433;">Trigger</th>
+        <th style="padding:6px 10px;text-align:left;color:#64748b;font-size:10px;font-weight:700;border:1px solid #1e2433;">User-facing message</th>
+        <th style="padding:6px 10px;text-align:center;color:#64748b;font-size:10px;font-weight:700;border:1px solid #1e2433;">retryable</th>
+      </tr>
+      <tr style="background:#080d12;"><td style="padding:6px 10px;font-family:monospace;font-size:10px;color:#f87171;border:1px solid #1e2433;">CLAUDE_TIMEOUT</td><td style="padding:6px 10px;font-size:10px;color:#94a3b8;border:1px solid #1e2433;">Claude API exceeds timeout</td><td style="padding:6px 10px;font-size:10px;color:#f1f5f9;border:1px solid #1e2433;">"Your coaching report is taking longer than expected. Refreshing should show your results shortly."</td><td style="padding:6px 10px;text-align:center;border:1px solid #1e2433;color:#4ade80;">true</td></tr>
+      <tr><td style="padding:6px 10px;font-family:monospace;font-size:10px;color:#f87171;border:1px solid #1e2433;">CLAUDE_ERROR</td><td style="padding:6px 10px;font-size:10px;color:#94a3b8;border:1px solid #1e2433;">Malformed or empty Claude response</td><td style="padding:6px 10px;font-size:10px;color:#f1f5f9;border:1px solid #1e2433;">"We hit a snag writing your coaching report. Your raw form data is saved — try refreshing."</td><td style="padding:6px 10px;text-align:center;border:1px solid #1e2433;color:#4ade80;">true</td></tr>
+    </table>
+
+    <!-- Infrastructure errors -->
+    <div style="font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#94a3b8;margin:10px 0 6px;">Infrastructure / Pipeline — error_stage: "pipeline"</div>
+    <table style="width:100%;border-collapse:collapse;font-size:11px;margin-bottom:20px;">
+      <tr style="background:#1e293b;">
+        <th style="padding:6px 10px;text-align:left;color:#64748b;font-size:10px;font-weight:700;border:1px solid #1e2433;">error_code</th>
+        <th style="padding:6px 10px;text-align:left;color:#64748b;font-size:10px;font-weight:700;border:1px solid #1e2433;">Trigger</th>
+        <th style="padding:6px 10px;text-align:left;color:#64748b;font-size:10px;font-weight:700;border:1px solid #1e2433;">User-facing message</th>
+        <th style="padding:6px 10px;text-align:center;color:#64748b;font-size:10px;font-weight:700;border:1px solid #1e2433;">retryable</th>
+      </tr>
+      <tr style="background:#080d12;"><td style="padding:6px 10px;font-family:monospace;font-size:10px;color:#f87171;border:1px solid #1e2433;">PIPELINE_TIMEOUT</td><td style="padding:6px 10px;font-size:10px;color:#94a3b8;border:1px solid #1e2433;">Total pipeline &gt; 5 min</td><td style="padding:6px 10px;font-size:10px;color:#f1f5f9;border:1px solid #1e2433;">"Your analysis is taking unusually long. We've flagged it — try again and your previous data is saved."</td><td style="padding:6px 10px;text-align:center;border:1px solid #1e2433;color:#4ade80;">true</td></tr>
+      <tr><td style="padding:6px 10px;font-family:monospace;font-size:10px;color:#f87171;border:1px solid #1e2433;">SYSTEM_ERROR</td><td style="padding:6px 10px;font-size:10px;color:#94a3b8;border:1px solid #1e2433;">Worker crash, OOM, unhandled exception</td><td style="padding:6px 10px;font-size:10px;color:#f1f5f9;border:1px solid #1e2433;">"Something went wrong on our end. Your video is saved — try again in a moment."</td><td style="padding:6px 10px;text-align:center;border:1px solid #1e2433;color:#4ade80;">true</td></tr>
+    </table>
+    <div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:0.7px;color:#334155;margin-bottom:8px;">SSE Contract — Roadmap Task IDs</div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;">
+      <div style="display:flex;gap:6px;align-items:center;"><span class="task-map-role role-defines" style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#f59e0b;width:auto;">Defines shapes</span><span class="tid tid-s1">S1-W5-03</span><span style="font-size:10px;color:#475569;">FE JSON schema incl. SSE event shapes</span></div>
+      <div style="display:flex;gap:6px;align-items:center;"><span class="task-map-role role-defines" style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#f59e0b;width:auto;">Defines contract</span><span class="tid tid-s1">S1-W5-06</span><span style="font-size:10px;color:#475569;">SSE skeleton — all event names + payloads delivered to Squad 2</span></div>
+      <div style="display:flex;gap:6px;align-items:center;"><span style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#22c55e;width:auto;">Emits server-side</span><span class="tid tid-s2">S2-W6-06</span><span style="font-size:10px;color:#475569;">Emit correct SSE events at each pipeline stage</span></div>
+      <div style="display:flex;gap:6px;align-items:center;"><span style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#60a5fa;width:auto;">Wires client-side</span><span class="tid tid-s1">S1-W6-03</span><span style="font-size:10px;color:#475569;">Wire SSE to real processing states — test against Squad 2 stub endpoint</span></div>
+    </div>
+  </div>
+</div>
+
+<script>
+function setScheme(s) {
+  document.documentElement.setAttribute('data-scheme', s);
+  const labels = {
+    a: { fe: 'Squad 1 — Frontend', be: 'Squad 2 — Backend', da: 'Squad 3 — Data' },
+    b: { fe: 'Frontend / UI Layer', be: 'Processing / AI / Storage', da: 'RAG / Vector Data' }
+  };
+  document.getElementById('ld-fe').textContent = labels[s].fe;
+  document.getElementById('ld-be').textContent = labels[s].be;
+  document.getElementById('ld-da').textContent = labels[s].da;
+}
+</script>
+</body>
+</html>
