@@ -259,6 +259,14 @@ Kinetic is a web app where users log their workouts (exercise, sets, reps, weigh
 - **Frontend:** React, Tailwind
 - **Data:** 20–30 curated sources per exercise (research papers, YouTube, Kaggle, Instagram tutorials, biomechanics references) for RAG corpus
 
+### Technical Decisions
+
+| Decision | Choice | Rationale |
+|----------|--------|-----------|
+| **Video upload + progress stream architecture** | Option A for demo day → Option B before beta | Option A: single POST endpoint handles upload + streams SSE progress back on same connection. Simpler, sufficient for demo day in a controlled WiFi environment. Option B: upload returns `analysis_id`, frontend opens a separate SSE connection for progress — adds reconnection support essential for real users on mobile/gym networks. Option B scoped as first infrastructure task before beta rollout. |
+
+---
+
 ### Technical Risks
 
 1. **MediaPipe accuracy on consumer-filmed video** — Camera angle, lighting, clothing all affect keypoint extraction quality
