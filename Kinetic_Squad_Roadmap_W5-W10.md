@@ -47,7 +47,7 @@
 - [ ] Scaffold core screen shells: Upload, Results, Dashboard, History, Workout Logger, Onboarding
 - [ ] Implement **SSE skeleton** on Upload screen — define processing states (e.g. `uploading`, `analysing`, `generating_coaching`, `complete`, `error`) and render placeholder UI for each state
 - [ ] Agree SSE event names + payloads with Squad 2
-- [ ] **[Design]** Upload flow screens → Form Analysis results screens (wireframes ready for dev handoff by Thu)
+- [ ] **[Design]** Upload video → Processing → Form Analysis screens (wireframes ready for dev handoff by Thu)
 
 **Thursday merge:** React scaffold + dummy data + SSE state skeleton + agreed JSON contracts committed
 
@@ -88,8 +88,7 @@
 - [ ] Build **Analysis Results screen** using dummy data: form score, joint angle corrections, coaching tips, weight recommendation (placeholder)
 - [ ] Build **Dashboard shell** with dummy session history and score trend chart
 - [ ] **End of week:** Replace Upload dummy data with real `/upload` endpoint — first real video upload working in browser
-- [ ] **[Design]** Home Screen + Authentication screens (wireframes ready for dev handoff by Thu)
-- [ ] **[Design]** Dashboard & Profile screens (wireframes ready for dev handoff by Thu)
+- [ ] **[Design]** Homepage · Authentication · Profile · User Profile screens (wireframes ready for dev handoff by Thu)
 
 **Thursday merge (E2E slice):** Upload → real endpoint → MediaPipe biomechanics JSON → displayed on Results screen (even if Nemotron/Claude not wired yet)
 
@@ -135,8 +134,7 @@
 - [ ] Build **Workout Logger screen**: log sets, reps, weight; link to form session
 - [ ] Update Dashboard to reflect real session data once auth lands
 - [ ] Build **History screen**: list of past sessions with form score trend line
-- [ ] **[Design]** Subpages from Profile + Onboarding screens (wireframes ready for dev handoff by Thu)
-- [ ] **[Design]** Workout Builder & Tracker screens (wireframes ready for dev handoff by Thu)
+- [ ] **[Design]** Onboarding · Dashboard · Workout Builder & Tracker screens (wireframes ready for dev handoff by Thu) — all design handoffs complete by end of W7
 
 **Thursday merge:** Results screen live with real coaching output; Onboarding + History screens committed
 
