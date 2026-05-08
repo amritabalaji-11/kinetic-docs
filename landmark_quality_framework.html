@@ -747,8 +747,367 @@ h1 { font-size:20px; font-weight:700; color:#f8fafc; }
   </div>
 </div>
 
+<!-- ══════════════════════════════════════════════════════
+     SECTION 6 — QUALITY GATE OUTPUT: USER MESSAGES  [V2]
+     ══════════════════════════════════════════════════════ -->
+<div class="section" style="margin-top:40px;">
+
+  <div class="section-title" style="display:flex;align-items:center;gap:10px;">
+    6 &nbsp; Quality Gate Output — User Messages
+    <span style="font-size:9px;font-weight:800;padding:2px 8px;border-radius:4px;background:#1c1000;color:#fb923c;border:1px solid #78350f;letter-spacing:0.4px;">V2 · May 8, 2026</span>
+  </div>
+  <div class="section-sub">Added May 8, 2026. Maps each gate outcome to the message shown to the user. Gate criteria in Sections 2–3 are unchanged — this section defines what happens after pass/fail is determined. M1–M3 message logic uses median visibility and presence per landmark (knee · hip · ankle only) to determine which side failed.</div>
+
+  <!-- ─── Message table ─── -->
+  <div class="card" style="padding:0;overflow:hidden;">
+    <table style="width:100%;border-collapse:collapse;font-size:11px;">
+      <thead>
+        <tr style="background:#080b10;">
+          <th style="padding:9px 12px;text-align:left;color:#475569;font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:0.5px;border-bottom:1.5px solid #1e2433;width:44px;">#</th>
+          <th style="padding:9px 12px;text-align:left;color:#475569;font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:0.5px;border-bottom:1.5px solid #1e2433;width:130px;">Scenario</th>
+          <th style="padding:9px 12px;text-align:left;color:#475569;font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:0.5px;border-bottom:1.5px solid #1e2433;width:170px;">Gate Condition</th>
+          <th style="padding:9px 12px;text-align:left;color:#475569;font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:0.5px;border-bottom:1.5px solid #1e2433;width:80px;">Decision</th>
+          <th style="padding:9px 12px;text-align:left;color:#475569;font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:0.5px;border-bottom:1.5px solid #1e2433;width:190px;">Message Logic</th>
+          <th style="padding:9px 12px;text-align:left;color:#475569;font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:0.5px;border-bottom:1.5px solid #1e2433;">User Message</th>
+          <th style="padding:9px 12px;text-align:left;color:#475569;font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:0.5px;border-bottom:1.5px solid #1e2433;width:90px;">CTA</th>
+        </tr>
+      </thead>
+      <tbody>
+
+        <!-- GROUP: CRITICAL OCCLUSION -->
+        <tr style="background:#0a0d14;">
+          <td colspan="7" style="padding:4px 12px;">
+            <span style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:0.6px;color:#f87171;">▸ Gate 1 — Critical Occlusion (reliability &lt; 0.60 on any critical landmark)</span>
+          </td>
+        </tr>
+
+        <!-- M1 -->
+        <tr style="border-bottom:1px solid #111827;">
+          <td style="padding:10px 12px;vertical-align:top;">
+            <span style="font-family:monospace;font-size:10px;font-weight:800;background:#2d0a0a;color:#f87171;border:1px solid #7f1d1d;padding:2px 6px;border-radius:4px;">M1</span>
+          </td>
+          <td style="padding:10px 12px;vertical-align:top;color:#f1f5f9;font-weight:600;font-size:11px;">One-side visibility failure</td>
+          <td style="padding:10px 12px;vertical-align:top;">
+            <span style="font-size:9.5px;color:#94a3b8;line-height:1.7;">CRITICAL_OCCLUSION triggered.<br><code style="font-family:monospace;color:#c4b5fd;background:#150d24;padding:1px 4px;border-radius:3px;font-size:10px;">reliability &lt; 0.60</code> on hip/knee/heel</span>
+          </td>
+          <td style="padding:10px 12px;vertical-align:top;">
+            <span style="display:inline-flex;align-items:center;gap:4px;background:#2d0a0a;color:#f87171;border:1px solid #7f1d1d;border-radius:5px;padding:3px 8px;font-size:10px;font-weight:800;">✕ FAIL</span>
+          </td>
+          <td style="padding:10px 12px;vertical-align:top;">
+            <span style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:0.4px;color:#60a5fa;background:rgba(96,165,250,0.08);border:1px solid rgba(96,165,250,0.2);border-radius:3px;padding:1px 6px;display:inline-block;margin-bottom:5px;">Knee · Hip · Ankle only</span><br>
+            <span style="font-size:10.5px;color:#94a3b8;line-height:1.6;"><code style="font-family:monospace;color:#c4b5fd;background:#150d24;padding:1px 4px;border-radius:3px;font-size:10px;">median_visibility ≤ 0.60</code> on <strong style="color:#60a5fa;">one side only</strong>. Other side ≥ 0.60. Left fails → left msg. Right fails → right msg.</span>
+          </td>
+          <td style="padding:10px 12px;vertical-align:top;">
+            <strong style="color:#f1f5f9;font-size:11px;">"Part of your [left/right] side was hidden from view"</strong><br>
+            <span style="font-size:11px;color:#94a3b8;line-height:1.6;">Your [left/right] [knee/hip/ankle] wasn't clearly visible. Rather than switching sides, rotate your camera slightly toward the front — this brings your [left/right] side into view without losing the other.</span>
+          </td>
+          <td style="padding:10px 12px;vertical-align:top;">
+            <span style="font-size:10px;font-weight:700;background:#1e3a5f;color:#93c5fd;border:1px solid #2d5a8e;padding:3px 8px;border-radius:4px;display:inline-block;">Re-film — see tips</span>
+          </td>
+        </tr>
+
+        <!-- M2 -->
+        <tr style="border-bottom:1px solid #111827;">
+          <td style="padding:10px 12px;vertical-align:top;">
+            <span style="font-family:monospace;font-size:10px;font-weight:800;background:#2d0a0a;color:#f87171;border:1px solid #7f1d1d;padding:2px 6px;border-radius:4px;">M2</span>
+          </td>
+          <td style="padding:10px 12px;vertical-align:top;color:#f1f5f9;font-weight:600;font-size:11px;">Both-sides visibility failure</td>
+          <td style="padding:10px 12px;vertical-align:top;">
+            <span style="font-size:9.5px;color:#94a3b8;line-height:1.7;">CRITICAL_OCCLUSION triggered.<br>Same formula as M1.</span>
+          </td>
+          <td style="padding:10px 12px;vertical-align:top;">
+            <span style="display:inline-flex;align-items:center;gap:4px;background:#2d0a0a;color:#f87171;border:1px solid #7f1d1d;border-radius:5px;padding:3px 8px;font-size:10px;font-weight:800;">✕ FAIL</span>
+          </td>
+          <td style="padding:10px 12px;vertical-align:top;">
+            <span style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:0.4px;color:#60a5fa;background:rgba(96,165,250,0.08);border:1px solid rgba(96,165,250,0.2);border-radius:3px;padding:1px 6px;display:inline-block;margin-bottom:5px;">Knee · Hip · Ankle only</span><br>
+            <span style="font-size:10.5px;color:#94a3b8;line-height:1.6;"><code style="font-family:monospace;color:#c4b5fd;background:#150d24;padding:1px 4px;border-radius:3px;font-size:10px;">median_visibility ≤ 0.60</code> for ≥1 joint on <strong style="color:#fb923c;">both</strong> left and right sides.</span>
+          </td>
+          <td style="padding:10px 12px;vertical-align:top;">
+            <strong style="color:#f1f5f9;font-size:11px;">"We couldn't see your lower body clearly"</strong><br>
+            <span style="font-size:11px;color:#94a3b8;line-height:1.6;">Your camera may be facing you from directly to your side or slightly behind you. Try angling it slightly toward the front so both legs are fully in view throughout the squat.</span>
+          </td>
+          <td style="padding:10px 12px;vertical-align:top;">
+            <span style="font-size:10px;font-weight:700;background:#1e3a5f;color:#93c5fd;border:1px solid #2d5a8e;padding:3px 8px;border-radius:4px;display:inline-block;">Re-film — see tips</span>
+          </td>
+        </tr>
+
+        <!-- M3 -->
+        <tr style="border-bottom:1px solid #111827;">
+          <td style="padding:10px 12px;vertical-align:top;">
+            <span style="font-family:monospace;font-size:10px;font-weight:800;background:#2d0a0a;color:#f87171;border:1px solid #7f1d1d;padding:2px 6px;border-radius:4px;">M3</span>
+          </td>
+          <td style="padding:10px 12px;vertical-align:top;color:#f1f5f9;font-weight:600;font-size:11px;">One-side presence failure</td>
+          <td style="padding:10px 12px;vertical-align:top;">
+            <span style="font-size:9.5px;color:#94a3b8;line-height:1.7;">CRITICAL_OCCLUSION triggered.<br>Same formula as M1.</span>
+          </td>
+          <td style="padding:10px 12px;vertical-align:top;">
+            <span style="display:inline-flex;align-items:center;gap:4px;background:#2d0a0a;color:#f87171;border:1px solid #7f1d1d;border-radius:5px;padding:3px 8px;font-size:10px;font-weight:800;">✕ FAIL</span>
+          </td>
+          <td style="padding:10px 12px;vertical-align:top;">
+            <span style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:0.4px;color:#60a5fa;background:rgba(96,165,250,0.08);border:1px solid rgba(96,165,250,0.2);border-radius:3px;padding:1px 6px;display:inline-block;margin-bottom:5px;">Knee · Hip · Ankle only</span><br>
+            <span style="font-size:10.5px;color:#94a3b8;line-height:1.6;"><code style="font-family:monospace;color:#c4b5fd;background:#150d24;padding:1px 4px;border-radius:3px;font-size:10px;">median_visibility</code> passes (&gt; 0.60) but <code style="font-family:monospace;color:#c4b5fd;background:#150d24;padding:1px 4px;border-radius:3px;font-size:10px;">median_presence ≤ 0.50</code> on one side. Lower threshold — less severe than visibility failure.</span>
+          </td>
+          <td style="padding:10px 12px;vertical-align:top;">
+            <strong style="color:#f1f5f9;font-size:11px;">"Your [left/right] side kept moving out of frame"</strong><br>
+            <span style="font-size:11px;color:#94a3b8;line-height:1.6;">Your [left/right] [knee/hip/ankle] wasn't fully in frame throughout the video. Move the camera back slightly so your full body stays visible throughout the squat.</span>
+          </td>
+          <td style="padding:10px 12px;vertical-align:top;">
+            <span style="font-size:10px;font-weight:700;background:#1e3a5f;color:#93c5fd;border:1px solid #2d5a8e;padding:3px 8px;border-radius:4px;display:inline-block;">Re-film — see tips</span>
+          </td>
+        </tr>
+
+        <!-- GROUP: COMPOSITE -->
+        <tr style="background:#0a0d14;">
+          <td colspan="7" style="padding:4px 12px;">
+            <span style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:0.6px;color:#fb923c;">▸ Gate 2 — Poor Composite Score (video_score &lt; 0.70)</span>
+          </td>
+        </tr>
+
+        <!-- M4 -->
+        <tr style="border-bottom:1px solid #111827;">
+          <td style="padding:10px 12px;vertical-align:top;">
+            <span style="font-family:monospace;font-size:10px;font-weight:800;background:#1c1000;color:#fb923c;border:1px solid #78350f;padding:2px 6px;border-radius:4px;">M4</span>
+          </td>
+          <td style="padding:10px 12px;vertical-align:top;color:#f1f5f9;font-weight:600;font-size:11px;">Overall poor quality</td>
+          <td style="padding:10px 12px;vertical-align:top;">
+            <span style="font-size:9.5px;color:#94a3b8;line-height:1.7;"><code style="font-family:monospace;color:#c4b5fd;background:#150d24;padding:1px 4px;border-radius:3px;font-size:10px;">video_score = Σ weight(lm) × reliability(lm)</code><br><code style="font-family:monospace;color:#fdba74;font-size:10px;">if video_score &lt; 0.70</code><br>No landmark hit 0.60 floor.</span>
+          </td>
+          <td style="padding:10px 12px;vertical-align:top;">
+            <span style="display:inline-flex;align-items:center;gap:4px;background:#2d0a0a;color:#f87171;border:1px solid #7f1d1d;border-radius:5px;padding:3px 8px;font-size:10px;font-weight:800;">✕ FAIL</span>
+          </td>
+          <td style="padding:10px 12px;vertical-align:top;">
+            <span style="font-size:10.5px;color:#94a3b8;line-height:1.6;">No additional logic. Composite score alone determines this message.<br><em style="color:#64748b;font-size:10px;">Typical causes: filming from behind, obstruction, low lighting.</em></span>
+          </td>
+          <td style="padding:10px 12px;vertical-align:top;">
+            <strong style="color:#f1f5f9;font-size:11px;">"We couldn't read your body position clearly"</strong><br>
+            <span style="font-size:11px;color:#94a3b8;line-height:1.6;">This usually happens when filming from behind, with something blocking the view, or in low lighting. Film from your side with good lighting and a clear background.</span>
+          </td>
+          <td style="padding:10px 12px;vertical-align:top;">
+            <span style="font-size:10px;font-weight:700;background:#1e3a5f;color:#93c5fd;border:1px solid #2d5a8e;padding:3px 8px;border-radius:4px;display:inline-block;">Re-film — see tips</span>
+          </td>
+        </tr>
+
+        <!-- GROUP: REPS -->
+        <tr style="background:#0a0d14;">
+          <td colspan="7" style="padding:4px 12px;">
+            <span style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:0.6px;color:#fbbf24;">▸ Gate 3 — Insufficient Reps (complete_reps &lt; 3)</span>
+          </td>
+        </tr>
+
+        <!-- M5 -->
+        <tr style="border-bottom:1px solid #111827;">
+          <td style="padding:10px 12px;vertical-align:top;">
+            <span style="font-family:monospace;font-size:10px;font-weight:800;background:#1a1000;color:#fbbf24;border:1px solid #78350f;padding:2px 6px;border-radius:4px;">M5</span>
+          </td>
+          <td style="padding:10px 12px;vertical-align:top;color:#f1f5f9;font-weight:600;font-size:11px;">No reps detected</td>
+          <td style="padding:10px 12px;vertical-align:top;">
+            <span style="font-size:9.5px;color:#94a3b8;line-height:1.7;">Complete rep = both <code style="font-family:monospace;color:#c4b5fd;background:#150d24;padding:1px 4px;border-radius:3px;font-size:10px;">position_tag:"top"</code> AND <code style="font-family:monospace;color:#c4b5fd;background:#150d24;padding:1px 4px;border-radius:3px;font-size:10px;">"bottom"</code> in same rep segment.<br><code style="font-family:monospace;color:#fdba74;font-size:10px;">if complete_reps = 0</code></span>
+          </td>
+          <td style="padding:10px 12px;vertical-align:top;">
+            <span style="display:inline-flex;align-items:center;gap:4px;background:#2d0a0a;color:#f87171;border:1px solid #7f1d1d;border-radius:5px;padding:3px 8px;font-size:10px;font-weight:800;">✕ FAIL</span>
+          </td>
+          <td style="padding:10px 12px;vertical-align:top;">
+            <span style="font-size:10.5px;color:#94a3b8;"><code style="font-family:monospace;color:#c4b5fd;background:#150d24;padding:1px 4px;border-radius:3px;font-size:10px;">rep_count = 0</code><br>No further logic.</span>
+          </td>
+          <td style="padding:10px 12px;vertical-align:top;">
+            <strong style="color:#f1f5f9;font-size:11px;">"We couldn't detect any squats in your video"</strong><br>
+            <span style="font-size:11px;color:#94a3b8;line-height:1.6;">Make sure you're doing goblet squats and that your full body is in frame from the start of your first rep.</span>
+          </td>
+          <td style="padding:10px 12px;vertical-align:top;">
+            <span style="font-size:10px;font-weight:700;background:#1e3a5f;color:#93c5fd;border:1px solid #2d5a8e;padding:3px 8px;border-radius:4px;display:inline-block;">Re-film</span>
+          </td>
+        </tr>
+
+        <!-- M6 -->
+        <tr style="border-bottom:1px solid #111827;">
+          <td style="padding:10px 12px;vertical-align:top;">
+            <span style="font-family:monospace;font-size:10px;font-weight:800;background:#1a1000;color:#fbbf24;border:1px solid #78350f;padding:2px 6px;border-radius:4px;">M6</span>
+          </td>
+          <td style="padding:10px 12px;vertical-align:top;color:#f1f5f9;font-weight:600;font-size:11px;">Too few reps</td>
+          <td style="padding:10px 12px;vertical-align:top;">
+            <span style="font-size:9.5px;color:#94a3b8;"><code style="font-family:monospace;color:#fdba74;font-size:10px;">if 0 &lt; complete_reps &lt; 3</code></span>
+          </td>
+          <td style="padding:10px 12px;vertical-align:top;">
+            <span style="display:inline-flex;align-items:center;gap:4px;background:#2d0a0a;color:#f87171;border:1px solid #7f1d1d;border-radius:5px;padding:3px 8px;font-size:10px;font-weight:800;">✕ FAIL</span>
+          </td>
+          <td style="padding:10px 12px;vertical-align:top;">
+            <span style="font-size:10.5px;color:#94a3b8;"><code style="font-family:monospace;color:#c4b5fd;background:#150d24;padding:1px 4px;border-radius:3px;font-size:10px;">rep_count = 1 or 2</code><br>No further logic.</span>
+          </td>
+          <td style="padding:10px 12px;vertical-align:top;">
+            <strong style="color:#f1f5f9;font-size:11px;">"Film a full set to get your analysis"</strong><br>
+            <span style="font-size:11px;color:#94a3b8;line-height:1.6;">We need at least 3 complete reps to give you meaningful feedback. Squat all the way down and all the way back up for each one.</span>
+          </td>
+          <td style="padding:10px 12px;vertical-align:top;">
+            <span style="font-size:10px;font-weight:700;background:#1e3a5f;color:#93c5fd;border:1px solid #2d5a8e;padding:3px 8px;border-radius:4px;display:inline-block;">Re-film</span>
+          </td>
+        </tr>
+
+        <!-- GROUP: PASS WITH FLAG -->
+        <tr style="background:#0a0d14;">
+          <td colspan="7" style="padding:4px 12px;">
+            <span style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:0.6px;color:#fbbf24;">▸ Pass with Flag — Acceptable (0.70 ≤ video_score &lt; 0.85)</span>
+          </td>
+        </tr>
+
+        <!-- M7 -->
+        <tr style="border-bottom:1px solid #111827;">
+          <td style="padding:10px 12px;vertical-align:top;">
+            <span style="font-family:monospace;font-size:10px;font-weight:800;background:#0a2015;color:#4ade80;border:1px solid #14532d;padding:2px 6px;border-radius:4px;">M7</span>
+          </td>
+          <td style="padding:10px 12px;vertical-align:top;color:#f1f5f9;font-weight:600;font-size:11px;">Low confidence</td>
+          <td style="padding:10px 12px;vertical-align:top;">
+            <span style="font-size:9.5px;color:#94a3b8;"><code style="font-family:monospace;color:#fdba74;font-size:10px;">0.70 ≤ video_score &lt; 0.85</code><br>Video proceeds to analysis.</span>
+          </td>
+          <td style="padding:10px 12px;vertical-align:top;">
+            <span style="display:inline-flex;align-items:center;gap:4px;background:#0a2015;color:#4ade80;border:1px solid #14532d;border-radius:5px;padding:3px 8px;font-size:10px;font-weight:800;">✓ PASS</span>
+            <br>
+            <span style="display:inline-flex;align-items:center;gap:4px;background:#1c1000;color:#fbbf24;border:1px solid #78350f;border-radius:4px;padding:2px 7px;font-size:9px;font-weight:700;margin-top:4px;">⚠ lower confidence</span>
+          </td>
+          <td style="padding:10px 12px;vertical-align:top;">
+            <span style="font-size:10.5px;color:#94a3b8;">No additional logic. Composite range determines this. Shown inline on Results screen only — not a blocking error.</span>
+          </td>
+          <td style="padding:10px 12px;vertical-align:top;">
+            <strong style="color:#f1f5f9;font-size:11px;">"Results may be slightly less accurate"</strong><br>
+            <span style="font-size:11px;color:#94a3b8;line-height:1.6;">Some parts of your form were harder to read than usual. Try filming closer to the guidelines next time for a sharper analysis.</span>
+            <br><em style="font-size:10px;color:#475569;">Dismissible inline note on Results screen</em>
+          </td>
+          <td style="padding:10px 12px;vertical-align:top;">
+            <span style="font-size:10px;font-weight:700;background:#1a2035;color:#64748b;border:1px solid #2d3a4a;padding:3px 8px;border-radius:4px;display:inline-block;">Inline only</span>
+          </td>
+        </tr>
+
+        <!-- GROUP: PASS GOOD -->
+        <tr style="background:#0a0d14;">
+          <td colspan="7" style="padding:4px 12px;">
+            <span style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:0.6px;color:#34d399;">▸ Pass — Good (video_score ≥ 0.85)</span>
+          </td>
+        </tr>
+
+        <!-- M8 -->
+        <tr>
+          <td style="padding:10px 12px;vertical-align:top;">
+            <span style="font-family:monospace;font-size:10px;font-weight:800;background:#0a2015;color:#4ade80;border:1px solid #14532d;padding:2px 6px;border-radius:4px;">M8</span>
+          </td>
+          <td style="padding:10px 12px;vertical-align:top;color:#f1f5f9;font-weight:600;font-size:11px;">Full quality — proceed</td>
+          <td style="padding:10px 12px;vertical-align:top;">
+            <span style="font-size:9.5px;color:#94a3b8;"><code style="font-family:monospace;color:#86efac;font-size:10px;">video_score ≥ 0.85</code><br>All critical landmarks reliable. Pipeline continues immediately.</span>
+          </td>
+          <td style="padding:10px 12px;vertical-align:top;">
+            <span style="display:inline-flex;align-items:center;gap:4px;background:#0a2015;color:#4ade80;border:1px solid #14532d;border-radius:5px;padding:3px 8px;font-size:10px;font-weight:800;">✓ PASS</span>
+            <br>
+            <span style="display:inline-flex;align-items:center;gap:4px;background:#062020;color:#34d399;border:1px solid #0e7490;border-radius:4px;padding:2px 7px;font-size:9px;font-weight:700;margin-top:4px;">✓ full confidence</span>
+          </td>
+          <td style="padding:10px 12px;vertical-align:top;">
+            <span style="font-size:10.5px;color:#94a3b8;">No additional logic. No message shown. SSE continues to next pipeline stage (<code style="font-family:monospace;color:#c4b5fd;background:#150d24;padding:1px 4px;border-radius:3px;font-size:10px;">nemotron_started</code>).</span>
+          </td>
+          <td style="padding:10px 12px;vertical-align:top;">
+            <strong style="color:#f1f5f9;font-size:11px;">No user-facing message</strong><br>
+            <span style="font-size:11px;color:#94a3b8;line-height:1.6;">Quality gate passes silently. User sees the SSE processing states as the pipeline runs. <code style="font-family:monospace;color:#c4b5fd;background:#150d24;padding:1px 4px;border-radius:3px;font-size:10px;">quality_gate_status: "GOOD"</code> included in <code style="font-family:monospace;color:#c4b5fd;background:#150d24;padding:1px 4px;border-radius:3px;font-size:10px;">mediapipe_complete</code> event.</span>
+          </td>
+          <td style="padding:10px 12px;vertical-align:top;">
+            <span style="font-size:10px;font-weight:700;background:#1a2035;color:#64748b;border:1px solid #2d3a4a;padding:3px 8px;border-radius:4px;display:inline-block;">None</span>
+          </td>
+        </tr>
+
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Priority -->
+  <div class="callout callout-info" style="margin-top:12px;">
+    <span class="callout-icon">⬡</span>
+    <span><strong>Priority if multiple gates fire simultaneously:</strong> 1 → M1/M2/M3 (most specific) · 2 → M4 (poor composite) · 3 → M5/M6 (rep count). Show one message only.</span>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════
+     SECTION 7 — SSE PAYLOAD CHANGES  [V2]
+     ══════════════════════════════════════════════════════ -->
+<div class="section" style="margin-top:32px;">
+
+  <div class="section-title" style="display:flex;align-items:center;gap:10px;">
+    7 &nbsp; SSE Payload Changes
+    <span style="font-size:9px;font-weight:800;padding:2px 8px;border-radius:4px;background:#1c1000;color:#fb923c;border:1px solid #78350f;letter-spacing:0.4px;">V2 · May 8, 2026</span>
+  </div>
+  <div class="section-sub">Two SSE event payloads need updating to support Section 6 message logic. Gate criteria in Sections 2–3 are unchanged. S2 also writes <code style="font-family:monospace;color:#c4b5fd;background:#150d24;padding:1px 4px;border-radius:3px;">quality_gate_status</code> and <code style="font-family:monospace;color:#c4b5fd;background:#150d24;padding:1px 4px;border-radius:3px;">video_score</code> to the <code style="font-family:monospace;color:#c4b5fd;background:#150d24;padding:1px 4px;border-radius:3px;">form_analyses</code> DB record — see technical_data_schema.html for full schema.</div>
+
+  <div class="callout callout-info" style="margin-bottom:14px;">
+    <span class="callout-icon">⬡</span>
+    <span>
+      <strong>DB Write ownership:</strong> S2 owns all DB calls. After receiving the quality gate result from S3-W5-06, S2 UPDATEs the <code style="font-family:monospace;color:#c4b5fd;background:#150d24;padding:1px 4px;border-radius:3px;">form_analyses</code> record with <code style="font-family:monospace;color:#c4b5fd;background:#150d24;padding:1px 4px;border-radius:3px;">quality_gate_status</code> and <code style="font-family:monospace;color:#c4b5fd;background:#150d24;padding:1px 4px;border-radius:3px;">video_score</code> before the pipeline continues to biomechanics. S3 maintains the schema. These two fields are then read by S2 when assembling the LLM context (alongside biomechanics output, user history, and weight).
+    </span>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+
+    <!-- mediapipe_complete -->
+    <div class="card">
+      <div class="card-title">mediapipe_complete event — add quality_gate_status</div>
+      <div style="font-size:10.5px;color:#64748b;margin-bottom:10px;">Add <code style="font-family:monospace;color:#c4b5fd;background:#150d24;padding:1px 4px;border-radius:3px;">quality_gate_status</code> and <code style="font-family:monospace;color:#c4b5fd;background:#150d24;padding:1px 4px;border-radius:3px;">video_score</code> so the frontend can display M7 soft warning on the Results screen.</div>
+      <div class="json-block">
+<span class="jp">{</span><br>
+&nbsp;&nbsp;<span class="jk">"event"</span><span class="jp">:</span> <span class="js">"mediapipe_complete"</span><span class="jp">,</span><br>
+&nbsp;&nbsp;<span class="jk">"analysis_id"</span><span class="jp">:</span> <span class="js">"uuid"</span><span class="jp">,</span><br>
+&nbsp;&nbsp;<span class="jk">"rep_count"</span><span class="jp">:</span> <span class="jn">8</span><span class="jp">,</span><br>
+&nbsp;&nbsp;<span class="jc">// V2 additions ↓</span><br>
+&nbsp;&nbsp;<span class="jk">"quality_gate_status"</span><span class="jp">:</span> <span class="js">"GOOD"</span> <span class="jc">// "GOOD" | "ACCEPTABLE"</span><br>
+&nbsp;&nbsp;<span class="jk">"video_score"</span><span class="jp">:</span> <span class="jn">0.91</span><br>
+<span class="jp">}</span>
+      </div>
+      <div style="margin-top:8px;font-size:10.5px;color:#64748b;line-height:1.6;">
+        <strong style="color:#475569;">GOOD</strong> (≥ 0.85) → no message shown, pipeline continues<br>
+        <strong style="color:#475569;">ACCEPTABLE</strong> (0.70–0.84) → M7 soft warning shown on Results screen
+      </div>
+    </div>
+
+    <!-- error event -->
+    <div class="card">
+      <div class="card-title">error event — add landmark_medians + specific error codes</div>
+      <div style="font-size:10.5px;color:#64748b;margin-bottom:10px;">Add <code style="font-family:monospace;color:#c4b5fd;background:#150d24;padding:1px 4px;border-radius:3px;">landmark_medians</code> to support M1/M2/M3 left/right message logic. Update <code style="font-family:monospace;color:#c4b5fd;background:#150d24;padding:1px 4px;border-radius:3px;">error_code</code> to specific scenario codes.</div>
+      <div class="json-block">
+<span class="jp">{</span><br>
+&nbsp;&nbsp;<span class="jk">"event"</span><span class="jp">:</span> <span class="js">"error"</span><span class="jp">,</span><br>
+&nbsp;&nbsp;<span class="jk">"analysis_id"</span><span class="jp">:</span> <span class="js">"uuid"</span><span class="jp">,</span><br>
+&nbsp;&nbsp;<span class="jk">"error_stage"</span><span class="jp">:</span> <span class="js">"quality_gate"</span><span class="jp">,</span><br>
+&nbsp;&nbsp;<span class="jk">"retryable"</span><span class="jp">:</span> <span class="jb">false</span><span class="jp">,</span><br>
+&nbsp;&nbsp;<span class="jk">"error_code"</span><span class="jp">:</span> <span class="js">"occlusion_left_side"</span><span class="jp">,</span> <span class="jc">// see codes below</span><br>
+&nbsp;&nbsp;<span class="jc">// V2 addition — only for M1/M2/M3 ↓</span><br>
+&nbsp;&nbsp;<span class="jk">"landmark_medians"</span><span class="jp">: {</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="jk">"left_knee"</span><span class="jp">:</span>  <span class="jp">{</span> <span class="jk">"median_visibility"</span><span class="jp">:</span> <span class="jn">0.42</span><span class="jp">,</span> <span class="jk">"median_presence"</span><span class="jp">:</span> <span class="jn">0.82</span> <span class="jp">},</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="jk">"right_knee"</span><span class="jp">:</span> <span class="jp">{</span> <span class="jk">"median_visibility"</span><span class="jp">:</span> <span class="jn">0.87</span><span class="jp">,</span> <span class="jk">"median_presence"</span><span class="jp">:</span> <span class="jn">0.91</span> <span class="jp">},</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="jk">"left_hip"</span><span class="jp">:</span>   <span class="jp">{</span> <span class="jk">"median_visibility"</span><span class="jp">:</span> <span class="jn">0.81</span><span class="jp">,</span> <span class="jk">"median_presence"</span><span class="jp">:</span> <span class="jn">0.85</span> <span class="jp">},</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="jk">"right_hip"</span><span class="jp">:</span>  <span class="jp">{</span> <span class="jk">"median_visibility"</span><span class="jp">:</span> <span class="jn">0.80</span><span class="jp">,</span> <span class="jk">"median_presence"</span><span class="jp">:</span> <span class="jn">0.88</span> <span class="jp">},</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="jk">"left_heel"</span><span class="jp">:</span>  <span class="jp">{</span> <span class="jk">"median_visibility"</span><span class="jp">:</span> <span class="jn">0.76</span><span class="jp">,</span> <span class="jk">"median_presence"</span><span class="jp">:</span> <span class="jn">0.80</span> <span class="jp">},</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="jk">"right_heel"</span><span class="jp">:</span> <span class="jp">{</span> <span class="jk">"median_visibility"</span><span class="jp">:</span> <span class="jn">0.78</span><span class="jp">,</span> <span class="jk">"median_presence"</span><span class="jp">:</span> <span class="jn">0.83</span> <span class="jp">}</span><br>
+&nbsp;&nbsp;<span class="jp">}</span><br>
+<span class="jp">}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Error codes -->
+  <div class="card" style="margin-top:14px;">
+    <div class="card-title">Error codes — complete list</div>
+    <table class="lm-table">
+      <thead><tr><th>error_code</th><th>Scenario</th><th>landmark_medians required?</th></tr></thead>
+      <tbody>
+        <tr><td>occlusion_left_side</td><td>M1 — left side visibility</td><td style="color:#4ade80;">Yes — knee/hip/heel</td></tr>
+        <tr><td>occlusion_right_side</td><td>M1 — right side visibility</td><td style="color:#4ade80;">Yes — knee/hip/heel</td></tr>
+        <tr><td>occlusion_both_sides</td><td>M2 — both sides visibility</td><td style="color:#4ade80;">Yes — knee/hip/heel</td></tr>
+        <tr><td>out_of_frame_left</td><td>M3 — left side presence</td><td style="color:#4ade80;">Yes — knee/hip/heel</td></tr>
+        <tr><td>out_of_frame_right</td><td>M3 — right side presence</td><td style="color:#4ade80;">Yes — knee/hip/heel</td></tr>
+        <tr><td>poor_video_quality</td><td>M4 — poor composite</td><td style="color:#64748b;">No</td></tr>
+        <tr><td>no_reps_detected</td><td>M5 — zero reps</td><td style="color:#64748b;">No</td></tr>
+        <tr><td>insufficient_reps</td><td>M6 — 1 or 2 reps</td><td style="color:#64748b;">No</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
 <div style="text-align:center;font-size:10px;color:#334155;margin-top:40px;padding-top:20px;border-top:1px solid #1e2433;">
-  Kinetic · Landmark Quality Framework · Last updated 2026-05-07 · Ref: S3-W5-06, S3-W5-07
+  Kinetic · Landmark Quality Framework · v1 2026-05-07 · <span style="color:#fb923c;font-weight:700;">v2 2026-05-08</span> (Sections 6–7 added) · Ref: S3-W5-06, S3-W5-07
 </div>
 
 </body>

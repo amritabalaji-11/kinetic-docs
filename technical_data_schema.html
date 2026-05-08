@@ -714,7 +714,25 @@ h1 { font-size:20px; font-weight:700; color:#f8fafc; }
           <tr><td>video_url</td><td><span class="type">string (GCS URI)</span></td><td><span class="example">gs://kinetic-videos/videos/{user_id}/{analysis_id}/original.mp4</span></td><td style="font-size:10px;color:#fbbf24;">Backend — constructed</td><td style="font-size:10px;color:#64748b;">GCS does not return a URL — backend constructs it from bucket name + object path after upload.</td></tr>
           <tr><td>created_at</td><td><span class="type">timestamp</span></td><td><span class="example">2026-05-04T10:32:00Z</span></td><td style="font-size:10px;color:#fbbf24;">Backend</td><td style="font-size:10px;color:#64748b;"></td></tr>
           <tr><td>status</td><td><span class="type">enum</span></td><td><span class="example">uploaded</span></td><td style="font-size:10px;color:#fbbf24;">Backend</td><td style="font-size:10px;color:#64748b;">uploaded → processing → complete → failed</td></tr>
+          <tr style="background:#0d1a10;">
+            <td style="color:#4ade80;">quality_gate_status &nbsp;<span style="font-size:9px;font-weight:800;padding:1px 6px;border-radius:3px;background:#1c1000;color:#fb923c;border:1px solid #78350f;">V2</span></td>
+            <td><span class="type">enum (nullable)</span></td>
+            <td><span class="example">ACCEPTABLE</span></td>
+            <td style="font-size:10px;color:#fbbf24;">Backend — S2 UPDATE</td>
+            <td style="font-size:10px;color:#64748b;">Written by S2 after quality gate result received from S3-W5-06. NULL until quality gate runs. Values: <code style="color:#c4b5fd;background:#150d24;padding:1px 3px;border-radius:2px;font-size:10px;">GOOD</code> | <code style="color:#c4b5fd;background:#150d24;padding:1px 3px;border-radius:2px;font-size:10px;">ACCEPTABLE</code>. Passed to LLM context so model can calibrate confidence rating.</td>
+          </tr>
+          <tr style="background:#0d1a10;">
+            <td style="color:#4ade80;">video_score &nbsp;<span style="font-size:9px;font-weight:800;padding:1px 6px;border-radius:3px;background:#1c1000;color:#fb923c;border:1px solid #78350f;">V2</span></td>
+            <td><span class="type">numeric(4,3) (nullable)</span></td>
+            <td><span class="example">0.74</span></td>
+            <td style="font-size:10px;color:#fbbf24;">Backend — S2 UPDATE</td>
+            <td style="font-size:10px;color:#64748b;">Composite visibility score (0.000–1.000) from Landmark Quality Framework Layer 2. NULL until quality gate runs. Written alongside quality_gate_status in same UPDATE. Passed to LLM context alongside quality_gate_status.</td>
+          </tr>
         </table>
+        <div style="margin-top:8px;font-size:10.5px;color:#64748b;background:#070a0f;border:1px solid #1e2433;border-radius:6px;padding:8px 12px;line-height:1.7;">
+          <span style="font-size:9px;font-weight:800;padding:1px 6px;border-radius:3px;background:#1c1000;color:#fb923c;border:1px solid #78350f;">V2 · May 8, 2026</span> &nbsp;
+          <strong style="color:#cbd5e1;">Two-step write pattern:</strong> Initial INSERT at upload time writes all fields except quality_gate_status and video_score (both NULL). S2 UPDATE writes these two fields after receiving the quality gate result from S3-W5-06 — before the pipeline continues to biomechanics. S2 owns both calls. S3 maintains the schema.
+        </div>
       </div>
 
       <div class="sub-section">
