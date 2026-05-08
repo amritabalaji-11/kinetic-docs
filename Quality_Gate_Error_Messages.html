@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kinetic — Quality Gate Criteria & Error Messages</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: #0a0d14;
+  color: #e2e8f0;
+  padding: 32px;
+  min-width: 1100px;
+}
+
+h1 { font-size: 20px; font-weight: 700; color: #f8fafc; margin-bottom: 4px; }
+.subtitle { font-size: 12px; color: #64748b; margin-bottom: 28px; }
+
+.badge-row { display: flex; gap: 8px; margin-bottom: 24px; flex-wrap: wrap; }
+.badge { font-size: 10px; padding: 3px 10px; border-radius: 6px; font-weight: 600; }
+.badge-draft  { background: #1a1205; color: #fb923c; border: 1px solid #431407; }
+.badge-date   { background: #0d1a2e; color: #60a5fa; border: 1px solid #1e3a5f; }
+.badge-scope  { background: #0a2015; color: #4ade80; border: 1px solid #14532d; }
+
+/* ─── Section label ─── */
+.section-label {
+  font-size: 10px; font-weight: 800; text-transform: uppercase;
+  letter-spacing: 0.7px; color: #475569; margin-bottom: 14px;
+  display: flex; align-items: center; gap: 10px;
+}
+.section-label::after { content: ''; flex: 1; height: 1px; background: #1e2433; }
+
+/* ─── Main table ─── */
+.gate-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.gate-table th {
+  text-align: left;
+  padding: 10px 14px;
+  background: #0d1117;
+  color: #64748b;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 2px solid #1e2433;
+  white-space: nowrap;
+}
+
+.gate-table td {
+  padding: 12px 14px;
+  border-bottom: 1px solid #111827;
+  vertical-align: top;
+  line-height: 1.6;
+  color: #cbd5e1;
+  font-size: 12px;
+}
+
+.gate-table tr:hover td { background: #0f1520; }
+
+/* ─── Row group labels ─── */
+.group-row td {
+  background: #080b10;
+  padding: 5px 14px;
+  border-bottom: 1px solid #1e2433;
+}
+.group-label {
+  font-size: 9px; font-weight: 800; text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+.gl-occlusion { color: #f87171; }
+.gl-composite { color: #fb923c; }
+.gl-reps      { color: #fbbf24; }
+.gl-warning   { color: #34d399; }
+
+/* ─── Scenario cell ─── */
+.scenario-num {
+  font-family: 'SF Mono', monospace;
+  font-size: 11px; font-weight: 800;
+  display: inline-block; padding: 2px 7px;
+  border-radius: 5px; margin-right: 6px;
+}
+.m1, .m2, .m3 { background: #2d0a0a; color: #f87171; border: 1px solid #7f1d1d; }
+.m4 { background: #1c1000; color: #fb923c; border: 1px solid #78350f; }
+.m5, .m6 { background: #1a1000; color: #fbbf24; border: 1px solid #78350f; }
+.m7 { background: #0a2015; color: #34d399; border: 1px solid #14532d; }
+
+.scenario-name { font-size: 12px; font-weight: 600; color: #f1f5f9; }
+
+/* ─── Gate condition cell ─── */
+.gate-name {
+  display: inline-block; font-size: 10px; font-weight: 700;
+  padding: 2px 7px; border-radius: 4px; margin-bottom: 5px;
+}
+.gate-occlusion { background: #2d0a0a; color: #f87171; border: 1px solid #7f1d1d; }
+.gate-composite { background: #1c1000; color: #fb923c; border: 1px solid #78350f; }
+.gate-reps      { background: #1a1000; color: #fbbf24; border: 1px solid #78350f; }
+.gate-acceptable{ background: #0a2015; color: #34d399; border: 1px solid #14532d; }
+
+.formula {
+  font-family: 'SF Mono', monospace;
+  font-size: 10.5px;
+  color: #94a3b8;
+  background: #070a0f;
+  border: 1px solid #1e2433;
+  border-radius: 5px;
+  padding: 6px 10px;
+  margin-top: 5px;
+  line-height: 1.7;
+}
+.f-key { color: #93c5fd; }
+.f-val { color: #fdba74; }
+.f-op  { color: #f9a8d4; }
+
+/* ─── Gate decision cell ─── */
+.decision-fail {
+  display: inline-flex; align-items: center; gap: 5px;
+  background: #2d0a0a; color: #f87171;
+  border: 1px solid #7f1d1d;
+  border-radius: 6px; padding: 4px 10px;
+  font-size: 11px; font-weight: 800;
+}
+.decision-pass {
+  display: inline-flex; align-items: center; gap: 5px;
+  background: #0a2015; color: #34d399;
+  border: 1px solid #14532d;
+  border-radius: 6px; padding: 4px 10px;
+  font-size: 11px; font-weight: 800;
+}
+.decision-warn {
+  display: inline-flex; align-items: center; gap: 5px;
+  background: #1c1000; color: #fbbf24;
+  border: 1px solid #78350f;
+  border-radius: 6px; padding: 4px 8px;
+  font-size: 9px; font-weight: 700;
+  margin-top: 4px;
+}
+
+/* ─── Message logic cell ─── */
+.logic-scope {
+  font-size: 10px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.4px; color: #60a5fa;
+  background: rgba(96,165,250,0.08);
+  border: 1px solid rgba(96,165,250,0.2);
+  border-radius: 4px; padding: 2px 7px;
+  display: inline-block; margin-bottom: 6px;
+}
+.logic-rule {
+  font-size: 11px; color: #94a3b8; line-height: 1.65;
+}
+.logic-rule code {
+  font-family: 'SF Mono', monospace;
+  font-size: 10.5px; color: #c4b5fd;
+  background: #150d24; padding: 1px 5px; border-radius: 3px;
+}
+.logic-side {
+  display: inline-block; font-size: 10px; font-weight: 700;
+  padding: 1px 6px; border-radius: 3px; margin: 2px 2px 2px 0;
+}
+.side-left  { background: rgba(96,165,250,0.12); color: #60a5fa; }
+.side-right { background: rgba(167,139,250,0.12); color: #a78bfa; }
+.side-both  { background: rgba(251,146,60,0.12);  color: #fb923c; }
+
+/* ─── Message cell ─── */
+.msg-title {
+  font-size: 12px; font-weight: 700; color: #f1f5f9;
+  margin-bottom: 5px;
+}
+.msg-body { font-size: 11.5px; color: #94a3b8; line-height: 1.65; }
+.msg-note {
+  font-size: 10px; color: #475569; font-style: italic; margin-top: 4px;
+}
+
+/* ─── CTA cell ─── */
+.cta-pill {
+  display: inline-block; font-size: 10.5px; font-weight: 700;
+  padding: 4px 10px; border-radius: 5px;
+}
+.cta-refilm { background: #1e3a5f; color: #93c5fd; border: 1px solid #2d5a8e; }
+.cta-inline { background: #1a2035; color: #64748b; border: 1px solid #2d3a4a; }
+
+/* ─── Priority box ─── */
+.priority-box {
+  background: #0d1117; border: 1px solid #1e2433;
+  border-radius: 8px; padding: 14px 18px; margin-top: 24px;
+}
+.priority-title {
+  font-size: 10px; font-weight: 800; text-transform: uppercase;
+  letter-spacing: 0.6px; color: #475569; margin-bottom: 10px;
+}
+.priority-row {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 12px; color: #94a3b8; margin-bottom: 6px;
+}
+.priority-row:last-child { margin-bottom: 0; }
+.p-num {
+  width: 20px; height: 20px; border-radius: 50%;
+  background: #1e2433; color: #64748b;
+  font-size: 10px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+</style>
+</head>
+<body>
+
+<h1>Kinetic — Quality Gate Criteria & Error Messages</h1>
+<p class="subtitle">Goblet Squat MVP · Video rejection conditions · Message logic · User-facing copy</p>
+
+<div class="badge-row">
+  <span class="badge badge-draft">Draft v1.0</span>
+  <span class="badge badge-date">May 8, 2026</span>
+  <span class="badge badge-scope">Goblet Squat MVP</span>
+</div>
+
+<div class="section-label">Quality Gate — All Scenarios</div>
+
+<table class="gate-table">
+  <thead>
+    <tr>
+      <th style="width:80px;">#</th>
+      <th style="width:130px;">Scenario</th>
+      <th style="width:180px;">Gate Condition</th>
+      <th style="width:90px;">Gate Decision</th>
+      <th style="width:220px;">Message Logic</th>
+      <th style="width:260px;">User Message</th>
+      <th style="width:110px;">CTA</th>
+    </tr>
+  </thead>
+  <tbody>
+
+    <!-- GROUP: CRITICAL OCCLUSION -->
+    <tr class="group-row">
+      <td colspan="7"><span class="group-label gl-occlusion">▸ Gate 1 — Critical Occlusion</span></td>
+    </tr>
+
+    <!-- M1 -->
+    <tr>
+      <td><span class="scenario-num m1">M1</span></td>
+      <td><span class="scenario-name">One-side visibility failure</span></td>
+      <td>
+        <div class="gate-name gate-occlusion">CRITICAL_OCCLUSION</div>
+        <div class="formula">
+          reliability(lm) <span class="f-op">=</span><br>
+          count(vis <span class="f-op">≥</span> <span class="f-val">0.70</span> <span class="f-op">AND</span><br>
+          &nbsp;pres <span class="f-op">≥</span> <span class="f-val">0.70</span>) <span class="f-op">÷</span> total_frames<br><br>
+          <span class="f-key">if</span> reliability(lm) <span class="f-op">&lt;</span> <span class="f-val">0.60</span> → reject
+        </div>
+      </td>
+      <td>
+        <div class="decision-fail">✕ FAIL</div>
+      </td>
+      <td>
+        <div class="logic-scope">Knee · Hip · Ankle only</div>
+        <div class="logic-rule">
+          Compute <code>median_visibility</code> per landmark.<br><br>
+          <span class="logic-side side-left">Left</span> ≥1 joint <code>≤ 0.60</code> AND right side <code>≥ 0.60</code> → left message<br><br>
+          <span class="logic-side side-right">Right</span> ≥1 joint <code>≤ 0.60</code> AND left side <code>≥ 0.60</code> → right message
+        </div>
+      </td>
+      <td>
+        <div class="msg-title">"Part of your [left/right] side was hidden from view"</div>
+        <div class="msg-body">Your [left/right] [knee/hip/ankle] wasn't clearly visible throughout the video. Rather than switching sides, rotate your camera slightly toward the front of your body — this brings your [left/right] side into view without losing the other.</div>
+      </td>
+      <td><span class="cta-pill cta-refilm">Re-film — see tips</span></td>
+    </tr>
+
+    <!-- M2 -->
+    <tr>
+      <td><span class="scenario-num m2">M2</span></td>
+      <td><span class="scenario-name">Both-sides visibility failure</span></td>
+      <td>
+        <div class="gate-name gate-occlusion">CRITICAL_OCCLUSION</div>
+        <div class="formula">Same as M1</div>
+      </td>
+      <td>
+        <div class="decision-fail">✕ FAIL</div>
+      </td>
+      <td>
+        <div class="logic-scope">Knee · Hip · Ankle only</div>
+        <div class="logic-rule">
+          <span class="logic-side side-both">Both sides</span> ≥1 joint with <code>median_visibility ≤ 0.60</code> on left AND right
+        </div>
+      </td>
+      <td>
+        <div class="msg-title">"We couldn't see your lower body clearly"</div>
+        <div class="msg-body">Your camera may be facing you from directly to your side or slightly behind you. Try angling it slightly toward the front of your body so both legs are fully in view throughout the squat.</div>
+      </td>
+      <td><span class="cta-pill cta-refilm">Re-film — see tips</span></td>
+    </tr>
+
+    <!-- M3 -->
+    <tr>
+      <td><span class="scenario-num m3">M3</span></td>
+      <td><span class="scenario-name">One-side presence failure</span></td>
+      <td>
+        <div class="gate-name gate-occlusion">CRITICAL_OCCLUSION</div>
+        <div class="formula">Same as M1</div>
+      </td>
+      <td>
+        <div class="decision-fail">✕ FAIL</div>
+      </td>
+      <td>
+        <div class="logic-scope">Knee · Hip · Ankle only</div>
+        <div class="logic-rule">
+          <code>median_visibility</code> passes (<code>&gt; 0.60</code>) but <code>median_presence ≤ 0.50</code> for ≥1 joint on one side.<br><br>
+          <span class="logic-side side-left">Left</span> presence fails → left message<br>
+          <span class="logic-side side-right">Right</span> presence fails → right message
+        </div>
+      </td>
+      <td>
+        <div class="msg-title">"Your [left/right] side kept moving out of frame"</div>
+        <div class="msg-body">Your [left/right] [knee/hip/ankle] wasn't fully in the frame throughout the video. Move the camera back slightly so your full body — [left/right] side included — stays visible throughout the squat.</div>
+      </td>
+      <td><span class="cta-pill cta-refilm">Re-film — see tips</span></td>
+    </tr>
+
+    <!-- GROUP: COMPOSITE -->
+    <tr class="group-row">
+      <td colspan="7"><span class="group-label gl-composite">▸ Gate 2 — Poor Composite Score</span></td>
+    </tr>
+
+    <!-- M4 -->
+    <tr>
+      <td><span class="scenario-num m4">M4</span></td>
+      <td><span class="scenario-name">Overall poor quality</span></td>
+      <td>
+        <div class="gate-name gate-composite">POOR COMPOSITE</div>
+        <div class="formula">
+          video_score <span class="f-op">=</span> Σ weight(lm) <span class="f-op">×</span> reliability(lm)<br><br>
+          <span class="f-key">if</span> video_score <span class="f-op">&lt;</span> <span class="f-val">0.70</span> → reject<br>
+          <span style="color:#475569;font-size:10px;">(no individual landmark hit 0.60 hard floor)</span>
+        </div>
+      </td>
+      <td>
+        <div class="decision-fail">✕ FAIL</div>
+      </td>
+      <td>
+        <div class="logic-rule">No additional logic needed. Composite score alone determines this message.<br><br>Typical causes: filming from behind, obstruction, low lighting.</div>
+      </td>
+      <td>
+        <div class="msg-title">"We couldn't read your body position clearly"</div>
+        <div class="msg-body">This usually happens when filming from behind, with something blocking the view, or in low lighting. Film from your side with good lighting and a clear background.</div>
+      </td>
+      <td><span class="cta-pill cta-refilm">Re-film — see tips</span></td>
+    </tr>
+
+    <!-- GROUP: REPS -->
+    <tr class="group-row">
+      <td colspan="7"><span class="group-label gl-reps">▸ Gate 3 — Insufficient Reps</span></td>
+    </tr>
+
+    <!-- M5 -->
+    <tr>
+      <td><span class="scenario-num m5">M5</span></td>
+      <td><span class="scenario-name">No reps detected</span></td>
+      <td>
+        <div class="gate-name gate-reps">INSUFFICIENT REPS</div>
+        <div class="formula">
+          complete_reps <span class="f-op">=</span> count(reps with<br>
+          &nbsp;"top" <span class="f-op">AND</span> "bottom" tagged)<br><br>
+          <span class="f-key">if</span> complete_reps <span class="f-op">=</span> <span class="f-val">0</span> → reject
+        </div>
+      </td>
+      <td>
+        <div class="decision-fail">✕ FAIL</div>
+      </td>
+      <td>
+        <div class="logic-rule"><code>rep_count = 0</code><br>No further logic needed.</div>
+      </td>
+      <td>
+        <div class="msg-title">"We couldn't detect any squats in your video"</div>
+        <div class="msg-body">Make sure you're doing goblet squats and that your full body is in frame from the start of your first rep.</div>
+      </td>
+      <td><span class="cta-pill cta-refilm">Re-film</span></td>
+    </tr>
+
+    <!-- M6 -->
+    <tr>
+      <td><span class="scenario-num m6">M6</span></td>
+      <td><span class="scenario-name">Too few reps</span></td>
+      <td>
+        <div class="gate-name gate-reps">INSUFFICIENT REPS</div>
+        <div class="formula">
+          <span class="f-key">if</span> <span class="f-val">0</span> <span class="f-op">&lt;</span> complete_reps <span class="f-op">&lt;</span> <span class="f-val">3</span> → reject
+        </div>
+      </td>
+      <td>
+        <div class="decision-fail">✕ FAIL</div>
+      </td>
+      <td>
+        <div class="logic-rule"><code>rep_count = 1 or 2</code><br>No further logic needed.</div>
+      </td>
+      <td>
+        <div class="msg-title">"Film a full set to get your analysis"</div>
+        <div class="msg-body">We need at least 3 complete reps to give you meaningful feedback. Squat all the way down and all the way back up for each one — don't stop at 1 or 2.</div>
+      </td>
+      <td><span class="cta-pill cta-refilm">Re-film</span></td>
+    </tr>
+
+    <!-- GROUP: SOFT WARNING -->
+    <tr class="group-row">
+      <td colspan="7"><span class="group-label gl-warning">▸ Pass with Flag — Acceptable Quality</span></td>
+    </tr>
+
+    <!-- M7 -->
+    <tr>
+      <td><span class="scenario-num m7">M7</span></td>
+      <td><span class="scenario-name">Low confidence</span></td>
+      <td>
+        <div class="gate-name gate-acceptable">ACCEPTABLE</div>
+        <div class="formula">
+          <span class="f-key">if</span> <span class="f-val">0.70</span> <span class="f-op">≤</span> video_score <span class="f-op">&lt;</span> <span class="f-val">0.85</span><br>
+          → proceed with flag
+        </div>
+      </td>
+      <td>
+        <div class="decision-pass">✓ PASS</div>
+        <div class="decision-warn">⚠ Lower confidence</div>
+      </td>
+      <td>
+        <div class="logic-rule">No additional logic. Composite score range determines this. Shown inline on Results screen — not a blocking error.</div>
+      </td>
+      <td>
+        <div class="msg-title">"Results may be slightly less accurate"</div>
+        <div class="msg-body">Some parts of your form were harder to read than usual. Try filming closer to the guidelines next time for a sharper analysis.</div>
+        <div class="msg-note">Shown as a dismissible inline note on Results screen</div>
+      </td>
+      <td><span class="cta-pill cta-inline">Inline note only</span></td>
+    </tr>
+
+  </tbody>
+</table>
+
+<!-- Priority order -->
+<div class="priority-box">
+  <div class="priority-title">Priority — if multiple gates fire simultaneously, show one message only</div>
+  <div class="priority-row"><div class="p-num">1</div> M1 / M2 / M3 — CRITICAL_OCCLUSION (most specific and actionable)</div>
+  <div class="priority-row"><div class="p-num">2</div> M4 — POOR COMPOSITE (if no individual landmark hit the hard floor)</div>
+  <div class="priority-row"><div class="p-num">3</div> M5 / M6 — INSUFFICIENT REPS (independent of visibility quality)</div>
+</div>
+
+<div style="text-align:center;color:#1e2433;font-size:11px;padding-top:24px;">
+  Kinetic · Quality Gate Error Messages v1.0 · May 8, 2026
+</div>
+
+</body>
+</html>
