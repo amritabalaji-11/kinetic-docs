@@ -550,19 +550,38 @@
         <details class="us-card">
           <summary class="us-summary">
             <span class="us-id">US-06a</span>
-            <span class="us-name">Basic Analysis Results</span>
+            <span class="us-name">Analysis Results — Form Score, 4 Parameters & Rep Progression</span>
             <div class="us-meta"><span class="us-week">W6</span><span class="us-tag us-tag-split">Split</span><span class="us-chevron">▶</span></div>
           </summary>
           <div class="us-body">
-            <div class="us-statement">As a gym-goer training alone, I want to see my form score and specific coaching text after analysis, so that I immediately understand what went wrong and what to fix.</div>
+            <div class="us-statement">As a gym-goer training alone, I want to see my overall form score, a breakdown across 4 key parameters with coaching, a verdict, and my rep-by-rep progression, so that I immediately understand how I performed and what to prioritise next.</div>
             <div class="us-note">W6: Results screen built against Nemotron output schema using dummy data. Real output wires in W7 (or end of W6 if stretched goal hit).</div>
-            <div class="us-ac-label">Acceptance Criteria</div>
+
+            <div class="us-ac-label">Overall Form Score</div>
             <ul class="us-ac-list">
-              <li class="us-ac-item">Given analysis is complete, I see my overall form score + 1-line summary</li>
-              <li class="us-ac-item">Given the Results screen, I see a rep-by-rep score trend chart (rep 1 to last rep)</li>
-              <li class="us-ac-item">Given the Results screen, I see minimum 2 specific joint-level corrections in text</li>
-              <li class="us-ac-item">Given each correction, I see at least 1 actionable coaching tip</li>
-              <li class="us-ac-item">Given results are detailed, they are scannable in under 10 seconds — score first, detail below</li>
+              <li class="us-ac-item">Given analysis is complete, I see a consolidated <strong>form score /100</strong> prominently at the top of the Results screen</li>
+            </ul>
+
+            <div class="us-ac-label" style="margin-top:10px;">4 Parameter Breakdown — Posture · Stability · Movement Quality · Tempo</div>
+            <ul class="us-ac-list">
+              <li class="us-ac-item">Given the Results screen, I see <strong>4 parameter sections</strong> each showing: score /100 (aggregated across all reps) · 1 affirmation (what I did well) · 1 critical observation · 1–2 actionable coaching tips</li>
+              <li class="us-ac-item">Parameters are scannable — headline score and affirmation visible first, detail below</li>
+            </ul>
+
+            <div class="us-ac-label" style="margin-top:10px;">Consolidated Verdict</div>
+            <ul class="us-ac-list">
+              <li class="us-ac-item">Given the Results screen, I see a verdict section with <strong>2–3 bullet points</strong> summarising overall performance — a quick-read summary separate from the parameter detail</li>
+            </ul>
+
+            <div class="us-ac-label" style="margin-top:10px;">Rep-by-Rep Progression</div>
+            <ul class="us-ac-list">
+              <li class="us-ac-item">Given the Results screen, I see a <strong>chart showing score per rep</strong> across the set — showing whether form improved, held, or degraded</li>
+            </ul>
+
+            <div class="us-ac-label" style="margin-top:10px;">General</div>
+            <ul class="us-ac-list">
+              <li class="us-ac-item">All content scannable in under 10 seconds — score and verdict first, detail below</li>
+              <li class="us-ac-item">Mobile web: all sections readable without zooming</li>
             </ul>
           </div>
         </details>

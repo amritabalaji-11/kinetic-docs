@@ -80,17 +80,35 @@ Stories are organised under the 6 outcome-oriented epics. Each epic answers one 
 
 ---
 
-**US-06a — Basic Analysis Results** *(split from US-06)*
-> As a gym-goer training alone, I want to see my form score and specific coaching text after analysis, so that I immediately understand what went wrong and what to fix.
+**US-06a — Analysis Results: Form Score, 4 Parameters & Rep Progression** *(split from US-06)*
+> As a gym-goer training alone, I want to see my overall form score, a breakdown across 4 key parameters with coaching, a verdict, and my rep-by-rep progression, so that I immediately understand how I performed and what to prioritise next.
 
 **Note:** W6 — Results screen built against Nemotron output schema using dummy data. Real output wires in W7 (or end of W6 if stretched goal hit).
 
 **Acceptance Criteria:**
-- Given analysis is complete, I see my overall form score + 1-line summary
-- Given the Results screen, I see a rep-by-rep score trend chart (rep 1 to last rep)
-- Given the Results screen, I see minimum 2 specific joint-level corrections in text (e.g. "Knee caves inward at bottom of rep")
-- Given each correction, I see at least 1 actionable coaching tip
-- Given results are detailed, they are scannable in under 10 seconds — score and recommendation first, detail below
+
+*Overall Form Score*
+- Given analysis is complete, I see a consolidated form score /100 prominently at the top of the Results screen
+
+*4 Parameter Breakdown (Posture · Stability · Movement Quality · Tempo)*
+- Given the Results screen, I see 4 parameter sections — each showing:
+  - Score /100 aggregated across all reps
+  - 1 affirmation — what I did well in this parameter
+  - 1 critical observation — the main issue identified
+  - 1–2 actionable coaching tips — what to do differently next time
+- Parameters are scannable — headline score and affirmation visible first, detail below
+
+*Consolidated Verdict*
+- Given the Results screen, I see a verdict section with 2–3 bullet points summarising my overall performance across the full set
+- The verdict is distinct from the parameter detail — a quick-read summary for users who won't scroll
+
+*Rep-by-Rep Progression*
+- Given the Results screen, I see a chart showing my score per rep across the set
+- The chart shows whether performance improved, held steady, or degraded across reps
+
+*General*
+- Given the full Results screen, all content is scannable in under 10 seconds — score and verdict first, parameter detail below
+- Given I'm on mobile web, all sections are readable without zooming
 
 ---
 
