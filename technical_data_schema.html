@@ -1044,45 +1044,57 @@ h1 { font-size:20px; font-weight:700; color:#f8fafc; }
     <div class="step-header">
       <div class="step-num">5b</div>
       <div class="step-icon">🎞️</div>
-      <div><div class="step-title">OpenCV Frame Extraction + Annotation</div><div class="step-squad">Squad 2 — Backend</div></div>
+      <div>
+        <div class="step-title">OpenCV Frame Extraction + Annotation</div>
+        <div class="step-squad">Squad 2 — Backend</div>
+        <span style="font-size:9px;font-weight:800;padding:1px 8px;border-radius:4px;background:#1c1000;color:#fb923c;border:1px solid #78350f;margin-left:8px;">V2 updated · May 9, 2026</span>
+      </div>
     </div>
     <div class="step-body">
       <div class="sub-section">
         <div class="sub-label">Why this step exists</div>
         <div style="background:#070a0f; border:1px solid #1e2433; border-radius:8px; padding:12px 14px; font-size:11px; color:#94a3b8; line-height:1.7;">
-          Nemotron identifies <em>when</em> form issues occur — it outputs timestamps in milliseconds (e.g. <code style="background:#0d1117;padding:1px 4px;border-radius:3px;color:#86efac;">first_detected_ms: 8400</code>). But Nemotron does not produce images. This step converts those timestamps into actual video frames the user can see.<br><br>
-          Without frame extraction, the analysis is purely text and numbers — "your left knee collapsed on reps 3–8." With it, the user sees a <strong style="color:#f1f5f9;">frozen frame at the exact moment of failure</strong>, with angle arcs, joint highlights, and arrows drawn on it. This is what makes the coaching believable and actionable for a non-expert user — it's the X-ray that proves the diagnosis.
+          The biomechanics script identifies the worst rep (lowest overall score) and its bottom position frame. This step extracts that one frame from the video and draws the joint overlay — green lines for correct angles, red highlights for deviations. The annotated frame is what the user sees on the Results screen and the Form Comparison toggle. It's the visual proof of the coaching diagnosis.
         </div>
       </div>
       <div class="sub-section">
-        <div class="sub-label">Input — from Nemotron output</div>
+        <div class="sub-label">Input</div>
         <div class="io-row">
-          <span class="io-pill io-in">Issue timestamps (ms) from Nemotron form_issues[].key_frames[]</span>
           <span class="io-pill io-in">Original video file (GCS URI from form_analyses.video_url)</span>
+          <span class="io-pill io-in">Worst rep bottom frame — timestamp_ms from biomechanics output (rep with lowest overall score, position_tag="bottom")</span>
+          <span class="io-pill io-in">Screen landmarks for that frame — joint x/y positions for drawing overlays</span>
         </div>
       </div>
       <div class="sub-section">
-        <div class="sub-label">Process</div>
+        <div class="sub-label">Frame Selection Logic <span style="font-size:9px;font-weight:800;padding:1px 6px;border-radius:3px;background:#1c1000;color:#fb923c;border:1px solid #78350f;">V2</span></div>
         <div style="background:#070a0f; border:1px solid #1e2433; border-radius:8px; padding:12px 14px; font-size:11px; color:#94a3b8; line-height:1.8;">
-          <strong style="color:#cbd5e1;">1. Seek to timestamp</strong> — OpenCV opens the video file from GCS and seeks to each <code style="background:#0d1117;padding:1px 4px;border-radius:3px;color:#86efac;">timestamp_ms</code> in Nemotron's output using <code style="background:#0d1117;padding:1px 4px;border-radius:3px;color:#fde68a;">cv2.VideoCapture.set(cv2.CAP_PROP_POS_MSEC, timestamp)</code><br>
-          <strong style="color:#cbd5e1;">2. Extract raw frame</strong> — reads the JPEG at that position, saves raw frame to GCS: <code style="background:#0d1117;padding:1px 4px;border-radius:3px;color:#fde68a;">/frames/raw/f_001.jpg</code><br>
-          <strong style="color:#cbd5e1;">3. Draw annotations</strong> — using <code style="background:#0d1117;padding:1px 4px;border-radius:3px;color:#fde68a;">cv2.ellipse()</code>, <code style="background:#0d1117;padding:1px 4px;border-radius:3px;color:#fde68a;">cv2.arrowedLine()</code>, <code style="background:#0d1117;padding:1px 4px;border-radius:3px;color:#fde68a;">cv2.circle()</code> — draws the overlay_annotations defined in Nemotron output (angle_arc, arrow, joint_highlight) in the specified colour (#ef4444 for issues, #22c55e for good)<br>
-          <strong style="color:#cbd5e1;">4. Write annotated frame</strong> — saves to GCS: <code style="background:#0d1117;padding:1px 4px;border-radius:3px;color:#fde68a;">/frames/annotated/f_001.jpg</code><br>
-          <strong style="color:#cbd5e1;">5. Repeat</strong> for every key frame across all detected issues (typically 8–15 frames per session)
+          <strong style="color:#cbd5e1;">1. Find worst rep</strong> — <code style="background:#0d1117;padding:1px 4px;border-radius:3px;color:#86efac;">worst_rep = min(rep_scores, key=lambda r: r["score"])</code><br>
+          <strong style="color:#cbd5e1;">2. Get bottom frame</strong> — from biomechanics frame data, find the frame where <code style="background:#0d1117;padding:1px 4px;border-radius:3px;color:#86efac;">rep_index == worst_rep AND position_tag == "bottom"</code><br>
+          <strong style="color:#cbd5e1;">3. Seek to timestamp</strong> — <code style="background:#0d1117;padding:1px 4px;border-radius:3px;color:#fde68a;">cv2.VideoCapture.set(cv2.CAP_PROP_POS_MSEC, frame.timestamp_ms)</code><br>
+          <strong style="color:#cbd5e1;">4. Extract raw frame</strong> — save to GCS: <code style="background:#0d1117;padding:1px 4px;border-radius:3px;color:#fde68a;">gs://.../analyses/{analysis_id}/frame_raw.jpg</code><br>
+          <strong style="color:#cbd5e1;">5. Draw joint overlays</strong> — using screen_landmarks from that frame:
+          <ul style="margin:6px 0 0 16px;list-style:disc;display:flex;flex-direction:column;gap:4px;">
+            <li>Green lines (<code style="background:#0d1117;padding:1px 3px;border-radius:2px;color:#86efac;">#22c55e</code>) between all tracked joints — cv2.line()</li>
+            <li>Red circles (<code style="background:#0d1117;padding:1px 3px;border-radius:2px;color:#f87171;">#ef4444</code>) on joints flagged in error_flags — cv2.circle()</li>
+            <li>Angle labels at flagged joints — cv2.putText()</li>
+          </ul><br>
+          <strong style="color:#cbd5e1;">6. Save annotated frame</strong> to GCS: <code style="background:#0d1117;padding:1px 4px;border-radius:3px;color:#fde68a;">gs://.../analyses/{analysis_id}/frame_bottom.jpg</code><br>
+          <strong style="color:#cbd5e1;">7. Write URL to DB</strong> — UPDATE form_analyses SET annotated_frame_url = '...' WHERE analysis_id = '...'
         </div>
       </div>
       <div class="sub-section">
         <div class="sub-label">Output</div>
         <div class="io-row">
-          <span class="io-pill io-out">Raw frame URLs — gs://kinetic-videos/videos/{user_id}/{analysis_id}/frames/raw/</span>
-          <span class="io-pill io-out">Annotated frame URLs — gs://kinetic-videos/videos/{user_id}/{analysis_id}/frames/annotated/</span>
+          <span class="io-pill io-out">1 annotated JPEG — worst-rep bottom frame with joint overlays</span>
+          <span class="io-pill io-out">GCS path: gs://kinetic-videos/analyses/{analysis_id}/frame_bottom.jpg</span>
+          <span class="io-pill io-out">URL written to form_analyses.annotated_frame_url</span>
         </div>
       </div>
       <div class="sub-section">
         <div class="sub-label">SSE Events Fired</div>
         <div class="sse-row">
-          <span class="sse-pill">frames_extracting → { session_id, frames_total: 12 }</span>
-          <span class="sse-pill">frames_ready → { session_id, frame_urls: [...] }</span>
+          <span class="sse-pill">frames_extracting → { session_id, frames_total: 1 }</span>
+          <span class="sse-pill">frames_ready → { session_id, frame_url: "gs://.../frame_bottom.jpg" }</span>
         </div>
       </div>
       <div class="sub-section">
