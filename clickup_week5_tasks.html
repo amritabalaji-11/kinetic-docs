@@ -196,7 +196,7 @@ h1 { font-size: 22px; font-weight: 800; color: #f8fafc; letter-spacing: -0.5px; 
   <div class="task-card">
     <div class="task-card-header">
       <span class="task-id-badge sq1-id">S1-W5-03</span>
-      <div class="task-title">Define JSON schema for all FE responses (form analysis, auth, SSE events)</div>
+      <div class="task-title">Define JSON schema for all FE responses (form analysis, auth, SSE events) &nbsp;<span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;background:#1c1000;color:#fb923c;border:1px solid #78350f;">PARTIALLY COMPLETE</span></div>
     </div>
     <div class="task-card-body">
       <div class="dep-block">
@@ -206,15 +206,35 @@ h1 { font-size: 22px; font-weight: 800; color: #f8fafc; letter-spacing: -0.5px; 
       </div>
       <div>
         <div class="desc-label">Description</div>
-        <div class="desc-text">Squad 1 and Squad 2 align on the exact JSON shape for every API response and SSE event the frontend will consume. This covers: the form analysis output (scores, issues array, rep data, annotated frame URLs, severity labels + numeric scores), auth responses (JWT token structure, user object shape), and all SSE event payloads (event name, data fields, and which pipeline stage each maps to). This schema is the contract both squads build against — misalignment here causes integration failures in Week 6. The output is a single schema document committed to the repo that both squads reference.</div>
+        <div class="desc-text">Squad 1 and Squad 2 align on the exact JSON shape for every API response and SSE event the frontend will consume. Schemas are defined and committed to <strong style="color:#f1f5f9;">FE_Response_Schemas.md</strong> in the repo. SSE events are defined separately in S1-W5-06a.</div>
       </div>
-      <div class="ac-block">
-        <div class="ac-label">Acceptance Criteria</div>
+
+      <div style="margin-top:12px;">
+        <div class="desc-label" style="color:#4ade80;">✓ Completed (May 8–9)</div>
+        <ul class="ac-list" style="margin-top:6px;">
+          <li class="ac-item"><span class="ac-check">✓</span> <strong>SSE events</strong> — all pipeline stages defined in S1-W5-06a (separate task)</li>
+          <li class="ac-item"><span class="ac-check">✓</span> <strong>Form analysis result</strong> — GET /analysis/{id}/result: overall_score, verdict (3 points), 4 parameters (score + affirmation + observation + tips each), rep scores with 1-sentence verdict, annotated frames (worst-rep bottom + top)</li>
+          <li class="ac-item"><span class="ac-check">✓</span> <strong>Form comparison</strong> — GET /analysis/{id}/comparison: async pre-generated after analysis_complete; current vs previous session; overall + parameter variance (colour-coded); parameter tips; rep scores both sessions on same graph; empty state if no previous session</li>
+          <li class="ac-item"><span class="ac-check">✓</span> <strong>Auth</strong> — POST /auth/signup + /auth/login: JWT token + user object</li>
+          <li class="ac-item"><span class="ac-check">✓</span> <strong>User profile</strong> — GET/POST /users/profile including injury_profile</li>
+        </ul>
+      </div>
+
+      <div style="margin-top:12px;">
+        <div class="desc-label" style="color:#fbbf24;">⬜ Pending — pick up W6 after design handoff</div>
+        <ul class="ac-list" style="margin-top:6px;">
+          <li class="ac-item" style="color:#64748b;"><span style="color:#fbbf24;margin-right:8px;">○</span> Session History endpoints — blocked on W6 design handoff (Homepage/Dashboard screens)</li>
+          <li class="ac-item" style="color:#64748b;"><span style="color:#fbbf24;margin-right:8px;">○</span> Dashboard endpoints — blocked on W6 design handoff</li>
+          <li class="ac-item" style="color:#64748b;"><span style="color:#fbbf24;margin-right:8px;">○</span> Workout Builder + Tracker endpoints — blocked on W6 design handoff</li>
+        </ul>
+      </div>
+
+      <div class="ac-block" style="margin-top:12px;">
+        <div class="ac-label">Reference</div>
         <ul class="ac-list">
-          <li class="ac-item"><span class="ac-check">✓</span> Schema document committed to repo covering: /analyze response, /auth/signup + /auth/login response, and all SSE event names + data payloads</li>
-          <li class="ac-item"><span class="ac-check">✓</span> Reviewed and signed off by both Squad 1 (Allex) and Squad 2 (Nicole/Valentin)</li>
-          <li class="ac-item"><span class="ac-check">✓</span> SSE events cover all pipeline stages: upload_received, mediapipe_started, mediapipe_complete, nemotron_started, nemotron_complete, frames_ready, rag_started, rag_complete, claude_started, claude_complete, analysis_complete, error — all events carry <code style="background:#1e293b;padding:1px 5px;border-radius:3px;font-size:11px;">analysis_id</code>; error events carry <code style="background:#1e293b;padding:1px 5px;border-radius:3px;font-size:11px;">error_code</code>, <code style="background:#1e293b;padding:1px 5px;border-radius:3px;font-size:11px;">error_stage</code>, <code style="background:#1e293b;padding:1px 5px;border-radius:3px;font-size:11px;">retryable</code></li>
-          <li class="ac-item"><span class="ac-check">✓</span> Squad 3 (Blessing) notified of any fields relevant to DB writes or RAG query output</li>
+          <li class="ac-item"><span class="ac-check">→</span> Full schema: <code style="background:#1e293b;padding:1px 5px;border-radius:3px;font-size:11px;">FE_Response_Schemas.md</code> in repo</li>
+          <li class="ac-item"><span class="ac-check">→</span> DB changes: <code style="background:#1e293b;padding:1px 5px;border-radius:3px;font-size:11px;">annotated_frame_url</code> added to form_analyses table — see technical_data_schema.html</li>
+          <li class="ac-item"><span class="ac-check">→</span> Error taxonomy: quality gate error codes defined — see technical_data_schema.html Error Taxonomy section</li>
         </ul>
       </div>
     </div>
