@@ -634,5 +634,408 @@ h1 { font-size: 20px; font-weight: 700; color: #f8fafc; margin-bottom: 4px; }
   <div class="question-item"><span class="q-num">Q4</span> Some data structured (knee angle), some unstructured (image, audio) — hybrid storage needed?</div>
 </div>
 
+
+<!-- ════════════════════════════════════════
+     OPTION C — GROUPED LAYERS
+     ════════════════════════════════════════ -->
+
+<hr class="divider">
+
+<div class="option-header">
+  <span class="option-badge" style="background:#0c2a1f;color:#34d399;">Option C</span>
+  <div>
+    <div class="option-title">Grouped Architecture Layers</div>
+    <div class="option-desc">Nodes grouped into their architectural tier — boundaries show exactly what data crosses each layer</div>
+  </div>
+</div>
+
+<style>
+/* ── Option C layer styles ── */
+.c-wrap { display: flex; flex-direction: column; gap: 0; max-width: 1100px; }
+
+.c-layer {
+  border-radius: 10px;
+  padding: 14px 18px 16px;
+  position: relative;
+}
+.c-layer-header {
+  font-size: 9.5px; font-weight: 800; text-transform: uppercase;
+  letter-spacing: 0.8px; margin-bottom: 12px;
+  display: flex; align-items: center; gap: 10px;
+}
+.c-layer-tag {
+  font-size: 9px; font-weight: 800; padding: 1px 8px; border-radius: 3px;
+}
+.c-layer-note { font-size: 10px; font-weight: 400; text-transform: none; letter-spacing: 0; }
+.c-nodes { display: flex; align-items: center; gap: 0; flex-wrap: nowrap; }
+
+/* Layer colours */
+.c-ui   { background: #0f0820; border: 1.5px solid #a855f7; }
+.c-ui   .c-layer-header { color: #c084fc; }
+.c-ui   .c-layer-tag    { background: #2d0b5e; color: #d8b4fe; border: 1px solid #7c3aed; }
+
+.c-api  { background: #0a1020; border: 1.5px solid #64748b; }
+.c-api  .c-layer-header { color: #94a3b8; }
+.c-api  .c-layer-tag    { background: #1e293b; color: #cbd5e1; border: 1px solid #475569; }
+
+.c-proc { background: #031820; border: 1.5px solid #06b6d4; }
+.c-proc .c-layer-header { color: #22d3ee; }
+.c-proc .c-layer-tag    { background: #062830; color: #67e8f9; border: 1px solid #0891b2; }
+
+.c-ai   { background: #1a0518; border: 1.5px solid #ec4899; }
+.c-ai   .c-layer-header { color: #f472b6; }
+.c-ai   .c-layer-tag    { background: #3b0a28; color: #f9a8d4; border: 1px solid #be185d; }
+
+.c-data { background: #080f02; border: 1.5px solid #84cc16; }
+.c-data .c-layer-header { color: #a3e635; }
+.c-data .c-layer-tag    { background: #142005; color: #bef264; border: 1px solid #4d7c0f; }
+
+/* Node colours per layer */
+.cn-ui   { background: #1a0d2e; border-color: #a855f7; }
+.cn-ui   .node-title { color: #d8b4fe; }
+.cn-api  { background: #111827; border-color: #64748b; }
+.cn-api  .node-title { color: #cbd5e1; }
+.cn-proc { background: #051e26; border-color: #06b6d4; }
+.cn-proc .node-title { color: #67e8f9; }
+.cn-ai   { background: #2d0a1e; border-color: #ec4899; }
+.cn-ai   .node-title { color: #f9a8d4; }
+.cn-data { background: #0c1800; border-color: #84cc16; }
+.cn-data .node-title { color: #bef264; }
+.cn-rag  { background: #1a0e00; border-color: #f59e0b; }
+.cn-rag  .node-title { color: #fcd34d; }
+
+/* Interlayer connector */
+.c-interlayer {
+  display: flex; align-items: stretch; gap: 0;
+  margin: 0; padding: 0;
+  height: 52px;
+}
+.c-interlayer-spine {
+  width: 2px; background: #1e2433;
+  margin: 0 28px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  position: relative;
+}
+.c-interlayer-arrow {
+  position: absolute;
+  font-size: 14px; color: #334155;
+  background: #0a0d14;
+  padding: 2px 3px;
+}
+.c-interlayer-labels {
+  display: flex; flex-direction: column; justify-content: center;
+  gap: 5px; padding: 6px 0;
+}
+.c-flow-label {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 10.5px; color: #475569;
+}
+.c-flow-arrow { font-size: 11px; flex-shrink: 0; }
+.c-flow-down { color: #22d3ee; }
+.c-flow-up   { color: #a855f7; }
+.c-flow-text { color: #64748b; }
+.c-flow-tag {
+  font-size: 9px; font-weight: 700; padding: 1px 6px; border-radius: 3px;
+  white-space: nowrap;
+}
+.ft-video  { background: #051e26; color: #67e8f9; }
+.ft-json   { background: #0a2015; color: #4ade80; }
+.ft-sse    { background: #1a0d2e; color: #c084fc; }
+.ft-rag    { background: #1a0e00; color: #fcd34d; }
+.ft-db     { background: #111a05; color: #a3e635; }
+
+/* RAG offline section */
+.c-offline {
+  border: 1px dashed #334155; border-radius: 10px;
+  padding: 14px 18px; margin-top: 20px;
+  background: #080b10;
+}
+.c-offline-label {
+  font-size: 9px; font-weight: 800; text-transform: uppercase;
+  letter-spacing: 0.7px; color: #475569; margin-bottom: 12px;
+  display: flex; align-items: center; gap: 8px;
+}
+</style>
+
+<div class="c-wrap">
+
+  <!-- ── Layer 1: User Interface ── -->
+  <div class="c-layer c-ui">
+    <div class="c-layer-header">
+      <span class="c-layer-tag">Layer 1</span>
+      User Interface
+      <span class="c-layer-note">— browser · React + Tailwind</span>
+    </div>
+    <div class="c-nodes">
+      <div class="node cn-ui">
+        <div class="node-icon">📱</div>
+        <div class="node-title">Upload Form</div>
+        <div class="node-sub">Video + weight<br>+ exercise</div>
+      </div>
+      <div class="arrow">→</div>
+      <div class="node cn-ui">
+        <div class="node-icon">⏳</div>
+        <div class="node-title">SSE Progress</div>
+        <div class="node-sub">Processing states<br>live in browser</div>
+      </div>
+      <div class="arrow">→</div>
+      <div class="node cn-ui">
+        <div class="node-icon">📊</div>
+        <div class="node-title">Results Screen</div>
+        <div class="node-sub">Score · corrections<br>· weight rec</div>
+      </div>
+      <div class="arrow">→</div>
+      <div class="node cn-ui">
+        <div class="node-icon">🏠</div>
+        <div class="node-title">Dashboard</div>
+        <div class="node-sub">History · trends<br>· habit tracker</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Interlayer: UI ↕ API ── -->
+  <div class="c-interlayer">
+    <div class="c-interlayer-spine">
+      <div class="c-interlayer-arrow">↕</div>
+    </div>
+    <div class="c-interlayer-labels">
+      <div class="c-flow-label">
+        <span class="c-flow-arrow c-flow-down">↓</span>
+        <span class="c-flow-text">POST /upload</span>
+        <span class="c-flow-tag ft-video">video + exercise + weight</span>
+      </div>
+      <div class="c-flow-label">
+        <span class="c-flow-arrow c-flow-up">↑</span>
+        <span class="c-flow-text">returns</span>
+        <span class="c-flow-tag ft-json">{ analysis_id }</span>
+        <span style="font-size:10px;color:#334155;">then opens</span>
+        <span class="c-flow-tag ft-sse">SSE /analysis/{id}/stream</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Layer 2: Backend / API ── -->
+  <div class="c-layer c-api">
+    <div class="c-layer-header">
+      <span class="c-layer-tag">Layer 2</span>
+      Backend / API
+      <span class="c-layer-note">— Python FastAPI · GCP Cloud Run</span>
+    </div>
+    <div class="c-nodes">
+      <div class="node cn-api">
+        <div class="node-icon">📤</div>
+        <div class="node-title">POST /upload</div>
+        <div class="node-sub">Receive video<br>save to GCS<br>write DB record</div>
+      </div>
+      <div class="arrow">→</div>
+      <div class="node cn-api">
+        <div class="node-icon">🔗</div>
+        <div class="node-title">SSE Stream</div>
+        <div class="node-sub">GET /analysis/<br>{id}/stream<br>emits events</div>
+      </div>
+      <div class="arrow">→</div>
+      <div class="node cn-api">
+        <div class="node-icon">🎛️</div>
+        <div class="node-title">Pipeline Orchestrator</div>
+        <div class="node-sub">Coordinates MediaPipe<br>→ AI → output<br>reads DB context</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Interlayer: API ↕ Processing ── -->
+  <div class="c-interlayer">
+    <div class="c-interlayer-spine">
+      <div class="c-interlayer-arrow">↕</div>
+    </div>
+    <div class="c-interlayer-labels">
+      <div class="c-flow-label">
+        <span class="c-flow-arrow c-flow-down">↓</span>
+        <span class="c-flow-text">triggers pipeline with</span>
+        <span class="c-flow-tag ft-video">video GCS URI + session context</span>
+      </div>
+      <div class="c-flow-label">
+        <span class="c-flow-arrow c-flow-up">↑</span>
+        <span class="c-flow-text">returns</span>
+        <span class="c-flow-tag ft-json">biomechanics JSON + quality_gate_status + video_score</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Layer 3: Processing / Compute ── -->
+  <div class="c-layer c-proc">
+    <div class="c-layer-header">
+      <span class="c-layer-tag">Layer 3</span>
+      Processing / Compute
+      <span class="c-layer-note">— Squad 3 · Python · MediaPipe</span>
+    </div>
+    <div class="c-nodes">
+      <div class="node cn-proc" style="min-width:140px;max-width:160px;">
+        <div class="node-icon">🦴</div>
+        <div class="node-title">MediaPipe<br>+ Quality Gate</div>
+        <div class="node-sub">Keypoints · visibility<br>· presence scores<br>· rep detection</div>
+      </div>
+      <div class="arrow">→</div>
+      <div class="node cn-proc" style="min-width:140px;max-width:160px;">
+        <div class="node-icon">🐍</div>
+        <div class="node-title">Biomechanics Script</div>
+        <div class="node-sub">Knee angle · hip angle<br>· rep count · tempo<br>· back angle</div>
+      </div>
+      <div class="arrow">→</div>
+      <div class="node cn-proc" style="min-width:140px;max-width:160px;">
+        <div class="node-icon">🎞️</div>
+        <div class="node-title">Frame Extraction</div>
+        <div class="node-sub">OpenCV · top + bottom<br>frames → annotated<br>overlays → GCS</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Interlayer: Processing ↕ AI ── -->
+  <div class="c-interlayer">
+    <div class="c-interlayer-spine">
+      <div class="c-interlayer-arrow">↕</div>
+    </div>
+    <div class="c-interlayer-labels">
+      <div class="c-flow-label">
+        <span class="c-flow-arrow c-flow-down">↓</span>
+        <span class="c-flow-tag ft-json">biomechanics JSON (angles · tempo · reps)</span>
+        <span class="c-flow-tag ft-video">annotated frames</span>
+        <span class="c-flow-tag" style="background:#051820;color:#67e8f9;">quality_gate_status</span>
+      </div>
+      <div class="c-flow-label">
+        <span class="c-flow-arrow c-flow-up">↑</span>
+        <span class="c-flow-text">also pulls</span>
+        <span class="c-flow-tag ft-rag">RAG context</span>
+        <span class="c-flow-tag ft-db">user history + weight</span>
+        <span class="c-flow-text">from Data layer</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Layer 4: AI Models ── -->
+  <div class="c-layer c-ai">
+    <div class="c-layer-header">
+      <span class="c-layer-tag">Layer 4</span>
+      AI Models
+      <span class="c-layer-note">— NVIDIA NIM · Anthropic API</span>
+    </div>
+    <div class="c-nodes">
+      <div class="node cn-ai" style="min-width:160px;max-width:180px;">
+        <div class="node-icon">🤖</div>
+        <div class="node-title">Nemotron 3 Nano Omni</div>
+        <div class="node-sub">Biomechanics JSON<br>+ video → structured<br>form analysis JSON</div>
+      </div>
+      <div class="arrow">→</div>
+      <div class="node cn-ai" style="min-width:160px;max-width:180px;">
+        <div class="node-icon">💡</div>
+        <div class="node-title">Claude Sonnet 4.6</div>
+        <div class="node-sub">Analysis + RAG context<br>+ user history →<br>coaching + progression</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Interlayer: AI ↕ Data ── -->
+  <div class="c-interlayer">
+    <div class="c-interlayer-spine">
+      <div class="c-interlayer-arrow">↕</div>
+    </div>
+    <div class="c-interlayer-labels">
+      <div class="c-flow-label">
+        <span class="c-flow-arrow c-flow-up">↑</span>
+        <span class="c-flow-text">reads</span>
+        <span class="c-flow-tag ft-rag">RAG passages (Vector DB)</span>
+        <span class="c-flow-tag ft-db">sessions · scores · weight history (Structured DB)</span>
+      </div>
+      <div class="c-flow-label">
+        <span class="c-flow-arrow c-flow-down">↓</span>
+        <span class="c-flow-text">writes</span>
+        <span class="c-flow-tag ft-json">coaching output · form score · progression rec → Structured DB</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Layer 5: Data / Storage ── -->
+  <div class="c-layer c-data">
+    <div class="c-layer-header">
+      <span class="c-layer-tag">Layer 5</span>
+      Data / Storage
+      <span class="c-layer-note">— GCS · Supabase (PostgreSQL) · Vector DB</span>
+    </div>
+    <div class="c-nodes">
+      <div class="node cn-api" style="min-width:150px;max-width:170px;">
+        <div class="node-icon">🪣</div>
+        <div class="node-title">GCS / S3</div>
+        <div class="node-sub">Raw video files<br>Annotated frames<br>MediaPipe output</div>
+      </div>
+      <div class="arrow" style="color:#1e2433;">·</div>
+      <div class="node cn-rag" style="min-width:150px;max-width:170px;">
+        <div class="node-icon">🗄️</div>
+        <div class="node-title">Vector DB</div>
+        <div class="node-sub">RAG corpus<br>Biomechanics refs<br>Form tips + transcripts</div>
+      </div>
+      <div class="arrow" style="color:#1e2433;">·</div>
+      <div class="node cn-data" style="min-width:150px;max-width:170px;">
+        <div class="node-icon">💾</div>
+        <div class="node-title">Structured DB</div>
+        <div class="node-sub">Users · sessions<br>Form scores · history<br>Workout logs</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── RAG Ingestion (offline) ── -->
+  <div class="c-offline">
+    <div class="c-offline-label">
+      <span style="background:#1e293b;color:#64748b;padding:1px 7px;border-radius:3px;font-size:9px;font-weight:800;">Offline</span>
+      RAG Ingestion Pipeline — populates Vector DB before live pipeline runs
+    </div>
+    <div class="c-nodes">
+      <div class="node cn-rag" style="min-width:120px;">
+        <div class="node-icon">🎥</div>
+        <div class="node-title">Squat Videos</div>
+        <div class="node-sub">20–30 good<br>+ bad form</div>
+      </div>
+      <div class="arrow" style="color:#334155;">+</div>
+      <div class="node cn-rag" style="min-width:120px;">
+        <div class="node-icon">📹</div>
+        <div class="node-title">Tutorial Videos</div>
+        <div class="node-sub">Form guidance<br>transcripts</div>
+      </div>
+      <div class="arrow" style="color:#334155;">+</div>
+      <div class="node cn-rag" style="min-width:120px;">
+        <div class="node-icon">🖼️</div>
+        <div class="node-title">Reference Images</div>
+        <div class="node-sub">Anatomy<br>form diagrams</div>
+      </div>
+      <div class="arrow">→</div>
+      <div class="node cn-proc" style="min-width:130px;">
+        <div class="node-icon">⚙️</div>
+        <div class="node-title">Processing</div>
+        <div class="node-sub">MediaPipe · Audio<br>transcription<br>Gemini Flash</div>
+      </div>
+      <div class="arrow">→</div>
+      <div class="node cn-rag" style="min-width:130px;">
+        <div class="node-icon">📦</div>
+        <div class="node-title">Embed + Index</div>
+        <div class="node-sub">Chunk · embed<br>metadata tag<br>store in Vector DB</div>
+      </div>
+      <div class="arrow">→</div>
+      <div class="node cn-rag" style="min-width:120px;">
+        <div class="node-icon">🗄️</div>
+        <div class="node-title">Vector DB</div>
+        <div class="node-sub">Ready for<br>RAG retrieval</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Open questions -->
+<div class="question-box" style="margin-top: 20px;">
+  <div class="question-title">Option C — What the layer grouping reveals</div>
+  <div class="question-item"><span class="q-num">→</span> 5 distinct architectural tiers — clear separation of UI, API, compute, AI, and data concerns</div>
+  <div class="question-item"><span class="q-num">→</span> Layer 2 (Backend/API) is the orchestrator — it touches every other layer, making it the highest integration risk</div>
+  <div class="question-item"><span class="q-num">→</span> The Processing → AI boundary is where the most data flows across — biomechanics JSON + frames + quality gate status + RAG + user history all converge here</div>
+  <div class="question-item"><span class="q-num">→</span> RAG ingestion is genuinely offline — it has no live-path connection to Layer 1 (UI), which is correct</div>
+</div>
+
 </body>
 </html>
