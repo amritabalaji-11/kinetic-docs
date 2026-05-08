@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kinetic — Biomechanics Script Specification · S3-W5-07</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0a0d14; color: #e2e8f0; padding: 32px; min-width: 960px; }
+
+h1 { font-size: 20px; font-weight: 700; color: #f8fafc; margin-bottom: 4px; }
+.subtitle { font-size: 12px; color: #64748b; margin-bottom: 28px; }
+.badge-row { display: flex; gap: 8px; margin-bottom: 24px; flex-wrap: wrap; }
+.badge { font-size: 10px; padding: 3px 10px; border-radius: 6px; font-weight: 600; }
+.badge-s3  { background: #1a1205; color: #fb923c; border: 1px solid #431407; }
+.badge-s2  { background: #0a1f12; color: #4ade80; border: 1px solid #14532d; }
+.badge-ref { background: #0d1a2e; color: #60a5fa; border: 1px solid #1e3a5f; }
+
+.section { margin-bottom: 40px; }
+.section-title { font-size: 13px; font-weight: 800; color: #f1f5f9; letter-spacing: 0.3px; margin-bottom: 4px; display: flex; align-items: center; gap: 10px; }
+.section-title::after { content: ''; flex: 1; height: 1px; background: #1e2433; }
+.section-sub { font-size: 11px; color: #64748b; margin-bottom: 16px; }
+
+.card { background: #0d1117; border: 1.5px solid #1e2433; border-radius: 12px; padding: 18px 20px; margin-bottom: 14px; }
+.card-title { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.7px; color: #475569; margin-bottom: 12px; }
+
+/* Parameter cards */
+.param-card { border-radius: 10px; overflow: hidden; margin-bottom: 20px; }
+.param-header { display: flex; align-items: center; gap: 12px; padding: 12px 18px; }
+.param-badge { font-size: 10px; font-weight: 800; padding: 3px 10px; border-radius: 5px; text-transform: uppercase; letter-spacing: 0.5px; }
+.param-title { font-size: 14px; font-weight: 700; }
+.param-body { padding: 16px 18px; background: #080b10; }
+
+.p-posture  .param-header { background: #130920; } .p-posture  .param-badge { background: #3b1f6e; color: #d8b4fe; } .p-posture  .param-title { color: #c084fc; }
+.p-stability .param-header { background: #051820; } .p-stability .param-badge { background: #0c2830; color: #67e8f9; } .p-stability .param-title { color: #22d3ee; }
+.p-movement  .param-header { background: #031508; } .p-movement  .param-badge { background: #14532d; color: #86efac; } .p-movement  .param-title { color: #4ade80; }
+.p-tempo     .param-header { background: #1a0e00; } .p-tempo     .param-badge { background: #3b2000; color: #fcd34d; } .p-tempo     .param-title { color: #fbbf24; }
+
+/* Field table */
+.field-table { width: 100%; border-collapse: collapse; font-size: 11px; margin-bottom: 14px; }
+.field-table th { text-align: left; padding: 7px 10px; color: #475569; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1.5px solid #1e2433; }
+.field-table td { padding: 7px 10px; border-bottom: 1px solid #111827; color: #94a3b8; vertical-align: top; }
+.field-table tr:last-child td { border-bottom: none; }
+.field-table tr:hover td { background: #0f1520; }
+.fn  { font-family: 'SF Mono', monospace; color: #c4b5fd; font-size: 10.5px; }
+.formula-cell { font-family: 'SF Mono', monospace; font-size: 10px; color: #86efac; line-height: 1.6; }
+.rep-pill { display: inline-block; font-size: 9px; font-weight: 700; padding: 1px 6px; border-radius: 3px; }
+.r-rep  { background: #0c2830; color: #67e8f9; }
+.r-con  { background: #14532d; color: #86efac; }
+.r-both { background: #3b2000; color: #fcd34d; }
+.range-good { color: #4ade80; }
+.range-ok   { color: #fbbf24; }
+.range-warn { color: #f87171; }
+
+/* Python blocks */
+.py-block { background: #070a0f; border: 1px solid #1e2433; border-radius: 8px; padding: 14px 16px; font-family: 'SF Mono', monospace; font-size: 10.5px; line-height: 1.8; overflow-x: auto; margin-bottom: 14px; }
+.py-def    { color: #c084fc; }
+.py-fn     { color: #67e8f9; }
+.py-str    { color: #86efac; }
+.py-num    { color: #fdba74; }
+.py-kw     { color: #f9a8d4; }
+.py-com    { color: #475569; font-style: italic; }
+.py-var    { color: #e2e8f0; }
+.py-ret    { color: #fbbf24; }
+
+/* JSON preview */
+.json-block { background: #070a0f; border: 1px solid #1e2433; border-radius: 8px; padding: 14px 16px; font-family: 'SF Mono', monospace; font-size: 10.5px; line-height: 1.8; overflow-x: auto; }
+.jk  { color: #93c5fd; }
+.js  { color: #86efac; }
+.jn  { color: #fdba74; }
+.jb  { color: #f9a8d4; }
+.jc  { color: #475569; font-style: italic; }
+.jp  { color: #64748b; }
+
+.callout { border-radius: 8px; padding: 10px 14px; font-size: 11px; line-height: 1.6; display: flex; gap: 10px; margin-bottom: 14px; }
+.callout-info { background: #0d1a2e; border: 1px solid #1e3a5f; color: #93c5fd; }
+.callout-warn { background: #1c1000; border: 1px solid #78350f; color: #fde68a; }
+.callout-icon { font-size: 14px; flex-shrink: 0; }
+
+.pipeline-row { display: flex; align-items: center; gap: 0; margin-bottom: 20px; flex-wrap: nowrap; overflow-x: auto; }
+.p-node { background: #0d1117; border: 1.5px solid #1e2433; border-radius: 8px; padding: 10px 14px; font-size: 11px; text-align: center; flex-shrink: 0; min-width: 110px; }
+.p-node-title { font-weight: 700; color: #f1f5f9; margin-bottom: 2px; }
+.p-node-sub   { font-size: 9.5px; color: #475569; }
+.p-arrow { font-size: 18px; color: #334155; padding: 0 6px; flex-shrink: 0; }
+.p-node.active { border-color: #fb923c; background: #1a1205; }
+.p-node.active .p-node-title { color: #fdba74; }
+</style>
+</head>
+<body>
+
+<h1>Kinetic — Biomechanics Script Specification</h1>
+<p class="subtitle">S3-W5-07 · Goblet Squat MVP · Converts MediaPipe frame data → structured per-rep + consolidated output for LLM</p>
+
+<div class="badge-row">
+  <span class="badge badge-s3">Squad 3 · implements</span>
+  <span class="badge badge-s2">Squad 2 · consumes output</span>
+  <span class="badge badge-ref">Ref: S3-W5-06 · S3-W5-07 · Kinetic_Biomechanics_Output_Schema.json</span>
+</div>
+
+
+<!-- ── PIPELINE POSITION ── -->
+<div class="section">
+  <div class="section-title">Pipeline Position</div>
+  <div class="pipeline-row">
+    <div class="p-node"><div class="p-node-title">S3-W5-06</div><div class="p-node-sub">MediaPipe<br>+ Quality Gate<br>+ Frame Selection</div></div>
+    <div class="p-arrow">→</div>
+    <div class="p-node active"><div class="p-node-title">S3-W5-07</div><div class="p-node-sub">Biomechanics Script<br>← YOU ARE HERE</div></div>
+    <div class="p-arrow">→</div>
+    <div class="p-node"><div class="p-node-title">Nemotron</div><div class="p-node-sub">Receives JSON<br>+ video overlay</div></div>
+    <div class="p-arrow">→</div>
+    <div class="p-node"><div class="p-node-title">Claude Sonnet</div><div class="p-node-sub">Coaching output<br>+ progression rec</div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">What this script does</div>
+    <div style="font-size:12px;color:#94a3b8;line-height:1.8;">
+      Receives an array of selected, quality-gated frames from S3-W5-06. Each frame carries world landmark coordinates (3D metric), screen landmark coordinates (normalised), visibility scores, rep_index, and position_tag (top / bottom / null).<br><br>
+      For each rep, computes: <strong style="color:#cbd5e1;">joint angles</strong> at key positions, <strong style="color:#cbd5e1;">tempo metrics</strong>, <strong style="color:#cbd5e1;">stability signals</strong>, <strong style="color:#cbd5e1;">error flags</strong>, and <strong style="color:#cbd5e1;">frame reliability</strong>. Aggregates all reps into a consolidated summary with cross-rep trends. Outputs a single JSON passed to the LLM stage.
+    </div>
+  </div>
+</div>
+
+
+<!-- ── INPUT ── -->
+<div class="section">
+  <div class="section-title">Input — Frame Payload from S3-W5-06</div>
+  <div class="section-sub">One object per frame. Biomechanics script receives an array of these for all frames that passed the visibility gate.</div>
+  <div class="json-block">
+<span class="jp">{</span><br>
+&nbsp;&nbsp;<span class="jk">"frame_index"</span><span class="jp">:</span> <span class="jn">142</span><span class="jp">,</span><br>
+&nbsp;&nbsp;<span class="jk">"timestamp_ms"</span><span class="jp">:</span> <span class="jn">4733</span><span class="jp">,</span> &nbsp;<span class="jc">// used for tempo calculation</span><br>
+&nbsp;&nbsp;<span class="jk">"rep_index"</span><span class="jp">:</span> <span class="jn">2</span><span class="jp">,</span> &nbsp;<span class="jc">// which rep this frame belongs to</span><br>
+&nbsp;&nbsp;<span class="jk">"position_tag"</span><span class="jp">:</span> <span class="js">"bottom"</span><span class="jp">,</span> &nbsp;<span class="jc">// "top" | "bottom" | null</span><br>
+&nbsp;&nbsp;<span class="jk">"error_flags"</span><span class="jp">:</span> <span class="jp">[</span><span class="js">"depth_insufficient"</span><span class="jp">,</span> <span class="js">"butt_wink"</span><span class="jp">],</span> &nbsp;<span class="jc">// added by S3-W5-07 after angle computation</span><br>
+&nbsp;&nbsp;<span class="jk">"error_values"</span><span class="jp">: {</span> <span class="jk">"knee_angle_at_depth"</span><span class="jp">:</span> <span class="jn">112</span><span class="jp">,</span> <span class="jk">"pelvic_deviation_deg"</span><span class="jp">:</span> <span class="jn">18.4</span> <span class="jp">},</span><br>
+&nbsp;&nbsp;<span class="jk">"frame_reliability"</span><span class="jp">:</span> <span class="jn">0.91</span><span class="jp">,</span> &nbsp;<span class="jc">// lowest visibility score among critical landmarks this frame</span><br>
+&nbsp;&nbsp;<span class="jk">"world_landmarks"</span><span class="jp">: {</span> <span class="jc">/* 3D metric coords, origin at hip — primary for angle math */</span> <span class="jp">},</span><br>
+&nbsp;&nbsp;<span class="jk">"screen_landmarks"</span><span class="jp">: {</span> <span class="jc">/* normalised x/y (0–1) — for valgus + foot turnout */</span> <span class="jp">}</span><br>
+<span class="jp">}</span>
+  </div>
+
+  <div class="callout callout-info">
+    <span class="callout-icon">ℹ</span>
+    <span><strong>Coordinate systems:</strong> Use <code style="background:#0d1117;padding:1px 4px;border-radius:3px;">world_landmarks</code> (metric, 3D) for all angle calculations — more accurate than normalised screen coords. Use <code style="background:#0d1117;padding:1px 4px;border-radius:3px;">screen_landmarks</code> (normalised x/y) only for knee valgus and foot turn-out, which are lateral measurements in the camera plane.</span>
+  </div>
+</div>
+
+
+<!-- ── LANDMARK IDs ── -->
+<div class="section">
+  <div class="section-title">Landmark IDs Used</div>
+  <div class="card">
+    <div class="card-title">MediaPipe Pose Landmark Reference</div>
+    <table class="field-table">
+      <thead><tr><th>ID</th><th>Landmark</th><th>Used for</th></tr></thead>
+      <tbody>
+        <tr><td class="fn">11, 12</td><td style="color:#cbd5e1;">Left / Right Shoulder</td><td>Back angle, hip angle, butt wink baseline</td></tr>
+        <tr><td class="fn">23, 24</td><td style="color:#cbd5e1;">Left / Right Hip</td><td>Hip angle, back angle, butt wink, rep segmentation</td></tr>
+        <tr><td class="fn">25, 26</td><td style="color:#cbd5e1;">Left / Right Knee</td><td>Knee angle, knee valgus</td></tr>
+        <tr><td class="fn">27, 28</td><td style="color:#cbd5e1;">Left / Right Ankle</td><td>Knee angle, ankle dorsiflexion</td></tr>
+        <tr><td class="fn">29, 30</td><td style="color:#cbd5e1;">Left / Right Heel</td><td>Heel lift detection</td></tr>
+        <tr><td class="fn">31, 32</td><td style="color:#cbd5e1;">Left / Right Foot Index</td><td>Ankle dorsiflexion, foot turn-out</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
+<!-- ── PARAMETER: TEMPO ── -->
+<div class="section">
+  <div class="section-title">Calculations — Tempo</div>
+
+  <div class="param-card p-tempo">
+    <div class="param-header">
+      <span class="param-badge">Tempo</span>
+      <span class="param-title">Eccentric · Pause · Concentric · Total · Notation</span>
+    </div>
+    <div class="param-body">
+
+      <div class="callout callout-info" style="margin-bottom:12px;">
+        <span class="callout-icon">ℹ</span>
+        <span>Tempo is computed from a state machine tracking <strong>hip angle over time</strong>. Each phase transition is timestamped using <code style="background:#0d1117;padding:1px 4px;border-radius:3px;">timestamp_ms</code> from the frame payload. Thresholds: hip &lt; 100° = descending · hip &lt; 90° = bottom · hip &gt; 160° = standing.</span>
+      </div>
+
+      <div class="py-block">
+<span class="py-com"># State machine — runs across frames ordered by timestamp_ms</span><br>
+<span class="py-kw">class</span> <span class="py-fn">TempoTracker</span>:<br>
+&nbsp;&nbsp;<span class="py-kw">def</span> <span class="py-fn">update</span>(<span class="py-var">self</span>, <span class="py-var">hip_angle</span>, <span class="py-var">timestamp_ms</span>):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="py-kw">if</span> <span class="py-var">self</span>.state == <span class="py-str">"STANDING"</span> <span class="py-kw">and</span> <span class="py-var">hip_angle</span> &lt; <span class="py-num">100</span>:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="py-var">self</span>.state = <span class="py-str">"DESCENDING"</span>; <span class="py-var">self</span>.t_start = <span class="py-var">timestamp_ms</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="py-kw">elif</span> <span class="py-var">self</span>.state == <span class="py-str">"DESCENDING"</span> <span class="py-kw">and</span> <span class="py-var">hip_angle</span> &lt; <span class="py-num">90</span>:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="py-var">self</span>.eccentric = (<span class="py-var">timestamp_ms</span> - <span class="py-var">self</span>.t_start) / <span class="py-num">1000</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="py-var">self</span>.state = <span class="py-str">"BOTTOM"</span>; <span class="py-var">self</span>.t_start = <span class="py-var">timestamp_ms</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="py-kw">elif</span> <span class="py-var">self</span>.state == <span class="py-str">"BOTTOM"</span> <span class="py-kw">and</span> <span class="py-var">hip_angle</span> &gt; <span class="py-num">100</span>:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="py-var">self</span>.pause = (<span class="py-var">timestamp_ms</span> - <span class="py-var">self</span>.t_start) / <span class="py-num">1000</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="py-var">self</span>.state = <span class="py-str">"ASCENDING"</span>; <span class="py-var">self</span>.t_start = <span class="py-var">timestamp_ms</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="py-kw">elif</span> <span class="py-var">self</span>.state == <span class="py-str">"ASCENDING"</span> <span class="py-kw">and</span> <span class="py-var">hip_angle</span> &gt; <span class="py-num">160</span>:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="py-var">self</span>.concentric = (<span class="py-var">timestamp_ms</span> - <span class="py-var">self</span>.t_start) / <span class="py-num">1000</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="py-var">self</span>.total = <span class="py-var">self</span>.eccentric + <span class="py-var">self</span>.pause + <span class="py-var">self</span>.concentric<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="py-ret">return</span> <span class="py-var">self</span>._build_output()
+      </div>
+
+      <table class="field-table">
+        <thead><tr><th>Field</th><th>Formula / Logic</th><th>Target Range</th><th>Level</th></tr></thead>
+        <tbody>
+          <tr><td class="fn">eccentric</td><td class="formula-cell">ms(STANDING→BOTTOM) ÷ 1000</td><td><span class="range-warn">&lt; 0.5s = dropped</span> · <span class="range-ok">0.5–1.5s = fast</span> · <span class="range-good">≥ 1.5s = controlled</span></td><td><span class="rep-pill r-both">Rep + Trend</span></td></tr>
+          <tr><td class="fn">pause</td><td class="formula-cell">ms(BOTTOM phase) ÷ 1000</td><td><span class="range-good">0.5–1.5s = ideal</span></td><td><span class="rep-pill r-both">Rep + Trend</span></td></tr>
+          <tr><td class="fn">concentric</td><td class="formula-cell">ms(BOTTOM→STANDING) ÷ 1000</td><td><span class="range-good">≥ 1.0s = controlled</span></td><td><span class="rep-pill r-both">Rep + Trend</span></td></tr>
+          <tr><td class="fn">total</td><td class="formula-cell">eccentric + pause + concentric</td><td>Trend: rising across reps = fatigue</td><td><span class="rep-pill r-both">Rep + Trend</span></td></tr>
+          <tr><td class="fn">tempo_notation</td><td class="formula-cell">"0" if phase &lt; 0.5s else "1"<br>format: "ecc-pause-con"</td><td>e.g. "0-1-0" = fast-controlled-fast</td><td><span class="rep-pill r-rep">Rep</span></td></tr>
+          <tr><td class="fn">squat_type</td><td class="formula-cell">from min_knee_angle</td><td>DEEP / PARALLEL / SHALLOW</td><td><span class="rep-pill r-rep">Rep</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+
+  <!-- ── PARAMETER: POSTURE ── -->
+  <div class="section-title">Calculations — Posture</div>
+
+  <div class="param-card p-posture">
+    <div class="param-header">
+      <span class="param-badge">Posture</span>
+      <span class="param-title">Back Angle · Butt Wink</span>
+    </div>
+    <div class="param-body">
+      <div class="py-block">
+<span class="py-com"># Back angle — torso lean from vertical (world coords)</span><br>
+<span class="py-kw">def</span> <span class="py-fn">back_angle</span>(<span class="py-var">shoulder</span>, <span class="py-var">hip</span>):<br>
+&nbsp;&nbsp;<span class="py-var">torso</span> = np.array([<span class="py-var">shoulder</span>.x - <span class="py-var">hip</span>.x, <span class="py-var">shoulder</span>.y - <span class="py-var">hip</span>.y, <span class="py-var">shoulder</span>.z - <span class="py-var">hip</span>.z])<br>
+&nbsp;&nbsp;<span class="py-var">vertical</span> = np.array([<span class="py-num">0</span>, -<span class="py-num">1</span>, <span class="py-num">0</span>])<br>
+&nbsp;&nbsp;<span class="py-ret">return</span> np.degrees(np.arccos(np.dot(<span class="py-var">torso</span>, <span class="py-var">vertical</span>) / np.linalg.norm(<span class="py-var">torso</span>)))<br>
+<br>
+<span class="py-com"># Average left + right side</span><br>
+<span class="py-var">angle</span> = (back_angle(lm[<span class="py-num">11</span>], lm[<span class="py-num">23</span>]) + back_angle(lm[<span class="py-num">12</span>], lm[<span class="py-num">24</span>])) / <span class="py-num">2</span><br>
+<br>
+<span class="py-com"># Butt wink — posterior pelvic tilt at bottom (S3-W5-07 post-processing)</span><br>
+<span class="py-kw">def</span> <span class="py-fn">butt_wink</span>(<span class="py-var">shoulder</span>, <span class="py-var">hip</span>, <span class="py-var">knee</span>, <span class="py-var">baseline_angle</span>):<br>
+&nbsp;&nbsp;<span class="py-var">torso_vec</span>  = <span class="py-var">hip</span> - <span class="py-var">shoulder</span><br>
+&nbsp;&nbsp;<span class="py-var">pelvis_vec</span> = <span class="py-var">knee</span> - <span class="py-var">hip</span><br>
+&nbsp;&nbsp;<span class="py-var">angle</span> = np.degrees(np.arccos(np.dot(<span class="py-var">torso_vec</span>, <span class="py-var">pelvis_vec</span>) / (norm(<span class="py-var">torso_vec</span>) * norm(<span class="py-var">pelvis_vec</span>))))<br>
+&nbsp;&nbsp;<span class="py-var">deviation</span> = <span class="py-var">angle</span> - <span class="py-var">baseline_angle</span><br>
+&nbsp;&nbsp;<span class="py-ret">return</span> deviation &gt; <span class="py-num">15</span>, deviation  <span class="py-com"># (detected: bool, severity_deg: float)</span>
+      </div>
+
+      <table class="field-table">
+        <thead><tr><th>Field</th><th>Formula / Logic</th><th>Target Range</th><th>Level</th></tr></thead>
+        <tbody>
+          <tr><td class="fn">back_angle_start</td><td class="formula-cell">back_angle at position_tag="top" frame</td><td><span class="range-good">10–20°</span></td><td><span class="rep-pill r-rep">Rep</span></td></tr>
+          <tr><td class="fn">back_angle_max</td><td class="formula-cell">max(back_angle across all frames in rep)</td><td><span class="range-good">&lt; 30° = Good</span> · <span class="range-ok">30–45° = Acceptable</span> · <span class="range-warn">&gt; 45° = Warning</span></td><td><span class="rep-pill r-both">Rep + Trend</span></td></tr>
+          <tr><td class="fn">back_angle_at_bottom</td><td class="formula-cell">back_angle at position_tag="bottom" frame</td><td>More specific than max — lean under max load</td><td><span class="rep-pill r-both">Rep + Trend</span></td></tr>
+          <tr><td class="fn">time_warning</td><td class="formula-cell">Σ frame_duration where back_angle &gt; 30°</td><td>Lower = better</td><td><span class="rep-pill r-both">Rep + Mean</span></td></tr>
+          <tr><td class="fn">time_excessive</td><td class="formula-cell">Σ frame_duration where back_angle &gt; 45°</td><td>Should be 0</td><td><span class="rep-pill r-rep">Rep</span></td></tr>
+          <tr><td class="fn">status</td><td class="formula-cell">GOOD if max &lt; 30° · ACCEPTABLE 30–45° · WARNING &gt; 45°</td><td>—</td><td><span class="rep-pill r-rep">Rep</span></td></tr>
+          <tr><td class="fn">butt_wink_detected</td><td class="formula-cell">torso–pelvis deviation &gt; 15° vs standing baseline near bottom frame</td><td>Should be false</td><td><span class="rep-pill r-both">Rep + Count</span></td></tr>
+          <tr><td class="fn">butt_wink_severity_deg</td><td class="formula-cell">max(torso_pelvis_angle − baseline) in ±10 frames around bottom</td><td>&lt; 15° = no wink</td><td><span class="rep-pill r-rep">Rep</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+
+  <!-- ── PARAMETER: MOVEMENT QUALITY ── -->
+  <div class="section-title">Calculations — Movement Quality</div>
+
+  <div class="param-card p-movement">
+    <div class="param-header">
+      <span class="param-badge">Movement Quality</span>
+      <span class="param-title">Depth · Hip Angle · Ankle Dorsiflexion · Foot Turn-out</span>
+    </div>
+    <div class="param-body">
+      <div class="py-block">
+<span class="py-com"># Hip angle (shoulder→hip→knee) — primary depth metric</span><br>
+<span class="py-kw">def</span> <span class="py-fn">hip_angle</span>(<span class="py-var">shoulder</span>, <span class="py-var">hip</span>, <span class="py-var">knee</span>):  <span class="py-com"># world coords</span><br>
+&nbsp;&nbsp;<span class="py-var">v1</span> = shoulder - hip; <span class="py-var">v2</span> = knee - hip<br>
+&nbsp;&nbsp;<span class="py-ret">return</span> np.degrees(np.arccos(np.clip(np.dot(<span class="py-var">v1</span>,<span class="py-var">v2</span>)/(norm(<span class="py-var">v1</span>)*norm(<span class="py-var">v2</span>)),-<span class="py-num">1</span>,<span class="py-num">1</span>)))<br>
+<br>
+<span class="py-com"># Knee angle (hip→knee→ankle)</span><br>
+<span class="py-kw">def</span> <span class="py-fn">knee_angle</span>(<span class="py-var">hip</span>, <span class="py-var">knee</span>, <span class="py-var">ankle</span>):  <span class="py-com"># world coords</span><br>
+&nbsp;&nbsp;<span class="py-var">v1</span> = hip - knee; <span class="py-var">v2</span> = ankle - knee<br>
+&nbsp;&nbsp;<span class="py-ret">return</span> np.degrees(np.arccos(np.clip(np.dot(<span class="py-var">v1</span>,<span class="py-var">v2</span>)/(norm(<span class="py-var">v1</span>)*norm(<span class="py-var">v2</span>)),-<span class="py-num">1</span>,<span class="py-num">1</span>)))<br>
+<br>
+<span class="py-com"># Ankle dorsiflexion (knee→ankle→foot_index)</span><br>
+<span class="py-kw">def</span> <span class="py-fn">ankle_dorsiflexion</span>(<span class="py-var">knee</span>, <span class="py-var">ankle</span>, <span class="py-var">foot_index</span>):  <span class="py-com"># world coords</span><br>
+&nbsp;&nbsp;<span class="py-var">v1</span> = knee - ankle; <span class="py-var">v2</span> = foot_index - ankle<br>
+&nbsp;&nbsp;<span class="py-ret">return</span> np.degrees(np.arccos(np.clip(np.dot(<span class="py-var">v1</span>,<span class="py-var">v2</span>)/(norm(<span class="py-var">v1</span>)*norm(<span class="py-var">v2</span>)),-<span class="py-num">1</span>,<span class="py-num">1</span>)))<br>
+<br>
+<span class="py-com"># Foot turn-out (heel→foot_index angle from sagittal plane, screen coords)</span><br>
+<span class="py-kw">def</span> <span class="py-fn">foot_turnout</span>(<span class="py-var">heel</span>, <span class="py-var">foot_index</span>):  <span class="py-com"># screen (x,y) only</span><br>
+&nbsp;&nbsp;<span class="py-var">foot_vec</span> = np.array([<span class="py-var">foot_index</span>.x - <span class="py-var">heel</span>.x, <span class="py-var">foot_index</span>.y - <span class="py-var">heel</span>.y])<br>
+&nbsp;&nbsp;<span class="py-var">forward</span>  = np.array([<span class="py-num">0</span>, -<span class="py-num">1</span>])  <span class="py-com"># y decreases upward in image</span><br>
+&nbsp;&nbsp;<span class="py-ret">return</span> np.degrees(np.arctan2(<span class="py-var">foot_vec</span>[<span class="py-num">0</span>], -<span class="py-var">foot_vec</span>[<span class="py-num">1</span>]))
+      </div>
+
+      <table class="field-table">
+        <thead><tr><th>Field</th><th>Formula / Logic</th><th>Target Range</th><th>Level</th></tr></thead>
+        <tbody>
+          <tr><td class="fn">hip_angle_start</td><td class="formula-cell">hip_angle at top frame (avg left+right)</td><td><span class="range-good">160–180°</span> = standing</td><td><span class="rep-pill r-rep">Rep</span></td></tr>
+          <tr><td class="fn">hip_angle_at_bottom</td><td class="formula-cell">hip_angle at bottom frame</td><td><span class="range-good">60–90°</span> = deep · <span class="range-ok">90–100°</span> = parallel</td><td><span class="rep-pill r-both">Rep + Mean</span></td></tr>
+          <tr><td class="fn">hip_angle_min</td><td class="formula-cell">min(hip_angle across all frames in rep)</td><td><span class="range-good">&lt; 90°</span> = good depth</td><td><span class="rep-pill r-rep">Rep</span></td></tr>
+          <tr><td class="fn">knee_angle_start</td><td class="formula-cell">knee_angle at top frame (avg left+right)</td><td><span class="range-good">170–180°</span> = standing</td><td><span class="rep-pill r-rep">Rep</span></td></tr>
+          <tr><td class="fn">knee_angle_at_bottom</td><td class="formula-cell">knee_angle at bottom frame</td><td><span class="range-good">&lt; 90°</span> = deep · <span class="range-ok">90–100°</span> = parallel · <span class="range-warn">&gt; 100°</span> = shallow</td><td><span class="rep-pill r-both">Rep + Trend</span></td></tr>
+          <tr><td class="fn">knee_angle_min</td><td class="formula-cell">min(knee_angle across all frames)</td><td>Maximum depth reached during rep</td><td><span class="rep-pill r-rep">Rep</span></td></tr>
+          <tr><td class="fn">depth_classification</td><td class="formula-cell">DEEP if knee_angle_min &lt; 90° · PARALLEL 90–100° · SHALLOW &gt; 100°</td><td>Target: DEEP</td><td><span class="rep-pill r-both">Rep + Distribution</span></td></tr>
+          <tr><td class="fn">depth_insufficient_flag</td><td class="formula-cell">boolean: knee_angle_at_bottom &gt; 100°</td><td>Should be false</td><td><span class="rep-pill r-both">Rep + Count</span></td></tr>
+          <tr><td class="fn">dorsiflexion_at_bottom</td><td class="formula-cell">ankle_dorsiflexion at bottom frame (avg L+R)</td><td><span class="range-good">&gt; 25°</span> = adequate · <span class="range-warn">&lt; 20°</span> = restricted</td><td><span class="rep-pill r-both">Rep + Trend</span></td></tr>
+          <tr><td class="fn">foot_turnout_left</td><td class="formula-cell">foot_turnout(left_heel, left_foot_index) at standing frame</td><td><span class="range-good">10–30°</span> outward</td><td><span class="rep-pill r-both">Rep + Mean</span></td></tr>
+          <tr><td class="fn">foot_turnout_right</td><td class="formula-cell">foot_turnout(right_heel, right_foot_index) at standing frame</td><td><span class="range-good">10–30°</span> outward</td><td><span class="rep-pill r-both">Rep + Mean</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+
+  <!-- ── PARAMETER: STABILITY ── -->
+  <div class="section-title">Calculations — Stability</div>
+
+  <div class="param-card p-stability">
+    <div class="param-header">
+      <span class="param-badge">Stability</span>
+      <span class="param-title">Knee Valgus · Heel Lift</span>
+    </div>
+    <div class="param-body">
+      <div class="py-block">
+<span class="py-com"># Knee valgus — min inter-knee x distance in first 20% of concentric phase</span><br>
+<span class="py-com"># Uses SCREEN coords — valgus is lateral collapse visible in camera plane</span><br>
+<span class="py-kw">def</span> <span class="py-fn">knee_valgus</span>(<span class="py-var">left_knee</span>, <span class="py-var">right_knee</span>):  <span class="py-com"># screen x only</span><br>
+&nbsp;&nbsp;<span class="py-ret">return</span> abs(<span class="py-var">left_knee</span>.x - <span class="py-var">right_knee</span>.x)  <span class="py-com"># smaller = more cave</span><br>
+<br>
+<span class="py-com"># Find worst cave point in first 20% of concentric window</span><br>
+<span class="py-var">concentric_start</span> = frame after bottom where hip_y starts decreasing<br>
+<span class="py-var">window_end</span> = concentric_start + <span class="py-num">0.20</span> * (top_frame - bottom_frame)<br>
+<span class="py-var">valgus_frames</span> = frames[concentric_start : window_end]<br>
+<span class="py-var">min_dist</span> = min(knee_valgus(f.left_knee, f.right_knee) <span class="py-kw">for</span> f <span class="py-kw">in</span> valgus_frames)<br>
+<span class="py-var">valgus_idx</span> = (index of min_dist - concentric_start) / (window_end - concentric_start)<br>
+<span class="py-var">valgus_phase</span> = <span class="py-str">"EARLY"</span> <span class="py-kw">if</span> valgus_idx &lt; <span class="py-num">0.33</span> <span class="py-kw">else</span> <span class="py-str">"MID"</span> <span class="py-kw">if</span> &lt; <span class="py-num">0.66</span> <span class="py-kw">else</span> <span class="py-str">"LATE"</span><br>
+<br>
+<span class="py-com"># Heel lift — world y-axis rise from standing baseline</span><br>
+<span class="py-var">baseline_heel_y</span> = avg(heel.world.y at top frame)  <span class="py-com"># standing reference</span><br>
+<span class="py-var">max_heel_y</span> = max(heel.world.y across all rep frames)<br>
+<span class="py-var">heel_lift_detected</span> = (max_heel_y - baseline_heel_y) &gt; <span class="py-num">0.02</span>  <span class="py-com"># 2cm threshold</span>
+      </div>
+
+      <table class="field-table">
+        <thead><tr><th>Field</th><th>Formula / Logic</th><th>Target Range</th><th>Level</th></tr></thead>
+        <tbody>
+          <tr><td class="fn">knee_valgus_distance</td><td class="formula-cell">min(|left_knee.screen_x − right_knee.screen_x|) in first 20% of concentric phase</td><td>Higher = more stable. Flag if below threshold.</td><td><span class="rep-pill r-both">Rep + Trend</span></td></tr>
+          <tr><td class="fn">valgus_phase</td><td class="formula-cell">frame index of min_valgus as % of concentric: EARLY &lt;33% · MID 33–66% · LATE &gt;66%</td><td>EARLY = highest risk (max load)</td><td><span class="rep-pill r-both">Rep + Distribution</span></td></tr>
+          <tr><td class="fn">valgus_flag</td><td class="formula-cell">boolean: knee_valgus_distance below defined threshold</td><td>Should be false</td><td><span class="rep-pill r-both">Rep + Count</span></td></tr>
+          <tr><td class="fn">heel_lift_detected</td><td class="formula-cell">boolean: max(heel world.y) − baseline &gt; 0.02m</td><td>Should be false</td><td><span class="rep-pill r-both">Rep + Count</span></td></tr>
+          <tr><td class="fn">heel_lift_magnitude</td><td class="formula-cell">max(heel world.y − standing_baseline_y) in rep</td><td>0.0 = no lift</td><td><span class="rep-pill r-both">Rep + Mean</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+
+  <!-- ── FRAME RELIABILITY ── -->
+  <div class="section-title">Frame Reliability — Confidence Signal</div>
+  <div class="card">
+    <div class="card-title">median_frame_reliability per rep</div>
+    <div class="py-block">
+<span class="py-com"># Aggregate frame_reliability from input frames for each rep</span><br>
+<span class="py-var">rep_frames</span> = [f <span class="py-kw">for</span> f <span class="py-kw">in</span> frames <span class="py-kw">if</span> f.rep_index == rep_num]<br>
+<span class="py-var">reliabilities</span> = [f.frame_reliability <span class="py-kw">for</span> f <span class="py-kw">in</span> rep_frames]<br>
+<span class="py-var">median_frame_reliability</span> = statistics.median(<span class="py-var">reliabilities</span>)<br>
+<span class="py-com"># Use median (not mean) — more robust to outlier frames</span><br>
+<br>
+<span class="py-com"># Overall session reliability</span><br>
+<span class="py-var">median_frame_reliability_overall</span> = statistics.median([f.frame_reliability <span class="py-kw">for</span> f <span class="py-kw">in</span> all_frames])
+    </div>
+    <div style="font-size:11px;color:#94a3b8;line-height:1.7;">
+      Passed to the LLM so it can calibrate confidence on computed angles for each rep. A rep with <code style="background:#0d1117;padding:1px 4px;border-radius:3px;">median_frame_reliability: 0.72</code> means landmark detection was marginal — the LLM should flag lower confidence on that rep's scores.
+    </div>
+  </div>
+
+
+  <!-- ── CONSOLIDATED ── -->
+  <div class="section-title">Consolidated — Cross-Rep Aggregation</div>
+  <div class="card">
+    <div class="card-title">Trend calculation (applies to key metrics)</div>
+    <div class="py-block">
+<span class="py-com"># Linear slope across reps — positive = worsening, negative = improving</span><br>
+<span class="py-kw">import</span> numpy <span class="py-kw">as</span> np<br>
+<br>
+<span class="py-kw">def</span> <span class="py-fn">trend_slope</span>(<span class="py-var">values</span>):<br>
+&nbsp;&nbsp;<span class="py-var">x</span> = np.arange(len(<span class="py-var">values</span>))<br>
+&nbsp;&nbsp;<span class="py-var">slope</span>, _ = np.polyfit(<span class="py-var">x</span>, <span class="py-var">values</span>, <span class="py-num">1</span>)<br>
+&nbsp;&nbsp;<span class="py-ret">return</span> round(<span class="py-var">slope</span>, <span class="py-num">4</span>)  <span class="py-com"># per-rep change</span><br>
+<br>
+<span class="py-com"># Applied to: back_angle_max, knee_angle_min, knee_valgus_distance, tempo.total</span><br>
+<span class="py-var">back_angle_trend</span>    = trend_slope([r.back_data.back_angle_max <span class="py-kw">for</span> r <span class="py-kw">in</span> reps])<br>
+<span class="py-var">depth_trend</span>         = trend_slope([r.depth_data.knee_angle_min <span class="py-kw">for</span> r <span class="py-kw">in</span> reps])<br>
+<span class="py-var">knee_valgus_trend</span>   = trend_slope([r.stability_data.knee_valgus_distance <span class="py-kw">for</span> r <span class="py-kw">in</span> reps])<br>
+<span class="py-var">tempo_trend</span>         = trend_slope([r.tempo_data.total <span class="py-kw">for</span> r <span class="py-kw">in</span> reps])
+    </div>
+
+    <table class="field-table">
+      <thead><tr><th>Trend Field</th><th>Positive slope means</th><th>Negative slope means</th></tr></thead>
+      <tbody>
+        <tr><td class="fn">back_angle_trend</td><td style="color:#f87171;">Lean worsening with fatigue</td><td style="color:#4ade80;">Lean improving</td></tr>
+        <tr><td class="fn">depth_trend</td><td style="color:#f87171;">Cutting depth as reps increase</td><td style="color:#4ade80;">Going deeper</td></tr>
+        <tr><td class="fn">knee_valgus_trend</td><td style="color:#f87171;">Cave worsening (less stable)</td><td style="color:#4ade80;">Stability improving</td></tr>
+        <tr><td class="fn">tempo_trend</td><td style="color:#fbbf24;">Slowing down (fatigue signal)</td><td style="color:#4ade80;">Speeding up</td></tr>
+        <tr><td class="fn">ankle_dorsiflexion_trend</td><td style="color:#fbbf24;">Ankle stiffening under load</td><td style="color:#4ade80;">Dorsiflexion improving</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
+<!-- ── OUTPUT JSON REFERENCE ── -->
+<div class="section">
+  <div class="section-title">Output — Full JSON Reference</div>
+  <div class="section-sub">Complete schema in <strong style="color:#f1f5f9;">Kinetic_Biomechanics_Output_Schema.json</strong> — see that file for all 10 reps with computed values.</div>
+
+  <div class="card">
+    <div class="card-title">Per-rep structure (abbreviated)</div>
+    <div class="json-block">
+<span class="jp">{</span><br>
+&nbsp;&nbsp;<span class="jk">"rep_number"</span><span class="jp">:</span> <span class="jn">5</span><span class="jp">,</span><br>
+&nbsp;&nbsp;<span class="jk">"median_frame_reliability"</span><span class="jp">:</span> <span class="jn">0.87</span><span class="jp">,</span><br>
+&nbsp;&nbsp;<span class="jk">"error_flags"</span><span class="jp">: [</span><span class="js">"max_knee_valgus"</span><span class="jp">],</span> &nbsp;<span class="jc">// pre-computed by S3-W5-07</span><br>
+&nbsp;&nbsp;<span class="jk">"error_values"</span><span class="jp">: {</span> <span class="jk">"knee_valgus_distance"</span><span class="jp">:</span> <span class="jn">0.04</span> <span class="jp">},</span><br>
+&nbsp;&nbsp;<span class="jk">"tempo_data"</span><span class="jp">: {</span> <span class="jk">"eccentric"</span><span class="jp">:</span> <span class="jn">0.13</span><span class="jp">,</span> <span class="jk">"pause"</span><span class="jp">:</span> <span class="jn">0.90</span><span class="jp">,</span> <span class="jk">"concentric"</span><span class="jp">:</span> <span class="jn">0.50</span><span class="jp">,</span> <span class="jk">"total"</span><span class="jp">:</span> <span class="jn">1.53</span><span class="jp">,</span> <span class="jk">"tempo_notation"</span><span class="jp">:</span> <span class="js">"0-1-0"</span><span class="jp">,</span> <span class="jk">"squat_type"</span><span class="jp">:</span> <span class="js">"DEEP"</span> <span class="jp">},</span><br>
+&nbsp;&nbsp;<span class="jk">"back_data"</span><span class="jp">: {</span> <span class="jk">"back_angle_max"</span><span class="jp">:</span> <span class="jn">38.33</span><span class="jp">,</span> <span class="jk">"back_angle_at_bottom"</span><span class="jp">:</span> <span class="jn">36.4</span><span class="jp">,</span> <span class="jk">"butt_wink_detected"</span><span class="jp">:</span> <span class="jb">false</span><span class="jp">,</span> <span class="jk">"status"</span><span class="jp">:</span> <span class="js">"ACCEPTABLE"</span> <span class="jp">},</span><br>
+&nbsp;&nbsp;<span class="jk">"depth_data"</span><span class="jp">: {</span> <span class="jk">"knee_angle_at_bottom"</span><span class="jp">:</span> <span class="jn">89.6</span><span class="jp">,</span> <span class="jk">"knee_angle_min"</span><span class="jp">:</span> <span class="jn">88.2</span><span class="jp">,</span> <span class="jk">"depth_classification"</span><span class="jp">:</span> <span class="js">"DEEP"</span> <span class="jp">},</span><br>
+&nbsp;&nbsp;<span class="jk">"stability_data"</span><span class="jp">: {</span> <span class="jk">"knee_valgus_distance"</span><span class="jp">:</span> <span class="jn">0.07</span><span class="jp">,</span> <span class="jk">"valgus_phase"</span><span class="jp">:</span> <span class="js">"EARLY"</span><span class="jp">,</span> <span class="jk">"heel_lift_detected"</span><span class="jp">:</span> <span class="jb">false</span> <span class="jp">},</span><br>
+&nbsp;&nbsp;<span class="jk">"ankle_data"</span><span class="jp">: {</span> <span class="jk">"dorsiflexion_at_bottom"</span><span class="jp">:</span> <span class="jn">27.1</span><span class="jp">,</span> <span class="jk">"foot_turnout_left"</span><span class="jp">:</span> <span class="jn">18.8</span><span class="jp">,</span> <span class="jk">"foot_turnout_right"</span><span class="jp">:</span> <span class="jn">19.6</span> <span class="jp">}</span><br>
+<span class="jp">}</span>
+    </div>
+  </div>
+</div>
+
+
+<div style="text-align:center;color:#1e2433;font-size:11px;padding-top:20px;border-top:1px solid #1e2433;margin-top:32px;">
+  Kinetic · Biomechanics Script Specification · S3-W5-07 · May 8, 2026 · Ref: MediaPipe Goblet Squat Implementation Guide
+</div>
+
+</body>
+</html>
