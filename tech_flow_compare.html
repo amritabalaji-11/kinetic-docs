@@ -251,17 +251,19 @@ h1 { font-size: 20px; font-weight: 700; color: #f8fafc; margin-bottom: 4px; }
 <body>
 
 <h1>Kinetic — Tech Design Flow</h1>
-<p class="page-sub">Color scheme comparison · Option A (Squad ownership) vs Option B (Pipeline layers)</p>
+<p class="page-sub">Option A (Grouped Layers) · Option B (Pipeline Layers) · Option C (Squad Ownership — reference)</p>
+
+<div style="display:flex;flex-direction:column;">
 
 <!-- ════════════════════════════════════════
-     OPTION A — SQUAD COLORS
+     OPTION C — SQUAD OWNERSHIP (REFERENCE)
      ════════════════════════════════════════ -->
-
+<div style="order:5;">
 <div class="option-header">
-  <span class="option-badge badge-a">Option A</span>
+  <span class="option-badge" style="background:#1f1005;color:#fdba74;border:1px solid #431407;">Option C</span>
   <div>
-    <div class="option-title">Squad Ownership Colors</div>
-    <div class="option-desc">Each node colored by which squad owns it — maps directly to the weekly roadmap</div>
+    <div class="option-title">Squad Ownership Colors (Reference)</div>
+    <div class="option-desc">Each node colored by which squad owns it — for reference only</div>
   </div>
 </div>
 
@@ -433,13 +435,14 @@ h1 { font-size: 20px; font-weight: 700; color: #f8fafc; margin-bottom: 4px; }
     <div class="data-item"><div class="data-dot"></div>Image/text from Gemini Flash</div>
   </div>
 </div>
+</div><!-- end Option C order:5 -->
 
-<hr class="divider">
+<div style="order:4;"><hr class="divider"></div>
 
 <!-- ════════════════════════════════════════
      OPTION B — PIPELINE LAYER COLORS
      ════════════════════════════════════════ -->
-
+<div style="order:3;">
 <div class="option-header">
   <span class="option-badge badge-b">Option B</span>
   <div>
@@ -635,14 +638,16 @@ h1 { font-size: 20px; font-weight: 700; color: #f8fafc; margin-bottom: 4px; }
 </div>
 
 
+</div><!-- end Option B order:3 -->
+
+<div style="order:2;"><hr class="divider"></div>
+
 <!-- ════════════════════════════════════════
-     OPTION C — GROUPED LAYERS
+     OPTION A — GROUPED LAYERS
      ════════════════════════════════════════ -->
-
-<hr class="divider">
-
+<div style="order:1;">
 <div class="option-header">
-  <span class="option-badge" style="background:#0c2a1f;color:#34d399;">Option C</span>
+  <span class="option-badge badge-a">Option A</span>
   <div>
     <div class="option-title">Grouped Architecture Layers</div>
     <div class="option-desc">Nodes grouped into their architectural tier — boundaries show exactly what data crosses each layer</div>
@@ -1030,12 +1035,16 @@ h1 { font-size: 20px; font-weight: 700; color: #f8fafc; margin-bottom: 4px; }
 
 <!-- Open questions -->
 <div class="question-box" style="margin-top: 20px;">
-  <div class="question-title">Option C — What the layer grouping reveals</div>
+  <div class="question-title">Option A — What the layer grouping reveals</div>
   <div class="question-item"><span class="q-num">→</span> 5 distinct architectural tiers — clear separation of UI, API, compute, AI, and data concerns</div>
   <div class="question-item"><span class="q-num">→</span> Layer 2 (Backend/API) is the orchestrator — it touches every other layer, making it the highest integration risk</div>
   <div class="question-item"><span class="q-num">→</span> The Processing → AI boundary is where the most data flows across — biomechanics JSON + frames + quality gate status + RAG + user history all converge here</div>
   <div class="question-item"><span class="q-num">→</span> RAG ingestion is genuinely offline — it has no live-path connection to Layer 1 (UI), which is correct</div>
 </div>
+
+</div><!-- end Option A order:1 -->
+
+</div><!-- end flex container -->
 
 </body>
 </html>
