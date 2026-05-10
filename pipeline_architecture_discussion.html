@@ -148,6 +148,86 @@ h1 { font-size: 22px; font-weight: 800; color: #f8fafc; letter-spacing: -0.5px; 
 .open-q-list { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
 .open-q { display: flex; gap: 10px; align-items: baseline; padding: 10px 14px; background: #080c12; border: 1px solid #1e2433; border-radius: 7px; font-size: 11px; color: #94a3b8; line-height: 1.5; }
 .open-q-num { font-size: 10px; font-weight: 800; color: #475569; flex-shrink: 0; width: 18px; }
+
+/* ── HORIZONTAL SEQUENCE DIAGRAMS ── */
+.hseq-option { margin-bottom: 20px; border-radius: 12px; overflow: hidden; }
+
+.hseq-header { padding: 14px 22px; display: grid; grid-template-columns: 180px 1fr 260px; gap: 20px; align-items: center; border: 1px solid; border-bottom: none; border-radius: 12px 12px 0 0; }
+.hseq-hdr-a { background: #0d1a2e; border-color: #3b82f6; }
+.hseq-hdr-b { background: #0a1f12; border-color: #22c55e; }
+.hseq-hdr-c { background: #150d2e; border-color: #a78bfa; }
+
+.hseq-title-col {}
+.hseq-opt-label { font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px; }
+.hseq-hdr-a .hseq-opt-label { color: #60a5fa; }
+.hseq-hdr-b .hseq-opt-label { color: #4ade80; }
+.hseq-hdr-c .hseq-opt-label { color: #a78bfa; }
+.hseq-opt-name { font-size: 13px; font-weight: 800; color: #f1f5f9; margin-top: 3px; line-height: 1.3; }
+
+.hseq-llm-col { text-align: center; }
+.hseq-llm-label { font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.6px; color: #334155; margin-bottom: 4px; }
+.hseq-llm-pills { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; }
+.llm-pill { font-size: 10px; font-weight: 700; padding: 3px 10px; border-radius: 20px; }
+.llm-nem  { background: #051e26; color: #67e8f9; border: 1px solid #0e7490; }
+.llm-cl   { background: #150d2e; color: #c4b5fd; border: 1px solid #5b21b6; }
+.llm-none { background: #111827; color: #475569; border: 1px solid #1e2433; text-decoration: line-through; opacity: 0.5; }
+
+.hseq-why-col { text-align: right; }
+.hseq-why-label { font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.6px; color: #334155; margin-bottom: 4px; }
+.hseq-why-text { font-size: 11px; color: #64748b; line-height: 1.5; font-style: italic; }
+
+.hseq-body { padding: 10px 22px 14px; border: 1px solid; border-top: none; border-radius: 0 0 12px 12px; display: flex; flex-direction: column; gap: 2px; }
+.hseq-body-a { background: #070b12; border-color: #1e3a5f; }
+.hseq-body-b { background: #07100a; border-color: #14532d; }
+.hseq-body-c { background: #0a080f; border-color: #2e1065; }
+
+.hseq-shared-bar { font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.6px; color: #334155; padding: 8px 0 4px; display: flex; align-items: center; gap: 10px; }
+.hseq-shared-bar::before { content: ''; flex: 0 0 24px; height: 1px; background: #1e2433; }
+.hseq-shared-bar::after  { content: ''; flex: 1; height: 1px; background: #1e2433; }
+
+.hseq-divider-label { font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.6px; padding: 8px 0 4px; display: flex; align-items: center; gap: 8px; }
+.hseq-divider-label::before { content: ''; flex: 0 0 24px; height: 1px; }
+.hseq-divider-label::after  { content: ''; flex: 1; height: 1px; }
+.hseq-div-a .hseq-divider-label { color: #1e3a5f; }
+.hseq-div-a .hseq-divider-label::before,
+.hseq-div-a .hseq-divider-label::after { background: #1e3a5f; }
+.hseq-div-b .hseq-divider-label { color: #14532d; }
+.hseq-div-b .hseq-divider-label::before,
+.hseq-div-b .hseq-divider-label::after { background: #14532d; }
+.hseq-div-c .hseq-divider-label { color: #2e1065; }
+.hseq-div-c .hseq-divider-label::before,
+.hseq-div-c .hseq-divider-label::after { background: #2e1065; }
+
+.hseq-step { display: flex; align-items: center; gap: 8px; min-height: 38px; }
+.hseq-num { font-size: 9px; font-weight: 800; color: #334155; width: 18px; flex-shrink: 0; text-align: right; }
+.hseq-from { flex-shrink: 0; }
+.hseq-msg-wrap { flex: 1; display: flex; flex-direction: column; margin: 0 6px; }
+.hseq-msg-text { font-size: 10px; font-weight: 700; color: #e2e8f0; text-align: center; margin-bottom: 2px; line-height: 1.3; }
+.hseq-msg-data { font-size: 9px; color: #475569; text-align: center; font-family: 'SF Mono', monospace; margin-bottom: 3px; line-height: 1.4; }
+.hseq-line-row { display: flex; align-items: center; }
+.hseq-line { flex: 1; height: 1.5px; }
+.hseq-line-a { background: #1e3a5f; }
+.hseq-line-b { background: #14532d; }
+.hseq-line-c { background: #2e1065; }
+.hseq-line-shared { background: #1e2433; }
+.hseq-arrowhead { font-size: 9px; flex-shrink: 0; margin-left: 1px; }
+.hseq-arrow-a { color: #3b82f6; }
+.hseq-arrow-b { color: #22c55e; }
+.hseq-arrow-c { color: #a78bfa; }
+.hseq-arrow-sh { color: #334155; }
+.hseq-to { flex-shrink: 0; }
+
+.hseq-internal { display: flex; align-items: center; gap: 8px; padding: 5px 0; }
+.hseq-internal-num { font-size: 9px; font-weight: 800; color: #334155; width: 18px; flex-shrink: 0; text-align: right; }
+.hseq-internal-badge { flex-shrink: 0; }
+.hseq-internal-text { font-size: 10px; color: #475569; padding-left: 8px; line-height: 1.5; }
+.hseq-internal-text strong { color: #94a3b8; font-weight: 600; }
+
+.hseq-skip { display: flex; align-items: center; gap: 8px; padding: 4px 0; opacity: 0.35; }
+.hseq-skip-num { width: 18px; flex-shrink: 0; }
+.hseq-skip-text { font-size: 10px; color: #334155; text-decoration: line-through; font-style: italic; }
+
+.hseq-phase { font-size: 9px; font-weight: 700; padding: 2px 7px; border-radius: 3px; background: #1a0d2e; color: #c4b5fd; border: 1px solid #5b21b6; margin-left: 4px; }
 </style>
 </head>
 <body>
@@ -161,438 +241,285 @@ h1 { font-size: 22px; font-weight: 800; color: #f8fafc; letter-spacing: -0.5px; 
 ══════════════════════════════ -->
 <div class="section">
   <div class="section-label">Section 0 — Sequence diagrams</div>
-  <div class="section-title">How data flows through each option — step by step</div>
-  <div class="section-desc">Steps 1–6 (upload → MediaPipe → quality gate → biomechanics) are identical in all three options. The divergence starts at Step 7. Greyed out = not used in that option.</div>
+  <div class="section-title">How data flows through each option</div>
+  <div class="section-desc">Each option shown full-width. Steps 1–5 (upload → GCS → MediaPipe → quality gate) are identical across all options and shown once. Divergence begins at the AI model call.</div>
 
-  <div class="seq-grid">
-
-    <!-- OPTION A -->
-    <div class="seq-block">
-      <div class="seq-header seq-hdr-a">
-        <span class="seq-opt-label">Option A</span>
-        <span class="seq-opt-title">Video + JSON → Nemotron → Claude</span>
-      </div>
-      <div class="seq-body seq-body-a">
-        <div class="seq-section">Steps 1–6 · Identical in all options</div>
-
-        <div class="seq-step">
-          <span class="seq-step-num">1</span>
-          <span class="act act-fe">User/FE</span>
-          <span style="color:#334155;font-size:10px;margin:0 4px;">──────────────────→</span>
-          <span class="act act-s2">Backend S2</span>
-          <div class="seq-msg" style="margin-left:8px;">
-            <span class="seq-msg-label">POST /upload</span>
-            <span class="seq-msg-data">video + exercise_id + weight_value</span>
-          </div>
-        </div>
-
-        <div class="seq-step">
-          <span class="seq-step-num">2</span>
-          <span class="act act-s2">Backend S2</span>
-          <span style="color:#334155;font-size:10px;margin:0 4px;">──────────────────→</span>
-          <span class="act act-db">GCS + DB</span>
-          <div class="seq-msg" style="margin-left:8px;">
-            <span class="seq-msg-label">Save video → video_url · write form_sessions</span>
-          </div>
-        </div>
-
-        <div class="seq-step">
-          <span class="seq-step-num">3</span>
-          <span class="act act-s2">Backend S2</span>
-          <span style="color:#334155;font-size:10px;margin:0 4px;">──────────────────→</span>
-          <span class="act act-s3">Squad 3</span>
-          <div class="seq-msg" style="margin-left:8px;">
-            <span class="seq-msg-label">Trigger: process_video(gcs_path, analysis_id)</span>
-          </div>
-        </div>
-
-        <div class="seq-step">
-          <span class="seq-step-num">4</span>
-          <span class="act act-s3">Squad 3</span>
-          <span style="color:#334155;font-size:10px;margin:0 4px;flex-shrink:0;">runs internally</span>
-          <div class="seq-msg" style="margin-left:4px;">
-            <span class="seq-msg-label">MediaPipe → landmarks + rep segments + bottom_frame per rep</span>
-          </div>
-        </div>
-
-        <div class="seq-step">
-          <span class="seq-step-num">5</span>
-          <span class="act act-s3">Squad 3</span>
-          <span style="color:#334155;font-size:10px;margin:0 4px;flex-shrink:0;">quality gate</span>
-          <div class="seq-msg" style="margin-left:4px;">
-            <span class="seq-msg-label">FAIL → error returned to S2 · PASS → continues</span>
-          </div>
-        </div>
-
-        <div class="seq-step">
-          <span class="seq-step-num">6</span>
-          <span class="act act-s3">Squad 3</span>
-          <span style="color:#334155;font-size:10px;margin:0 4px;flex-shrink:0;">runs internally</span>
-          <div class="seq-msg" style="margin-left:4px;">
-            <span class="seq-msg-label">OpenCV overlay video → GCS · Biomechanics JSON → S2</span>
-          </div>
-        </div>
-
-        <div class="seq-section" style="color:#1e3a5f;">Option A diverges here ↓</div>
-
-        <div class="seq-step">
-          <span class="seq-step-num">7</span>
-          <span class="act act-s2">Backend S2</span>
-          <span style="color:#3b82f6;font-size:10px;margin:0 4px;">──────────→</span>
-          <span class="act act-nem">Nemotron</span>
-          <div class="seq-msg" style="margin-left:8px;">
-            <span class="seq-msg-label" style="color:#93c5fd;">Overlay video + Biomechanics JSON + Gold standard angles</span>
-          </div>
-        </div>
-
-        <div class="seq-step">
-          <span class="seq-step-num">8</span>
-          <span class="act act-nem">Nemotron</span>
-          <span style="color:#3b82f6;font-size:10px;margin:0 4px;">──────────→</span>
-          <span class="act act-s2">Backend S2</span>
-          <div class="seq-msg" style="margin-left:8px;">
-            <span class="seq-msg-label" style="color:#93c5fd;">Structured JSON: per_rep_scores · worst_rep_number · issues · CoT</span>
-          </div>
-        </div>
-
-        <div class="seq-step">
-          <span class="seq-step-num">9</span>
-          <span class="act act-s2">Backend S2</span>
-          <span style="color:#334155;font-size:10px;margin:0 4px;">──────────→</span>
-          <span class="act act-db">DB</span>
-          <div class="seq-msg" style="margin-left:8px;">
-            <span class="seq-msg-label">Store biomechanics_json · query weight_history</span>
-          </div>
-        </div>
-
-        <div class="seq-step">
-          <span class="seq-step-num">10</span>
-          <span class="act act-s2">Backend S2</span>
-          <span style="color:#3b82f6;font-size:10px;margin:0 4px;">──────────→</span>
-          <span class="act act-cl">Claude</span>
-          <div class="seq-msg" style="margin-left:8px;">
-            <span class="seq-msg-label">Nemotron JSON + weight history + RAG MD files</span>
-          </div>
-        </div>
-
-        <div class="seq-step">
-          <span class="seq-step-num">11</span>
-          <span class="act act-cl">Claude</span>
-          <span style="color:#3b82f6;font-size:10px;margin:0 4px;">──────────→</span>
-          <span class="act act-s2">Backend S2</span>
-          <div class="seq-msg" style="margin-left:8px;">
-            <span class="seq-msg-label">Coaching paragraphs + progression (ready/hold/drop)</span>
-          </div>
-        </div>
-
-        <div class="seq-step">
-          <span class="seq-step-num">12</span>
-          <span class="act act-s2">Backend S2</span>
-          <span style="color:#334155;font-size:10px;margin:0 4px;">──────────→</span>
-          <span class="act act-s3">Squad 3</span>
-          <div class="seq-msg" style="margin-left:8px;">
-            <span class="seq-msg-label">extract_frame(worst_rep_number → from Nemotron)</span>
-          </div>
-        </div>
-
-        <div class="seq-step">
-          <span class="seq-step-num">13</span>
-          <span class="act act-fe">User/FE</span>
-          <span style="color:#334155;font-size:10px;margin:0 4px;">receives SSE</span>
-          <div class="seq-msg" style="margin-left:4px;">
-            <span class="seq-msg-label">analysis_complete → coaching + annotated frame — together</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- OPTION B -->
-    <div class="seq-block">
-      <div class="seq-header seq-hdr-b">
-        <span class="seq-opt-label">Option B</span>
-        <span class="seq-opt-title">Video only → Nemotron · All data → Claude</span>
-      </div>
-      <div class="seq-body seq-body-b">
-        <div class="seq-section">Steps 1–6 · Identical in all options</div>
-
-        <div class="seq-step">
-          <span class="seq-step-num">1</span>
-          <span class="act act-fe">User/FE</span>
-          <span style="color:#334155;font-size:10px;margin:0 4px;">──────────────────→</span>
-          <span class="act act-s2">Backend S2</span>
-          <div class="seq-msg" style="margin-left:8px;">
-            <span class="seq-msg-label">POST /upload</span>
-            <span class="seq-msg-data">video + exercise_id + weight_value</span>
-          </div>
-        </div>
-
-        <div class="seq-step">
-          <span class="seq-step-num">2</span>
-          <span class="act act-s2">Backend S2</span>
-          <span style="color:#334155;font-size:10px;margin:0 4px;">──────────────────→</span>
-          <span class="act act-db">GCS + DB</span>
-          <div class="seq-msg" style="margin-left:8px;">
-            <span class="seq-msg-label">Save video → video_url · write form_sessions</span>
-          </div>
-        </div>
-
-        <div class="seq-step">
-          <span class="seq-step-num">3</span>
-          <span class="act act-s2">Backend S2</span>
-          <span style="color:#334155;font-size:10px;margin:0 4px;">──────────────────→</span>
-          <span class="act act-s3">Squad 3</span>
-          <div class="seq-msg" style="margin-left:8px;">
-            <span class="seq-msg-label">Trigger: process_video(gcs_path, analysis_id)</span>
-          </div>
-        </div>
-
-        <div class="seq-step">
-          <span class="seq-step-num">4</span>
-          <span class="act act-s3">Squad 3</span>
-          <span style="color:#334155;font-size:10px;margin:0 4px;flex-shrink:0;">runs internally</span>
-          <div class="seq-msg" style="margin-left:4px;">
-            <span class="seq-msg-label">MediaPipe → landmarks + rep segments + bottom_frame per rep</span>
-          </div>
-        </div>
-
-        <div class="seq-step">
-          <span class="seq-step-num">5</span>
-          <span class="act act-s3">Squad 3</span>
-          <span style="color:#334155;font-size:10px;margin:0 4px;flex-shrink:0;">quality gate</span>
-          <div class="seq-msg" style="margin-left:4px;">
-            <span class="seq-msg-label">FAIL → error returned to S2 · PASS → continues</span>
-          </div>
-        </div>
-
-        <div class="seq-step">
-          <span class="seq-step-num">6</span>
-          <span class="act act-s3">Squad 3</span>
-          <span style="color:#334155;font-size:10px;margin:0 4px;flex-shrink:0;">runs internally</span>
-          <div class="seq-msg" style="margin-left:4px;">
-            <span class="seq-msg-label">OpenCV overlay video → GCS · Biomechanics JSON → S2</span>
-          </div>
-        </div>
-
-        <div class="seq-section" style="color:#14532d;">Option B diverges here ↓</div>
-
-        <div class="seq-step">
-          <span class="seq-step-num">7</span>
-          <span class="act act-s2">Backend S2</span>
-          <span style="color:#22c55e;font-size:10px;margin:0 4px;">──────────→</span>
-          <span class="act act-nem">Nemotron</span>
-          <div class="seq-msg" style="margin-left:8px;">
-            <span class="seq-msg-label" style="color:#86efac;">Overlay video ONLY — no JSON, no gold standard</span>
-          </div>
-        </div>
-
-        <div class="seq-step">
-          <span class="seq-step-num">8</span>
-          <span class="act act-nem">Nemotron</span>
-          <span style="color:#22c55e;font-size:10px;margin:0 4px;">──────────→</span>
-          <span class="act act-s2">Backend S2</span>
-          <div class="seq-msg" style="margin-left:8px;">
-            <span class="seq-msg-label" style="color:#86efac;">Text observations + basic JSON — qualitative, per-rep scores TBC</span>
-          </div>
-        </div>
-
-        <div class="seq-step">
-          <span class="seq-step-num">9</span>
-          <span class="act act-s2">Backend S2</span>
-          <span style="color:#334155;font-size:10px;margin:0 4px;">──────────→</span>
-          <span class="act act-db">DB</span>
-          <div class="seq-msg" style="margin-left:8px;">
-            <span class="seq-msg-label">Store biomechanics_json · query weight_history + gold_standard_angles</span>
-          </div>
-        </div>
-
-        <div class="seq-step">
-          <span class="seq-step-num">10</span>
-          <span class="act act-s2">Backend S2</span>
-          <span style="color:#22c55e;font-size:10px;margin:0 4px;">──────────→</span>
-          <span class="act act-cl">Claude</span>
-          <div class="seq-msg" style="margin-left:8px;">
-            <span class="seq-msg-label" style="color:#86efac;">Nemotron text + Biomechanics JSON + gold standard angles + weight history + RAG MD files</span>
-          </div>
-        </div>
-
-        <div class="seq-step">
-          <span class="seq-step-num">11</span>
-          <span class="act act-cl">Claude</span>
-          <span style="color:#22c55e;font-size:10px;margin:0 4px;">──────────→</span>
-          <span class="act act-s2">Backend S2</span>
-          <div class="seq-msg" style="margin-left:8px;">
-            <span class="seq-msg-label" style="color:#86efac;">Coaching + progression + worst_rep_number (derived from biomechanics)</span>
-          </div>
-        </div>
-
-        <div class="seq-step">
-          <span class="seq-step-num">12</span>
-          <span class="act act-fe">User/FE</span>
-          <span style="color:#334155;font-size:10px;margin:0 4px;">SSE phase 1</span>
-          <div class="seq-msg" style="margin-left:4px;">
-            <span class="seq-msg-label">coaching_complete → coaching text appears immediately</span>
-          </div>
-        </div>
-
-        <div class="seq-step">
-          <span class="seq-step-num">13</span>
-          <span class="act act-s2">Backend S2</span>
-          <span style="color:#334155;font-size:10px;margin:0 4px;">──────────→</span>
-          <span class="act act-s3">Squad 3</span>
-          <div class="seq-msg" style="margin-left:8px;">
-            <span class="seq-msg-label">extract_frame(worst_rep_number → from Claude) [async]</span>
-          </div>
-        </div>
-
-        <div class="seq-step">
-          <span class="seq-step-num">14</span>
-          <span class="act act-fe">User/FE</span>
-          <span style="color:#334155;font-size:10px;margin:0 4px;">SSE phase 2</span>
-          <div class="seq-msg" style="margin-left:4px;">
-            <span class="seq-msg-label">frame_ready → annotated frame appears on Results screen</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- OPTION C -->
-    <div class="seq-block">
-      <div class="seq-header seq-hdr-c">
-        <span class="seq-opt-label">Option C · New</span>
-        <span class="seq-opt-title">Biomechanics angles → Claude grounded by gold standard DB</span>
-      </div>
-      <div class="seq-body seq-body-c">
-        <div class="seq-section">Steps 1–5 · Identical in all options</div>
-
-        <div class="seq-step">
-          <span class="seq-step-num">1</span>
-          <span class="act act-fe">User/FE</span>
-          <span style="color:#334155;font-size:10px;margin:0 4px;">──────────────────→</span>
-          <span class="act act-s2">Backend S2</span>
-          <div class="seq-msg" style="margin-left:8px;">
-            <span class="seq-msg-label">POST /upload</span>
-            <span class="seq-msg-data">video + exercise_id + weight_value</span>
-          </div>
-        </div>
-
-        <div class="seq-step">
-          <span class="seq-step-num">2</span>
-          <span class="act act-s2">Backend S2</span>
-          <span style="color:#334155;font-size:10px;margin:0 4px;">──────────────────→</span>
-          <span class="act act-db">GCS + DB</span>
-          <div class="seq-msg" style="margin-left:8px;">
-            <span class="seq-msg-label">Save video → video_url · write form_sessions</span>
-          </div>
-        </div>
-
-        <div class="seq-step">
-          <span class="seq-step-num">3</span>
-          <span class="act act-s2">Backend S2</span>
-          <span style="color:#334155;font-size:10px;margin:0 4px;">──────────────────→</span>
-          <span class="act act-s3">Squad 3</span>
-          <div class="seq-msg" style="margin-left:8px;">
-            <span class="seq-msg-label">Trigger: process_video(gcs_path, analysis_id)</span>
-          </div>
-        </div>
-
-        <div class="seq-step">
-          <span class="seq-step-num">4</span>
-          <span class="act act-s3">Squad 3</span>
-          <span style="color:#334155;font-size:10px;margin:0 4px;flex-shrink:0;">runs internally</span>
-          <div class="seq-msg" style="margin-left:4px;">
-            <span class="seq-msg-label">MediaPipe → landmarks + rep segments + bottom_frame per rep</span>
-          </div>
-        </div>
-
-        <div class="seq-step">
-          <span class="seq-step-num">5</span>
-          <span class="act act-s3">Squad 3</span>
-          <span style="color:#334155;font-size:10px;margin:0 4px;flex-shrink:0;">quality gate</span>
-          <div class="seq-msg" style="margin-left:4px;">
-            <span class="seq-msg-label">FAIL → error returned to S2 · PASS → continues</span>
-          </div>
-        </div>
-
-        <div class="seq-section" style="color:#5b21b6;">Option C diverges here ↓</div>
-
-        <div class="seq-step" style="opacity:0.4;">
-          <span class="seq-step-num" style="text-decoration:line-through;">–</span>
-          <span class="act act-nem-off">Nemotron</span>
-          <div class="seq-msg" style="margin-left:8px;">
-            <span class="seq-msg-label" style="color:#334155;text-decoration:line-through;">Not used in Option C</span>
-          </div>
-        </div>
-
-        <div class="seq-step" style="opacity:0.4;">
-          <span class="seq-step-num" style="text-decoration:line-through;">–</span>
-          <span class="act act-s3">Squad 3</span>
-          <div class="seq-msg" style="margin-left:8px;">
-            <span class="seq-msg-label" style="color:#334155;text-decoration:line-through;">OpenCV overlay video — not generated (no Nemotron to send it to)</span>
-          </div>
-        </div>
-
-        <div class="seq-step">
-          <span class="seq-step-num">6</span>
-          <span class="act act-s3">Squad 3</span>
-          <span style="color:#a78bfa;font-size:10px;margin:0 4px;flex-shrink:0;">runs internally</span>
-          <div class="seq-msg" style="margin-left:4px;">
-            <span class="seq-msg-label" style="color:#c4b5fd;">Biomechanics script → user angle JSON (knee, hip, ankle per rep)</span>
-          </div>
-        </div>
-
-        <div class="seq-step">
-          <span class="seq-step-num">7</span>
-          <span class="act act-s2">Backend S2</span>
-          <span style="color:#a78bfa;font-size:10px;margin:0 4px;">──────────→</span>
-          <span class="act act-db">DB</span>
-          <div class="seq-msg" style="margin-left:8px;">
-            <span class="seq-msg-label" style="color:#c4b5fd;">Query gold_standard_biomechanics — angle distributions from 3–5+ good-form reference videos</span>
-          </div>
-        </div>
-
-        <div class="seq-step">
-          <span class="seq-step-num">8</span>
-          <span class="act act-s2">Backend S2</span>
-          <span style="color:#a78bfa;font-size:10px;margin:0 4px;">──────────→</span>
-          <span class="act act-cl">Claude</span>
-          <div class="seq-msg" style="margin-left:8px;">
-            <span class="seq-msg-label" style="color:#c4b5fd;">User biomechanics angles + gold standard angles (DB) + weight history + RAG MD files</span>
-            <span class="seq-msg-data" style="color:#5b21b6;">No Nemotron. No video. Pure quantitative reasoning.</span>
-          </div>
-        </div>
-
-        <div class="seq-step">
-          <span class="seq-step-num">9</span>
-          <span class="act act-cl">Claude</span>
-          <span style="color:#a78bfa;font-size:10px;margin:0 4px;">──────────→</span>
-          <span class="act act-s2">Backend S2</span>
-          <div class="seq-msg" style="margin-left:8px;">
-            <span class="seq-msg-label" style="color:#c4b5fd;">Coaching + progression + worst_rep_number (from angle deviation analysis)</span>
-          </div>
-        </div>
-
-        <div class="seq-step">
-          <span class="seq-step-num">10</span>
-          <span class="act act-s2">Backend S2</span>
-          <span style="color:#334155;font-size:10px;margin:0 4px;">──────────→</span>
-          <span class="act act-s3">Squad 3</span>
-          <div class="seq-msg" style="margin-left:8px;">
-            <span class="seq-msg-label">extract_frame(worst_rep_number · bottom_timestamp_ms)</span>
-          </div>
-        </div>
-
-        <div class="seq-step">
-          <span class="seq-step-num">11</span>
-          <span class="act act-fe">User/FE</span>
-          <span style="color:#334155;font-size:10px;margin:0 4px;">receives SSE</span>
-          <div class="seq-msg" style="margin-left:4px;">
-            <span class="seq-msg-label">analysis_complete → coaching + annotated frame</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
+  <!-- SHARED STEPS NOTE -->
+  <div style="background:#080c12;border:1px solid #1e2433;border-radius:8px;padding:10px 20px;margin-bottom:16px;display:flex;align-items:center;gap:12px;font-size:11px;color:#475569;">
+    <span style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:0.6px;color:#334155;flex-shrink:0;">Steps 1–5 · All options identical</span>
+    <span class="act act-fe">User/FE</span><span style="margin:0 6px;color:#334155;">→</span>
+    <span class="act act-s2">Backend S2</span><span style="margin:0 6px;color:#334155;">→</span>
+    <span class="act act-db">GCS + DB</span><span style="margin:0 6px;color:#334155;">→</span>
+    <span class="act act-s3">Squad 3 (MediaPipe)</span><span style="margin:0 6px;color:#334155;">→</span>
+    <span style="color:#34d399;font-weight:700;">Quality Gate</span>
+    <span style="margin:0 6px;color:#334155;">→</span>
+    <span class="act act-s3">Biomechanics Script</span>
+    <span style="margin-left:auto;font-size:9px;color:#334155;">Output: biomechanics_json · bottom_frame per rep</span>
   </div>
+
+  <!-- OPTION A -->
+  <div class="hseq-option">
+    <div class="hseq-header hseq-hdr-a">
+      <div class="hseq-title-col">
+        <div class="hseq-opt-label">Option A</div>
+        <div class="hseq-opt-name">Video + JSON → Nemotron → Claude</div>
+      </div>
+      <div class="hseq-llm-col">
+        <div class="hseq-llm-label">LLMs used</div>
+        <div class="hseq-llm-pills">
+          <span class="llm-pill llm-nem">Nemotron 3 Nano Omni</span>
+          <span class="llm-pill llm-cl">Claude Sonnet</span>
+        </div>
+      </div>
+      <div class="hseq-why-col">
+        <div class="hseq-why-label">Why this option</div>
+        <div class="hseq-why-text">Both video and structured angles sent to Nemotron for primary analysis — Claude synthesises coaching from Nemotron&apos;s structured JSON output.</div>
+      </div>
+    </div>
+    <div class="hseq-body hseq-body-a">
+      <div class="hseq-shared-bar">Steps 1–5 shared · continues from biomechanics output above</div>
+
+      <div class="hseq-internal">
+        <div class="hseq-internal-num">6</div>
+        <span class="act act-s3">Squad 3</span>
+        <div class="hseq-internal-text"><strong>OpenCV overlay video generated</strong> — raw video + MediaPipe landmarks → full video with green skeleton lines → saved to GCS as <code style="background:#0d1117;padding:1px 4px;border-radius:3px;font-size:9px;">overlay_video_url</code></div>
+      </div>
+
+      <div class="hseq-step">
+        <div class="hseq-num">7</div>
+        <span class="act act-s3">Squad 3</span>
+        <div class="hseq-msg-wrap">
+          <div class="hseq-msg-text">return overlay_video_url + biomechanics_json</div>
+          <div class="hseq-line-row"><div class="hseq-line hseq-line-a"></div><span class="hseq-arrowhead hseq-arrow-a">▶</span></div>
+        </div>
+        <span class="act act-s2">Backend S2</span>
+      </div>
+
+      <div class="hseq-step">
+        <div class="hseq-num">8</div>
+        <span class="act act-s2">Backend S2</span>
+        <div class="hseq-msg-wrap">
+          <div class="hseq-msg-text" style="color:#93c5fd;">overlay_video + biomechanics_json + gold_standard_angles</div>
+          <div class="hseq-msg-data">Both visual and quantitative inputs — Nemotron analyses all</div>
+          <div class="hseq-line-row"><div class="hseq-line hseq-line-a"></div><span class="hseq-arrowhead hseq-arrow-a">▶</span></div>
+        </div>
+        <span class="act act-nem">Nemotron</span>
+      </div>
+
+      <div class="hseq-step">
+        <div class="hseq-num">9</div>
+        <span class="act act-nem">Nemotron</span>
+        <div class="hseq-msg-wrap">
+          <div class="hseq-msg-text" style="color:#93c5fd;">Structured JSON: per_rep_scores · worst_rep_number · issues · chain-of-thought</div>
+          <div class="hseq-line-row"><div class="hseq-line hseq-line-a"></div><span class="hseq-arrowhead hseq-arrow-a">▶</span></div>
+        </div>
+        <span class="act act-s2">Backend S2</span>
+      </div>
+
+      <div class="hseq-step">
+        <div class="hseq-num">10</div>
+        <span class="act act-s2">Backend S2</span>
+        <div class="hseq-msg-wrap">
+          <div class="hseq-msg-text">Nemotron JSON + user weight history + RAG MD files</div>
+          <div class="hseq-line-row"><div class="hseq-line hseq-line-a"></div><span class="hseq-arrowhead hseq-arrow-a">▶</span></div>
+        </div>
+        <span class="act act-cl">Claude Sonnet</span>
+      </div>
+
+      <div class="hseq-step">
+        <div class="hseq-num">11</div>
+        <span class="act act-cl">Claude Sonnet</span>
+        <div class="hseq-msg-wrap">
+          <div class="hseq-msg-text">Coaching paragraphs + progression recommendation (ready / hold / drop)</div>
+          <div class="hseq-line-row"><div class="hseq-line hseq-line-a"></div><span class="hseq-arrowhead hseq-arrow-a">▶</span></div>
+        </div>
+        <span class="act act-s2">Backend S2</span>
+      </div>
+
+      <div class="hseq-step">
+        <div class="hseq-num">12</div>
+        <span class="act act-s2">Backend S2</span>
+        <div class="hseq-msg-wrap">
+          <div class="hseq-msg-text">extract_frame(worst_rep_number from Nemotron · bottom_timestamp_ms from DB)</div>
+          <div class="hseq-line-row"><div class="hseq-line hseq-line-shared"></div><span class="hseq-arrowhead hseq-arrow-sh">▶</span></div>
+        </div>
+        <span class="act act-s3">Squad 3</span>
+      </div>
+
+      <div class="hseq-step">
+        <div class="hseq-num">13</div>
+        <span class="act act-s2">Backend S2</span>
+        <div class="hseq-msg-wrap">
+          <div class="hseq-msg-text">analysis_complete SSE → coaching + annotated frame delivered together</div>
+          <div class="hseq-line-row"><div class="hseq-line hseq-line-shared"></div><span class="hseq-arrowhead hseq-arrow-sh">▶</span></div>
+        </div>
+        <span class="act act-fe">User / FE</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- OPTION B -->
+  <div class="hseq-option">
+    <div class="hseq-header hseq-hdr-b">
+      <div class="hseq-title-col">
+        <div class="hseq-opt-label">Option B</div>
+        <div class="hseq-opt-name">Video only → Nemotron · All data → Claude</div>
+      </div>
+      <div class="hseq-llm-col">
+        <div class="hseq-llm-label">LLMs used</div>
+        <div class="hseq-llm-pills">
+          <span class="llm-pill llm-nem">Nemotron 3 Nano Omni</span>
+          <span class="llm-pill llm-cl">Claude Sonnet</span>
+        </div>
+      </div>
+      <div class="hseq-why-col">
+        <div class="hseq-why-label">Why this option</div>
+        <div class="hseq-why-text">Nemotron sees only the video for pure visual analysis — Claude receives all structured data (angles, gold standard, history) and does the quantitative reasoning.</div>
+      </div>
+    </div>
+    <div class="hseq-body hseq-body-b">
+      <div class="hseq-shared-bar">Steps 1–5 shared · continues from biomechanics output above</div>
+
+      <div class="hseq-internal">
+        <div class="hseq-internal-num">6</div>
+        <span class="act act-s3">Squad 3</span>
+        <div class="hseq-internal-text"><strong>OpenCV overlay video generated</strong> — same as Option A. Saved to GCS as <code style="background:#0d1117;padding:1px 4px;border-radius:3px;font-size:9px;">overlay_video_url</code></div>
+      </div>
+
+      <div class="hseq-step">
+        <div class="hseq-num">7</div>
+        <span class="act act-s2">Backend S2</span>
+        <div class="hseq-msg-wrap">
+          <div class="hseq-msg-text" style="color:#86efac;">overlay_video ONLY — no JSON, no gold standard angles</div>
+          <div class="hseq-msg-data">Nemotron focuses on visual movement analysis only</div>
+          <div class="hseq-line-row"><div class="hseq-line hseq-line-b"></div><span class="hseq-arrowhead hseq-arrow-b">▶</span></div>
+        </div>
+        <span class="act act-nem">Nemotron</span>
+      </div>
+
+      <div class="hseq-step">
+        <div class="hseq-num">8</div>
+        <span class="act act-nem">Nemotron</span>
+        <div class="hseq-msg-wrap">
+          <div class="hseq-msg-text" style="color:#86efac;">Text observations + basic JSON — qualitative per-rep output (structure TBC from Test A)</div>
+          <div class="hseq-line-row"><div class="hseq-line hseq-line-b"></div><span class="hseq-arrowhead hseq-arrow-b">▶</span></div>
+        </div>
+        <span class="act act-s2">Backend S2</span>
+      </div>
+
+      <div class="hseq-step">
+        <div class="hseq-num">9</div>
+        <span class="act act-s2">Backend S2</span>
+        <div class="hseq-msg-wrap">
+          <div class="hseq-msg-text" style="color:#86efac;">Nemotron text + biomechanics_json + gold_standard_angles + weight_history + RAG MD files</div>
+          <div class="hseq-msg-data">All quantitative data goes to Claude for reasoning</div>
+          <div class="hseq-line-row"><div class="hseq-line hseq-line-b"></div><span class="hseq-arrowhead hseq-arrow-b">▶</span></div>
+        </div>
+        <span class="act act-cl">Claude Sonnet</span>
+      </div>
+
+      <div class="hseq-step">
+        <div class="hseq-num">10</div>
+        <span class="act act-cl">Claude Sonnet</span>
+        <div class="hseq-msg-wrap">
+          <div class="hseq-msg-text" style="color:#86efac;">Coaching + progression + worst_rep_number (derived by Claude from biomechanics data)</div>
+          <div class="hseq-line-row"><div class="hseq-line hseq-line-b"></div><span class="hseq-arrowhead hseq-arrow-b">▶</span></div>
+        </div>
+        <span class="act act-s2">Backend S2</span>
+      </div>
+
+      <div class="hseq-step">
+        <div class="hseq-num">11a</div>
+        <span class="act act-s2">Backend S2</span>
+        <div class="hseq-msg-wrap">
+          <div class="hseq-msg-text">coaching_complete SSE <span class="hseq-phase">Phase 1</span> → coaching text appears immediately</div>
+          <div class="hseq-line-row"><div class="hseq-line hseq-line-shared"></div><span class="hseq-arrowhead hseq-arrow-sh">▶</span></div>
+        </div>
+        <span class="act act-fe">User / FE</span>
+      </div>
+
+      <div class="hseq-step">
+        <div class="hseq-num">11b</div>
+        <span class="act act-s2">Backend S2</span>
+        <div class="hseq-msg-wrap">
+          <div class="hseq-msg-text">extract_frame(worst_rep_number) → frame_ready SSE <span class="hseq-phase">Phase 2</span> → image appears async</div>
+          <div class="hseq-line-row"><div class="hseq-line hseq-line-shared"></div><span class="hseq-arrowhead hseq-arrow-sh">▶</span></div>
+        </div>
+        <span class="act act-fe">User / FE</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- OPTION C -->
+  <div class="hseq-option">
+    <div class="hseq-header hseq-hdr-c">
+      <div class="hseq-title-col">
+        <div class="hseq-opt-label">Option C · New</div>
+        <div class="hseq-opt-name">Biomechanics angles → Claude only</div>
+      </div>
+      <div class="hseq-llm-col">
+        <div class="hseq-llm-label">LLMs used</div>
+        <div class="hseq-llm-pills">
+          <span class="llm-pill llm-none">Nemotron — not used</span>
+          <span class="llm-pill llm-cl">Claude Sonnet</span>
+        </div>
+      </div>
+      <div class="hseq-why-col">
+        <div class="hseq-why-label">Why this option</div>
+        <div class="hseq-why-text">Skip Nemotron entirely — Claude reasons purely from quantitative biomechanics angles compared against gold standard angle distributions from reference videos in the DB.</div>
+      </div>
+    </div>
+    <div class="hseq-body hseq-body-c">
+      <div class="hseq-shared-bar">Steps 1–5 shared · continues from biomechanics output above</div>
+
+      <div class="hseq-skip">
+        <div class="hseq-skip-num">—</div>
+        <div class="hseq-skip-text">OpenCV overlay video — NOT generated. No Nemotron to send it to. Saves Squad 3 processing time.</div>
+      </div>
+
+      <div class="hseq-step">
+        <div class="hseq-num">6</div>
+        <span class="act act-s2">Backend S2</span>
+        <div class="hseq-msg-wrap">
+          <div class="hseq-msg-text" style="color:#c4b5fd;">Query gold_standard_biomechanics — angle distributions from 3–5+ good-form reference videos</div>
+          <div class="hseq-line-row"><div class="hseq-line hseq-line-c"></div><span class="hseq-arrowhead hseq-arrow-c">▶</span></div>
+        </div>
+        <span class="act act-db">DB / GCS</span>
+      </div>
+
+      <div class="hseq-step">
+        <div class="hseq-num">7</div>
+        <span class="act act-s2">Backend S2</span>
+        <div class="hseq-msg-wrap">
+          <div class="hseq-msg-text" style="color:#c4b5fd;">User biomechanics angles + gold standard angle distributions + weight history + RAG MD files</div>
+          <div class="hseq-msg-data" style="color:#5b21b6;">No video. No Nemotron. Pure quantitative angle-vs-reference reasoning.</div>
+          <div class="hseq-line-row"><div class="hseq-line hseq-line-c"></div><span class="hseq-arrowhead hseq-arrow-c">▶</span></div>
+        </div>
+        <span class="act act-cl">Claude Sonnet</span>
+      </div>
+
+      <div class="hseq-step">
+        <div class="hseq-num">8</div>
+        <span class="act act-cl">Claude Sonnet</span>
+        <div class="hseq-msg-wrap">
+          <div class="hseq-msg-text" style="color:#c4b5fd;">Coaching + progression + worst_rep_number (rep with greatest angle deviation from gold standard)</div>
+          <div class="hseq-line-row"><div class="hseq-line hseq-line-c"></div><span class="hseq-arrowhead hseq-arrow-c">▶</span></div>
+        </div>
+        <span class="act act-s2">Backend S2</span>
+      </div>
+
+      <div class="hseq-step">
+        <div class="hseq-num">9</div>
+        <span class="act act-s2">Backend S2</span>
+        <div class="hseq-msg-wrap">
+          <div class="hseq-msg-text">extract_frame(worst_rep_number · bottom_timestamp_ms) → analysis_complete SSE</div>
+          <div class="hseq-line-row"><div class="hseq-line hseq-line-shared"></div><span class="hseq-arrowhead hseq-arrow-sh">▶</span></div>
+        </div>
+        <span class="act act-fe">User / FE</span>
+      </div>
+    </div>
+  </div>
+
 </div>
 
 
@@ -866,7 +793,8 @@ h1 { font-size: 22px; font-weight: 800; color: #f8fafc; letter-spacing: -0.5px; 
         <div style="border-top:1px solid #1e2433;padding-top:8px;">
           <div class="pc-section-label pc-cons-label">Cons</div>
           <div class="pc-list">
-            <div class="pc-item pc-con">No visual analysis — Claude cannot detect form issues that are visible in the video but not captured in the angles (e.g. bar path, chest positioning, foot placement)</div>
+            <div class="pc-item pc-con">No visual analysis — Claude cannot detect form issues visible in the video but not captured in the angles (e.g. bar path, chest positioning, foot placement)</div>
+            <div class="pc-item pc-con">No trajectory-based decision making — analysis is a snapshot of computed angles at fixed points in the rep, not a continuous read of movement quality through the full range of motion the way a video model can observe it</div>
             <div class="pc-item pc-con">Entirely dependent on biomechanics script accuracy — if an angle is computed incorrectly, the whole coaching is wrong with no visual check</div>
             <div class="pc-item pc-con">Gold standard DB needs sufficient volume (3–5 is minimum — more is better) to produce reliable angle distributions</div>
             <div class="pc-item pc-con">Removes Nemotron from the stack — investment in API access and test plan wasted</div>
