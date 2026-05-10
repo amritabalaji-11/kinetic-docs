@@ -3,234 +3,660 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kinetic — Pipeline Architecture Discussion · Option A vs Option B</title>
+<title>Kinetic — Pipeline Architecture Discussion · Options A, B &amp; C</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0a0d14; color: #e2e8f0; padding: 40px; max-width: 1200px; margin: 0 auto; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0a0d14; color: #e2e8f0; padding: 40px; max-width: 1260px; margin: 0 auto; }
 
 h1 { font-size: 22px; font-weight: 800; color: #f8fafc; letter-spacing: -0.5px; }
 .subtitle { font-size: 13px; color: #64748b; margin-top: 4px; margin-bottom: 32px; }
 
-/* Section */
 .section { margin-bottom: 52px; }
 .section-label { font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: #475569; margin-bottom: 14px; display: flex; align-items: center; gap: 12px; }
 .section-label::after { content: ''; flex: 1; height: 1px; background: #1e2433; }
 .section-title { font-size: 17px; font-weight: 800; color: #f1f5f9; margin-bottom: 6px; }
 .section-desc { font-size: 12px; color: #64748b; margin-bottom: 20px; line-height: 1.6; }
 
-/* Two-column pipeline comparison */
-.pipeline-compare { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+/* ── ACTOR BADGES ── */
+.act { display: inline-block; font-size: 8px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.4px; padding: 2px 6px; border-radius: 3px; white-space: nowrap; flex-shrink: 0; }
+.act-fe  { background: #0d1a2e; color: #93c5fd; border: 1px solid #1e3a5f; }
+.act-s2  { background: #0a1f12; color: #86efac; border: 1px solid #14532d; }
+.act-s3  { background: #1a1205; color: #fdba74; border: 1px solid #431407; }
+.act-nem { background: #051e26; color: #67e8f9; border: 1px solid #0e7490; }
+.act-cl  { background: #150d2e; color: #c4b5fd; border: 1px solid #5b21b6; }
+.act-db  { background: #111827; color: #94a3b8; border: 1px solid #1e2433; }
+.act-nem-off { background: #111827; color: #334155; border: 1px solid #1e2433; text-decoration: line-through; opacity: 0.4; }
 
+/* ── SEQUENCE DIAGRAMS ── */
+.seq-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+.seq-block { border-radius: 10px; overflow: hidden; }
+
+.seq-header { padding: 10px 16px; display: flex; align-items: center; gap: 8px; }
+.seq-hdr-a   { background: #0d1a2e; border: 1px solid #3b82f6; border-bottom: none; }
+.seq-hdr-b   { background: #0a1f12; border: 1px solid #22c55e; border-bottom: none; }
+.seq-hdr-c   { background: #150d2e; border: 1px solid #a78bfa; border-bottom: none; }
+.seq-opt-label { font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.6px; }
+.seq-hdr-a .seq-opt-label { color: #60a5fa; }
+.seq-hdr-b .seq-opt-label { color: #4ade80; }
+.seq-hdr-c .seq-opt-label { color: #a78bfa; }
+.seq-opt-title { font-size: 11px; font-weight: 700; color: #f1f5f9; }
+
+.seq-body { border: 1px solid; padding: 6px 0; border-top: none; border-radius: 0 0 10px 10px; }
+.seq-hdr-a ~ .seq-body, .seq-body-a { border-color: #1e3a5f; background: #080c14; }
+.seq-hdr-b ~ .seq-body, .seq-body-b { border-color: #14532d; background: #080d0a; }
+.seq-hdr-c ~ .seq-body, .seq-body-c { border-color: #2e1065; background: #0a080f; }
+
+.seq-step { display: flex; align-items: center; gap: 6px; padding: 5px 12px; border-bottom: 1px solid #111827; font-size: 10px; }
+.seq-step:last-child { border-bottom: none; }
+.seq-step-num { font-size: 8px; font-weight: 800; color: #334155; width: 14px; flex-shrink: 0; }
+.seq-arrow { flex: 1; display: flex; align-items: center; gap: 0; }
+.seq-line { flex: 1; height: 1px; background: currentColor; opacity: 0.3; }
+.seq-arrowhead { font-size: 9px; flex-shrink: 0; }
+.seq-msg { display: flex; flex-direction: column; gap: 1px; flex: 1; padding: 0 4px; }
+.seq-msg-label { font-size: 9.5px; font-weight: 700; color: #e2e8f0; }
+.seq-msg-data  { font-size: 8.5px; color: #475569; font-family: 'SF Mono', monospace; line-height: 1.4; }
+.seq-note { font-size: 8.5px; color: #5b21b6; font-style: italic; padding: 3px 12px; background: rgba(91,33,182,0.06); }
+.seq-note-a { color: #1e40af; background: rgba(30,64,175,0.06); }
+.seq-section { font-size: 8px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.6px; padding: 5px 12px 2px; color: #334155; }
+.seq-skip { font-size: 9px; color: #334155; padding: 4px 12px; font-style: italic; text-decoration: line-through; opacity: 0.5; }
+
+/* ── THREE-COLUMN PIPELINE ── */
+.pipeline-three { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
 .option-col { display: flex; flex-direction: column; gap: 0; }
-.option-header {
-  padding: 14px 18px; border-radius: 10px 10px 0 0;
-  border: 1px solid; border-bottom: none;
-}
+.option-header { padding: 12px 16px; border-radius: 10px 10px 0 0; border: 1px solid; border-bottom: none; }
 .opt-a-header { background: #0d1a2e; border-color: #3b82f6; }
 .opt-b-header { background: #0a1f12; border-color: #22c55e; }
+.opt-c-header { background: #150d2e; border-color: #a78bfa; }
 .option-label { font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 4px; }
 .opt-a-header .option-label { color: #3b82f6; }
 .opt-b-header .option-label { color: #22c55e; }
-.option-title { font-size: 13px; font-weight: 800; color: #f1f5f9; line-height: 1.4; }
-.option-desc { font-size: 11px; color: #64748b; margin-top: 4px; line-height: 1.5; }
-
-/* Pipeline steps */
-.pipeline-step {
-  border-left: 1px solid; border-right: 1px solid;
-  padding: 0;
-}
+.opt-c-header .option-label { color: #a78bfa; }
+.option-title { font-size: 12px; font-weight: 800; color: #f1f5f9; line-height: 1.4; }
+.option-desc  { font-size: 10.5px; color: #64748b; margin-top: 4px; line-height: 1.5; }
+.pipeline-step { border-left: 1px solid; border-right: 1px solid; padding: 0; }
 .opt-a-step { border-color: #1e3a5f; }
 .opt-b-step { border-color: #14532d; }
+.opt-c-step { border-color: #2e1065; }
 .pipeline-step:last-child { border-radius: 0 0 10px 10px; border-bottom: 1px solid; }
-.opt-a-step:last-child { border-color: #1e3a5f; }
-.opt-b-step:last-child { border-color: #14532d; }
-
-.step-inner { padding: 12px 16px; border-bottom: 1px solid #111827; }
+.step-inner { padding: 10px 14px; border-bottom: 1px solid #111827; }
 .step-inner:last-child { border-bottom: none; }
-
-.step-num-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
-.step-num { font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; padding: 2px 7px; border-radius: 4px; }
+.step-num-row { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; }
+.step-num { font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; padding: 2px 6px; border-radius: 4px; }
 .opt-a .step-num { background: #0d1a2e; color: #60a5fa; border: 1px solid #1e3a5f; }
 .opt-b .step-num { background: #0a1f12; color: #4ade80; border: 1px solid #14532d; }
-.step-name { font-size: 12px; font-weight: 700; color: #f1f5f9; }
+.opt-c .step-num { background: #150d2e; color: #c4b5fd; border: 1px solid #5b21b6; }
+.step-name { font-size: 11px; font-weight: 700; color: #f1f5f9; }
 .step-squad { font-size: 9px; color: #475569; margin-left: auto; }
-
-.io-rows { display: flex; flex-direction: column; gap: 4px; }
-.io-row { display: flex; gap: 8px; align-items: baseline; font-size: 10.5px; line-height: 1.5; }
-.io-label { font-size: 8px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.4px; flex-shrink: 0; width: 36px; }
-.io-in  { color: #0e7490; }
-.io-out { color: #059669; }
+.io-rows { display: flex; flex-direction: column; gap: 3px; margin-top: 4px; }
+.io-row { display: flex; gap: 6px; align-items: baseline; font-size: 10px; line-height: 1.5; }
+.io-label { font-size: 8px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.4px; flex-shrink: 0; width: 30px; }
+.io-in  { color: #0e7490; } .io-out { color: #059669; }
 .io-val { color: #94a3b8; }
-.io-val code { background: #0d1117; padding: 1px 4px; border-radius: 3px; font-size: 9.5px; color: #c4b5fd; }
-.io-val.highlight-a { color: #93c5fd; font-weight: 600; }
-.io-val.highlight-b { color: #86efac; font-weight: 600; }
-.io-val.highlight-diff { color: #fbbf24; font-weight: 600; }
-
-/* Connector arrow */
-.step-connector { display: flex; align-items: center; justify-content: center; height: 20px; color: #1e2433; font-size: 14px; border-left: 1px solid; border-right: 1px solid; }
-.opt-a .step-connector { border-color: #1e3a5f; }
-.opt-b .step-connector { border-color: #14532d; }
-
-/* Difference callout within a step */
-.step-diff {
-  margin-top: 6px; padding: 6px 9px; border-radius: 5px;
-  font-size: 10.5px; line-height: 1.5;
-}
+.io-val code { background: #0d1117; padding: 1px 3px; border-radius: 3px; font-size: 9px; color: #c4b5fd; }
+.highlight-a { color: #93c5fd; font-weight: 600; }
+.highlight-b { color: #86efac; font-weight: 600; }
+.highlight-c { color: #c4b5fd; font-weight: 600; }
+.highlight-diff { color: #fbbf24; font-weight: 600; }
+.step-diff { margin-top: 5px; padding: 5px 8px; border-radius: 5px; font-size: 10px; line-height: 1.5; }
 .diff-a { background: rgba(59,130,246,0.07); border: 1px solid rgba(59,130,246,0.2); color: #93c5fd; }
 .diff-b { background: rgba(34,197,94,0.07); border: 1px solid rgba(34,197,94,0.2); color: #86efac; }
+.diff-c { background: rgba(167,139,250,0.07); border: 1px solid rgba(167,139,250,0.2); color: #c4b5fd; }
+.step-connector { display: flex; align-items: center; justify-content: center; height: 16px; color: #1e2433; font-size: 12px; border-left: 1px solid; border-right: 1px solid; }
+.opt-a .step-connector { border-color: #1e3a5f; }
+.opt-b .step-connector { border-color: #14532d; }
+.opt-c .step-connector { border-color: #2e1065; }
+.two-phase { display: inline-block; font-size: 8px; font-weight: 700; padding: 1px 5px; border-radius: 3px; background: #1a0d2e; color: #c4b5fd; border: 1px solid #5b21b6; margin-left: 3px; }
 
-/* Two-phase badge */
-.two-phase-badge { display: inline-block; font-size: 8px; font-weight: 700; padding: 1px 6px; border-radius: 4px; background: #1a0d2e; color: #c4b5fd; border: 1px solid #5b21b6; margin-left: 4px; }
-
-/* Pros/cons table */
-.pc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+/* ── PROS / CONS ── */
+.pc-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
 .pc-col { background: #0d1117; border: 1px solid #1e2433; border-radius: 10px; overflow: hidden; }
-.pc-header { padding: 12px 16px; border-bottom: 1px solid #1e2433; display: flex; align-items: center; gap: 10px; }
-.pc-option-badge { font-size: 10px; font-weight: 800; padding: 2px 9px; border-radius: 4px; }
+.pc-header { padding: 10px 14px; border-bottom: 1px solid #1e2433; display: flex; align-items: center; gap: 8px; }
+.pc-option-badge { font-size: 10px; font-weight: 800; padding: 2px 8px; border-radius: 4px; }
 .pc-a { background: #0d1a2e; color: #60a5fa; border: 1px solid #1e3a5f; }
 .pc-b { background: #0a1f12; color: #4ade80; border: 1px solid #14532d; }
-.pc-header-title { font-size: 12px; font-weight: 700; color: #f1f5f9; }
-.pc-body { padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; }
-.pc-section-label { font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 6px; }
-.pc-pros-label { color: #22c55e; }
-.pc-cons-label { color: #ef4444; }
+.pc-c { background: #150d2e; color: #c4b5fd; border: 1px solid #5b21b6; }
+.pc-header-title { font-size: 11px; font-weight: 700; color: #f1f5f9; }
+.pc-body { padding: 12px 14px; display: flex; flex-direction: column; gap: 10px; }
+.pc-section-label { font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 5px; }
+.pc-pros-label { color: #22c55e; } .pc-cons-label { color: #ef4444; }
 .pc-list { display: flex; flex-direction: column; gap: 5px; }
-.pc-item { display: flex; gap: 8px; align-items: baseline; font-size: 11px; color: #94a3b8; line-height: 1.5; }
+.pc-item { display: flex; gap: 7px; align-items: baseline; font-size: 11px; color: #94a3b8; line-height: 1.5; }
 .pc-pro::before { content: '✓'; color: #22c55e; flex-shrink: 0; font-weight: 700; }
 .pc-con::before { content: '✗'; color: #ef4444; flex-shrink: 0; font-weight: 700; }
 
-/* Key question */
-.key-q { background: #1a1000; border: 1px solid #92400e; border-radius: 8px; padding: 12px 16px; margin-bottom: 10px; }
-.key-q-label { font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.6px; color: #f59e0b; margin-bottom: 5px; }
-.key-q-text { font-size: 12px; color: #fde68a; line-height: 1.6; }
-.key-q-stakes { font-size: 11px; color: #92400e; margin-top: 5px; line-height: 1.5; }
-
-/* Testing framework */
+/* ── TESTING ── */
 .test-table { width: 100%; border-collapse: collapse; }
 .test-table th { padding: 9px 14px; text-align: left; font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.6px; color: #475569; background: #0d1117; border-bottom: 2px solid #1e2433; }
-.test-table td { padding: 11px 14px; border-bottom: 1px solid #0d1117; font-size: 11px; color: #94a3b8; vertical-align: top; line-height: 1.6; }
+.test-table td { padding: 10px 14px; border-bottom: 1px solid #0d1117; font-size: 11px; color: #94a3b8; vertical-align: top; line-height: 1.6; }
 .test-table tr:nth-child(even) td { background: #080c12; }
-.test-indicator { display: inline-block; font-size: 9px; font-weight: 700; padding: 1px 7px; border-radius: 10px; }
+.ind { display: inline-block; font-size: 9px; font-weight: 700; padding: 1px 7px; border-radius: 10px; }
 .ind-a  { background: #0d1a2e; color: #60a5fa; border: 1px solid #1e3a5f; }
 .ind-b  { background: #0a1f12; color: #4ade80; border: 1px solid #14532d; }
+.ind-c  { background: #150d2e; color: #c4b5fd; border: 1px solid #5b21b6; }
 .ind-ab { background: #1a1205; color: #fb923c; border: 1px solid #431407; }
 
-/* Recommendation box */
-.rec-box { background: #080c12; border: 1px solid #1e2433; border-radius: 10px; padding: 18px 20px; margin-top: 20px; }
-.rec-box-label { font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px; color: #475569; margin-bottom: 10px; }
+.key-q { background: #1a1000; border: 1px solid #92400e; border-radius: 8px; padding: 11px 14px; margin-bottom: 10px; }
+.key-q-label { font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.6px; color: #f59e0b; margin-bottom: 4px; }
+.key-q-text { font-size: 11px; color: #fde68a; line-height: 1.6; }
+.key-q-stakes { font-size: 10.5px; color: #92400e; margin-top: 4px; line-height: 1.5; }
+
+.rec-box { background: #080c12; border: 1px solid #1e2433; border-radius: 10px; padding: 16px 18px; margin-top: 20px; }
+.rec-box-label { font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px; color: #475569; margin-bottom: 8px; }
 .rec-pending { font-size: 12px; color: #94a3b8; line-height: 1.7; }
 .rec-pending strong { color: #f1f5f9; }
 
-/* Open Qs */
 .open-q-list { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
-.open-q { display: flex; gap: 12px; align-items: baseline; padding: 10px 14px; background: #080c12; border: 1px solid #1e2433; border-radius: 7px; font-size: 11px; color: #94a3b8; line-height: 1.5; }
-.open-q-num { font-size: 10px; font-weight: 800; color: #475569; flex-shrink: 0; width: 20px; }
+.open-q { display: flex; gap: 10px; align-items: baseline; padding: 10px 14px; background: #080c12; border: 1px solid #1e2433; border-radius: 7px; font-size: 11px; color: #94a3b8; line-height: 1.5; }
+.open-q-num { font-size: 10px; font-weight: 800; color: #475569; flex-shrink: 0; width: 18px; }
 </style>
 </head>
 <body>
 
 <h1>Kinetic — Pipeline Architecture Discussion</h1>
-<p class="subtitle">Option A vs Option B · Nemotron → Claude flow · For team discussion · May 10, 2026</p>
+<p class="subtitle">Options A, B &amp; C · Nemotron vs Claude reasoning flow · For team discussion · May 2026</p>
 
 
 <!-- ══════════════════════════════
-     SECTION 1 — PIPELINE COMPARISON
+     SECTION 0 — SEQUENCE DIAGRAMS
 ══════════════════════════════ -->
 <div class="section">
-  <div class="section-label">Section 1 — Pipeline comparison</div>
-  <div class="section-title">Option A vs Option B — inputs, outputs, and responsibilities at each step</div>
-  <div class="section-desc">Yellow = the field or decision that differs between the two options. Everything before Step 7 (Nemotron) is identical in both options.</div>
+  <div class="section-label">Section 0 — Sequence diagrams</div>
+  <div class="section-title">How data flows through each option — step by step</div>
+  <div class="section-desc">Steps 1–6 (upload → MediaPipe → quality gate → biomechanics) are identical in all three options. The divergence starts at Step 7. Greyed out = not used in that option.</div>
 
-  <div class="pipeline-compare">
+  <div class="seq-grid">
+
+    <!-- OPTION A -->
+    <div class="seq-block">
+      <div class="seq-header seq-hdr-a">
+        <span class="seq-opt-label">Option A</span>
+        <span class="seq-opt-title">Video + JSON → Nemotron → Claude</span>
+      </div>
+      <div class="seq-body seq-body-a">
+        <div class="seq-section">Steps 1–6 · Identical in all options</div>
+
+        <div class="seq-step">
+          <span class="seq-step-num">1</span>
+          <span class="act act-fe">User/FE</span>
+          <span style="color:#334155;font-size:10px;margin:0 4px;">──────────────────→</span>
+          <span class="act act-s2">Backend S2</span>
+          <div class="seq-msg" style="margin-left:8px;">
+            <span class="seq-msg-label">POST /upload</span>
+            <span class="seq-msg-data">video + exercise_id + weight_value</span>
+          </div>
+        </div>
+
+        <div class="seq-step">
+          <span class="seq-step-num">2</span>
+          <span class="act act-s2">Backend S2</span>
+          <span style="color:#334155;font-size:10px;margin:0 4px;">──────────────────→</span>
+          <span class="act act-db">GCS + DB</span>
+          <div class="seq-msg" style="margin-left:8px;">
+            <span class="seq-msg-label">Save video → video_url · write form_sessions</span>
+          </div>
+        </div>
+
+        <div class="seq-step">
+          <span class="seq-step-num">3</span>
+          <span class="act act-s2">Backend S2</span>
+          <span style="color:#334155;font-size:10px;margin:0 4px;">──────────────────→</span>
+          <span class="act act-s3">Squad 3</span>
+          <div class="seq-msg" style="margin-left:8px;">
+            <span class="seq-msg-label">Trigger: process_video(gcs_path, analysis_id)</span>
+          </div>
+        </div>
+
+        <div class="seq-step">
+          <span class="seq-step-num">4</span>
+          <span class="act act-s3">Squad 3</span>
+          <span style="color:#334155;font-size:10px;margin:0 4px;flex-shrink:0;">runs internally</span>
+          <div class="seq-msg" style="margin-left:4px;">
+            <span class="seq-msg-label">MediaPipe → landmarks + rep segments + bottom_frame per rep</span>
+          </div>
+        </div>
+
+        <div class="seq-step">
+          <span class="seq-step-num">5</span>
+          <span class="act act-s3">Squad 3</span>
+          <span style="color:#334155;font-size:10px;margin:0 4px;flex-shrink:0;">quality gate</span>
+          <div class="seq-msg" style="margin-left:4px;">
+            <span class="seq-msg-label">FAIL → error returned to S2 · PASS → continues</span>
+          </div>
+        </div>
+
+        <div class="seq-step">
+          <span class="seq-step-num">6</span>
+          <span class="act act-s3">Squad 3</span>
+          <span style="color:#334155;font-size:10px;margin:0 4px;flex-shrink:0;">runs internally</span>
+          <div class="seq-msg" style="margin-left:4px;">
+            <span class="seq-msg-label">OpenCV overlay video → GCS · Biomechanics JSON → S2</span>
+          </div>
+        </div>
+
+        <div class="seq-section" style="color:#1e3a5f;">Option A diverges here ↓</div>
+
+        <div class="seq-step">
+          <span class="seq-step-num">7</span>
+          <span class="act act-s2">Backend S2</span>
+          <span style="color:#3b82f6;font-size:10px;margin:0 4px;">──────────→</span>
+          <span class="act act-nem">Nemotron</span>
+          <div class="seq-msg" style="margin-left:8px;">
+            <span class="seq-msg-label" style="color:#93c5fd;">Overlay video + Biomechanics JSON + Gold standard angles</span>
+          </div>
+        </div>
+
+        <div class="seq-step">
+          <span class="seq-step-num">8</span>
+          <span class="act act-nem">Nemotron</span>
+          <span style="color:#3b82f6;font-size:10px;margin:0 4px;">──────────→</span>
+          <span class="act act-s2">Backend S2</span>
+          <div class="seq-msg" style="margin-left:8px;">
+            <span class="seq-msg-label" style="color:#93c5fd;">Structured JSON: per_rep_scores · worst_rep_number · issues · CoT</span>
+          </div>
+        </div>
+
+        <div class="seq-step">
+          <span class="seq-step-num">9</span>
+          <span class="act act-s2">Backend S2</span>
+          <span style="color:#334155;font-size:10px;margin:0 4px;">──────────→</span>
+          <span class="act act-db">DB</span>
+          <div class="seq-msg" style="margin-left:8px;">
+            <span class="seq-msg-label">Store biomechanics_json · query weight_history</span>
+          </div>
+        </div>
+
+        <div class="seq-step">
+          <span class="seq-step-num">10</span>
+          <span class="act act-s2">Backend S2</span>
+          <span style="color:#3b82f6;font-size:10px;margin:0 4px;">──────────→</span>
+          <span class="act act-cl">Claude</span>
+          <div class="seq-msg" style="margin-left:8px;">
+            <span class="seq-msg-label">Nemotron JSON + weight history + RAG MD files</span>
+          </div>
+        </div>
+
+        <div class="seq-step">
+          <span class="seq-step-num">11</span>
+          <span class="act act-cl">Claude</span>
+          <span style="color:#3b82f6;font-size:10px;margin:0 4px;">──────────→</span>
+          <span class="act act-s2">Backend S2</span>
+          <div class="seq-msg" style="margin-left:8px;">
+            <span class="seq-msg-label">Coaching paragraphs + progression (ready/hold/drop)</span>
+          </div>
+        </div>
+
+        <div class="seq-step">
+          <span class="seq-step-num">12</span>
+          <span class="act act-s2">Backend S2</span>
+          <span style="color:#334155;font-size:10px;margin:0 4px;">──────────→</span>
+          <span class="act act-s3">Squad 3</span>
+          <div class="seq-msg" style="margin-left:8px;">
+            <span class="seq-msg-label">extract_frame(worst_rep_number → from Nemotron)</span>
+          </div>
+        </div>
+
+        <div class="seq-step">
+          <span class="seq-step-num">13</span>
+          <span class="act act-fe">User/FE</span>
+          <span style="color:#334155;font-size:10px;margin:0 4px;">receives SSE</span>
+          <div class="seq-msg" style="margin-left:4px;">
+            <span class="seq-msg-label">analysis_complete → coaching + annotated frame — together</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- OPTION B -->
+    <div class="seq-block">
+      <div class="seq-header seq-hdr-b">
+        <span class="seq-opt-label">Option B</span>
+        <span class="seq-opt-title">Video only → Nemotron · All data → Claude</span>
+      </div>
+      <div class="seq-body seq-body-b">
+        <div class="seq-section">Steps 1–6 · Identical in all options</div>
+
+        <div class="seq-step">
+          <span class="seq-step-num">1</span>
+          <span class="act act-fe">User/FE</span>
+          <span style="color:#334155;font-size:10px;margin:0 4px;">──────────────────→</span>
+          <span class="act act-s2">Backend S2</span>
+          <div class="seq-msg" style="margin-left:8px;">
+            <span class="seq-msg-label">POST /upload</span>
+            <span class="seq-msg-data">video + exercise_id + weight_value</span>
+          </div>
+        </div>
+
+        <div class="seq-step">
+          <span class="seq-step-num">2</span>
+          <span class="act act-s2">Backend S2</span>
+          <span style="color:#334155;font-size:10px;margin:0 4px;">──────────────────→</span>
+          <span class="act act-db">GCS + DB</span>
+          <div class="seq-msg" style="margin-left:8px;">
+            <span class="seq-msg-label">Save video → video_url · write form_sessions</span>
+          </div>
+        </div>
+
+        <div class="seq-step">
+          <span class="seq-step-num">3</span>
+          <span class="act act-s2">Backend S2</span>
+          <span style="color:#334155;font-size:10px;margin:0 4px;">──────────────────→</span>
+          <span class="act act-s3">Squad 3</span>
+          <div class="seq-msg" style="margin-left:8px;">
+            <span class="seq-msg-label">Trigger: process_video(gcs_path, analysis_id)</span>
+          </div>
+        </div>
+
+        <div class="seq-step">
+          <span class="seq-step-num">4</span>
+          <span class="act act-s3">Squad 3</span>
+          <span style="color:#334155;font-size:10px;margin:0 4px;flex-shrink:0;">runs internally</span>
+          <div class="seq-msg" style="margin-left:4px;">
+            <span class="seq-msg-label">MediaPipe → landmarks + rep segments + bottom_frame per rep</span>
+          </div>
+        </div>
+
+        <div class="seq-step">
+          <span class="seq-step-num">5</span>
+          <span class="act act-s3">Squad 3</span>
+          <span style="color:#334155;font-size:10px;margin:0 4px;flex-shrink:0;">quality gate</span>
+          <div class="seq-msg" style="margin-left:4px;">
+            <span class="seq-msg-label">FAIL → error returned to S2 · PASS → continues</span>
+          </div>
+        </div>
+
+        <div class="seq-step">
+          <span class="seq-step-num">6</span>
+          <span class="act act-s3">Squad 3</span>
+          <span style="color:#334155;font-size:10px;margin:0 4px;flex-shrink:0;">runs internally</span>
+          <div class="seq-msg" style="margin-left:4px;">
+            <span class="seq-msg-label">OpenCV overlay video → GCS · Biomechanics JSON → S2</span>
+          </div>
+        </div>
+
+        <div class="seq-section" style="color:#14532d;">Option B diverges here ↓</div>
+
+        <div class="seq-step">
+          <span class="seq-step-num">7</span>
+          <span class="act act-s2">Backend S2</span>
+          <span style="color:#22c55e;font-size:10px;margin:0 4px;">──────────→</span>
+          <span class="act act-nem">Nemotron</span>
+          <div class="seq-msg" style="margin-left:8px;">
+            <span class="seq-msg-label" style="color:#86efac;">Overlay video ONLY — no JSON, no gold standard</span>
+          </div>
+        </div>
+
+        <div class="seq-step">
+          <span class="seq-step-num">8</span>
+          <span class="act act-nem">Nemotron</span>
+          <span style="color:#22c55e;font-size:10px;margin:0 4px;">──────────→</span>
+          <span class="act act-s2">Backend S2</span>
+          <div class="seq-msg" style="margin-left:8px;">
+            <span class="seq-msg-label" style="color:#86efac;">Text observations + basic JSON — qualitative, per-rep scores TBC</span>
+          </div>
+        </div>
+
+        <div class="seq-step">
+          <span class="seq-step-num">9</span>
+          <span class="act act-s2">Backend S2</span>
+          <span style="color:#334155;font-size:10px;margin:0 4px;">──────────→</span>
+          <span class="act act-db">DB</span>
+          <div class="seq-msg" style="margin-left:8px;">
+            <span class="seq-msg-label">Store biomechanics_json · query weight_history + gold_standard_angles</span>
+          </div>
+        </div>
+
+        <div class="seq-step">
+          <span class="seq-step-num">10</span>
+          <span class="act act-s2">Backend S2</span>
+          <span style="color:#22c55e;font-size:10px;margin:0 4px;">──────────→</span>
+          <span class="act act-cl">Claude</span>
+          <div class="seq-msg" style="margin-left:8px;">
+            <span class="seq-msg-label" style="color:#86efac;">Nemotron text + Biomechanics JSON + gold standard angles + weight history + RAG MD files</span>
+          </div>
+        </div>
+
+        <div class="seq-step">
+          <span class="seq-step-num">11</span>
+          <span class="act act-cl">Claude</span>
+          <span style="color:#22c55e;font-size:10px;margin:0 4px;">──────────→</span>
+          <span class="act act-s2">Backend S2</span>
+          <div class="seq-msg" style="margin-left:8px;">
+            <span class="seq-msg-label" style="color:#86efac;">Coaching + progression + worst_rep_number (derived from biomechanics)</span>
+          </div>
+        </div>
+
+        <div class="seq-step">
+          <span class="seq-step-num">12</span>
+          <span class="act act-fe">User/FE</span>
+          <span style="color:#334155;font-size:10px;margin:0 4px;">SSE phase 1</span>
+          <div class="seq-msg" style="margin-left:4px;">
+            <span class="seq-msg-label">coaching_complete → coaching text appears immediately</span>
+          </div>
+        </div>
+
+        <div class="seq-step">
+          <span class="seq-step-num">13</span>
+          <span class="act act-s2">Backend S2</span>
+          <span style="color:#334155;font-size:10px;margin:0 4px;">──────────→</span>
+          <span class="act act-s3">Squad 3</span>
+          <div class="seq-msg" style="margin-left:8px;">
+            <span class="seq-msg-label">extract_frame(worst_rep_number → from Claude) [async]</span>
+          </div>
+        </div>
+
+        <div class="seq-step">
+          <span class="seq-step-num">14</span>
+          <span class="act act-fe">User/FE</span>
+          <span style="color:#334155;font-size:10px;margin:0 4px;">SSE phase 2</span>
+          <div class="seq-msg" style="margin-left:4px;">
+            <span class="seq-msg-label">frame_ready → annotated frame appears on Results screen</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- OPTION C -->
+    <div class="seq-block">
+      <div class="seq-header seq-hdr-c">
+        <span class="seq-opt-label">Option C · New</span>
+        <span class="seq-opt-title">Biomechanics angles → Claude grounded by gold standard DB</span>
+      </div>
+      <div class="seq-body seq-body-c">
+        <div class="seq-section">Steps 1–5 · Identical in all options</div>
+
+        <div class="seq-step">
+          <span class="seq-step-num">1</span>
+          <span class="act act-fe">User/FE</span>
+          <span style="color:#334155;font-size:10px;margin:0 4px;">──────────────────→</span>
+          <span class="act act-s2">Backend S2</span>
+          <div class="seq-msg" style="margin-left:8px;">
+            <span class="seq-msg-label">POST /upload</span>
+            <span class="seq-msg-data">video + exercise_id + weight_value</span>
+          </div>
+        </div>
+
+        <div class="seq-step">
+          <span class="seq-step-num">2</span>
+          <span class="act act-s2">Backend S2</span>
+          <span style="color:#334155;font-size:10px;margin:0 4px;">──────────────────→</span>
+          <span class="act act-db">GCS + DB</span>
+          <div class="seq-msg" style="margin-left:8px;">
+            <span class="seq-msg-label">Save video → video_url · write form_sessions</span>
+          </div>
+        </div>
+
+        <div class="seq-step">
+          <span class="seq-step-num">3</span>
+          <span class="act act-s2">Backend S2</span>
+          <span style="color:#334155;font-size:10px;margin:0 4px;">──────────────────→</span>
+          <span class="act act-s3">Squad 3</span>
+          <div class="seq-msg" style="margin-left:8px;">
+            <span class="seq-msg-label">Trigger: process_video(gcs_path, analysis_id)</span>
+          </div>
+        </div>
+
+        <div class="seq-step">
+          <span class="seq-step-num">4</span>
+          <span class="act act-s3">Squad 3</span>
+          <span style="color:#334155;font-size:10px;margin:0 4px;flex-shrink:0;">runs internally</span>
+          <div class="seq-msg" style="margin-left:4px;">
+            <span class="seq-msg-label">MediaPipe → landmarks + rep segments + bottom_frame per rep</span>
+          </div>
+        </div>
+
+        <div class="seq-step">
+          <span class="seq-step-num">5</span>
+          <span class="act act-s3">Squad 3</span>
+          <span style="color:#334155;font-size:10px;margin:0 4px;flex-shrink:0;">quality gate</span>
+          <div class="seq-msg" style="margin-left:4px;">
+            <span class="seq-msg-label">FAIL → error returned to S2 · PASS → continues</span>
+          </div>
+        </div>
+
+        <div class="seq-section" style="color:#5b21b6;">Option C diverges here ↓</div>
+
+        <div class="seq-step" style="opacity:0.4;">
+          <span class="seq-step-num" style="text-decoration:line-through;">–</span>
+          <span class="act act-nem-off">Nemotron</span>
+          <div class="seq-msg" style="margin-left:8px;">
+            <span class="seq-msg-label" style="color:#334155;text-decoration:line-through;">Not used in Option C</span>
+          </div>
+        </div>
+
+        <div class="seq-step" style="opacity:0.4;">
+          <span class="seq-step-num" style="text-decoration:line-through;">–</span>
+          <span class="act act-s3">Squad 3</span>
+          <div class="seq-msg" style="margin-left:8px;">
+            <span class="seq-msg-label" style="color:#334155;text-decoration:line-through;">OpenCV overlay video — not generated (no Nemotron to send it to)</span>
+          </div>
+        </div>
+
+        <div class="seq-step">
+          <span class="seq-step-num">6</span>
+          <span class="act act-s3">Squad 3</span>
+          <span style="color:#a78bfa;font-size:10px;margin:0 4px;flex-shrink:0;">runs internally</span>
+          <div class="seq-msg" style="margin-left:4px;">
+            <span class="seq-msg-label" style="color:#c4b5fd;">Biomechanics script → user angle JSON (knee, hip, ankle per rep)</span>
+          </div>
+        </div>
+
+        <div class="seq-step">
+          <span class="seq-step-num">7</span>
+          <span class="act act-s2">Backend S2</span>
+          <span style="color:#a78bfa;font-size:10px;margin:0 4px;">──────────→</span>
+          <span class="act act-db">DB</span>
+          <div class="seq-msg" style="margin-left:8px;">
+            <span class="seq-msg-label" style="color:#c4b5fd;">Query gold_standard_biomechanics — angle distributions from 3–5+ good-form reference videos</span>
+          </div>
+        </div>
+
+        <div class="seq-step">
+          <span class="seq-step-num">8</span>
+          <span class="act act-s2">Backend S2</span>
+          <span style="color:#a78bfa;font-size:10px;margin:0 4px;">──────────→</span>
+          <span class="act act-cl">Claude</span>
+          <div class="seq-msg" style="margin-left:8px;">
+            <span class="seq-msg-label" style="color:#c4b5fd;">User biomechanics angles + gold standard angles (DB) + weight history + RAG MD files</span>
+            <span class="seq-msg-data" style="color:#5b21b6;">No Nemotron. No video. Pure quantitative reasoning.</span>
+          </div>
+        </div>
+
+        <div class="seq-step">
+          <span class="seq-step-num">9</span>
+          <span class="act act-cl">Claude</span>
+          <span style="color:#a78bfa;font-size:10px;margin:0 4px;">──────────→</span>
+          <span class="act act-s2">Backend S2</span>
+          <div class="seq-msg" style="margin-left:8px;">
+            <span class="seq-msg-label" style="color:#c4b5fd;">Coaching + progression + worst_rep_number (from angle deviation analysis)</span>
+          </div>
+        </div>
+
+        <div class="seq-step">
+          <span class="seq-step-num">10</span>
+          <span class="act act-s2">Backend S2</span>
+          <span style="color:#334155;font-size:10px;margin:0 4px;">──────────→</span>
+          <span class="act act-s3">Squad 3</span>
+          <div class="seq-msg" style="margin-left:8px;">
+            <span class="seq-msg-label">extract_frame(worst_rep_number · bottom_timestamp_ms)</span>
+          </div>
+        </div>
+
+        <div class="seq-step">
+          <span class="seq-step-num">11</span>
+          <span class="act act-fe">User/FE</span>
+          <span style="color:#334155;font-size:10px;margin:0 4px;">receives SSE</span>
+          <div class="seq-msg" style="margin-left:4px;">
+            <span class="seq-msg-label">analysis_complete → coaching + annotated frame</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════
+     SECTION 1 — PIPELINE DETAIL
+══════════════════════════════ -->
+<div class="section">
+  <div class="section-label">Section 1 — Pipeline detail</div>
+  <div class="section-title">Inputs, outputs, and responsibilities at each step</div>
+  <div class="section-desc">Yellow = differs between options. Steps 1–6 are identical — divergence starts at the AI model call.</div>
+
+  <div class="pipeline-three">
 
     <!-- OPTION A -->
     <div class="option-col opt-a">
       <div class="option-header opt-a-header">
-        <div class="option-label">Option A — Current plan</div>
-        <div class="option-title">Biomechanics JSON + Overlay Video → Nemotron → structured JSON → Claude</div>
-        <div class="option-desc">Nemotron does the primary analysis using both inputs. Claude synthesises coaching from Nemotron's output.</div>
+        <div class="option-label">Option A</div>
+        <div class="option-title">Overlay video + Biomechanics JSON + Gold standard → Nemotron → Claude</div>
+        <div class="option-desc">Nemotron does primary analysis with both inputs. Claude synthesises coaching from structured JSON.</div>
       </div>
 
-      <!-- Steps 1-6 identical -->
       <div class="pipeline-step opt-a-step">
         <div class="step-inner">
-          <div class="step-num-row">
-            <span class="step-num">Steps 1–6</span>
-            <span class="step-name">Upload → GCS → MediaPipe → Quality Gate → OpenCV Overlay → Biomechanics</span>
-          </div>
+          <div class="step-num-row"><span class="step-num">Steps 1–6</span><span class="step-name">Shared pipeline</span></div>
           <div class="io-rows">
-            <div class="io-row"><div class="io-label io-out">OUT</div><div class="io-val"><code>overlay_video_url</code> · <code>biomechanics_json</code> (all angles + per-rep timestamps) · <code>gold_standard_biomechanics</code> from DB</div></div>
+            <div class="io-row"><div class="io-label io-out">OUT</div><div class="io-val"><code>overlay_video_url</code> · <code>biomechanics_json</code> · <code>gold_standard_angles</code> (DB)</div></div>
           </div>
-          <div class="step-diff diff-a" style="font-size:10px;color:#64748b;">Identical in both options — no difference up to this point</div>
+          <div class="step-diff diff-a" style="font-size:9.5px;color:#475569;">Identical in all three options</div>
         </div>
       </div>
 
       <div class="step-connector opt-a">↓</div>
 
-      <!-- Step 7 Nemotron -->
       <div class="pipeline-step opt-a-step">
         <div class="step-inner">
-          <div class="step-num-row">
-            <span class="step-num">Step 7</span>
-            <span class="step-name">Nemotron 3 Nano Omni</span>
-            <span class="step-squad">Squad 2</span>
-          </div>
+          <div class="step-num-row"><span class="step-num">Step 7</span><span class="step-name">Nemotron</span><span class="step-squad">NVIDIA API</span></div>
           <div class="io-rows">
             <div class="io-row"><div class="io-label io-in">IN</div><div class="io-val highlight-a">Overlay video + Biomechanics JSON + Gold standard angle references</div></div>
-            <div class="io-row"><div class="io-label io-out">OUT</div><div class="io-val highlight-a">Structured JSON — per-rep scores · <code>worst_rep_number</code> · issue tags · chain-of-thought paragraphs</div></div>
+            <div class="io-row"><div class="io-label io-out">OUT</div><div class="io-val highlight-a">Structured JSON: per-rep scores · <code>worst_rep_number</code> · issues · chain-of-thought</div></div>
           </div>
-          <div class="step-diff diff-a"><strong>Nemotron's role in A:</strong> Full analysis using both visual input (video) and quantitative input (JSON). Responsible for scoring reps, identifying issues, and determining the worst rep. Also receives gold standard angles for comparison.</div>
+          <div class="step-diff diff-a">Nemotron does full analysis — visual + quantitative. <code>worst_rep_number</code> explicit in output.</div>
         </div>
       </div>
 
       <div class="step-connector opt-a">↓</div>
 
-      <!-- Step 8 OpenCV -->
       <div class="pipeline-step opt-a-step">
         <div class="step-inner">
-          <div class="step-num-row">
-            <span class="step-num">Step 8</span>
-            <span class="step-name">OpenCV — worst-rep frame extraction</span>
-            <span class="step-squad">Squad 3</span>
-          </div>
+          <div class="step-num-row"><span class="step-num">Step 8</span><span class="step-name">Claude Sonnet</span><span class="step-squad">Anthropic API</span></div>
           <div class="io-rows">
-            <div class="io-row"><div class="io-label io-in">IN</div><div class="io-val"><code>worst_rep_number</code> from Nemotron · <code>bottom_timestamp_ms</code> from biomechanics DB</div></div>
-            <div class="io-row"><div class="io-label io-out">OUT</div><div class="io-val"><code>annotated_frame_url</code> — saved to GCS</div></div>
+            <div class="io-row"><div class="io-label io-in">IN</div><div class="io-val highlight-a">Nemotron JSON + user weight history + RAG MD files</div></div>
+            <div class="io-row"><div class="io-label io-out">OUT</div><div class="io-val">Coaching paragraphs + progression recommendation</div></div>
           </div>
-          <div class="step-diff diff-a"><code>worst_rep_number</code> is explicitly in Nemotron's JSON output — clean handoff.</div>
+          <div class="step-diff diff-a">Smaller Claude context — Nemotron already did analysis. Claude focuses on coaching language and progression.</div>
         </div>
       </div>
 
       <div class="step-connector opt-a">↓</div>
 
-      <!-- Step 9 Claude -->
-      <div class="pipeline-step opt-a-step">
-        <div class="step-inner">
-          <div class="step-num-row">
-            <span class="step-num">Step 9</span>
-            <span class="step-name">Claude Sonnet — coaching + progression</span>
-            <span class="step-squad">Squad 2</span>
-          </div>
-          <div class="io-rows">
-            <div class="io-row"><div class="io-label io-in">IN</div><div class="io-val highlight-a">Nemotron JSON output · user weight history (DB) · RAG coaching MD files</div></div>
-            <div class="io-row"><div class="io-label io-out">OUT</div><div class="io-val">Coaching paragraphs · progression recommendation (ready / hold / drop)</div></div>
-          </div>
-          <div class="step-diff diff-a"><strong>Claude's role in A:</strong> Receives Nemotron's already-processed analysis as clean JSON. Focuses on coaching language and progression reasoning. Smaller context — Nemotron has done the heavy analysis lifting.</div>
-        </div>
-      </div>
-
-      <div class="step-connector opt-a">↓</div>
-
-      <!-- Frontend -->
       <div class="pipeline-step opt-a-step">
         <div class="step-inner" style="border-bottom:none;">
-          <div class="step-num-row">
-            <span class="step-num">Frontend</span>
-            <span class="step-name">Results screen delivery</span>
-            <span class="step-squad">Squad 1</span>
-          </div>
+          <div class="step-num-row"><span class="step-num">Frontend</span><span class="step-name">Single delivery</span></div>
           <div class="io-rows">
-            <div class="io-row"><div class="io-label" style="color:#a78bfa;width:36px;">SSE</div><div class="io-val">Single <code>analysis_complete</code> event — coaching + annotated frame arrive together</div></div>
+            <div class="io-row"><div class="io-label" style="color:#a78bfa;width:30px;">SSE</div><div class="io-val"><code>analysis_complete</code> — coaching + annotated frame arrive together</div></div>
           </div>
         </div>
       </div>
@@ -239,92 +665,123 @@ h1 { font-size: 22px; font-weight: 800; color: #f8fafc; letter-spacing: -0.5px; 
     <!-- OPTION B -->
     <div class="option-col opt-b">
       <div class="option-header opt-b-header">
-        <div class="option-label">Option B — Proposed</div>
-        <div class="option-title">Overlay Video only → Nemotron → text output → Claude does all reasoning</div>
-        <div class="option-desc">Nemotron does visual analysis only. Claude receives Nemotron's observations + all structured data and does the reasoning.</div>
+        <div class="option-label">Option B</div>
+        <div class="option-title">Overlay video only → Nemotron · All structured data → Claude</div>
+        <div class="option-desc">Nemotron does visual analysis only. Claude receives all quantitative data and does the reasoning.</div>
       </div>
 
-      <!-- Steps 1-6 identical -->
       <div class="pipeline-step opt-b-step">
         <div class="step-inner">
-          <div class="step-num-row">
-            <span class="step-num">Steps 1–6</span>
-            <span class="step-name">Upload → GCS → MediaPipe → Quality Gate → OpenCV Overlay → Biomechanics</span>
-          </div>
+          <div class="step-num-row"><span class="step-num">Steps 1–6</span><span class="step-name">Shared pipeline</span></div>
           <div class="io-rows">
-            <div class="io-row"><div class="io-label io-out">OUT</div><div class="io-val"><code>overlay_video_url</code> · <code>biomechanics_json</code> (all angles + per-rep timestamps) · <code>gold_standard_biomechanics</code> from DB</div></div>
+            <div class="io-row"><div class="io-label io-out">OUT</div><div class="io-val"><code>overlay_video_url</code> · <code>biomechanics_json</code> · <code>gold_standard_angles</code> (DB)</div></div>
           </div>
-          <div class="step-diff diff-b" style="font-size:10px;color:#64748b;">Identical in both options — no difference up to this point</div>
+          <div class="step-diff diff-b" style="font-size:9.5px;color:#475569;">Identical in all three options</div>
         </div>
       </div>
 
       <div class="step-connector opt-b">↓</div>
 
-      <!-- Step 7 Nemotron -->
       <div class="pipeline-step opt-b-step">
         <div class="step-inner">
-          <div class="step-num-row">
-            <span class="step-num">Step 7</span>
-            <span class="step-name">Nemotron 3 Nano Omni</span>
-            <span class="step-squad">Squad 2</span>
-          </div>
+          <div class="step-num-row"><span class="step-num">Step 7</span><span class="step-name">Nemotron</span><span class="step-squad">NVIDIA API</span></div>
           <div class="io-rows">
-            <div class="io-row"><div class="io-label io-in">IN</div><div class="io-val highlight-diff">Overlay video only — no JSON, no gold standard</div></div>
-            <div class="io-row"><div class="io-label io-out">OUT</div><div class="io-val highlight-diff">Text observations + basic JSON — movement quality, identified form issues, per-rep qualitative notes. Format TBC from Test A results.</div></div>
+            <div class="io-row"><div class="io-label io-in">IN</div><div class="io-val highlight-diff">Overlay video ONLY — no JSON, no gold standard</div></div>
+            <div class="io-row"><div class="io-label io-out">OUT</div><div class="io-val highlight-diff">Text observations + basic JSON (qualitative, per-rep TBC from Test A)</div></div>
           </div>
-          <div class="step-diff diff-b"><strong>Nemotron's role in B:</strong> Visual analysis only — what does it see in the movement? Qualitative observations about form, movement patterns, notable deviations. Does NOT do angle comparison or worst-rep scoring — that moves to Claude.</div>
+          <div class="step-diff diff-b">Nemotron focuses on visual movement patterns only. Does NOT do angle comparison or numerical scoring.</div>
         </div>
       </div>
 
       <div class="step-connector opt-b">↓</div>
 
-      <!-- Step 8 Claude -->
       <div class="pipeline-step opt-b-step">
         <div class="step-inner">
-          <div class="step-num-row">
-            <span class="step-num">Step 8</span>
-            <span class="step-name">Claude Sonnet — reasoning + coaching + progression</span>
-            <span class="step-squad">Squad 2</span>
-          </div>
+          <div class="step-num-row"><span class="step-num">Step 8</span><span class="step-name">Claude Sonnet</span><span class="step-squad">Anthropic API</span></div>
           <div class="io-rows">
-            <div class="io-row"><div class="io-label io-in">IN</div><div class="io-val highlight-b">Nemotron text output · Biomechanics JSON · Gold standard angles (DB) · User weight history (DB) · RAG coaching MD files</div></div>
-            <div class="io-row"><div class="io-label io-out">OUT</div><div class="io-val highlight-b">Coaching paragraphs · progression recommendation · <code>worst_rep_number</code> (derived from biomechanics data)</div></div>
+            <div class="io-row"><div class="io-label io-in">IN</div><div class="io-val highlight-b">Nemotron text + Biomechanics JSON + Gold standard angles (DB) + Weight history + RAG MD files</div></div>
+            <div class="io-row"><div class="io-label io-out">OUT</div><div class="io-val highlight-b">Coaching + progression + <code>worst_rep_number</code> (derived from biomechanics)</div></div>
           </div>
-          <div class="step-diff diff-b"><strong>Claude's role in B:</strong> Does all quantitative reasoning — compares user angles to gold standard, identifies worst rep, integrates weight history, produces coaching. Larger context but uses Claude's strengths: structured data reasoning.</div>
+          <div class="step-diff diff-b">Claude does all quantitative reasoning — angle comparison, worst rep identification, progression. Larger context but uses Claude's strengths.</div>
         </div>
       </div>
 
       <div class="step-connector opt-b">↓</div>
 
-      <!-- Step 9 OpenCV Phase 1 -->
-      <div class="pipeline-step opt-b-step">
-        <div class="step-inner">
-          <div class="step-num-row">
-            <span class="step-num">Step 9a</span>
-            <span class="step-name">Frontend — Phase 1 delivery <span class="two-phase-badge">Two-phase SSE</span></span>
-            <span class="step-squad">Squad 1</span>
-          </div>
-          <div class="io-rows">
-            <div class="io-row"><div class="io-label" style="color:#a78bfa;width:36px;">SSE</div><div class="io-val highlight-diff"><code>coaching_complete</code> fires → Results screen renders text coaching immediately. Image shows placeholder.</div></div>
-          </div>
-          <div class="step-diff diff-b">User sees coaching output fast. Annotated frame loads separately in the background.</div>
-        </div>
-      </div>
-
-      <div class="step-connector opt-b">↓</div>
-
-      <!-- Step 9b OpenCV -->
       <div class="pipeline-step opt-b-step">
         <div class="step-inner" style="border-bottom:none;">
-          <div class="step-num-row">
-            <span class="step-num">Step 9b</span>
-            <span class="step-name">OpenCV — worst-rep frame extraction (async)</span>
-            <span class="step-squad">Squad 3</span>
-          </div>
+          <div class="step-num-row"><span class="step-num">Frontend</span><span class="step-name">Two-phase delivery <span class="two-phase">SSE</span></span></div>
           <div class="io-rows">
-            <div class="io-row"><div class="io-label io-in">IN</div><div class="io-val"><code>worst_rep_number</code> from Claude · <code>bottom_timestamp_ms</code> from biomechanics DB</div></div>
-            <div class="io-row"><div class="io-label io-out">OUT</div><div class="io-val"><code>annotated_frame_url</code> saved to GCS</div></div>
-            <div class="io-row"><div class="io-label" style="color:#a78bfa;width:36px;">SSE</div><div class="io-val"><code>frame_ready</code> fires → Results screen updates with annotated image</div></div>
+            <div class="io-row"><div class="io-label" style="color:#a78bfa;width:30px;">1</div><div class="io-val"><code>coaching_complete</code> → coaching text appears immediately · image placeholder shown</div></div>
+            <div class="io-row"><div class="io-label" style="color:#a78bfa;width:30px;">2</div><div class="io-val"><code>frame_ready</code> → annotated frame appears async</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- OPTION C -->
+    <div class="option-col opt-c">
+      <div class="option-header opt-c-header">
+        <div class="option-label">Option C · New</div>
+        <div class="option-title">Biomechanics angles only → Claude grounded by gold standard DB</div>
+        <div class="option-desc">No Nemotron. No video to AI. Claude reasons purely from quantitative angle data vs gold standard reference angles.</div>
+      </div>
+
+      <div class="pipeline-step opt-c-step">
+        <div class="step-inner">
+          <div class="step-num-row"><span class="step-num">Steps 1–5</span><span class="step-name">Shared pipeline</span></div>
+          <div class="io-rows">
+            <div class="io-row"><div class="io-label io-out">OUT</div><div class="io-val"><code>biomechanics_json</code> (angles per rep) · <code>gold_standard_angles</code> (DB)</div></div>
+          </div>
+          <div class="step-diff diff-c" style="font-size:9.5px;color:#475569;">Steps 1–5 identical. OpenCV overlay video is NOT generated — no Nemotron to receive it.</div>
+        </div>
+      </div>
+
+      <div class="step-connector opt-c">↓</div>
+
+      <div class="pipeline-step opt-c-step">
+        <div class="step-inner">
+          <div class="step-num-row"><span class="step-num">Step 6</span><span class="step-name">Biomechanics script only</span><span class="step-squad">Squad 3</span></div>
+          <div class="io-rows">
+            <div class="io-row"><div class="io-label io-out">OUT</div><div class="io-val highlight-c">Full angle JSON per rep: knee · hip · ankle · tempo · stability · bottom_frame</div></div>
+          </div>
+          <div class="step-diff diff-c">Biomechanics JSON is richer here — it is the primary AI input, so completeness matters most.</div>
+        </div>
+      </div>
+
+      <div class="step-connector opt-c">↓</div>
+
+      <div class="pipeline-step opt-c-step">
+        <div class="step-inner">
+          <div class="step-num-row"><span class="step-num">Step 7</span><span class="step-name">Gold standard DB query</span><span class="step-squad">Backend S2</span></div>
+          <div class="io-rows">
+            <div class="io-row"><div class="io-label io-in">IN</div><div class="io-val">exercise_id = goblet_squat</div></div>
+            <div class="io-row"><div class="io-label io-out">OUT</div><div class="io-val highlight-c">Angle distributions from 3–5+ reference videos: mean, range, and variance per joint per rep position</div></div>
+          </div>
+          <div class="step-diff diff-c">More gold standard videos = richer reference. The DB can hold angle distributions (not just single values) from all reference sessions — Claude can reason about variance, not just thresholds.</div>
+        </div>
+      </div>
+
+      <div class="step-connector opt-c">↓</div>
+
+      <div class="pipeline-step opt-c-step">
+        <div class="step-inner">
+          <div class="step-num-row"><span class="step-num">Step 8</span><span class="step-name">Claude Sonnet</span><span class="step-squad">Anthropic API</span></div>
+          <div class="io-rows">
+            <div class="io-row"><div class="io-label io-in">IN</div><div class="io-val highlight-c">User biomechanics angles + gold standard angle distributions (DB) + weight history + RAG MD files · No Nemotron, no video</div></div>
+            <div class="io-row"><div class="io-label io-out">OUT</div><div class="io-val highlight-c">Coaching + progression + worst_rep_number (rep with greatest deviation from gold standard)</div></div>
+          </div>
+          <div class="step-diff diff-c">Claude compares user's angles against gold standard distributions directly — purely numerical. Identifies worst rep as the rep whose angles deviate most from the reference mean. No visual understanding, but potentially the most accurate quantitative comparison.</div>
+        </div>
+      </div>
+
+      <div class="step-connector opt-c">↓</div>
+
+      <div class="pipeline-step opt-c-step">
+        <div class="step-inner" style="border-bottom:none;">
+          <div class="step-num-row"><span class="step-num">Frontend</span><span class="step-name">Single delivery</span></div>
+          <div class="io-rows">
+            <div class="io-row"><div class="io-label" style="color:#a78bfa;width:30px;">SSE</div><div class="io-val"><code>analysis_complete</code> — coaching + annotated frame (from OpenCV Part 2 using worst_rep_number from Claude)</div></div>
           </div>
         </div>
       </div>
@@ -344,58 +801,75 @@ h1 { font-size: 22px; font-weight: 800; color: #f8fafc; letter-spacing: -0.5px; 
   <div class="pc-grid">
 
     <div class="pc-col">
-      <div class="pc-header">
-        <span class="pc-option-badge pc-a">Option A</span>
-        <span class="pc-header-title">Biomechanics JSON + Video → Nemotron</span>
-      </div>
+      <div class="pc-header"><span class="pc-option-badge pc-a">Option A</span><span class="pc-header-title">Video + JSON → Nemotron</span></div>
       <div class="pc-body">
         <div>
           <div class="pc-section-label pc-pros-label">Pros</div>
           <div class="pc-list">
-            <div class="pc-item pc-pro">Both inputs ground Nemotron's analysis — JSON confirms what the video shows, reducing hallucinated form issues</div>
-            <div class="pc-item pc-pro">Nemotron outputs clean structured JSON → straightforward handoff to Claude, simpler prompt engineering</div>
-            <div class="pc-item pc-pro"><code>worst_rep_number</code> is explicit in Nemotron's output — no ambiguity for OpenCV Step 2</div>
-            <div class="pc-item pc-pro">Test C (both inputs) is the current plan — test scripts already written and ready to run</div>
-            <div class="pc-item pc-pro">Smaller Claude context — Nemotron has already done the analysis, Claude just synthesises coaching</div>
-            <div class="pc-item pc-pro">Single <code>analysis_complete</code> SSE event — simpler frontend implementation</div>
+            <div class="pc-item pc-pro">Both inputs ground Nemotron — JSON confirms what the video shows, reduces hallucination</div>
+            <div class="pc-item pc-pro">Clean structured JSON output from Nemotron → straightforward Claude handoff</div>
+            <div class="pc-item pc-pro"><code>worst_rep_number</code> explicit in Nemotron output — no ambiguity for OpenCV Step 2</div>
+            <div class="pc-item pc-pro">Test C already planned — scripts ready to run this week</div>
+            <div class="pc-item pc-pro">Smaller Claude context — Nemotron does the heavy analysis</div>
           </div>
         </div>
-        <div style="border-top:1px solid #1e2433;padding-top:10px;">
+        <div style="border-top:1px solid #1e2433;padding-top:8px;">
           <div class="pc-section-label pc-cons-label">Cons</div>
           <div class="pc-list">
-            <div class="pc-item pc-con">Asking Nemotron to do both visual analysis AND numerical angle comparison — mixing its strengths with reasoning tasks it may not excel at</div>
-            <div class="pc-item pc-con">Gold standard angle comparison ("88° vs ideal 80–95°") is a pure reasoning task — arguably better suited to Claude than a video model</div>
-            <div class="pc-item pc-con">Risk: Nemotron may over-rely on the JSON and under-use its visual capabilities, defeating the purpose of sending the video</div>
-            <div class="pc-item pc-con">If coaching quality is poor, harder to debug — was it the visual analysis or the angle reasoning that failed?</div>
+            <div class="pc-item pc-con">Asking Nemotron to do both visual analysis AND numerical angle comparison — mixing its strengths</div>
+            <div class="pc-item pc-con">Gold standard angle comparison is a reasoning task — Claude may do this better</div>
+            <div class="pc-item pc-con">Harder to debug — if coaching is poor, was it visual analysis or angle reasoning that failed?</div>
           </div>
         </div>
       </div>
     </div>
 
     <div class="pc-col">
-      <div class="pc-header">
-        <span class="pc-option-badge pc-b">Option B</span>
-        <span class="pc-header-title">Video only → Nemotron · All reasoning → Claude</span>
-      </div>
+      <div class="pc-header"><span class="pc-option-badge pc-b">Option B</span><span class="pc-header-title">Video only → Nemotron</span></div>
       <div class="pc-body">
         <div>
           <div class="pc-section-label pc-pros-label">Pros</div>
           <div class="pc-list">
-            <div class="pc-item pc-pro">Clean separation — Nemotron does what it's built for (visual movement analysis), Claude does what it's built for (structured data reasoning)</div>
-            <div class="pc-item pc-pro">Gold standard angle comparison goes to Claude — a reasoning model comparing numbers is more reliable than a vision model doing the same</div>
-            <div class="pc-item pc-pro">All quantitative context (biomechanics, gold standard, weight history) lives in Claude's context together — coherent reasoning in one place</div>
-            <div class="pc-item pc-pro">Easier to debug — if visual observations are wrong, it's Nemotron; if coaching or angle reasoning is wrong, it's Claude</div>
-            <div class="pc-item pc-pro">Two-phase SSE delivery: user sees coaching text fast, annotated frame loads afterwards — better perceived performance</div>
+            <div class="pc-item pc-pro">Clean separation — Nemotron does vision, Claude does reasoning</div>
+            <div class="pc-item pc-pro">Gold standard angle comparison goes to Claude — more reliable numerical reasoning</div>
+            <div class="pc-item pc-pro">All quantitative context in one place for Claude — coherent reasoning</div>
+            <div class="pc-item pc-pro">Two-phase SSE — user sees coaching text fast, frame loads separately</div>
+            <div class="pc-item pc-pro">Easier to debug — clear responsibility boundary</div>
           </div>
         </div>
-        <div style="border-top:1px solid #1e2433;padding-top:10px;">
+        <div style="border-top:1px solid #1e2433;padding-top:8px;">
           <div class="pc-section-label pc-cons-label">Cons</div>
           <div class="pc-list">
-            <div class="pc-item pc-con">Nemotron without the JSON may produce less structured or less reliable output — Test A results are the critical unknown here</div>
-            <div class="pc-item pc-con">Claude receives significantly more context (Nemotron text + biomechanics JSON + gold standard + history + RAG) — larger prompt, higher cost, potential latency impact</div>
-            <div class="pc-item pc-con"><code>worst_rep_number</code> must be derived by Claude from biomechanics data — must be an explicit structured output field, not buried in prose, or OpenCV Step 2 cannot run</div>
-            <div class="pc-item pc-con">Two-phase SSE requires more frontend complexity — two completion events, placeholder state for the image</div>
-            <div class="pc-item pc-con">Unproven — Test A (video only) results needed before committing to this architecture</div>
+            <div class="pc-item pc-con">Nemotron without JSON may produce vague or unstructured output — Test A results critical</div>
+            <div class="pc-item pc-con">Larger Claude context — Nemotron text + biomechanics JSON + gold standard + history + RAG</div>
+            <div class="pc-item pc-con"><code>worst_rep_number</code> must be explicit structured field in Claude's output or OpenCV Step 2 fails</div>
+            <div class="pc-item pc-con">Two-phase SSE requires more frontend complexity</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pc-col">
+      <div class="pc-header"><span class="pc-option-badge pc-c">Option C · New</span><span class="pc-header-title">Biomechanics angles → Claude</span></div>
+      <div class="pc-body">
+        <div>
+          <div class="pc-section-label pc-pros-label">Pros</div>
+          <div class="pc-list">
+            <div class="pc-item pc-pro">No Nemotron — removes one API call, reduces latency, removes a failure point</div>
+            <div class="pc-item pc-pro">Pure quantitative reasoning — Claude compares user angles against gold standard distributions directly, which is exactly what LLM reasoning excels at</div>
+            <div class="pc-item pc-pro">Gold standard DB becomes richer over time — more reference videos = better angle distributions, improving analysis quality without retraining</div>
+            <div class="pc-item pc-pro">Cheaper per-analysis — one model API call instead of two</div>
+            <div class="pc-item pc-pro">Simpler pipeline — fewer integration points between squads</div>
+            <div class="pc-item pc-pro">OpenCV overlay video not required — saves processing time in Squad 3</div>
+          </div>
+        </div>
+        <div style="border-top:1px solid #1e2433;padding-top:8px;">
+          <div class="pc-section-label pc-cons-label">Cons</div>
+          <div class="pc-list">
+            <div class="pc-item pc-con">No visual analysis — Claude cannot detect form issues that are visible in the video but not captured in the angles (e.g. bar path, chest positioning, foot placement)</div>
+            <div class="pc-item pc-con">Entirely dependent on biomechanics script accuracy — if an angle is computed incorrectly, the whole coaching is wrong with no visual check</div>
+            <div class="pc-item pc-con">Gold standard DB needs sufficient volume (3–5 is minimum — more is better) to produce reliable angle distributions</div>
+            <div class="pc-item pc-con">Removes Nemotron from the stack — investment in API access and test plan wasted</div>
           </div>
         </div>
       </div>
@@ -406,19 +880,18 @@ h1 { font-size: 22px; font-weight: 800; color: #f8fafc; letter-spacing: -0.5px; 
 
 
 <!-- ══════════════════════════════
-     SECTION 3 — TESTING DISCUSSION
+     SECTION 3 — TESTING
 ══════════════════════════════ -->
 <div class="section">
   <div class="section-label">Section 3 — Testing discussion</div>
-  <div class="section-title">What the A/B/C test results need to answer</div>
-  <div class="section-desc">The Nemotron A/B/C tests (S2-W6-05) are the primary input for this decision. Each test was designed to isolate one input combination. The key comparisons are below.</div>
+  <div class="section-title">What the A/B/C tests need to answer — and what Option C needs separately</div>
 
   <table class="test-table">
     <thead>
       <tr>
         <th>Test</th>
-        <th>What was sent to Nemotron</th>
-        <th>What to look for in the output</th>
+        <th>Input to Nemotron</th>
+        <th>What to look for</th>
         <th>Decision relevance</th>
       </tr>
     </thead>
@@ -426,72 +899,59 @@ h1 { font-size: 22px; font-weight: 800; color: #f8fafc; letter-spacing: -0.5px; 
       <tr>
         <td><strong style="color:#60a5fa;">Test A</strong><br><span style="font-size:10px;color:#475569;">Video only</span></td>
         <td>Overlay video · no JSON · no gold standard</td>
-        <td>
-          · Does it return per-rep scores or only qualitative text?<br>
-          · Does it identify a specific worst rep?<br>
-          · Are form issues specific (e.g. "left knee valgus rep 3") or vague ("poor form")?<br>
-          · Is the output format consistent across different videos?
-        </td>
-        <td><span class="test-indicator ind-b">Option B</span> If Test A produces specific, reliable output → Option B is viable. If it's too vague without the JSON → Option B carries high risk.</td>
+        <td>Does it return per-rep scores or only qualitative text? · Does it identify worst_rep_number explicitly? · How specific are the form issue descriptions?</td>
+        <td><span class="ind ind-b">Option B</span> If Test A produces specific, structured per-rep output → Option B is viable. If output is vague without JSON → Option B carries high risk.</td>
       </tr>
       <tr>
         <td><strong style="color:#60a5fa;">Test B</strong><br><span style="font-size:10px;color:#475569;">JSON only</span></td>
-        <td>Biomechanics JSON only · no video</td>
-        <td>
-          · How does JSON-only compare to Test A in specificity?<br>
-          · Does Nemotron add anything over what Claude could do with the JSON directly?
-        </td>
-        <td><span class="test-indicator ind-ab">Both</span> Baseline for whether Nemotron adds value over just passing JSON to Claude directly.</td>
+        <td>Biomechanics JSON · no video</td>
+        <td>Does JSON-only Nemotron output add value over what Claude could derive directly from the JSON alone?</td>
+        <td><span class="ind ind-ab">All options</span> If Test B ≈ Option C quality → Option C may be sufficient without any video model.</td>
       </tr>
       <tr>
         <td><strong style="color:#60a5fa;">Test C</strong><br><span style="font-size:10px;color:#475569;">Both inputs</span></td>
         <td>Overlay video + Biomechanics JSON</td>
-        <td>
-          · Is the output meaningfully better than Test A or Test B alone?<br>
-          · Does Nemotron use both inputs or effectively just one?<br>
-          · Is the JSON structure clean and consistent?<br>
-          · Does it include <code>worst_rep_number</code> explicitly?
-        </td>
-        <td><span class="test-indicator ind-a">Option A</span> If Test C is significantly better than Test A → Option A is validated. If Test C ≈ Test A → video alone is sufficient, Option B is worth pursuing.</td>
+        <td>Is output meaningfully better than A or B alone? · Does Nemotron use both inputs or effectively just one? · JSON structure clean and consistent?</td>
+        <td><span class="ind ind-a">Option A</span> If Test C >> Test A → Option A validated. If Test C ≈ Test A → video adds little, consider Option B or C.</td>
+      </tr>
+      <tr>
+        <td><strong style="color:#c4b5fd;">Option C test</strong><br><span style="font-size:10px;color:#475569;">No Nemotron</span></td>
+        <td>N/A — send user angles + gold standard angles directly to Claude</td>
+        <td>Can Claude accurately identify the worst rep and the correct form issues using angles alone? · Is the coaching specific enough without visual context? · Compare quality to Test A output side by side.</td>
+        <td><span class="ind ind-c">Option C</span> Compare Claude's angle-only output against Nemotron's outputs. If quality is comparable and latency is better → Option C may be the strongest choice.</td>
       </tr>
     </tbody>
   </table>
 
   <div style="margin-top:20px;">
-    <div class="section-label" style="margin-bottom:14px;">Key questions to answer from test results</div>
+    <div class="section-label" style="margin-bottom:14px;">Key questions for the team</div>
 
     <div class="key-q">
-      <div class="key-q-label">Question 1 — The critical decision gate</div>
-      <div class="key-q-text">Does Nemotron in video-only mode (Test A) return a reliable <code>worst_rep_number</code> and specific per-rep observations — or only qualitative text?</div>
-      <div class="key-q-stakes">If yes → Option B is viable. If no → Option B loses its clean architecture advantage because Claude still needs to derive worst rep from biomechanics data, making the pipeline more complex with no guaranteed quality gain.</div>
+      <div class="key-q-label">Question 1 — Does video add value over angles alone?</div>
+      <div class="key-q-text">Compare Test A (Nemotron video-only) output against Option C (Claude angles-only) output on the same video. Does seeing the video allow identification of form issues that the biomechanics angles miss entirely?</div>
+      <div class="key-q-stakes">If yes → keep Nemotron (Option A or B). If no → Option C is the simplest and cheapest architecture.</div>
     </div>
 
     <div class="key-q">
-      <div class="key-q-label">Question 2 — The quality delta</div>
-      <div class="key-q-text">Is Test C output quality meaningfully better than Test A? Or is the video doing most of the work regardless of whether the JSON is also present?</div>
-      <div class="key-q-stakes">If Test C ≈ Test A in quality → send video only (Option B). If Test C >> Test A → the JSON is grounding the analysis in a meaningful way (Option A). "Meaningfully better" = more specific issue identification, fewer hallucinations, more accurate per-rep scoring.</div>
+      <div class="key-q-label">Question 2 — How many gold standard videos does Option C need to be reliable?</div>
+      <div class="key-q-text">Option C's quality improves as the gold standard DB grows. 3–5 videos gives angle ranges. 10–20 gives statistical distributions. At what volume does the angle comparison become credible enough for coaching?</div>
+      <div class="key-q-stakes">This determines the data prep investment required before Option C is viable in production.</div>
     </div>
 
     <div class="key-q">
-      <div class="key-q-label">Question 3 — Context window feasibility for Option B</div>
-      <div class="key-q-text">How long is Nemotron's video-only output in Test A (approximate token count)? Added to biomechanics JSON + gold standard + weight history + RAG docs — does Claude's context stay manageable?</div>
-      <div class="key-q-stakes">If Nemotron outputs several paragraphs per rep (e.g. 8 reps × 100 tokens = 800+ tokens) plus all other context, total Claude input could approach 8,000–12,000 tokens. Measure this before committing to Option B.</div>
-    </div>
-
-    <div class="key-q">
-      <div class="key-q-label">Question 4 — The two-phase SSE trade-off</div>
-      <div class="key-q-text">In Option B, OpenCV Step 2 runs after Claude's output and the annotated frame arrives separately. Does the team want the extra frontend complexity of two-phase delivery, or is a single delivery simpler to ship for demo?</div>
-      <div class="key-q-stakes">Two-phase is better UX — user sees coaching text faster. But it requires: a second SSE event (<code>frame_ready</code>), a placeholder image state on the Results screen, and keeping the SSE stream open past the coaching completion event. Worth doing but needs a clear frontend task.</div>
+      <div class="key-q-label">Question 3 — Does Nemotron in Test A produce worst_rep_number explicitly?</div>
+      <div class="key-q-text">OpenCV Step 2 needs a rep index to seek to. Options A and B depend on this being a structured output field. If Nemotron doesn't produce it reliably, Claude must derive it — which works in Options B and C but requires explicit prompt engineering.</div>
+      <div class="key-q-stakes">If Nemotron does produce it reliably → Option A gains an advantage. If not → Options B and C handle this more gracefully via Claude or biomechanics data.</div>
     </div>
   </div>
 
   <div class="rec-box">
-    <div class="rec-box-label">Team recommendation — pending test results</div>
+    <div class="rec-box-label">Recommendation — pending test results</div>
     <div class="rec-pending">
-      <strong>Do not commit to either option before running the A/B/C tests.</strong> The architecture decision is straightforward once Test A results are in hand — that single test is the deciding factor.<br><br>
-      <strong>If Test A (video only) produces specific, structured output with per-rep scoring:</strong> Go with Option B. Cleaner architecture, Claude does what it's best at, two-phase delivery improves UX.<br><br>
-      <strong>If Test A produces vague or inconsistent output without the JSON:</strong> Stay with Option A. The JSON is doing meaningful grounding work for Nemotron. Shipping a reliable Option A is better than betting on an unproven Option B.<br><br>
-      <strong>Regardless of option chosen:</strong> The two-phase SSE delivery (coaching text first, annotated frame second) is worth implementing — it improves perceived speed and works with either architecture.
+      <strong>Run all four comparisons before committing.</strong> The Nemotron A/B/C tests are already planned. Add a fourth test: send user biomechanics angles + gold standard angles directly to Claude with no Nemotron call. Compare the four outputs side by side.<br><br>
+      <strong>If Option C coaching quality ≈ Option A or B:</strong> Choose Option C — no Nemotron, lower cost, simpler pipeline, faster latency, and the gold standard DB improves over time without code changes.<br><br>
+      <strong>If Nemotron (A or B) clearly outperforms Option C:</strong> The video is adding meaningful form insight that angles alone miss — keep Nemotron and choose between A and B based on Test A vs Test C quality delta.<br><br>
+      <strong>Regardless of option:</strong> Two-phase SSE delivery (coaching text first, frame second) improves UX and works with any of the three architectures.
     </div>
   </div>
 </div>
@@ -505,27 +965,16 @@ h1 { font-size: 22px; font-weight: 800; color: #f8fafc; letter-spacing: -0.5px; 
   <div class="section-title">Bring these to the discussion — answers shape the final decision</div>
 
   <div class="open-q-list">
-    <div class="open-q">
-      <div class="open-q-num">1</div>
-      <div>In Option B, Claude must output <code>worst_rep_number</code> as an explicit structured field — not described in prose — so OpenCV Step 2 can run. Is the team comfortable engineering Claude's prompt to guarantee this field is always present and correctly formatted? What's the fallback if it's missing?</div>
-    </div>
-    <div class="open-q">
-      <div class="open-q-num">2</div>
-      <div>In Option A, gold standard angles go into Nemotron. But angle comparison (88° vs 80–95° ideal) is a numerical reasoning task. Do we trust Nemotron to do this reliably, or should gold standard always live with Claude regardless of which option we choose?</div>
-    </div>
-    <div class="open-q">
-      <div class="open-q-num">3</div>
-      <div>Two-phase SSE delivery is independent of the Option A/B decision. Should the team implement it regardless — i.e. coaching text always fires first as <code>coaching_complete</code>, then image fires as <code>frame_ready</code>? Or keep a single <code>analysis_complete</code> event for simplicity in the demo?</div>
-    </div>
-    <div class="open-q">
-      <div class="open-q-num">4</div>
-      <div>If Option B is chosen and Nemotron's video-only output is verbose (multi-paragraph per rep), how do we handle the Claude context window? Do we summarise Nemotron's output before passing to Claude, or pass the full text? Who writes the summarisation logic?</div>
-    </div>
+    <div class="open-q"><div class="open-q-num">1</div><div>For Option C — how many gold standard videos are needed for the angle distributions to be statistically meaningful? 3 videos gives ranges; 10+ gives distributions. What's the minimum for credible coaching output?</div></div>
+    <div class="open-q"><div class="open-q-num">2</div><div>For Options B and C — Claude must output <code>worst_rep_number</code> as an explicit structured field. Is the team comfortable engineering Claude's prompt to guarantee this is always present and correctly formatted? What's the fallback if it's missing?</div></div>
+    <div class="open-q"><div class="open-q-num">3</div><div>For Option C — if we skip OpenCV overlay video (not needed since no Nemotron), Squad 3 saves processing time. But does the user still see a visual of their form? The annotated still frame from OpenCV Part 2 still works — it doesn't require the overlay video. Confirm this is acceptable.</div></div>
+    <div class="open-q"><div class="open-q-num">4</div><div>Two-phase SSE delivery is independent of the option chosen. Should the team implement it regardless — coaching text fires first as <code>coaching_complete</code>, then image fires as <code>frame_ready</code>? Or keep a single <code>analysis_complete</code> for demo simplicity?</div></div>
+    <div class="open-q"><div class="open-q-num">5</div><div>For Option A — gold standard angles are sent into Nemotron alongside the JSON. But angle comparison is a numerical reasoning task. Should gold standard always go to Claude regardless of which option is chosen?</div></div>
   </div>
 </div>
 
 <p style="font-size:10px;color:#1e293b;text-align:right;margin-top:24px;">
-  Kinetic · Pipeline Architecture Discussion · Option A vs B · May 10, 2026 · Pending Nemotron A/B/C test results
+  Kinetic · Pipeline Architecture Discussion · Options A, B &amp; C · May 2026 · Pending Nemotron A/B/C test results
 </p>
 
 </body>
