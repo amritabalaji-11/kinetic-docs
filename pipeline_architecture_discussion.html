@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kinetic — Pipeline Architecture Discussion · Option A vs Option B</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0a0d14; color: #e2e8f0; padding: 40px; max-width: 1200px; margin: 0 auto; }
+
+h1 { font-size: 22px; font-weight: 800; color: #f8fafc; letter-spacing: -0.5px; }
+.subtitle { font-size: 13px; color: #64748b; margin-top: 4px; margin-bottom: 32px; }
+
+/* Section */
+.section { margin-bottom: 52px; }
+.section-label { font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: #475569; margin-bottom: 14px; display: flex; align-items: center; gap: 12px; }
+.section-label::after { content: ''; flex: 1; height: 1px; background: #1e2433; }
+.section-title { font-size: 17px; font-weight: 800; color: #f1f5f9; margin-bottom: 6px; }
+.section-desc { font-size: 12px; color: #64748b; margin-bottom: 20px; line-height: 1.6; }
+
+/* Two-column pipeline comparison */
+.pipeline-compare { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+
+.option-col { display: flex; flex-direction: column; gap: 0; }
+.option-header {
+  padding: 14px 18px; border-radius: 10px 10px 0 0;
+  border: 1px solid; border-bottom: none;
+}
+.opt-a-header { background: #0d1a2e; border-color: #3b82f6; }
+.opt-b-header { background: #0a1f12; border-color: #22c55e; }
+.option-label { font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 4px; }
+.opt-a-header .option-label { color: #3b82f6; }
+.opt-b-header .option-label { color: #22c55e; }
+.option-title { font-size: 13px; font-weight: 800; color: #f1f5f9; line-height: 1.4; }
+.option-desc { font-size: 11px; color: #64748b; margin-top: 4px; line-height: 1.5; }
+
+/* Pipeline steps */
+.pipeline-step {
+  border-left: 1px solid; border-right: 1px solid;
+  padding: 0;
+}
+.opt-a-step { border-color: #1e3a5f; }
+.opt-b-step { border-color: #14532d; }
+.pipeline-step:last-child { border-radius: 0 0 10px 10px; border-bottom: 1px solid; }
+.opt-a-step:last-child { border-color: #1e3a5f; }
+.opt-b-step:last-child { border-color: #14532d; }
+
+.step-inner { padding: 12px 16px; border-bottom: 1px solid #111827; }
+.step-inner:last-child { border-bottom: none; }
+
+.step-num-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+.step-num { font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; padding: 2px 7px; border-radius: 4px; }
+.opt-a .step-num { background: #0d1a2e; color: #60a5fa; border: 1px solid #1e3a5f; }
+.opt-b .step-num { background: #0a1f12; color: #4ade80; border: 1px solid #14532d; }
+.step-name { font-size: 12px; font-weight: 700; color: #f1f5f9; }
+.step-squad { font-size: 9px; color: #475569; margin-left: auto; }
+
+.io-rows { display: flex; flex-direction: column; gap: 4px; }
+.io-row { display: flex; gap: 8px; align-items: baseline; font-size: 10.5px; line-height: 1.5; }
+.io-label { font-size: 8px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.4px; flex-shrink: 0; width: 36px; }
+.io-in  { color: #0e7490; }
+.io-out { color: #059669; }
+.io-val { color: #94a3b8; }
+.io-val code { background: #0d1117; padding: 1px 4px; border-radius: 3px; font-size: 9.5px; color: #c4b5fd; }
+.io-val.highlight-a { color: #93c5fd; font-weight: 600; }
+.io-val.highlight-b { color: #86efac; font-weight: 600; }
+.io-val.highlight-diff { color: #fbbf24; font-weight: 600; }
+
+/* Connector arrow */
+.step-connector { display: flex; align-items: center; justify-content: center; height: 20px; color: #1e2433; font-size: 14px; border-left: 1px solid; border-right: 1px solid; }
+.opt-a .step-connector { border-color: #1e3a5f; }
+.opt-b .step-connector { border-color: #14532d; }
+
+/* Difference callout within a step */
+.step-diff {
+  margin-top: 6px; padding: 6px 9px; border-radius: 5px;
+  font-size: 10.5px; line-height: 1.5;
+}
+.diff-a { background: rgba(59,130,246,0.07); border: 1px solid rgba(59,130,246,0.2); color: #93c5fd; }
+.diff-b { background: rgba(34,197,94,0.07); border: 1px solid rgba(34,197,94,0.2); color: #86efac; }
+
+/* Two-phase badge */
+.two-phase-badge { display: inline-block; font-size: 8px; font-weight: 700; padding: 1px 6px; border-radius: 4px; background: #1a0d2e; color: #c4b5fd; border: 1px solid #5b21b6; margin-left: 4px; }
+
+/* Pros/cons table */
+.pc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.pc-col { background: #0d1117; border: 1px solid #1e2433; border-radius: 10px; overflow: hidden; }
+.pc-header { padding: 12px 16px; border-bottom: 1px solid #1e2433; display: flex; align-items: center; gap: 10px; }
+.pc-option-badge { font-size: 10px; font-weight: 800; padding: 2px 9px; border-radius: 4px; }
+.pc-a { background: #0d1a2e; color: #60a5fa; border: 1px solid #1e3a5f; }
+.pc-b { background: #0a1f12; color: #4ade80; border: 1px solid #14532d; }
+.pc-header-title { font-size: 12px; font-weight: 700; color: #f1f5f9; }
+.pc-body { padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; }
+.pc-section-label { font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 6px; }
+.pc-pros-label { color: #22c55e; }
+.pc-cons-label { color: #ef4444; }
+.pc-list { display: flex; flex-direction: column; gap: 5px; }
+.pc-item { display: flex; gap: 8px; align-items: baseline; font-size: 11px; color: #94a3b8; line-height: 1.5; }
+.pc-pro::before { content: '✓'; color: #22c55e; flex-shrink: 0; font-weight: 700; }
+.pc-con::before { content: '✗'; color: #ef4444; flex-shrink: 0; font-weight: 700; }
+
+/* Key question */
+.key-q { background: #1a1000; border: 1px solid #92400e; border-radius: 8px; padding: 12px 16px; margin-bottom: 10px; }
+.key-q-label { font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.6px; color: #f59e0b; margin-bottom: 5px; }
+.key-q-text { font-size: 12px; color: #fde68a; line-height: 1.6; }
+.key-q-stakes { font-size: 11px; color: #92400e; margin-top: 5px; line-height: 1.5; }
+
+/* Testing framework */
+.test-table { width: 100%; border-collapse: collapse; }
+.test-table th { padding: 9px 14px; text-align: left; font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.6px; color: #475569; background: #0d1117; border-bottom: 2px solid #1e2433; }
+.test-table td { padding: 11px 14px; border-bottom: 1px solid #0d1117; font-size: 11px; color: #94a3b8; vertical-align: top; line-height: 1.6; }
+.test-table tr:nth-child(even) td { background: #080c12; }
+.test-indicator { display: inline-block; font-size: 9px; font-weight: 700; padding: 1px 7px; border-radius: 10px; }
+.ind-a  { background: #0d1a2e; color: #60a5fa; border: 1px solid #1e3a5f; }
+.ind-b  { background: #0a1f12; color: #4ade80; border: 1px solid #14532d; }
+.ind-ab { background: #1a1205; color: #fb923c; border: 1px solid #431407; }
+
+/* Recommendation box */
+.rec-box { background: #080c12; border: 1px solid #1e2433; border-radius: 10px; padding: 18px 20px; margin-top: 20px; }
+.rec-box-label { font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px; color: #475569; margin-bottom: 10px; }
+.rec-pending { font-size: 12px; color: #94a3b8; line-height: 1.7; }
+.rec-pending strong { color: #f1f5f9; }
+
+/* Open Qs */
+.open-q-list { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
+.open-q { display: flex; gap: 12px; align-items: baseline; padding: 10px 14px; background: #080c12; border: 1px solid #1e2433; border-radius: 7px; font-size: 11px; color: #94a3b8; line-height: 1.5; }
+.open-q-num { font-size: 10px; font-weight: 800; color: #475569; flex-shrink: 0; width: 20px; }
+</style>
+</head>
+<body>
+
+<h1>Kinetic — Pipeline Architecture Discussion</h1>
+<p class="subtitle">Option A vs Option B · Nemotron → Claude flow · For team discussion · May 10, 2026</p>
+
+
+<!-- ══════════════════════════════
+     SECTION 1 — PIPELINE COMPARISON
+══════════════════════════════ -->
+<div class="section">
+  <div class="section-label">Section 1 — Pipeline comparison</div>
+  <div class="section-title">Option A vs Option B — inputs, outputs, and responsibilities at each step</div>
+  <div class="section-desc">Yellow = the field or decision that differs between the two options. Everything before Step 7 (Nemotron) is identical in both options.</div>
+
+  <div class="pipeline-compare">
+
+    <!-- OPTION A -->
+    <div class="option-col opt-a">
+      <div class="option-header opt-a-header">
+        <div class="option-label">Option A — Current plan</div>
+        <div class="option-title">Biomechanics JSON + Overlay Video → Nemotron → structured JSON → Claude</div>
+        <div class="option-desc">Nemotron does the primary analysis using both inputs. Claude synthesises coaching from Nemotron's output.</div>
+      </div>
+
+      <!-- Steps 1-6 identical -->
+      <div class="pipeline-step opt-a-step">
+        <div class="step-inner">
+          <div class="step-num-row">
+            <span class="step-num">Steps 1–6</span>
+            <span class="step-name">Upload → GCS → MediaPipe → Quality Gate → OpenCV Overlay → Biomechanics</span>
+          </div>
+          <div class="io-rows">
+            <div class="io-row"><div class="io-label io-out">OUT</div><div class="io-val"><code>overlay_video_url</code> · <code>biomechanics_json</code> (all angles + per-rep timestamps) · <code>gold_standard_biomechanics</code> from DB</div></div>
+          </div>
+          <div class="step-diff diff-a" style="font-size:10px;color:#64748b;">Identical in both options — no difference up to this point</div>
+        </div>
+      </div>
+
+      <div class="step-connector opt-a">↓</div>
+
+      <!-- Step 7 Nemotron -->
+      <div class="pipeline-step opt-a-step">
+        <div class="step-inner">
+          <div class="step-num-row">
+            <span class="step-num">Step 7</span>
+            <span class="step-name">Nemotron 3 Nano Omni</span>
+            <span class="step-squad">Squad 2</span>
+          </div>
+          <div class="io-rows">
+            <div class="io-row"><div class="io-label io-in">IN</div><div class="io-val highlight-a">Overlay video + Biomechanics JSON + Gold standard angle references</div></div>
+            <div class="io-row"><div class="io-label io-out">OUT</div><div class="io-val highlight-a">Structured JSON — per-rep scores · <code>worst_rep_number</code> · issue tags · chain-of-thought paragraphs</div></div>
+          </div>
+          <div class="step-diff diff-a"><strong>Nemotron's role in A:</strong> Full analysis using both visual input (video) and quantitative input (JSON). Responsible for scoring reps, identifying issues, and determining the worst rep. Also receives gold standard angles for comparison.</div>
+        </div>
+      </div>
+
+      <div class="step-connector opt-a">↓</div>
+
+      <!-- Step 8 OpenCV -->
+      <div class="pipeline-step opt-a-step">
+        <div class="step-inner">
+          <div class="step-num-row">
+            <span class="step-num">Step 8</span>
+            <span class="step-name">OpenCV — worst-rep frame extraction</span>
+            <span class="step-squad">Squad 3</span>
+          </div>
+          <div class="io-rows">
+            <div class="io-row"><div class="io-label io-in">IN</div><div class="io-val"><code>worst_rep_number</code> from Nemotron · <code>bottom_timestamp_ms</code> from biomechanics DB</div></div>
+            <div class="io-row"><div class="io-label io-out">OUT</div><div class="io-val"><code>annotated_frame_url</code> — saved to GCS</div></div>
+          </div>
+          <div class="step-diff diff-a"><code>worst_rep_number</code> is explicitly in Nemotron's JSON output — clean handoff.</div>
+        </div>
+      </div>
+
+      <div class="step-connector opt-a">↓</div>
+
+      <!-- Step 9 Claude -->
+      <div class="pipeline-step opt-a-step">
+        <div class="step-inner">
+          <div class="step-num-row">
+            <span class="step-num">Step 9</span>
+            <span class="step-name">Claude Sonnet — coaching + progression</span>
+            <span class="step-squad">Squad 2</span>
+          </div>
+          <div class="io-rows">
+            <div class="io-row"><div class="io-label io-in">IN</div><div class="io-val highlight-a">Nemotron JSON output · user weight history (DB) · RAG coaching MD files</div></div>
+            <div class="io-row"><div class="io-label io-out">OUT</div><div class="io-val">Coaching paragraphs · progression recommendation (ready / hold / drop)</div></div>
+          </div>
+          <div class="step-diff diff-a"><strong>Claude's role in A:</strong> Receives Nemotron's already-processed analysis as clean JSON. Focuses on coaching language and progression reasoning. Smaller context — Nemotron has done the heavy analysis lifting.</div>
+        </div>
+      </div>
+
+      <div class="step-connector opt-a">↓</div>
+
+      <!-- Frontend -->
+      <div class="pipeline-step opt-a-step">
+        <div class="step-inner" style="border-bottom:none;">
+          <div class="step-num-row">
+            <span class="step-num">Frontend</span>
+            <span class="step-name">Results screen delivery</span>
+            <span class="step-squad">Squad 1</span>
+          </div>
+          <div class="io-rows">
+            <div class="io-row"><div class="io-label" style="color:#a78bfa;width:36px;">SSE</div><div class="io-val">Single <code>analysis_complete</code> event — coaching + annotated frame arrive together</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- OPTION B -->
+    <div class="option-col opt-b">
+      <div class="option-header opt-b-header">
+        <div class="option-label">Option B — Proposed</div>
+        <div class="option-title">Overlay Video only → Nemotron → text output → Claude does all reasoning</div>
+        <div class="option-desc">Nemotron does visual analysis only. Claude receives Nemotron's observations + all structured data and does the reasoning.</div>
+      </div>
+
+      <!-- Steps 1-6 identical -->
+      <div class="pipeline-step opt-b-step">
+        <div class="step-inner">
+          <div class="step-num-row">
+            <span class="step-num">Steps 1–6</span>
+            <span class="step-name">Upload → GCS → MediaPipe → Quality Gate → OpenCV Overlay → Biomechanics</span>
+          </div>
+          <div class="io-rows">
+            <div class="io-row"><div class="io-label io-out">OUT</div><div class="io-val"><code>overlay_video_url</code> · <code>biomechanics_json</code> (all angles + per-rep timestamps) · <code>gold_standard_biomechanics</code> from DB</div></div>
+          </div>
+          <div class="step-diff diff-b" style="font-size:10px;color:#64748b;">Identical in both options — no difference up to this point</div>
+        </div>
+      </div>
+
+      <div class="step-connector opt-b">↓</div>
+
+      <!-- Step 7 Nemotron -->
+      <div class="pipeline-step opt-b-step">
+        <div class="step-inner">
+          <div class="step-num-row">
+            <span class="step-num">Step 7</span>
+            <span class="step-name">Nemotron 3 Nano Omni</span>
+            <span class="step-squad">Squad 2</span>
+          </div>
+          <div class="io-rows">
+            <div class="io-row"><div class="io-label io-in">IN</div><div class="io-val highlight-diff">Overlay video only — no JSON, no gold standard</div></div>
+            <div class="io-row"><div class="io-label io-out">OUT</div><div class="io-val highlight-diff">Text observations + basic JSON — movement quality, identified form issues, per-rep qualitative notes. Format TBC from Test A results.</div></div>
+          </div>
+          <div class="step-diff diff-b"><strong>Nemotron's role in B:</strong> Visual analysis only — what does it see in the movement? Qualitative observations about form, movement patterns, notable deviations. Does NOT do angle comparison or worst-rep scoring — that moves to Claude.</div>
+        </div>
+      </div>
+
+      <div class="step-connector opt-b">↓</div>
+
+      <!-- Step 8 Claude -->
+      <div class="pipeline-step opt-b-step">
+        <div class="step-inner">
+          <div class="step-num-row">
+            <span class="step-num">Step 8</span>
+            <span class="step-name">Claude Sonnet — reasoning + coaching + progression</span>
+            <span class="step-squad">Squad 2</span>
+          </div>
+          <div class="io-rows">
+            <div class="io-row"><div class="io-label io-in">IN</div><div class="io-val highlight-b">Nemotron text output · Biomechanics JSON · Gold standard angles (DB) · User weight history (DB) · RAG coaching MD files</div></div>
+            <div class="io-row"><div class="io-label io-out">OUT</div><div class="io-val highlight-b">Coaching paragraphs · progression recommendation · <code>worst_rep_number</code> (derived from biomechanics data)</div></div>
+          </div>
+          <div class="step-diff diff-b"><strong>Claude's role in B:</strong> Does all quantitative reasoning — compares user angles to gold standard, identifies worst rep, integrates weight history, produces coaching. Larger context but uses Claude's strengths: structured data reasoning.</div>
+        </div>
+      </div>
+
+      <div class="step-connector opt-b">↓</div>
+
+      <!-- Step 9 OpenCV Phase 1 -->
+      <div class="pipeline-step opt-b-step">
+        <div class="step-inner">
+          <div class="step-num-row">
+            <span class="step-num">Step 9a</span>
+            <span class="step-name">Frontend — Phase 1 delivery <span class="two-phase-badge">Two-phase SSE</span></span>
+            <span class="step-squad">Squad 1</span>
+          </div>
+          <div class="io-rows">
+            <div class="io-row"><div class="io-label" style="color:#a78bfa;width:36px;">SSE</div><div class="io-val highlight-diff"><code>coaching_complete</code> fires → Results screen renders text coaching immediately. Image shows placeholder.</div></div>
+          </div>
+          <div class="step-diff diff-b">User sees coaching output fast. Annotated frame loads separately in the background.</div>
+        </div>
+      </div>
+
+      <div class="step-connector opt-b">↓</div>
+
+      <!-- Step 9b OpenCV -->
+      <div class="pipeline-step opt-b-step">
+        <div class="step-inner" style="border-bottom:none;">
+          <div class="step-num-row">
+            <span class="step-num">Step 9b</span>
+            <span class="step-name">OpenCV — worst-rep frame extraction (async)</span>
+            <span class="step-squad">Squad 3</span>
+          </div>
+          <div class="io-rows">
+            <div class="io-row"><div class="io-label io-in">IN</div><div class="io-val"><code>worst_rep_number</code> from Claude · <code>bottom_timestamp_ms</code> from biomechanics DB</div></div>
+            <div class="io-row"><div class="io-label io-out">OUT</div><div class="io-val"><code>annotated_frame_url</code> saved to GCS</div></div>
+            <div class="io-row"><div class="io-label" style="color:#a78bfa;width:36px;">SSE</div><div class="io-val"><code>frame_ready</code> fires → Results screen updates with annotated image</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════
+     SECTION 2 — PROS AND CONS
+══════════════════════════════ -->
+<div class="section">
+  <div class="section-label">Section 2 — Pros and cons</div>
+  <div class="section-title">What each option does well and where the risks sit</div>
+
+  <div class="pc-grid">
+
+    <div class="pc-col">
+      <div class="pc-header">
+        <span class="pc-option-badge pc-a">Option A</span>
+        <span class="pc-header-title">Biomechanics JSON + Video → Nemotron</span>
+      </div>
+      <div class="pc-body">
+        <div>
+          <div class="pc-section-label pc-pros-label">Pros</div>
+          <div class="pc-list">
+            <div class="pc-item pc-pro">Both inputs ground Nemotron's analysis — JSON confirms what the video shows, reducing hallucinated form issues</div>
+            <div class="pc-item pc-pro">Nemotron outputs clean structured JSON → straightforward handoff to Claude, simpler prompt engineering</div>
+            <div class="pc-item pc-pro"><code>worst_rep_number</code> is explicit in Nemotron's output — no ambiguity for OpenCV Step 2</div>
+            <div class="pc-item pc-pro">Test C (both inputs) is the current plan — test scripts already written and ready to run</div>
+            <div class="pc-item pc-pro">Smaller Claude context — Nemotron has already done the analysis, Claude just synthesises coaching</div>
+            <div class="pc-item pc-pro">Single <code>analysis_complete</code> SSE event — simpler frontend implementation</div>
+          </div>
+        </div>
+        <div style="border-top:1px solid #1e2433;padding-top:10px;">
+          <div class="pc-section-label pc-cons-label">Cons</div>
+          <div class="pc-list">
+            <div class="pc-item pc-con">Asking Nemotron to do both visual analysis AND numerical angle comparison — mixing its strengths with reasoning tasks it may not excel at</div>
+            <div class="pc-item pc-con">Gold standard angle comparison ("88° vs ideal 80–95°") is a pure reasoning task — arguably better suited to Claude than a video model</div>
+            <div class="pc-item pc-con">Risk: Nemotron may over-rely on the JSON and under-use its visual capabilities, defeating the purpose of sending the video</div>
+            <div class="pc-item pc-con">If coaching quality is poor, harder to debug — was it the visual analysis or the angle reasoning that failed?</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pc-col">
+      <div class="pc-header">
+        <span class="pc-option-badge pc-b">Option B</span>
+        <span class="pc-header-title">Video only → Nemotron · All reasoning → Claude</span>
+      </div>
+      <div class="pc-body">
+        <div>
+          <div class="pc-section-label pc-pros-label">Pros</div>
+          <div class="pc-list">
+            <div class="pc-item pc-pro">Clean separation — Nemotron does what it's built for (visual movement analysis), Claude does what it's built for (structured data reasoning)</div>
+            <div class="pc-item pc-pro">Gold standard angle comparison goes to Claude — a reasoning model comparing numbers is more reliable than a vision model doing the same</div>
+            <div class="pc-item pc-pro">All quantitative context (biomechanics, gold standard, weight history) lives in Claude's context together — coherent reasoning in one place</div>
+            <div class="pc-item pc-pro">Easier to debug — if visual observations are wrong, it's Nemotron; if coaching or angle reasoning is wrong, it's Claude</div>
+            <div class="pc-item pc-pro">Two-phase SSE delivery: user sees coaching text fast, annotated frame loads afterwards — better perceived performance</div>
+          </div>
+        </div>
+        <div style="border-top:1px solid #1e2433;padding-top:10px;">
+          <div class="pc-section-label pc-cons-label">Cons</div>
+          <div class="pc-list">
+            <div class="pc-item pc-con">Nemotron without the JSON may produce less structured or less reliable output — Test A results are the critical unknown here</div>
+            <div class="pc-item pc-con">Claude receives significantly more context (Nemotron text + biomechanics JSON + gold standard + history + RAG) — larger prompt, higher cost, potential latency impact</div>
+            <div class="pc-item pc-con"><code>worst_rep_number</code> must be derived by Claude from biomechanics data — must be an explicit structured output field, not buried in prose, or OpenCV Step 2 cannot run</div>
+            <div class="pc-item pc-con">Two-phase SSE requires more frontend complexity — two completion events, placeholder state for the image</div>
+            <div class="pc-item pc-con">Unproven — Test A (video only) results needed before committing to this architecture</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════
+     SECTION 3 — TESTING DISCUSSION
+══════════════════════════════ -->
+<div class="section">
+  <div class="section-label">Section 3 — Testing discussion</div>
+  <div class="section-title">What the A/B/C test results need to answer</div>
+  <div class="section-desc">The Nemotron A/B/C tests (S2-W6-05) are the primary input for this decision. Each test was designed to isolate one input combination. The key comparisons are below.</div>
+
+  <table class="test-table">
+    <thead>
+      <tr>
+        <th>Test</th>
+        <th>What was sent to Nemotron</th>
+        <th>What to look for in the output</th>
+        <th>Decision relevance</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong style="color:#60a5fa;">Test A</strong><br><span style="font-size:10px;color:#475569;">Video only</span></td>
+        <td>Overlay video · no JSON · no gold standard</td>
+        <td>
+          · Does it return per-rep scores or only qualitative text?<br>
+          · Does it identify a specific worst rep?<br>
+          · Are form issues specific (e.g. "left knee valgus rep 3") or vague ("poor form")?<br>
+          · Is the output format consistent across different videos?
+        </td>
+        <td><span class="test-indicator ind-b">Option B</span> If Test A produces specific, reliable output → Option B is viable. If it's too vague without the JSON → Option B carries high risk.</td>
+      </tr>
+      <tr>
+        <td><strong style="color:#60a5fa;">Test B</strong><br><span style="font-size:10px;color:#475569;">JSON only</span></td>
+        <td>Biomechanics JSON only · no video</td>
+        <td>
+          · How does JSON-only compare to Test A in specificity?<br>
+          · Does Nemotron add anything over what Claude could do with the JSON directly?
+        </td>
+        <td><span class="test-indicator ind-ab">Both</span> Baseline for whether Nemotron adds value over just passing JSON to Claude directly.</td>
+      </tr>
+      <tr>
+        <td><strong style="color:#60a5fa;">Test C</strong><br><span style="font-size:10px;color:#475569;">Both inputs</span></td>
+        <td>Overlay video + Biomechanics JSON</td>
+        <td>
+          · Is the output meaningfully better than Test A or Test B alone?<br>
+          · Does Nemotron use both inputs or effectively just one?<br>
+          · Is the JSON structure clean and consistent?<br>
+          · Does it include <code>worst_rep_number</code> explicitly?
+        </td>
+        <td><span class="test-indicator ind-a">Option A</span> If Test C is significantly better than Test A → Option A is validated. If Test C ≈ Test A → video alone is sufficient, Option B is worth pursuing.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div style="margin-top:20px;">
+    <div class="section-label" style="margin-bottom:14px;">Key questions to answer from test results</div>
+
+    <div class="key-q">
+      <div class="key-q-label">Question 1 — The critical decision gate</div>
+      <div class="key-q-text">Does Nemotron in video-only mode (Test A) return a reliable <code>worst_rep_number</code> and specific per-rep observations — or only qualitative text?</div>
+      <div class="key-q-stakes">If yes → Option B is viable. If no → Option B loses its clean architecture advantage because Claude still needs to derive worst rep from biomechanics data, making the pipeline more complex with no guaranteed quality gain.</div>
+    </div>
+
+    <div class="key-q">
+      <div class="key-q-label">Question 2 — The quality delta</div>
+      <div class="key-q-text">Is Test C output quality meaningfully better than Test A? Or is the video doing most of the work regardless of whether the JSON is also present?</div>
+      <div class="key-q-stakes">If Test C ≈ Test A in quality → send video only (Option B). If Test C >> Test A → the JSON is grounding the analysis in a meaningful way (Option A). "Meaningfully better" = more specific issue identification, fewer hallucinations, more accurate per-rep scoring.</div>
+    </div>
+
+    <div class="key-q">
+      <div class="key-q-label">Question 3 — Context window feasibility for Option B</div>
+      <div class="key-q-text">How long is Nemotron's video-only output in Test A (approximate token count)? Added to biomechanics JSON + gold standard + weight history + RAG docs — does Claude's context stay manageable?</div>
+      <div class="key-q-stakes">If Nemotron outputs several paragraphs per rep (e.g. 8 reps × 100 tokens = 800+ tokens) plus all other context, total Claude input could approach 8,000–12,000 tokens. Measure this before committing to Option B.</div>
+    </div>
+
+    <div class="key-q">
+      <div class="key-q-label">Question 4 — The two-phase SSE trade-off</div>
+      <div class="key-q-text">In Option B, OpenCV Step 2 runs after Claude's output and the annotated frame arrives separately. Does the team want the extra frontend complexity of two-phase delivery, or is a single delivery simpler to ship for demo?</div>
+      <div class="key-q-stakes">Two-phase is better UX — user sees coaching text faster. But it requires: a second SSE event (<code>frame_ready</code>), a placeholder image state on the Results screen, and keeping the SSE stream open past the coaching completion event. Worth doing but needs a clear frontend task.</div>
+    </div>
+  </div>
+
+  <div class="rec-box">
+    <div class="rec-box-label">Team recommendation — pending test results</div>
+    <div class="rec-pending">
+      <strong>Do not commit to either option before running the A/B/C tests.</strong> The architecture decision is straightforward once Test A results are in hand — that single test is the deciding factor.<br><br>
+      <strong>If Test A (video only) produces specific, structured output with per-rep scoring:</strong> Go with Option B. Cleaner architecture, Claude does what it's best at, two-phase delivery improves UX.<br><br>
+      <strong>If Test A produces vague or inconsistent output without the JSON:</strong> Stay with Option A. The JSON is doing meaningful grounding work for Nemotron. Shipping a reliable Option A is better than betting on an unproven Option B.<br><br>
+      <strong>Regardless of option chosen:</strong> The two-phase SSE delivery (coaching text first, annotated frame second) is worth implementing — it improves perceived speed and works with either architecture.
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════
+     SECTION 4 — OPEN QUESTIONS
+══════════════════════════════ -->
+<div class="section">
+  <div class="section-label">Section 4 — Open questions for the team</div>
+  <div class="section-title">Bring these to the discussion — answers shape the final decision</div>
+
+  <div class="open-q-list">
+    <div class="open-q">
+      <div class="open-q-num">1</div>
+      <div>In Option B, Claude must output <code>worst_rep_number</code> as an explicit structured field — not described in prose — so OpenCV Step 2 can run. Is the team comfortable engineering Claude's prompt to guarantee this field is always present and correctly formatted? What's the fallback if it's missing?</div>
+    </div>
+    <div class="open-q">
+      <div class="open-q-num">2</div>
+      <div>In Option A, gold standard angles go into Nemotron. But angle comparison (88° vs 80–95° ideal) is a numerical reasoning task. Do we trust Nemotron to do this reliably, or should gold standard always live with Claude regardless of which option we choose?</div>
+    </div>
+    <div class="open-q">
+      <div class="open-q-num">3</div>
+      <div>Two-phase SSE delivery is independent of the Option A/B decision. Should the team implement it regardless — i.e. coaching text always fires first as <code>coaching_complete</code>, then image fires as <code>frame_ready</code>? Or keep a single <code>analysis_complete</code> event for simplicity in the demo?</div>
+    </div>
+    <div class="open-q">
+      <div class="open-q-num">4</div>
+      <div>If Option B is chosen and Nemotron's video-only output is verbose (multi-paragraph per rep), how do we handle the Claude context window? Do we summarise Nemotron's output before passing to Claude, or pass the full text? Who writes the summarisation logic?</div>
+    </div>
+  </div>
+</div>
+
+<p style="font-size:10px;color:#1e293b;text-align:right;margin-top:24px;">
+  Kinetic · Pipeline Architecture Discussion · Option A vs B · May 10, 2026 · Pending Nemotron A/B/C test results
+</p>
+
+</body>
+</html>
