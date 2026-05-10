@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kinetic — Epics v2 · Revised Scope</title>
+  <style>
+    :root {
+      --bg: #0f0f0f; --surface: #1a1a1a; --surface-2: #222222; --border: #2e2e2e;
+      --text: #e5e5e5; --text-muted: #737373; --text-dim: #a3a3a3; --tag-bg: #2a2a2a;
+      --yellow: #fbbf24; --yellow-soft: rgba(251,191,36,0.1);
+      --e1: #a78bfa; --e1-soft: rgba(167,139,250,0.12); --e1-border: rgba(167,139,250,0.3);
+      --e2: #60a5fa; --e2-soft: rgba(96,165,250,0.12);  --e2-border: rgba(96,165,250,0.3);
+      --e3: #fb923c; --e3-soft: rgba(251,146,60,0.12);  --e3-border: rgba(251,146,60,0.3);
+      --e4: #34d399; --e4-soft: rgba(52,211,153,0.12);  --e4-border: rgba(52,211,153,0.3);
+      --e5: #22d3ee; --e5-soft: rgba(34,211,238,0.12);  --e5-border: rgba(34,211,238,0.3);
+      --e6: #f472b6; --e6-soft: rgba(244,114,182,0.12); --e6-border: rgba(244,114,182,0.3);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; padding: 40px 20px 80px; }
+    .container { max-width: 900px; margin: 0 auto; }
+
+    /* Header */
+    .header { border-bottom: 1px solid var(--border); padding-bottom: 32px; margin-bottom: 48px; }
+    .header-meta { display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
+    .badge { font-size: 11px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; padding: 4px 10px; border-radius: 4px; background: var(--tag-bg); color: var(--text-muted); border: 1px solid var(--border); }
+    .badge.green { background: rgba(52,211,153,0.12); color: #34d399; border-color: rgba(52,211,153,0.25); }
+    .badge.blue  { background: rgba(96,165,250,0.12);  color: #60a5fa; border-color: rgba(96,165,250,0.25); }
+    .badge.yellow { background: var(--yellow-soft); color: var(--yellow); border-color: rgba(251,191,36,0.25); }
+    h1 { font-size: 30px; font-weight: 700; color: #fff; letter-spacing: -0.5px; margin-bottom: 8px; }
+    .header-sub { color: var(--text-muted); font-size: 14px; }
+
+    /* Sections */
+    .section { margin-bottom: 56px; }
+    .section-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); margin-bottom: 6px; }
+    .section-title { font-size: 22px; font-weight: 700; color: #fff; margin-bottom: 6px; }
+    .section-desc { font-size: 14px; color: var(--text-muted); margin-bottom: 28px; }
+
+    /* Epic cards */
+    .epic-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 16px; overflow: hidden; }
+    .epic-card.dropped { opacity: 0.5; }
+    .epic-card-header { display: flex; align-items: center; gap: 14px; padding: 18px 24px; border-bottom: 1px solid var(--border); }
+    .epic-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+    .epic-badge { font-size: 11px; font-weight: 700; letter-spacing: 0.06em; padding: 3px 8px; border-radius: 4px; white-space: nowrap; }
+    .epic-name { font-size: 16px; font-weight: 600; color: #fff; }
+    .epic-outcome { font-size: 13px; color: var(--text-muted); margin-left: auto; text-align: right; max-width: 340px; }
+    .epic-week { font-size: 11px; font-weight: 600; letter-spacing: 0.05em; padding: 3px 8px; border-radius: 4px; background: var(--tag-bg); color: var(--text-muted); border: 1px solid var(--border); white-space: nowrap; }
+    .epic-status-pill { font-size: 10px; font-weight: 700; padding: 2px 9px; border-radius: 4px; }
+    .pill-dropped { background: rgba(248,113,113,0.12); color: #f87171; border: 1px solid rgba(248,113,113,0.25); }
+    .pill-frontend { background: rgba(251,191,36,0.1); color: #fbbf24; border: 1px solid rgba(251,191,36,0.25); }
+    .epic-card-body { padding: 16px 24px; display: flex; flex-wrap: wrap; gap: 8px; align-items: flex-start; }
+    .epic-phases { width: 100%; display: flex; flex-direction: column; gap: 0; }
+    .phase-block { padding: 14px 0; border-top: 1px solid var(--border); }
+    .phase-block:first-child { border-top: none; padding-top: 0; }
+    .phase-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+    .phase-week { font-size: 10px; font-weight: 700; letter-spacing: 0.08em; padding: 3px 9px; border-radius: 4px; text-transform: uppercase; }
+    .pw6 { background: var(--e2-soft); color: var(--e2); border: 1px solid var(--e2-border); }
+    .pw7 { background: var(--e1-soft); color: var(--e1); border: 1px solid var(--e1-border); }
+    .phase-version { font-size: 11px; color: var(--text-muted); font-style: italic; }
+    .phase-row { margin-bottom: 8px; }
+    .phase-row-label { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px; display: block; }
+    .label-confirmed { color: #34d399; }
+    .phase-pills { display: flex; flex-wrap: wrap; gap: 6px; }
+    .story-pill { font-size: 12px; font-weight: 500; padding: 5px 12px; border-radius: 20px; display: flex; align-items: center; gap: 6px; }
+    .story-tag { font-size: 10px; font-weight: 700; letter-spacing: 0.04em; padding: 1px 5px; border-radius: 3px; text-transform: uppercase; }
+    .tag-new     { background: rgba(52,211,153,0.2); color: #34d399; }
+    .tag-task    { background: rgba(248,113,113,0.15); color: #f87171; }
+    .tag-fe      { background: rgba(251,191,36,0.15); color: #fbbf24; }
+
+    .e1 .epic-dot { background: var(--e1); } .e1 .epic-badge { background: var(--e1-soft); color: var(--e1); border: 1px solid var(--e1-border); } .e1 .story-pill { background: var(--e1-soft); color: var(--e1); border: 1px solid var(--e1-border); }
+    .e2 .epic-dot { background: var(--e2); } .e2 .epic-badge { background: var(--e2-soft); color: var(--e2); border: 1px solid var(--e2-border); } .e2 .story-pill { background: var(--e2-soft); color: var(--e2); border: 1px solid var(--e2-border); }
+    .e3 .epic-dot { background: var(--e3); } .e3 .epic-badge { background: var(--e3-soft); color: var(--e3); border: 1px solid var(--e3-border); } .e3 .story-pill { background: var(--e3-soft); color: var(--e3); border: 1px solid var(--e3-border); }
+    .e4 .epic-dot { background: var(--e4); } .e4 .epic-badge { background: var(--e4-soft); color: var(--e4); border: 1px solid var(--e4-border); } .e4 .story-pill { background: var(--e4-soft); color: var(--e4); border: 1px solid var(--e4-border); }
+    .e5 .epic-dot { background: var(--e5); } .e5 .epic-badge { background: var(--e5-soft); color: var(--e5); border: 1px solid var(--e5-border); } .e5 .story-pill { background: var(--e5-soft); color: var(--e5); border: 1px solid var(--e5-border); }
+    .e6 .epic-dot { background: var(--e6); } .e6 .epic-badge { background: var(--e6-soft); color: var(--e6); border: 1px solid var(--e6-border); } .e6 .story-pill { background: var(--e6-soft); color: var(--e6); border: 1px solid var(--e6-border); }
+
+    /* User stories */
+    .epic-stories { border-top: 1px solid var(--border); background: rgba(0,0,0,0.15); padding: 16px 24px 18px; }
+    .epic-stories-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); margin-bottom: 10px; display: flex; align-items: center; gap: 10px; }
+    .epic-stories-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+    .us-card { border: 1px solid var(--border); border-radius: 7px; margin-bottom: 7px; overflow: hidden; background: var(--surface); }
+    .us-card:last-child { margin-bottom: 0; }
+    .us-summary { display: flex; align-items: center; gap: 10px; padding: 9px 14px; cursor: pointer; list-style: none; user-select: none; }
+    .us-summary:hover { background: rgba(255,255,255,0.03); }
+    .us-summary::-webkit-details-marker { display: none; }
+    .us-id { font-size: 10px; font-weight: 700; letter-spacing: 0.05em; padding: 2px 7px; border-radius: 3px; white-space: nowrap; flex-shrink: 0; }
+    .e1 .us-id { background: var(--e1-soft); color: var(--e1); border: 1px solid var(--e1-border); }
+    .e2 .us-id { background: var(--e2-soft); color: var(--e2); border: 1px solid var(--e2-border); }
+    .e3 .us-id { background: var(--e3-soft); color: var(--e3); border: 1px solid var(--e3-border); }
+    .e4 .us-id { background: var(--e4-soft); color: var(--e4); border: 1px solid var(--e4-border); }
+    .e5 .us-id { background: var(--e5-soft); color: var(--e5); border: 1px solid var(--e5-border); }
+    .e6 .us-id { background: var(--e6-soft); color: var(--e6); border: 1px solid var(--e6-border); }
+    .us-name { font-size: 13px; font-weight: 600; color: #fff; flex: 1; }
+    .us-meta { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+    .us-week { font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 4px; background: var(--tag-bg); color: var(--text-muted); border: 1px solid var(--border); }
+    .us-tag { font-size: 9px; font-weight: 700; padding: 2px 6px; border-radius: 3px; text-transform: uppercase; letter-spacing: 0.04em; }
+    .us-tag-new    { background: rgba(52,211,153,0.15);  color: #34d399; border: 1px solid rgba(52,211,153,0.25); }
+    .us-tag-task   { background: rgba(248,113,113,0.15); color: #f87171; border: 1px solid rgba(248,113,113,0.25); }
+    .us-tag-fe     { background: rgba(251,191,36,0.15);  color: #fbbf24; border: 1px solid rgba(251,191,36,0.25); }
+    .us-chevron { color: var(--text-muted); font-size: 11px; flex-shrink: 0; transition: transform 0.15s; }
+    details[open] .us-chevron { transform: rotate(90deg); }
+    .us-body { padding: 12px 14px 14px; border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 10px; }
+    .us-statement { font-size: 13px; color: var(--text-dim); font-style: italic; line-height: 1.6; padding: 8px 12px; background: rgba(255,255,255,0.02); border-radius: 5px; border-left: 2px solid var(--border); }
+    .us-ac-label { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin-bottom: 6px; }
+    .us-ac-list { list-style: none; display: flex; flex-direction: column; gap: 5px; }
+    .us-ac-item { font-size: 12px; color: var(--text-muted); padding-left: 16px; position: relative; line-height: 1.5; }
+    .us-ac-item::before { content: '→'; position: absolute; left: 0; font-size: 10px; top: 2px; color: #475569; }
+    .us-ac-item strong { color: var(--text-dim); font-weight: 500; }
+    .us-note  { font-size: 11px; color: #fbbf24; background: rgba(251,191,36,0.07); border: 1px solid rgba(251,191,36,0.2); border-radius: 5px; padding: 7px 10px; line-height: 1.6; }
+    .us-scope { font-size: 11px; color: #fb923c; background: rgba(251,146,60,0.07); border: 1px solid rgba(251,146,60,0.2); border-radius: 5px; padding: 7px 10px; line-height: 1.6; }
+    .us-dep   { font-size: 11px; color: var(--e5); background: rgba(34,211,238,0.07); border: 1px solid rgba(34,211,238,0.2); border-radius: 5px; padding: 7px 10px; line-height: 1.6; }
+
+    /* Weekly view */
+    .week-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .week-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+    .week-card.wfull { grid-column: 1 / -1; }
+    .week-card.w10   { grid-column: 1 / -1; }
+    .week-card.finished { border-color: rgba(52,211,153,0.35); }
+    .week-card.current  { border-color: rgba(96,165,250,0.4); }
+    .week-header { padding: 14px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+    .week-num   { font-size: 13px; font-weight: 700; color: #fff; }
+    .week-dates { font-size: 12px; color: var(--text-muted); }
+    .week-theme { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; padding: 2px 8px; border-radius: 4px; margin-left: auto; background: var(--tag-bg); color: var(--text-muted); border: 1px solid var(--border); white-space: nowrap; }
+    .week-theme.done    { background: rgba(52,211,153,0.12); color: #34d399; border-color: rgba(52,211,153,0.25); }
+    .week-theme.current { background: rgba(96,165,250,0.12); color: #60a5fa; border-color: rgba(96,165,250,0.25); }
+    .week-body { padding: 16px 20px; display: flex; flex-direction: column; gap: 12px; }
+    .week-squad-goals { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; padding-top: 10px; border-top: 1px solid var(--border); }
+    .wsg-squad { display: flex; flex-direction: column; gap: 4px; }
+    .wsg-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px; }
+    .wsg-sq1 { color: #60a5fa; } .wsg-sq2 { color: #4ade80; } .wsg-sq3 { color: #fb923c; }
+    .wsg-list { list-style: none; display: flex; flex-direction: column; gap: 4px; }
+    .wsg-item { font-size: 11px; color: var(--text-muted); padding-left: 12px; position: relative; line-height: 1.5; }
+    .wsg-item::before { content: '·'; position: absolute; left: 0; color: #475569; }
+    .wsg-item strong { color: var(--text-dim); font-weight: 500; }
+    .wsg-item.done::before { content: '✓'; color: #34d399; }
+    .wsg-item.done { color: #6b9980; }
+    .wsg-item.carry::before { content: '→'; color: #fbbf24; font-size: 9px; top: 3px; }
+    .wsg-item.carry { color: #92400e; }
+    .wsg-item.not-started::before { content: '○'; color: #475569; }
+    .wsg-item.not-started { color: #475569; }
+    .wsg-item.wip::before { content: '◑'; color: #f59e0b; }
+    .wsg-item.wip { color: #b45309; }
+    .week-ship { font-size: 12px; color: var(--text-dim); }
+    .week-ship strong { color: var(--text); font-weight: 500; }
+    .week-test { font-size: 12px; padding: 8px 12px; border-radius: 6px; background: rgba(52,211,153,0.07); border: 1px solid rgba(52,211,153,0.15); color: var(--text-muted); }
+    .week-test span { color: #34d399; font-weight: 600; }
+    .week-epics { display: flex; flex-wrap: wrap; gap: 6px; }
+
+    /* Scope decisions */
+    .decisions { display: flex; flex-direction: column; gap: 12px; }
+    .decision-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; display: grid; grid-template-columns: 240px 1fr; }
+    .decision-left { padding: 18px 20px; border-right: 1px solid var(--border); background: var(--surface-2); }
+    .decision-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-muted); margin-bottom: 6px; }
+    .decision-title { font-size: 14px; font-weight: 600; color: #fff; line-height: 1.4; }
+    .decision-right { padding: 18px 20px; display: flex; flex-direction: column; gap: 10px; }
+    .decision-what { font-size: 13px; color: var(--text); line-height: 1.6; }
+    .decision-why { font-size: 12px; color: var(--text-muted); line-height: 1.6; padding-left: 12px; border-left: 2px solid var(--border); }
+
+    /* PT cards */
+    .task-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; margin-bottom: 16px; }
+    .task-header { display: flex; align-items: center; gap: 14px; padding: 16px 24px; border-bottom: 1px solid var(--border); }
+    .task-badge { font-size: 11px; font-weight: 700; letter-spacing: 0.06em; padding: 3px 8px; border-radius: 4px; background: rgba(248,113,113,0.12); color: #f87171; border: 1px solid rgba(248,113,113,0.25); }
+    .task-name { font-size: 15px; font-weight: 600; color: #fff; }
+    .task-owner { font-size: 12px; color: var(--text-muted); margin-left: auto; }
+    .task-body { padding: 18px 24px; }
+    .task-row { display: grid; grid-template-columns: 80px 1fr; gap: 16px; padding: 10px 0; border-bottom: 1px solid var(--border); }
+    .task-row:last-child { border-bottom: none; }
+    .task-week { font-size: 12px; font-weight: 700; color: var(--text-muted); padding-top: 2px; }
+    .task-detail { font-size: 13px; color: var(--text-dim); line-height: 1.6; }
+    .task-detail strong { color: var(--text); font-weight: 500; }
+
+    .divider { border: none; border-top: 1px solid var(--border); margin: 48px 0; }
+    code { font-size: 11px; background: var(--surface-2); padding: 1px 5px; border-radius: 3px; color: var(--text-dim); }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <div class="header">
+    <div class="header-meta">
+      <span class="badge">Kinetic</span>
+      <span class="badge">Epics &amp; Delivery Plan</span>
+      <span class="badge blue">v2 · Revised Scope</span>
+      <span class="badge green">W5–W10</span>
+      <span class="badge yellow">May 11, 2026</span>
+    </div>
+    <h1>Epics v2 — Revised Scope</h1>
+    <p class="header-sub">Outcome-oriented epics · W5 May 4–10 through W10 Jun 8 · Based on mentor review May 10, 2026</p>
+  </div>
+
+
+  <!-- ═══ SECTION 1: EPICS ═══ -->
+  <div class="section">
+    <div class="section-label">Section 1</div>
+    <div class="section-title">Epics → User Stories</div>
+    <div class="section-desc">Each epic answers one question a user needs answered. Stories ship in slices across weeks.</div>
+
+
+    <!-- E1 — DROPPED -->
+    <div class="epic-card e1 dropped">
+      <div class="epic-card-header">
+        <div class="epic-dot"></div>
+        <span class="epic-badge">E1</span>
+        <span class="epic-name">Identity &amp; Access</span>
+        <span class="epic-status-pill pill-dropped" style="margin-left:8px;">Not in demo scope</span>
+        <span class="epic-outcome">Replaced by demo user selector screen — 2–3 hardcoded users, no auth required</span>
+      </div>
+      <div class="epic-stories">
+        <div class="epic-stories-label">Replaced by</div>
+        <details class="us-card e1">
+          <summary class="us-summary">
+            <span class="us-id">US-01b</span>
+            <span class="us-name">Demo User Selection — Proxy for Auth</span>
+            <div class="us-meta"><span class="us-week">W7</span><span class="us-tag us-tag-new">New</span><span class="us-chevron">▶</span></div>
+          </summary>
+          <div class="us-body">
+            <div class="us-statement">As a demo user opening the app, I want to select which user I am from a simple entry screen, so that the app loads the right session history and progression data — and the experience feels grounded without requiring real authentication.</div>
+            <div class="us-note">This is the first screen when opening the app. Designed to look and feel like a profile selector — a clear, intentional stand-in for the real auth flow post-demo. Selected user_id is stored in session and passed as a header on all API requests.</div>
+            <div class="us-ac-label">Acceptance Criteria</div>
+            <ul class="us-ac-list">
+              <li class="us-ac-item">Given I open the app, the first screen I see is a user selection screen with 2–3 demo user cards, each showing a name and one-line training context</li>
+              <li class="us-ac-item">Given I select a user, I'm taken to the Dashboard with that user's session history and form data loaded</li>
+              <li class="us-ac-item">Given a user is selected, their user_id is stored and sent as a header on all subsequent API requests</li>
+              <li class="us-ac-item">Given I want to switch users, I can return to this screen without reloading the app</li>
+            </ul>
+          </div>
+        </details>
+      </div>
+    </div>
+
+
+    <!-- E2 — THE ANALYSIS CORE -->
+    <div class="epic-card e2">
+      <div class="epic-card-header">
+        <div class="epic-dot"></div>
+        <span class="epic-badge">E2</span>
+        <span class="epic-name">The Analysis Core</span>
+        <span class="epic-week">W6 → W7</span>
+        <span class="epic-outcome">I upload a video and receive detailed form analysis with personalised coaching</span>
+      </div>
+      <div class="epic-card-body">
+        <div class="epic-phases">
+
+          <div class="phase-block">
+            <div class="phase-header">
+              <span class="phase-week pw6">W6 · May 11–17</span>
+              <span class="phase-version">First thin E2E slice</span>
+            </div>
+            <div class="phase-row">
+              <span class="phase-row-label label-confirmed">✓ Confirmed ship</span>
+              <div class="phase-pills">
+                <span class="story-pill">Video upload + GCS storage</span>
+                <span class="story-pill">SSE processing states</span>
+                <span class="story-pill">MediaPipe + quality gate <span class="story-tag" style="background:rgba(251,146,60,0.15);color:#fb923c;">Squad 3</span></span>
+                <span class="story-pill">OpenCV overlay video → Nemotron input</span>
+                <span class="story-pill">Biomechanics JSON → DB → Results screen</span>
+                <span class="story-pill">Nemotron A/B/C tests — best scenario → basic output on Results screen</span>
+                <span class="story-pill">PT-02 Gold standard data prep</span>
+                <span class="story-pill">MD coaching files committed</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="phase-block">
+            <div class="phase-header">
+              <span class="phase-week pw7">W7 · May 18–24</span>
+              <span class="phase-version">Full pipeline complete</span>
+            </div>
+            <div class="phase-pills">
+              <span class="story-pill">Full Results screen — real pipeline output</span>
+              <span class="story-pill">Claude Sonnet coaching — weight-specific</span>
+              <span class="story-pill">MD files → Claude system prompt</span>
+              <span class="story-pill">Weight history from DB → Claude</span>
+              <span class="story-pill">Visual proof of form — image with angles</span>
+              <span class="story-pill">Joint corrections + coaching tips</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+      <div class="epic-stories">
+        <div class="epic-stories-label">User Stories</div>
+
+        <details class="us-card e2">
+          <summary class="us-summary">
+            <span class="us-id">US-04</span>
+            <span class="us-name">Video Submission</span>
+            <div class="us-meta"><span class="us-week">W6</span><span class="us-chevron">▶</span></div>
+          </summary>
+          <div class="us-body">
+            <div class="us-statement">As a user ready to analyse my form, I want to select my exercise, enter my weight, and upload a video, so that Kinetic can analyse my session.</div>
+            <div class="us-scope">Upload screen includes an inline filming tips section — a reference image showing correct camera angle for Goblet Squat + 3–4 short copy tips. Always visible before the user picks a file. Filming tips are part of this screen, not a separate flow.</div>
+            <div class="us-ac-label">Acceptance Criteria</div>
+            <ul class="us-ac-list">
+              <li class="us-ac-item">Given I'm on the Upload screen, I see an inline filming guide — a reference image and 3–4 tips on camera angle, distance, height, and clothing</li>
+              <li class="us-ac-item">Given I'm on the Upload screen, I can select Goblet Squat and enter my weight in kg</li>
+              <li class="us-ac-item">Given I select a video file (.mp4 / .mov), I see the filename and size confirmed</li>
+              <li class="us-ac-item">Given all fields are complete, the Submit button becomes active</li>
+              <li class="us-ac-item">Given the file is unsupported or over 500MB, I see a clear inline error</li>
+              <li class="us-ac-item">POST /upload fields: <code>video</code> (file) · <code>exercise_id</code> = "ex_gob_squat_001" · <code>weight_value</code> (float) · <code>weight_unit</code> = "kg"</li>
+            </ul>
+          </div>
+        </details>
+
+        <details class="us-card e2">
+          <summary class="us-summary">
+            <span class="us-id">US-05</span>
+            <span class="us-name">Analysis Processing &amp; Quality Gate Errors</span>
+            <div class="us-meta"><span class="us-week">W6</span><span class="us-chevron">▶</span></div>
+          </summary>
+          <div class="us-body">
+            <div class="us-statement">As a user who just submitted a video, I want to see a clear processing status — and if my video is rejected, an error that tells me exactly what went wrong and how to fix it when I re-film.</div>
+            <div class="us-ac-label">Processing</div>
+            <ul class="us-ac-list">
+              <li class="us-ac-item">Given I submit a video, I see a live progress indicator with stage labels (e.g. "Reading your movement patterns…") — not a blank screen</li>
+              <li class="us-ac-item">Given processing completes, I'm automatically taken to the Results screen</li>
+            </ul>
+            <div class="us-ac-label" style="margin-top:10px;">Quality Gate — contextual errors per rejection reason</div>
+            <ul class="us-ac-list">
+              <li class="us-ac-item">Bad angle → <em>"Try filming from a 45° side angle so your full body is visible"</em></li>
+              <li class="us-ac-item">Poor visibility → <em>"Try fitted clothing and a well-lit space"</em></li>
+              <li class="us-ac-item">Partial occlusion → <em>"Step back so your full body from head to toe is in frame"</em></li>
+              <li class="us-ac-item">Too few reps → <em>"We need at least 3 complete reps — film a longer set"</em></li>
+              <li class="us-ac-item">Given any rejection, a "Try again" button returns to Upload with filming tips visible</li>
+            </ul>
+          </div>
+        </details>
+
+        <details class="us-card e2">
+          <summary class="us-summary">
+            <span class="us-id">US-06a</span>
+            <span class="us-name">Analysis Results — Score, Parameters &amp; Rep Chart</span>
+            <div class="us-meta"><span class="us-week">W6 → W7</span><span class="us-chevron">▶</span></div>
+          </summary>
+          <div class="us-body">
+            <div class="us-statement">As a gym-goer training alone, I want to see my overall form score, a breakdown across 4 parameters, a personalised summary, and my rep-by-rep progression, so I immediately understand how I performed and what to prioritise.</div>
+            <div class="us-note">W6: Results screen built against dummy data. W7: Real pipeline output wired — confirmed deliverable, not optional.</div>
+            <div class="us-ac-label">Results screen delivers</div>
+            <ul class="us-ac-list">
+              <li class="us-ac-item"><strong>Overall score /100</strong> — prominently at the top</li>
+              <li class="us-ac-item"><strong>1–2 sentence personalised summary</strong> — combines form quality with the weight used</li>
+              <li class="us-ac-item"><strong>4 parameters</strong> — Posture · Stability · Movement Quality · Tempo. Each shows: score / what they're doing well (1 sentence) / what's off (1 sentence) / action to work on</li>
+              <li class="us-ac-item"><strong>Rep-by-rep chart</strong> — visualises form from first to last rep, showing where breakdown begins</li>
+            </ul>
+          </div>
+        </details>
+
+        <details class="us-card e2">
+          <summary class="us-summary">
+            <span class="us-id">US-06b</span>
+            <span class="us-name">Visual Proof of Form</span>
+            <div class="us-meta"><span class="us-week">W7</span><span class="us-chevron">▶</span></div>
+          </summary>
+          <div class="us-body">
+            <div class="us-statement">As a user viewing my results, I want to see a video or image of me doing the exercise with joint angles visible, so I can see exactly where my form broke down on my own body.</div>
+            <div class="us-ac-label">Acceptance Criteria</div>
+            <ul class="us-ac-list">
+              <li class="us-ac-item">Given analysis is complete, I see a visual of my form — image or video — with joint angles visible on my own body</li>
+              <li class="us-ac-item">Given the visual, joint markers are colour-coded by status: green (in range) · amber (borderline) · red (outside range)</li>
+              <li class="us-ac-item">Given each joint, I see my actual angle and the gold standard range — e.g. "Knee: 88° · Ideal: 80–95°"</li>
+              <li class="us-ac-item">Given I'm on mobile web, the visual is full-width and labels are legible without zooming</li>
+            </ul>
+          </div>
+        </details>
+
+        <details class="us-card e2">
+          <summary class="us-summary">
+            <span class="us-id">US-07</span>
+            <span class="us-name">Weight-Specific Coaching &amp; Joint Corrections</span>
+            <div class="us-meta"><span class="us-week">W7</span><span class="us-chevron">▶</span></div>
+          </summary>
+          <div class="us-body">
+            <div class="us-statement">As a user, I want coaching that is specific to the weight I was lifting and the joint issues detected, so I know exactly what to fix at this load — not generic advice.</div>
+            <div class="us-ac-label">Acceptance Criteria</div>
+            <ul class="us-ac-list">
+              <li class="us-ac-item">Given analysis is complete, I see minimum 2 specific joint-level corrections (e.g. "Ankle dorsiflexion limits your depth from rep 5 onwards")</li>
+              <li class="us-ac-item">Given multiple sessions exist at different weights, coaching references weight history — e.g. "Your form at 12kg has held for 3 sessions — ready for 14kg"</li>
+              <li class="us-ac-item">Coaching is specific to what was observed, not generic — generic output is a fail state</li>
+            </ul>
+          </div>
+        </details>
+
+        <details class="us-card e2">
+          <summary class="us-summary">
+            <span class="us-id">PT-02</span>
+            <span class="us-name">Gold Standard Data Prep — 3–5 Reference Videos</span>
+            <div class="us-meta"><span class="us-week">W6</span><span class="us-tag us-tag-task">Product Task</span><span class="us-chevron">▶</span></div>
+          </summary>
+          <div class="us-body">
+            <div class="us-statement">PM + Squad 3 run 3–5 good-form Goblet Squat videos through the pipeline and store reference values in the DB. This serves two purposes: (1) grounding Claude's angle comparison reasoning, (2) powering the gold standard display on the visual proof screen.</div>
+            <div class="us-ac-label">Acceptance Criteria</div>
+            <ul class="us-ac-list">
+              <li class="us-ac-item">3–5 good-form videos identified and agreed by PM before end of W6</li>
+              <li class="us-ac-item">Videos processed through the W6 MediaPipe + Biomechanics pipeline — outputs stored in <code>gold_standard_biomechanics</code> table</li>
+              <li class="us-ac-item">Reference angle ranges confirmed: knee (80–95° at bottom) · hip (80–95°) · ankle dorsiflexion (≥25°)</li>
+              <li class="us-ac-item">Gold standard values queryable by OpenCV Part 2 and available for Claude's system prompt context</li>
+            </ul>
+          </div>
+        </details>
+
+      </div>
+    </div>
+
+
+    <!-- E3 — LONGITUDINAL INTELLIGENCE -->
+    <div class="epic-card e3">
+      <div class="epic-card-header">
+        <div class="epic-dot"></div>
+        <span class="epic-badge">E3</span>
+        <span class="epic-name">Longitudinal Intelligence</span>
+        <span class="epic-week">W7 → W8</span>
+        <span class="epic-outcome">I can see if I'm improving — and whether I'm ready to go heavier</span>
+      </div>
+      <div class="epic-card-body">
+        <span class="story-pill">Form Comparison</span>
+        <span class="story-pill">Progression Recommendation</span>
+        <span class="story-pill">Progression Logic Definition <span class="story-tag tag-task">Product Task</span></span>
+      </div>
+      <div class="epic-stories">
+        <div class="epic-stories-label">User Stories</div>
+
+        <details class="us-card e3">
+          <summary class="us-summary">
+            <span class="us-id">US-08</span>
+            <span class="us-name">Form Comparison &amp; Progression Recommendation</span>
+            <div class="us-meta"><span class="us-week">W8</span><span class="us-chevron">▶</span></div>
+          </summary>
+          <div class="us-body">
+            <div class="us-statement">As a user who has logged multiple sessions, I want to compare my current form against my previous session on the same 4 parameters, and receive a weight progression recommendation, so I can see whether I'm improving and whether to go heavier.</div>
+            <div class="us-note">Weight history (past sessions, weights used, form scores) is retrieved from the DB and passed to Claude Sonnet — not Nemotron. Nemotron analyses the current video. Claude synthesises coaching and the progression recommendation using historical context.</div>
+            <div class="us-ac-label">Acceptance Criteria</div>
+            <ul class="us-ac-list">
+              <li class="us-ac-item">Given I'm on the Results screen, I see a <strong>Form Comparison</strong> view alongside my current results</li>
+              <li class="us-ac-item">Given I have a previous session, I see a side-by-side breakdown: session date + weight, overall score, 4 parameter scores, visual proof, rep chart — for current and previous session</li>
+              <li class="us-ac-item">Given no previous session, I see: "Log more sessions to see your progression"</li>
+              <li class="us-ac-item">Given multiple sessions, the progression recommendation (ready / hold / drop) references specific past sessions by weight</li>
+            </ul>
+          </div>
+        </details>
+
+        <details class="us-card e3">
+          <summary class="us-summary">
+            <span class="us-id">PT-01</span>
+            <span class="us-name">Progression Recommendation Logic Definition</span>
+            <div class="us-meta"><span class="us-week">W5–W9</span><span class="us-tag us-tag-task">Product Task</span><span class="us-chevron">▶</span></div>
+          </summary>
+          <div class="us-body">
+            <div class="us-statement">PM + Physical Trainer define the exact ruleset determining "Ready to progress" / "Hold" / "Drop weight" — before Squad 2 builds the logic in W8.</div>
+            <div class="us-ac-label">4-Phase Delivery</div>
+            <ul class="us-ac-list">
+              <li class="us-ac-item"><strong>Phase 1 (W5 — done):</strong> Biomechanics parameters defined + Nemotron output schema agreed</li>
+              <li class="us-ac-item"><strong>Phase 2 (W7):</strong> Refine thresholds against first real pipeline output — 1–2 hours, not a sprint</li>
+              <li class="us-ac-item"><strong>Phase 3 (Mon W8):</strong> Final spec handed to Squad 2 — exact thresholds, edge cases, three recommendation strings</li>
+              <li class="us-ac-item"><strong>Phase 4 (W9):</strong> PT expert review on 3–5 test videos including gold standard set</li>
+            </ul>
+          </div>
+        </details>
+
+      </div>
+    </div>
+
+
+    <!-- E4 — HABIT & ENGAGEMENT -->
+    <div class="epic-card e4">
+      <div class="epic-card-header">
+        <div class="epic-dot"></div>
+        <span class="epic-badge">E4</span>
+        <span class="epic-name">Habit &amp; Engagement Loop</span>
+        <span class="epic-week">W7 → W8</span>
+        <span class="epic-outcome">I come back because I can see my progress over time</span>
+      </div>
+      <div class="epic-card-body">
+        <span class="story-pill">Dashboard</span>
+        <span class="story-pill">Session History</span>
+      </div>
+      <div class="epic-stories">
+        <div class="epic-stories-label">User Stories</div>
+
+        <details class="us-card e4">
+          <summary class="us-summary">
+            <span class="us-id">US-09</span>
+            <span class="us-name">Dashboard — Progression History</span>
+            <div class="us-meta"><span class="us-week">W7–W8</span><span class="us-chevron">▶</span></div>
+          </summary>
+          <div class="us-body">
+            <div class="us-statement">As a user, I want my home screen to show my form score progression over time — tied to the weights I've been lifting — so I can see the longitudinal story of my training at a glance.</div>
+            <div class="us-note">Dashboard seeded with 3–4 pre-loaded sessions per demo user (user_001/002/003). Demo operator switches users via the entry screen to show different progression stories. No real auth required.</div>
+            <div class="us-ac-label">Acceptance Criteria</div>
+            <ul class="us-ac-list">
+              <li class="us-ac-item">Given I land on the Dashboard, I see a form score trend chart across recent sessions — showing how score changes as weight increases</li>
+              <li class="us-ac-item">Given the dashboard, I see a session history list — exercise, date, weight, overall score per session</li>
+              <li class="us-ac-item">Given I tap a past session, I see the full Results screen for that session</li>
+              <li class="us-ac-item">Given an empty state, I see a prompt to upload my first session</li>
+              <li class="us-ac-item">A prominent "Analyse new session" CTA links to the Upload screen</li>
+            </ul>
+          </div>
+        </details>
+
+        <details class="us-card e4">
+          <summary class="us-summary">
+            <span class="us-id">US-10</span>
+            <span class="us-name">Session History</span>
+            <div class="us-meta"><span class="us-week">W7</span><span class="us-chevron">▶</span></div>
+          </summary>
+          <div class="us-body">
+            <div class="us-statement">As a user reviewing my progress, I want a chronological list of past sessions so I can revisit specific analyses and track how I've developed.</div>
+            <div class="us-ac-label">Acceptance Criteria</div>
+            <ul class="us-ac-list">
+              <li class="us-ac-item">Given I'm in History, I see all sessions in reverse-chronological order — exercise, date, weight, overall form score</li>
+              <li class="us-ac-item">Given I tap a session, I see its full Results screen including the visual proof of form</li>
+            </ul>
+          </div>
+        </details>
+
+      </div>
+    </div>
+
+
+    <!-- E5 — WORKOUT LIFECYCLE -->
+    <div class="epic-card e5">
+      <div class="epic-card-header">
+        <div class="epic-dot"></div>
+        <span class="epic-badge">E5</span>
+        <span class="epic-name">Workout Lifecycle</span>
+        <span class="epic-status-pill pill-frontend" style="margin-left:8px;">Frontend only</span>
+        <span class="epic-week">W8</span>
+        <span class="epic-outcome">Users can see the full product vision — plan and log a workout in-app</span>
+      </div>
+      <div class="epic-card-body">
+        <span class="story-pill">Workout Builder <span class="story-tag tag-fe">FE only</span></span>
+        <span class="story-pill">Workout Tracker <span class="story-tag tag-fe">FE only</span></span>
+      </div>
+      <div class="epic-stories">
+        <div class="epic-stories-label">User Stories</div>
+
+        <details class="us-card e5">
+          <summary class="us-summary">
+            <span class="us-id">US-11</span>
+            <span class="us-name">Workout Builder &amp; Tracker — Frontend Experience</span>
+            <div class="us-meta"><span class="us-week">W8</span><span class="us-tag us-tag-fe">FE only</span><span class="us-chevron">▶</span></div>
+          </summary>
+          <div class="us-body">
+            <div class="us-statement">As a user, I want to browse exercises, plan a workout, and log my sets — so the app feels complete and I can see what Kinetic will offer beyond form analysis.</div>
+            <div class="us-scope">Frontend only — no backend integrations, no data saved, no AI. Built purely to demonstrate the full product vision and improve the overall app experience. Scope intentionally limited to UI for the demo.</div>
+            <div class="us-ac-label">Acceptance Criteria</div>
+            <ul class="us-ac-list">
+              <li class="us-ac-item">Given I open the Workout Builder, I see an exercise library with form tips per exercise</li>
+              <li class="us-ac-item">Given I build a plan, I can add exercises with target sets</li>
+              <li class="us-ac-item">Given I open the Tracker, I can log reps and weight per set — UI updates but no data is persisted</li>
+              <li class="us-ac-item">The flow looks and feels complete — the frontend only limitation is not visible to the user</li>
+            </ul>
+          </div>
+        </details>
+
+      </div>
+    </div>
+
+
+    <!-- E6 — PERSONALIZATION -->
+    <div class="epic-card e6">
+      <div class="epic-card-header">
+        <div class="epic-dot"></div>
+        <span class="epic-badge">E6</span>
+        <span class="epic-name">Personalization</span>
+        <span class="epic-status-pill pill-frontend" style="margin-left:8px;">Frontend shell only</span>
+        <span class="epic-week">W8</span>
+        <span class="epic-outcome">Profile screen exists — signals future personalisation without backend build</span>
+      </div>
+      <div class="epic-card-body">
+        <span class="story-pill">Profile Screen <span class="story-tag tag-fe">Shell only</span></span>
+      </div>
+      <div class="epic-stories">
+        <div class="epic-stories-label">User Stories</div>
+
+        <details class="us-card e6">
+          <summary class="us-summary">
+            <span class="us-id">US-12</span>
+            <span class="us-name">Profile Screen — Frontend Shell</span>
+            <div class="us-meta"><span class="us-week">W8</span><span class="us-tag us-tag-fe">Shell only</span><span class="us-chevron">▶</span></div>
+          </summary>
+          <div class="us-body">
+            <div class="us-statement">As a user, I want to see a profile and preferences section, so the product feels complete and I understand that personalisation (training frequency, injury profile) is planned for a future version.</div>
+            <div class="us-scope">Frontend shell only. Screen exists and is routable. Displays dummy data. No save functionality, no backend endpoints. Shown in the demo as a deliberate design decision — injury-personalised coaching is a post-demo feature.</div>
+          </div>
+        </details>
+
+      </div>
+    </div>
+
+  </div>
+
+  <hr class="divider" />
+
+
+  <!-- ═══ SECTION 2: WEEKLY VIEW ═══ -->
+  <div class="section">
+    <div class="section-label">Section 2</div>
+    <div class="section-title">Weekly Delivery View</div>
+    <div class="section-desc">Week dates, squad goals, and Thursday merge targets. Each week builds on the previous.</div>
+
+    <div class="week-grid">
+
+      <!-- W5 -->
+      <div class="week-card wfull finished">
+        <div class="week-header">
+          <span class="week-num">Week 5</span>
+          <span class="week-dates">May 4–10, 2026</span>
+          <span class="week-theme done">✓ Finished</span>
+        </div>
+        <div class="week-body">
+          <div class="week-ship"><strong>Theme:</strong> Scaffold everything, agree all shared contracts. No squad blocked going into W6.</div>
+          <div class="week-squad-goals">
+            <div class="wsg-squad">
+              <div class="wsg-label wsg-sq1">Squad 1 — Frontend</div>
+              <ul class="wsg-list">
+                <li class="wsg-item done">React + Tailwind scaffold on Vercel</li>
+                <li class="wsg-item done">Defined SSE events and FE messages</li>
+                <li class="wsg-item done">Design handoff — Upload → Form Analysis screens</li>
+                <li class="wsg-item wip">Vercel setup — resolving</li>
+                <li class="wsg-item not-started">JSON response schemas — not started</li>
+                <li class="wsg-item not-started">SSE contract committed with Squad 2 — not started</li>
+                <li class="wsg-item not-started">Dummy data fixtures — not started</li>
+                <li class="wsg-item not-started">Screen shells: Upload, Results, Dashboard, History — not started</li>
+                <li class="wsg-item not-started">Upload screen build — not started</li>
+              </ul>
+            </div>
+            <div class="wsg-squad">
+              <div class="wsg-label wsg-sq2">Squad 2 — Backend</div>
+              <ul class="wsg-list">
+                <li class="wsg-item done">GitHub repo + branch protection</li>
+                <li class="wsg-item done">GCP, Cloud Storage, API Gateway provisioned</li>
+                <li class="wsg-item done">FastAPI scaffold on Cloud Run</li>
+                <li class="wsg-item done">DB schema defined · Supabase provisioned · Goblet Squat seeded</li>
+                <li class="wsg-item done">Stub /upload + /analyze/stream endpoints deployed</li>
+                <li class="wsg-item wip">NVIDIA Nemotron API — WIP, debugging</li>
+                <li class="wsg-item done">Nemotron test plan (A/B/C) written</li>
+                <li class="wsg-item not-started">Nemotron A/B/C test execution — not started</li>
+              </ul>
+            </div>
+            <div class="wsg-squad">
+              <div class="wsg-label wsg-sq3">Squad 3 — Data</div>
+              <ul class="wsg-list">
+                <li class="wsg-item done">OpenCV wrapper for video overlays</li>
+                <li class="wsg-item done">MediaPipe pipeline — landmark extraction</li>
+                <li class="wsg-item done">MediaPipe quality gate</li>
+                <li class="wsg-item wip">Biomechanics script — angle calculations WIP</li>
+                <li class="wsg-item wip">Source content — 5 gold standard videos (biomechanics ref) + 5–10 MD files for coaching tips WIP</li>
+                <li class="wsg-item not-started">Vector DB setup &amp; chunking strategy — not done · direction changed (no longer needed)</li>
+                <li class="wsg-item carry">Nemotron A/B/C tests moved to Squad 2 → W6</li>
+              </ul>
+            </div>
+          </div>
+          <div class="week-test"><span>Thursday merge:</span> Scaffolds committed · contracts agreed · stub endpoints deployed · Nemotron API confirmed</div>
+        </div>
+      </div>
+
+      <!-- W6 -->
+      <div class="week-card wfull current">
+        <div class="week-header">
+          <span class="week-num">Week 6</span>
+          <span class="week-dates">May 11–17, 2026</span>
+          <span class="week-theme current">Current week</span>
+        </div>
+        <div class="week-body">
+          <div class="week-epics">
+            <span class="story-pill e2" style="background:var(--e2-soft);color:var(--e2);border:1px solid var(--e2-border);font-size:12px;padding:4px 10px;border-radius:16px;">E2 partial</span>
+          </div>
+          <div class="week-ship"><strong>Theme:</strong> First time all three squads connect. Real video through the full biomechanics pipeline, results on screen. Nemotron's best scenario output on FE. Gold standard data prepped.</div>
+          <div class="week-squad-goals">
+            <div class="wsg-squad">
+              <div class="wsg-label wsg-sq1">Squad 1 — Frontend</div>
+              <ul class="wsg-list">
+                <li class="wsg-item"><strong>Upload screen</strong> — complete with inline filming tips + demo user selector</li>
+                <li class="wsg-item"><strong>Results screen</strong> — wired to real biomechanics JSON by Thursday; basic Nemotron score if available</li>
+                <li class="wsg-item"><strong>SSE client</strong> — wired to real pipeline events</li>
+                <li class="wsg-item"><strong>Dashboard shell</strong> — score trend chart with dummy data</li>
+                <li class="wsg-item"><strong>Design handoff</strong> — Homepage · Auth proxy · Profile screens</li>
+              </ul>
+            </div>
+            <div class="wsg-squad">
+              <div class="wsg-label wsg-sq2">Squad 2 — Backend</div>
+              <ul class="wsg-list">
+                <li class="wsg-item"><strong>Real /upload endpoint</strong> — GCS + DB write + analysis_id</li>
+                <li class="wsg-item"><strong>SSE orchestration</strong> — events at each pipeline stage</li>
+                <li class="wsg-item"><strong>Nemotron A/B/C tests</strong> — execute + findings to PM by Thu</li>
+                <li class="wsg-item"><strong>Best Nemotron scenario → FE</strong> — wire basic score output to Results screen</li>
+                <li class="wsg-item"><strong>Biomechanics integration</strong> — receive from Squad 3, store to DB, serve to FE</li>
+              </ul>
+            </div>
+            <div class="wsg-squad">
+              <div class="wsg-label wsg-sq3">Squad 3 — Data</div>
+              <ul class="wsg-list">
+                <li class="wsg-item"><strong>MediaPipe + quality gate + OpenCV overlay</strong> — full pipeline to overlay_video_url</li>
+                <li class="wsg-item"><strong>Biomechanics script</strong> — angles, tempo, stability, bottom_frame per rep → DB</li>
+                <li class="wsg-item"><strong>PT-02 Gold standard data prep</strong> — 3–5 reference videos → DB</li>
+                <li class="wsg-item"><strong>MD file curation</strong> — 5–10 coaching documents → MD format</li>
+                <li class="wsg-item"><strong>RAG source collection</strong> (carry-over W5) — complete this week</li>
+              </ul>
+            </div>
+          </div>
+          <div class="week-test"><span>Thursday merge:</span> Real video → GCS → MediaPipe → biomechanics JSON → SSE → Results screen shows real data. Nemotron best-scenario basic output on Results screen. Gold standard in DB. MD files committed.</div>
+        </div>
+      </div>
+
+      <!-- W7 -->
+      <div class="week-card">
+        <div class="week-header">
+          <span class="week-num">Week 7</span>
+          <span class="week-dates">May 18–24, 2026</span>
+          <span class="week-theme">Full pipeline</span>
+        </div>
+        <div class="week-body">
+          <div class="week-epics">
+            <span class="story-pill e1" style="background:var(--e1-soft);color:var(--e1);border:1px solid var(--e1-border);font-size:12px;padding:4px 10px;border-radius:16px;">US-01b</span>
+            <span class="story-pill e2" style="background:var(--e2-soft);color:var(--e2);border:1px solid var(--e2-border);font-size:12px;padding:4px 10px;border-radius:16px;">E2 complete</span>
+            <span class="story-pill e4" style="background:var(--e4-soft);color:var(--e4);border:1px solid var(--e4-border);font-size:12px;padding:4px 10px;border-radius:16px;">E4 shell</span>
+          </div>
+          <div class="week-ship">
+            <strong>Ship:</strong> Demo user selection screen live. Full Results screen with real pipeline output — Claude Sonnet coaching (MD files → system prompt), weight-specific advice from DB history, visual proof of form. History screen shell. PT-01 Phase 2 threshold refinement.
+          </div>
+          <div class="week-test"><span>Test:</span> Upload → real coaching output with weight-specific advice → visual proof of form on Results screen</div>
+        </div>
+      </div>
+
+      <!-- W8 -->
+      <div class="week-card">
+        <div class="week-header">
+          <span class="week-num">Week 8</span>
+          <span class="week-dates">May 25–31, 2026</span>
+          <span class="week-theme">Differentiation + Lifecycle</span>
+        </div>
+        <div class="week-body">
+          <div class="week-epics">
+            <span class="story-pill e3" style="background:var(--e3-soft);color:var(--e3);border:1px solid var(--e3-border);font-size:12px;padding:4px 10px;border-radius:16px;">E3</span>
+            <span class="story-pill e4" style="background:var(--e4-soft);color:var(--e4);border:1px solid var(--e4-border);font-size:12px;padding:4px 10px;border-radius:16px;">E4 complete</span>
+            <span class="story-pill e5" style="background:var(--e5-soft);color:var(--e5);border:1px solid var(--e5-border);font-size:12px;padding:4px 10px;border-radius:16px;">E5 FE only</span>
+            <span class="story-pill e6" style="background:var(--e6-soft);color:var(--e6);border:1px solid var(--e6-border);font-size:12px;padding:4px 10px;border-radius:16px;">E6 shell</span>
+          </div>
+          <div class="week-ship">
+            <strong>Ship:</strong> Progression recommendation live (weight history → Claude). Dashboard + History on real data. Workout Builder + Tracker (frontend only — no backend). Profile screen shell. PT-01 Phase 3 final spec to Squad 2.
+          </div>
+          <div class="week-test"><span>Test:</span> Does progression recommendation fire correctly using weight history from DB?</div>
+        </div>
+      </div>
+
+      <!-- W9 -->
+      <div class="week-card">
+        <div class="week-header">
+          <span class="week-num">Week 9</span>
+          <span class="week-dates">Jun 1–7, 2026</span>
+          <span class="week-theme">Validation</span>
+        </div>
+        <div class="week-body">
+          <div class="week-ship">
+            <strong>Ship:</strong> Gold standard videos validated by PT experts. Latency confirmed under 35s. SSE narration states polished. Dashboard seeded with compelling progression story for all 3 demo users. PT-01 Phase 4 expert review.
+          </div>
+          <div class="week-test"><span>Test:</span> Do PT reviewers agree with coaching + recommendation outputs? Is the live demo smooth under 35s?</div>
+        </div>
+      </div>
+
+      <!-- W10 -->
+      <div class="week-card w10">
+        <div class="week-header">
+          <span class="week-num">Week 10</span>
+          <span class="week-dates">Jun 8, 2026</span>
+          <span class="week-theme">UAT + Launch criteria</span>
+        </div>
+        <div class="week-body">
+          <div class="week-ship">
+            <strong>Ship:</strong> Zero high-severity bugs. All demo-day launch criteria green. Demo accounts seeded with rich progression data. Pitch deck and walkthrough finalised.
+          </div>
+          <div class="week-test"><span>Test:</span> Select demo user → upload → results → form comparison → progression recommendation → dashboard story</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <hr class="divider" />
+
+
+  <!-- ═══ SECTION 3: SCOPE DECISIONS ═══ -->
+  <div class="section">
+    <div class="section-label">Section 3</div>
+    <div class="section-title">Scope Decisions</div>
+    <div class="section-desc">Key decisions made to protect the demo and reduce risk — with plain-language reasoning.</div>
+
+    <div class="decisions">
+
+      <div class="decision-card">
+        <div class="decision-left">
+          <div class="decision-label">Auth</div>
+          <div class="decision-title">No authentication — hardcoded demo users</div>
+        </div>
+        <div class="decision-right">
+          <div class="decision-what">2–3 user IDs seeded in the DB. App opens with a user selection screen (proxy for auth). Frontend sends selected user_id as a header. Form comparison, session history, and dashboard all work as expected.</div>
+          <div class="decision-why"><strong>Why:</strong> Auth adds significant Squad 1 + Squad 2 build effort with zero demo value. The user selector enables switching between demo users to show different progression stories — more compelling than a single user with limited history.</div>
+        </div>
+      </div>
+
+      <div class="decision-card">
+        <div class="decision-left">
+          <div class="decision-label">RAG</div>
+          <div class="decision-title">Vector DB dropped — MD files in Claude system prompt</div>
+        </div>
+        <div class="decision-right">
+          <div class="decision-what">5–10 curated coaching documents converted to MD files and injected directly into Claude Sonnet's system prompt. No retrieval endpoint, no embeddings, no ingestion pipeline.</div>
+          <div class="decision-why"><strong>Why:</strong> 1 exercise + &lt;10 documents = system prompt injection is sufficient. Vector DB adds significant Squad 3 infrastructure with no meaningful quality gain at this scale.</div>
+        </div>
+      </div>
+
+      <div class="decision-card">
+        <div class="decision-left">
+          <div class="decision-label">Visual proof</div>
+          <div class="decision-title">Text coaching ships W6, visual proof ships W7</div>
+        </div>
+        <div class="decision-right">
+          <div class="decision-what">W6: Results screen shows real biomechanics data + basic Nemotron output. W7 confirmed deliverable: visual proof of form (image or video with joint angles) + full Claude coaching.<br><br>
+          <strong>OpenCV — what's already built (W5):</strong> The developer built a full video overlay with green skeleton lines, joint dots, angle values (Hip, Knee, Back), rep counter, and state detection. This overlay video is what gets sent to Nemotron.<br><br>
+          <strong>W7 addition:</strong> After Nemotron identifies the worst-performing rep, the pipeline extracts a still frame from the raw video at that moment. The existing overlay drawing code is reused to annotate it with actual vs gold standard angles. This image is shown to the user on the Results screen. Estimated 3–4 days to build since the core drawing work is already done.</div>
+          <div class="decision-why"><strong>Why:</strong> Reuses 70% of already-built code. Delivers the same user value. Showing someone their own body is more powerful than any score — this is the product moment.</div>
+        </div>
+      </div>
+
+      <div class="decision-card">
+        <div class="decision-left">
+          <div class="decision-label">Workout Lifecycle</div>
+          <div class="decision-title">Frontend only — no backend, no AI</div>
+        </div>
+        <div class="decision-right">
+          <div class="decision-what">Workout Builder + Tracker are built as a frontend experience only. No data is saved, no backend integration, no AI. Built to show users the full product vision and improve overall app feel.</div>
+          <div class="decision-why"><strong>Why:</strong> Frontend capacity is committed to the core demo screens. The Workout Lifecycle adds product depth for the demo without engineering cost. The limitation is invisible to the viewer.</div>
+        </div>
+      </div>
+
+      <div class="decision-card">
+        <div class="decision-left">
+          <div class="decision-label">Profile</div>
+          <div class="decision-title">Profile screen — frontend shell only</div>
+        </div>
+        <div class="decision-right">
+          <div class="decision-what">Profile screen exists and is routable. Displays dummy data. No save functionality, no backend endpoints. Auth dropped means no onboarding flow to collect initial profile.</div>
+          <div class="decision-why"><strong>Why:</strong> Removes backend profile endpoints from Squad 2's W8 scope. Showing the screen signals intent — personalisation wired to AI coaching is a post-demo feature.</div>
+        </div>
+      </div>
+
+      <div class="decision-card">
+        <div class="decision-left">
+          <div class="decision-label">Latency</div>
+          <div class="decision-title">Target 30–35s end-to-end</div>
+        </div>
+        <div class="decision-right">
+          <div class="decision-what">End-to-end pipeline latency target: under 35 seconds. While processing, the presenter narrates what the AI is doing at each stage — turning the wait into a credibility moment. If latency exceeds 35s by W9, a pre-recorded backup is prepared.</div>
+          <div class="decision-why"><strong>Why:</strong> 35s is realistic for the full pipeline — MediaPipe, OpenCV overlay, Biomechanics, Nemotron, Claude coaching. Narration makes it compelling regardless.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <hr class="divider" />
+
+
+  <!-- ═══ SECTION 4: PT-01 ═══ -->
+  <div class="section">
+    <div class="section-label">Product Task</div>
+    <div class="section-title">PT-01 — Progression Recommendation Logic</div>
+    <div class="section-desc">Defines what "ready to progress / hold / drop weight" means — before engineering builds it in W8.</div>
+
+    <div class="task-card">
+      <div class="task-header">
+        <span class="task-badge">PT-01 · Phase 1</span>
+        <span class="task-name">Biomechanics Parameters &amp; Nemotron Output Schema</span>
+        <span class="task-owner">Owner: PM · W5 — Done</span>
+      </div>
+      <div class="task-body">
+        <div class="task-row"><div class="task-week">Done</div><div class="task-detail">Joint parameters defined for Goblet Squat · Nemotron output schema agreed with Squad 1 · Biomechanics script spec completed</div></div>
+      </div>
+    </div>
+
+    <div class="task-card">
+      <div class="task-header">
+        <span class="task-badge">PT-01 · Phase 2</span>
+        <span class="task-name">Refine Against Real Pipeline Output</span>
+        <span class="task-owner">Owner: PM + Squad 2 · Week 7</span>
+      </div>
+      <div class="task-body">
+        <div class="task-row"><div class="task-week">Week 7</div><div class="task-detail">Once biomechanics + Nemotron are returning real values — check whether outputs are sensible. Are angles correct? Are Nemotron scores reasonable? Adjust parameters and prompt if not. Takes 1–2 hours, not a full sprint.</div></div>
+      </div>
+    </div>
+
+    <div class="task-card">
+      <div class="task-header">
+        <span class="task-badge">PT-01 · Phase 3</span>
+        <span class="task-name">Progression Thresholds — Final Spec to Squad 2</span>
+        <span class="task-owner">Owner: PM + PT Expert · By Mon Week 8</span>
+      </div>
+      <div class="task-body">
+        <div class="task-row"><div class="task-week">Mon W8</div><div class="task-detail"><strong>Ready to progress</strong> — score threshold, consistency across sessions, minimum session count<br/><strong>Hold at current weight</strong> — degradation delta between sessions<br/><strong>Drop weight</strong> — which joints, if flagged, block progression regardless of overall score</div></div>
+      </div>
+    </div>
+
+    <div class="task-card">
+      <div class="task-header">
+        <span class="task-badge">PT-01 · Phase 4</span>
+        <span class="task-name">Expert Validation on Test Videos</span>
+        <span class="task-owner">Owner: PT Experts 1 + 2 · Week 9</span>
+      </div>
+      <div class="task-body">
+        <div class="task-row"><div class="task-week">Week 9</div><div class="task-detail">PT Experts review recommendation outputs on 3–5 test videos including the gold standard set. Does "ready to progress" fire when a trainer would agree? Flag any mismatches for prompt or threshold refinement.</div></div>
+      </div>
+    </div>
+
+  </div>
+
+  <div style="text-align:center;color:var(--text-muted);font-size:12px;padding-top:20px;">
+    Kinetic · Epics v2 · Revised Scope · May 11, 2026
+  </div>
+
+</div>
+</body>
+</html>
