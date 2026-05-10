@@ -1,0 +1,1016 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kinetic — Team Meeting Brief · Demo Day Vision</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0a0d14; color: #e2e8f0; min-height: 100vh; }
+
+/* ── NAV BAR ── */
+.nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(10,13,20,0.95); backdrop-filter: blur(12px);
+  border-bottom: 1px solid #1e2433;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 32px; height: 52px;
+}
+.nav-logo { font-size: 13px; font-weight: 800; color: #f8fafc; letter-spacing: -0.3px; }
+.nav-logo span { color: #60a5fa; }
+.nav-date { font-size: 11px; color: #475569; }
+.mode-toggle { display: flex; gap: 6px; }
+.mode-btn {
+  font-size: 10px; font-weight: 700; padding: 5px 14px; border-radius: 6px;
+  cursor: pointer; border: 1px solid #1e2433; background: #0d1117;
+  color: #64748b; transition: all 0.15s;
+}
+.mode-btn.active { background: #1e3a5f; color: #60a5fa; border-color: #3b82f6; }
+
+/* ── SECTION ── */
+.section {
+  min-height: 100vh; display: flex; flex-direction: column;
+  justify-content: center; padding: 80px 64px 60px;
+  border-bottom: 1px solid #1e2433;
+}
+.section-num { font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.2px; color: #334155; margin-bottom: 10px; }
+.section-title { font-size: 28px; font-weight: 800; color: #f8fafc; letter-spacing: -0.5px; line-height: 1.2; margin-bottom: 8px; }
+.section-sub { font-size: 14px; color: #64748b; margin-bottom: 36px; }
+
+/* presentation mode */
+body.pres .section { display: none; min-height: 100vh; }
+body.pres .section.active { display: flex; }
+.pres-nav {
+  display: none; position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+  z-index: 100; background: #0d1117; border: 1px solid #1e2433; border-radius: 30px;
+  padding: 8px 16px; gap: 16px; align-items: center;
+}
+body.pres .pres-nav { display: flex; }
+.pres-btn {
+  font-size: 11px; font-weight: 700; padding: 6px 16px; border-radius: 20px;
+  cursor: pointer; border: 1px solid #1e2433; background: #080c14; color: #64748b;
+  transition: all 0.15s;
+}
+.pres-btn:hover { border-color: #3b82f6; color: #60a5fa; background: #0d1a2e; }
+.pres-counter { font-size: 11px; color: #334155; min-width: 44px; text-align: center; }
+
+/* ── SECTION 1: VISION ── */
+.hero-statement {
+  background: linear-gradient(135deg, #0d1a2e 0%, #0a0d14 60%, #0a1205 100%);
+  border: 1px solid #1e2433; border-radius: 16px;
+  padding: 40px 44px; margin-bottom: 28px;
+}
+.hero-statement h2 {
+  font-size: 22px; font-weight: 800; color: #f8fafc; line-height: 1.5;
+  letter-spacing: -0.3px;
+}
+.hero-statement h2 em { color: #60a5fa; font-style: normal; }
+.hero-statement h2 strong { color: #4ade80; }
+
+.vision-cards { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+.vision-card {
+  background: #0d1117; border: 1px solid #1e2433; border-radius: 10px;
+  padding: 16px 18px;
+}
+.vision-card-icon { font-size: 20px; margin-bottom: 8px; }
+.vision-card-title { font-size: 11px; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+.vision-card-text { font-size: 12px; color: #64748b; line-height: 1.6; }
+
+/* ── SECTION 2: SUCCESS ── */
+.success-grid { display: flex; flex-direction: column; gap: 14px; }
+.success-card {
+  display: flex; gap: 20px; align-items: flex-start;
+  background: #0d1117; border: 1px solid #1e2433; border-radius: 12px;
+  padding: 18px 22px;
+}
+.success-num {
+  font-size: 28px; font-weight: 800; color: #1e2433; flex-shrink: 0;
+  width: 48px; text-align: center; line-height: 1;
+  font-family: 'SF Mono', monospace;
+}
+.success-content {}
+.success-title { font-size: 14px; font-weight: 800; color: #f1f5f9; margin-bottom: 4px; }
+.success-desc { font-size: 12px; color: #64748b; line-height: 1.6; }
+.success-card.s1 { border-left: 3px solid #3b82f6; } .success-card.s1 .success-num { color: #1e3a5f; }
+.success-card.s2 { border-left: 3px solid #22c55e; } .success-card.s2 .success-num { color: #14532d; }
+.success-card.s3 { border-left: 3px solid #a78bfa; } .success-card.s3 .success-num { color: #2e1065; }
+.success-card.s4 { border-left: 3px solid #f59e0b; } .success-card.s4 .success-num { color: #451a03; }
+.success-card.s5 { border-left: 3px solid #f97316; } .success-card.s5 .success-num { color: #431407; }
+
+/* ── SECTION 3: USER FEATURES ── */
+.features-flow { display: flex; gap: 0; align-items: stretch; }
+.feature-step {
+  flex: 1; background: #0d1117; border: 1px solid #1e2433;
+  border-radius: 0; padding: 20px 18px;
+  display: flex; flex-direction: column; gap: 10px;
+  position: relative;
+}
+.feature-step:first-child { border-radius: 12px 0 0 12px; }
+.feature-step:last-child { border-radius: 0 12px 12px 0; }
+.feature-arrow {
+  display: flex; align-items: center; color: #1e2433;
+  font-size: 20px; padding: 0 4px; flex-shrink: 0; align-self: center;
+}
+.feature-step-num {
+  font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.6px;
+  color: #334155;
+}
+.feature-step-title { font-size: 13px; font-weight: 800; color: #f1f5f9; }
+.feature-items { display: flex; flex-direction: column; gap: 5px; margin-top: 4px; }
+.feature-item { font-size: 11px; color: #64748b; display: flex; gap: 6px; line-height: 1.4; }
+.feature-item::before { content: '→'; color: #334155; flex-shrink: 0; }
+.feature-step.highlight { border-color: #3b82f6; background: #0d1a2e; }
+.feature-step.highlight .feature-step-title { color: #93c5fd; }
+.feature-step.highlight .feature-item::before { color: #3b82f6; }
+.feature-step.highlight .feature-item { color: #94a3b8; }
+
+/* ── SECTION 4: ARCHITECTURE ── */
+.pipeline { display: flex; flex-direction: column; gap: 0; }
+.pipe-row {
+  display: grid; grid-template-columns: 100px 1fr;
+  border-left: 2px solid #1e2433; margin-left: 20px;
+  position: relative;
+}
+.pipe-row::before {
+  content: ''; position: absolute; left: -7px; top: 50%;
+  transform: translateY(-50%);
+  width: 12px; height: 12px; border-radius: 50%;
+  border: 2px solid #1e2433; background: #0a0d14;
+}
+.pipe-row.sq1::before { border-color: #3b82f6; background: #0d1a2e; }
+.pipe-row.sq2::before { border-color: #22c55e; background: #0a1f12; }
+.pipe-row.sq3::before { border-color: #f97316; background: #1a1205; }
+.pipe-row.gate::before { border-color: #ef4444; background: #150505; }
+
+.pipe-meta {
+  padding: 10px 14px 10px 20px;
+  display: flex; flex-direction: column; justify-content: center; gap: 2px;
+}
+.pipe-step-label { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #334155; }
+.pipe-squad-label { font-size: 9px; font-weight: 700; }
+.sq1 .pipe-squad-label { color: #3b82f6; }
+.sq2 .pipe-squad-label { color: #22c55e; }
+.sq3 .pipe-squad-label { color: #f97316; }
+.gate .pipe-squad-label { color: #ef4444; }
+
+.pipe-content {
+  border-left: 1px solid #1e2433; padding: 10px 16px;
+  display: flex; flex-direction: column; gap: 4px;
+}
+.pipe-name { font-size: 12px; font-weight: 700; color: #f1f5f9; }
+.pipe-io { font-size: 10px; color: #475569; line-height: 1.5; }
+.pipe-sse {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 9px; font-weight: 700; padding: 1px 7px; border-radius: 10px;
+  background: #1a0d2e; color: #c4b5fd; border: 1px solid #5b21b6;
+  width: fit-content; margin-top: 2px; font-family: 'SF Mono', monospace;
+}
+.pipe-spacer { height: 2px; margin-left: 20px; border-left: 2px dashed #1e2433; }
+
+/* Visual panels */
+.pipe-content { display: flex; gap: 14px; align-items: flex-start; }
+.pipe-text { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+.pipe-visual {
+  width: 168px; flex-shrink: 0;
+  background: #070a0f; border: 1px solid #1e2433; border-radius: 8px;
+  overflow: hidden;
+}
+.pv-header {
+  background: #0d1117; padding: 4px 9px;
+  font-size: 8px; font-weight: 800; text-transform: uppercase;
+  letter-spacing: 0.5px; color: #334155; border-bottom: 1px solid #1e2433;
+}
+.pv-body { padding: 8px 9px; font-size: 9.5px; display: flex; flex-direction: column; gap: 5px; }
+.pv-field {
+  display: flex; flex-direction: column; gap: 1px;
+}
+.pv-label { font-size: 8px; color: #334155; text-transform: uppercase; letter-spacing: 0.3px; }
+.pv-value {
+  background: #0d1117; border: 1px solid #1e2433; border-radius: 4px;
+  padding: 3px 7px; font-size: 9.5px; color: #94a3b8; font-family: 'SF Mono', monospace;
+}
+.pv-btn {
+  background: #1e3a5f; border: 1px solid #3b82f6; border-radius: 4px;
+  padding: 4px 7px; font-size: 9px; font-weight: 700; color: #60a5fa;
+  text-align: center; margin-top: 2px;
+}
+.pv-row { display: flex; justify-content: space-between; align-items: baseline; font-family: 'SF Mono', monospace; }
+.pv-key { font-size: 9px; color: #475569; }
+.pv-val { font-size: 9.5px; }
+.pv-val.green { color: #4ade80; }
+.pv-val.amber { color: #fbbf24; }
+.pv-val.red { color: #f87171; }
+.pv-val.blue { color: #60a5fa; }
+.pv-divider { height: 1px; background: #1e2433; margin: 2px 0; }
+.pv-tag {
+  display: inline-block; font-size: 8px; font-weight: 700; padding: 1px 5px;
+  border-radius: 3px; margin-right: 2px;
+}
+.pv-issue { background: #150505; color: #f87171; border: 1px solid #7f1d1d; }
+.pv-pass  { background: #030d06; color: #4ade80; border: 1px solid #14532d; }
+.pv-fail  { background: #150505; color: #f87171; border: 1px solid #7f1d1d; }
+
+/* Joint diagram */
+.pv-joints { position: relative; height: 100px; }
+.joint-line {
+  position: absolute; background: #22c55e; border-radius: 2px;
+}
+.joint-dot {
+  position: absolute; border-radius: 50%; border: 2px solid;
+  width: 10px; height: 10px; transform: translate(-50%, -50%);
+}
+.jd-green { border-color: #22c55e; background: #0a1f12; }
+.jd-red   { border-color: #ef4444; background: #150505; }
+.jd-amber { border-color: #f59e0b; background: #141000; }
+.joint-label { position: absolute; font-size: 8px; font-family: 'SF Mono', monospace; }
+
+/* Coaching snippet */
+.pv-coaching { font-size: 9px; color: #94a3b8; line-height: 1.5; font-style: italic; }
+.pv-rec { font-size: 9px; font-weight: 700; padding: 3px 7px; border-radius: 4px; text-align: center; margin-top: 4px; }
+.rec-hold  { background: #1c1000; color: #fbbf24; border: 1px solid #92400e; }
+.rec-prog  { background: #030d06; color: #4ade80; border: 1px solid #14532d; }
+
+/* Image placeholder */
+.pv-img-placeholder {
+  border: 1.5px dashed #334155; border-radius: 6px;
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: center; text-align: center; gap: 4px;
+  padding: 10px 8px; min-height: 90px;
+}
+
+/* Data layer tags */
+.pipe-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 5px; }
+.pipe-tag {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 9px; font-weight: 700; padding: 2px 8px;
+  border-radius: 10px; white-space: nowrap; font-family: 'SF Mono', monospace;
+}
+.tag-db-write { background: #150d2e; color: #c4b5fd; border: 1px solid #5b21b6; }
+.tag-db-read  { background: #051e26; color: #67e8f9; border: 1px solid #0e7490; }
+.tag-rag      { background: #1c1000; color: #fde68a; border: 1px solid #92400e; }
+.tag-db-write::before { content: '↑ DB WRITE · '; color: #7c3aed; }
+.tag-db-read::before  { content: '↓ DB READ · ';  color: #0e7490; }
+.tag-rag::before      { content: '📄 RAG · ';     }
+
+/* ── SECTION 5: SCOPE ── */
+.scope-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+.scope-card {
+  border-radius: 10px; padding: 16px 18px; display: flex; flex-direction: column; gap: 10px;
+}
+.scope-card.kept { background: #030d06; border: 1px solid #14532d; }
+.scope-card.simplified { background: #141000; border: 1px solid #92400e; }
+.scope-card.dropped { background: #0d0500; border: 1px solid #7f1d1d; }
+
+.scope-card-header { display: flex; align-items: center; gap: 8px; }
+.scope-tag {
+  font-size: 9px; font-weight: 700; padding: 2px 8px; border-radius: 10px;
+}
+.tag-kept      { background: #0a1f12; color: #4ade80; border: 1px solid #14532d; }
+.tag-simplified { background: #1c1000; color: #fbbf24; border: 1px solid #78350f; }
+.tag-dropped   { background: #150505; color: #f87171; border: 1px solid #7f1d1d; }
+
+.scope-title { font-size: 13px; font-weight: 800; }
+.scope-card.kept .scope-title { color: #4ade80; }
+.scope-card.simplified .scope-title { color: #fbbf24; }
+.scope-card.dropped .scope-title { color: #f87171; text-decoration: line-through; opacity: 0.8; }
+
+.scope-what { font-size: 11px; color: #94a3b8; line-height: 1.6; }
+.scope-why-label { font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: #334155; }
+.scope-why { font-size: 11px; line-height: 1.5; }
+.scope-card.kept .scope-why { color: #4ade80; }
+.scope-card.simplified .scope-why { color: #fde68a; }
+.scope-card.dropped .scope-why { color: #fca5a5; }
+
+.scope-full-row {
+  grid-column: 1 / -1;
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-logo">Kinetic <span>·</span> Team Meeting</div>
+  <div class="nav-date">May 10, 2026 &nbsp;·&nbsp; Demo Day Vision</div>
+  <div style="font-size:10px;color:#334155;display:flex;align-items:center;gap:6px;">
+    <span style="width:6px;height:6px;border-radius:50%;background:#3b82f6;display:inline-block;"></span> Presentation mode &nbsp;·&nbsp; ← → to navigate
+  </div>
+</nav>
+
+<!-- PRESENTATION NAV -->
+<div class="pres-nav">
+  <button class="pres-btn" onclick="prevSection()">← Prev</button>
+  <span class="pres-counter" id="pres-counter">1 / 5</span>
+  <button class="pres-btn" onclick="nextSection()">Next →</button>
+</div>
+
+
+<!-- ══════════════════════════
+     SECTION 1 — VISION
+══════════════════════════ -->
+<div class="section active" id="s1">
+  <div class="section-num">Section 01 — Demo Day Vision</div>
+  <div class="section-title">What we're building</div>
+  <div class="section-sub">What the product delivers — end to end</div>
+
+  <div class="hero-statement">
+    <h2>
+      A user uploads a <em>30–60 second Goblet Squat video</em> and receives a
+      <strong>detailed form analysis and comparison against their previous session</strong>
+      with personalised coaching to improve their form and weight-related input.
+    </h2>
+  </div>
+
+  <!-- Screen previews -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:28px;">
+    <div style="background:#0d1117;border:1px solid #1e2433;border-radius:10px;overflow:hidden;">
+      <div style="padding:8px 14px;border-bottom:1px solid #1e2433;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:0.6px;color:#475569;">Results screen — initial analysis</div>
+      <img src="Initial_Result_Screen.png" style="width:50%;display:block;margin:0 auto;" alt="Initial results screen">
+    </div>
+    <div style="background:#0d1117;border:1px solid #1e2433;border-radius:10px;overflow:hidden;">
+      <div style="padding:8px 14px;border-bottom:1px solid #1e2433;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:0.6px;color:#475569;">Results screen — form comparison</div>
+      <img src="Comparison_Result_Screen.png" style="width:50%;display:block;margin:0 auto;" alt="Comparison results screen">
+    </div>
+  </div>
+
+  <!-- Detailed breakdown -->
+  <div style="display:flex;flex-direction:column;gap:16px;margin-bottom:28px;">
+
+    <!-- Block 1 — Detailed analysis -->
+    <div style="background:#0d1117;border:1px solid #1e2433;border-radius:10px;overflow:hidden;">
+      <div style="padding:12px 18px;border-bottom:1px solid #1e2433;display:flex;align-items:center;gap:10px;">
+        <div style="font-size:13px;font-weight:800;color:#f1f5f9;">1 &nbsp;—&nbsp; Detailed Analysis of Their Session</div>
+      </div>
+      <div style="padding:14px 18px;display:flex;flex-direction:column;gap:10px;">
+
+        <div style="display:flex;gap:12px;align-items:baseline;">
+          <div style="font-size:11px;font-weight:800;color:#60a5fa;background:#0d1a2e;border:1px solid #1e3a5f;border-radius:4px;padding:2px 8px;flex-shrink:0;">a</div>
+          <div style="font-size:12px;color:#94a3b8;line-height:1.6;"><strong style="color:#f1f5f9;">Visual proof of their form</strong> — a video or image of them doing the exercise, with joint angles visible on their own body. Seeing yourself is more powerful than any score.</div></div>
+        </div>
+
+        <div style="display:flex;gap:12px;align-items:baseline;">
+          <div style="font-size:11px;font-weight:800;color:#60a5fa;background:#0d1a2e;border:1px solid #1e3a5f;border-radius:4px;padding:2px 8px;flex-shrink:0;">b</div>
+          <div style="font-size:12px;color:#94a3b8;line-height:1.6;"><strong style="color:#f1f5f9;">Numerical score /100</strong> — an overall form score across the session.</div>
+        </div>
+
+        <div style="display:flex;gap:12px;align-items:baseline;">
+          <div style="font-size:11px;font-weight:800;color:#60a5fa;background:#0d1a2e;border:1px solid #1e3a5f;border-radius:4px;padding:2px 8px;flex-shrink:0;">c</div>
+          <div style="font-size:12px;color:#94a3b8;line-height:1.6;"><strong style="color:#f1f5f9;">1–2 sentence personalised summary</strong> — combines their form quality with the weight they were lifting. e.g. <em style="color:#64748b;">"At 12kg your posture holds well across all reps, but your ankle dorsiflexion limits your depth from rep 5 onwards."</em></div>
+        </div>
+
+        <div style="display:flex;gap:12px;align-items:baseline;">
+          <div style="font-size:11px;font-weight:800;color:#60a5fa;background:#0d1a2e;border:1px solid #1e3a5f;border-radius:4px;padding:2px 8px;flex-shrink:0;">d</div>
+          <div style="font-size:12px;color:#94a3b8;line-height:1.6;">
+            <strong style="color:#f1f5f9;">4 Parameters — Posture · Stability · Movement Quality · Tempo</strong><br>
+            Each parameter shows four things:
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px;">
+              <div style="background:#080c12;border:1px solid #1e2433;border-radius:6px;padding:8px 10px;font-size:11px;color:#94a3b8;"><strong style="color:#4ade80;display:block;margin-bottom:2px;">Score</strong>A score /100 for that parameter</div>
+              <div style="background:#080c12;border:1px solid #1e2433;border-radius:6px;padding:8px 10px;font-size:11px;color:#94a3b8;"><strong style="color:#4ade80;display:block;margin-bottom:2px;">What they're doing well</strong>1 sentence affirmation</div>
+              <div style="background:#080c12;border:1px solid #1e2433;border-radius:6px;padding:8px 10px;font-size:11px;color:#94a3b8;"><strong style="color:#fbbf24;display:block;margin-bottom:2px;">What's off</strong>1 sentence specific observation</div>
+              <div style="background:#080c12;border:1px solid #1e2433;border-radius:6px;padding:8px 10px;font-size:11px;color:#94a3b8;"><strong style="color:#f87171;display:block;margin-bottom:2px;">Action to work on</strong>1 concrete correction</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:12px;align-items:baseline;">
+          <div style="font-size:11px;font-weight:800;color:#60a5fa;background:#0d1a2e;border:1px solid #1e3a5f;border-radius:4px;padding:2px 8px;flex-shrink:0;">e</div>
+          <div style="font-size:12px;color:#94a3b8;line-height:1.6;"><strong style="color:#f1f5f9;">Rep-by-rep score chart</strong> — visualises how form holds or deteriorates from the first rep to the last. Shows where fatigue or technique breakdown begins.</div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Block 2 — Form comparison -->
+    <div style="background:#0d1117;border:1px solid #1e2433;border-radius:10px;overflow:hidden;">
+      <div style="padding:12px 18px;border-bottom:1px solid #1e2433;display:flex;align-items:center;gap:10px;">
+        <div style="font-size:13px;font-weight:800;color:#f1f5f9;">2 &nbsp;—&nbsp; Form Comparison Against Previous Session</div>
+        <div style="margin-left:auto;font-size:9px;font-weight:700;padding:2px 8px;border-radius:4px;background:rgba(251,146,60,0.12);color:#fb923c;border:1px solid rgba(251,146,60,0.3);">The longitudinal differentiator</div>
+      </div>
+      <div style="padding:14px 18px;font-size:12px;color:#94a3b8;line-height:1.7;">
+        Side-by-side comparison of the user's current session vs their previous session — on the same 4 parameters (Posture, Stability, Movement Quality, Tempo). Shows whether form improved, held, or degraded at the same or different weight. This is what no competitor offers — not a single-session snapshot, but a <strong style="color:#f1f5f9;">progression story over time</strong>.
+      </div>
+    </div>
+
+  </div>
+
+  <div class="vision-cards">
+    <div class="vision-card">
+      <div class="vision-card-icon">👁</div>
+      <div class="vision-card-title">Visual proof beats a score</div>
+      <div class="vision-card-text">Showing someone their own body at the worst moment — knee caving in, back leaning forward — is more powerful than any number. The annotated frame is the product moment.</div>
+    </div>
+    <div class="vision-card">
+      <div class="vision-card-icon">📈</div>
+      <div class="vision-card-title">Longitudinal, not snapshot</div>
+      <div class="vision-card-text">Competitors show one rep. Kinetic shows the journey — how form changes as weight increases, rep by rep, session by session. That's the moat.</div>
+    </div>
+    <div class="vision-card">
+      <div class="vision-card-icon">⚖️</div>
+      <div class="vision-card-title">Weight-specific advice</div>
+      <div class="vision-card-text">"Your form at 12kg is solid — try 14kg" or "Your tempo degrades after rep 5 at 16kg." The recommendation is tied to load, not just generic form cues.</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════
+     SECTION 2 — SUCCESS
+══════════════════════════ -->
+<div class="section" id="s2">
+  <div class="section-num">Section 02 — What Does Success Look Like</div>
+  <div class="section-title">5 things we need to nail for demo day</div>
+  <div class="section-sub">These are the criteria we evaluate the demo against — not features, but outcomes</div>
+
+  <div class="success-grid">
+
+    <div class="success-card s1">
+      <div class="success-num">01</div>
+      <div class="success-content">
+        <div class="success-title">Pipeline completes in 30–35 seconds</div>
+        <div class="success-desc">Upload video → annotated results on screen in under 35 seconds. Not a progress bar spinning forever. Measured wall-clock from upload submit to Results screen fully loaded. This proves the product is usable, not just technically functional.</div>
+      </div>
+    </div>
+
+    <div class="success-card s2">
+      <div class="success-num">02</div>
+      <div class="success-content">
+        <div class="success-title">Visual proof on the Results screen</div>
+        <div class="success-desc">The worst-rep bottom frame appears — the user's own body, annotated with actual joint angles (knee, hip, ankle) and gold standard comparison. The image is clear enough to see the form fault. This is the moment the product becomes real to someone who's never seen it before.</div>
+      </div>
+    </div>
+
+    <div class="success-card s3">
+      <div class="success-num">03</div>
+      <div class="success-content">
+        <div class="success-title">MediaPipe angle outputs are accurate</div>
+        <div class="success-desc">The biomechanics data is trustworthy — knee angle, hip angle, and dorsiflexion values on screen match what a trained eye would observe from the same video. Validated by running 3–5 gold standard videos through the pipeline and comparing outputs to known good values. If the foundation is wrong, everything above it is wrong.</div>
+      </div>
+    </div>
+
+    <div class="success-card s4">
+      <div class="success-num">04</div>
+      <div class="success-content">
+        <div class="success-title">Weight-specific coaching output</div>
+        <div class="success-desc">The coaching paragraph references the weight used and links it to what was observed. e.g. <em>"At 12kg your tempo is consistent across reps, but your back angle degrades noticeably after rep 6 — this is typical as load approaches your stability limit. At 14kg this is likely to get worse before it improves."</em> Generic advice ("work on your form") is a fail.</div>
+      </div>
+    </div>
+
+    <div class="success-card s5">
+      <div class="success-num">05</div>
+      <div class="success-content">
+        <div class="success-title">Dashboard tells the progression story</div>
+        <div class="success-desc">The dashboard shows 3–4 sessions of history for a demo user — form score trending up, weight increasing over time, parameter-level breakdowns. A viewer should be able to see the story without explanation: this person is getting stronger and their form is holding. The longitudinal data differentiator needs to be visible, not described.</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ══════════════════════════
+     SECTION 3 — FEATURES
+══════════════════════════ -->
+<div class="section" id="s3">
+  <div class="section-num">Section 03 — Key User Features</div>
+  <div class="section-title">What the user experiences end to end</div>
+  <div class="section-sub">Every screen in the demo flow — what it does and why it matters</div>
+
+  <div class="features-flow">
+
+    <div class="feature-step highlight">
+      <div class="feature-step-num">Step 1</div>
+      <div class="feature-step-title">Upload</div>
+      <div class="feature-items">
+        <div class="feature-item">Select exercise (Goblet Squat)</div>
+        <div class="feature-item">Enter weight used (kg)</div>
+        <div class="feature-item">Pick video file</div>
+        <div class="feature-item">Filming tips modal</div>
+      </div>
+    </div>
+
+    <div class="feature-arrow">→</div>
+
+    <div class="feature-step">
+      <div class="feature-step-num">Step 2</div>
+      <div class="feature-step-title">Processing</div>
+      <div class="feature-items">
+        <div class="feature-item">Live SSE progress bar</div>
+        <div class="feature-item">Stage-by-stage messages</div>
+        <div class="feature-item">Error handling if bad video</div>
+      </div>
+    </div>
+
+    <div class="feature-arrow">→</div>
+
+    <div class="feature-step highlight">
+      <div class="feature-step-num">Step 3</div>
+      <div class="feature-step-title">Results</div>
+      <div class="feature-items">
+        <div class="feature-item">Visual proof of their form</div>
+        <div class="feature-item">Actual vs gold standard angles</div>
+        <div class="feature-item">4 parameter scores + tips</div>
+        <div class="feature-item">Rep-by-rep chart</div>
+        <div class="feature-item">Weight progression chip</div>
+      </div>
+    </div>
+
+    <div class="feature-arrow">→</div>
+
+    <div class="feature-step highlight">
+      <div class="feature-step-num">Step 4</div>
+      <div class="feature-step-title">Dashboard</div>
+      <div class="feature-items">
+        <div class="feature-item">Form score trend chart</div>
+        <div class="feature-item">Weight vs form over time</div>
+        <div class="feature-item">Session history list</div>
+        <div class="feature-item">Seeded with 3 demo users</div>
+      </div>
+    </div>
+
+    <div class="feature-arrow">→</div>
+
+    <div class="feature-step">
+      <div class="feature-step-num">Also</div>
+      <div class="feature-step-title">Workout Logger</div>
+      <div class="feature-items">
+        <div class="feature-item">Log sets, reps, weight</div>
+        <div class="feature-item">Links to form sessions</div>
+        <div class="feature-item">Feeds progression logic</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div style="margin-top:20px;padding:14px 18px;background:#0d1117;border:1px solid #1e2433;border-radius:8px;font-size:11px;color:#475569;line-height:1.7;">
+    <strong style="color:#94a3b8;">Not in demo:</strong> Login / signup screen &nbsp;·&nbsp; Profile screen (frontend shell only, no backend) &nbsp;·&nbsp; Auth tokens / session management
+  </div>
+</div>
+
+
+<!-- ══════════════════════════
+     SECTION 4 — ARCHITECTURE
+══════════════════════════ -->
+<div class="section" id="s4">
+  <div class="section-num">Section 04 — Tech Architecture &amp; Sequence</div>
+  <div class="section-title">How the pipeline runs</div>
+  <div class="section-sub">Every step from video upload to results on screen — squad ownership and data flow</div>
+
+  <div style="display:grid;grid-template-columns:1fr 200px;gap:24px;align-items:start;">
+
+    <div class="pipeline">
+
+      <!-- STEP 1 -->
+      <div class="pipe-row sq1">
+        <div class="pipe-meta">
+          <div class="pipe-step-label">Step 1</div>
+          <div class="pipe-squad-label">Squad 1</div>
+        </div>
+        <div class="pipe-content">
+          <div class="pipe-text">
+            <div class="pipe-name">User uploads video</div>
+            <div class="pipe-io">POST /upload · video file + exercise_id + weight_value + weight_unit</div>
+            <div class="pipe-sse">upload_received</div>
+          </div>
+          <div class="pipe-visual">
+            <div class="pv-header">Upload screen</div>
+            <div class="pv-body">
+              <div class="pv-field">
+                <div class="pv-label">Exercise</div>
+                <div class="pv-value">Goblet Squat ▾</div>
+              </div>
+              <div class="pv-field">
+                <div class="pv-label">Weight</div>
+                <div class="pv-value">12 kg</div>
+              </div>
+              <div class="pv-field">
+                <div class="pv-label">Video file</div>
+                <div class="pv-value" style="color:#475569;">squat_session.mp4</div>
+              </div>
+              <div class="pv-btn">Upload →</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pipe-spacer"></div>
+
+      <!-- STEP 2 -->
+      <div class="pipe-row sq2">
+        <div class="pipe-meta">
+          <div class="pipe-step-label">Step 2</div>
+          <div class="pipe-squad-label">Squad 2</div>
+        </div>
+        <div class="pipe-content">
+          <div class="pipe-text">
+            <div class="pipe-name">Save to GCS + write DB record</div>
+            <div class="pipe-io">Generates analysis_id · saves video to GCS · returns {analysis_id} to frontend immediately</div>
+            <div class="pipe-tags">
+              <span class="pipe-tag tag-db-write">form_sessions: analysis_id, user_id, exercise_id, weight_kg, video_url, status: processing</span>
+            </div>
+            <div class="pipe-sse">mediapipe_started (+ video_url)</div>
+          </div>
+          <div class="pipe-visual">
+            <div class="pv-header">DB write · form_sessions</div>
+            <div class="pv-body">
+              <div class="pv-row"><span class="pv-key">analysis_id</span><span class="pv-val blue">550e…4000</span></div>
+              <div class="pv-row"><span class="pv-key">exercise_id</span><span class="pv-val" style="color:#94a3b8;">gob_squat</span></div>
+              <div class="pv-row"><span class="pv-key">weight_kg</span><span class="pv-val green">12.0</span></div>
+              <div class="pv-row"><span class="pv-key">video_url</span><span class="pv-val" style="color:#475569;">gs://…mp4</span></div>
+              <div class="pv-divider"></div>
+              <div class="pv-row"><span class="pv-key">status</span><span class="pv-val amber">processing</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pipe-spacer"></div>
+
+      <!-- STEP 3 -->
+      <div class="pipe-row sq3">
+        <div class="pipe-meta">
+          <div class="pipe-step-label">Step 3</div>
+          <div class="pipe-squad-label">Squad 3</div>
+        </div>
+        <div class="pipe-content">
+          <div class="pipe-text">
+            <div class="pipe-name">MediaPipe — joint keypoint extraction</div>
+            <div class="pipe-io">Reads raw video frame-by-frame · outputs per-frame landmarks + per-rep segments including bottom_frame and bottom_timestamp_ms</div>
+            <div class="pipe-sse">mediapipe_complete</div>
+          </div>
+          <div class="pipe-visual">
+            <div class="pv-header">Landmark output · per frame</div>
+            <div class="pv-body">
+              <div class="pv-row"><span class="pv-key">left_hip</span><span class="pv-val green">vis: 0.94</span></div>
+              <div class="pv-row"><span class="pv-key">left_knee</span><span class="pv-val green">vis: 0.91</span></div>
+              <div class="pv-row"><span class="pv-key">left_ankle</span><span class="pv-val green">vis: 0.88</span></div>
+              <div class="pv-divider"></div>
+              <div class="pv-row"><span class="pv-key">rep_count</span><span class="pv-val blue">8</span></div>
+              <div class="pv-row"><span class="pv-key">bottom_frame</span><span class="pv-val amber">342</span></div>
+              <div class="pv-row"><span class="pv-key">bottom_ms</span><span class="pv-val amber">5700</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pipe-spacer"></div>
+
+      <!-- STEP 4 -->
+      <div class="pipe-row gate">
+        <div class="pipe-meta">
+          <div class="pipe-step-label">Step 4</div>
+          <div class="pipe-squad-label">Quality Gate</div>
+        </div>
+        <div class="pipe-content">
+          <div class="pipe-text">
+            <div class="pipe-name">Visibility quality gate</div>
+            <div class="pipe-io">Checks landmark confidence across frames · FAIL → error SSE + pipeline stops · PASS → continues to Step 5</div>
+            <div style="margin-top:5px;"><a href="https://amritabalaji-11.github.io/kinetic-docs/landmark_quality_framework.html" target="_blank" style="font-size:9.5px;color:#0e7490;text-decoration:none;display:inline-flex;align-items:center;gap:4px;padding:2px 7px;background:#051e26;border:1px solid #0e7490;border-radius:4px;">↗ Landmark Quality Framework</a></div>
+          </div>
+          <div class="pipe-visual">
+            <div class="pv-header">Two outcomes</div>
+            <div class="pv-body">
+              <div style="background:#030d06;border:1px solid #14532d;border-radius:5px;padding:5px 7px;">
+                <div style="font-size:8px;font-weight:800;color:#22c55e;margin-bottom:2px;">✓ PASS</div>
+                <div style="font-size:9px;color:#86efac;">Good angle · joints detected · pipeline continues</div>
+              </div>
+              <div style="background:#150505;border:1px solid #7f1d1d;border-radius:5px;padding:5px 7px;">
+                <div style="font-size:8px;font-weight:800;color:#ef4444;margin-bottom:2px;">✗ FAIL</div>
+                <div style="font-size:9px;color:#fca5a5;">BAD_ANGLE detected · SSE error fired · user asked to re-film</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pipe-spacer"></div>
+
+      <!-- STEP 5 -->
+      <div class="pipe-row sq3">
+        <div class="pipe-meta">
+          <div class="pipe-step-label">Step 5</div>
+          <div class="pipe-squad-label">Squad 3</div>
+        </div>
+        <div class="pipe-content">
+          <div class="pipe-text">
+            <div class="pipe-name">OpenCV Part 1 — full video overlay</div>
+            <div class="pipe-io">Draws green skeleton lines on every frame of the raw video · saves full overlay video to GCS · sent to Nemotron, NOT shown to user</div>
+            <div class="pipe-sse">overlay_complete (+ overlay_video_url)</div>
+          </div>
+          <div class="pipe-visual">
+            <div class="pv-header">Output — overlay video</div>
+            <div class="pv-body" style="padding:6px;">
+              <img src="opencv_overlay_screenshot.jpg" style="width:100%;border-radius:5px;display:block;" alt="OpenCV overlay — green skeleton on video">
+              <div style="font-size:8px;color:#475569;text-align:center;margin-top:4px;">Full video · green skeleton lines · every frame</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pipe-spacer"></div>
+
+      <!-- STEP 6 -->
+      <div class="pipe-row sq3">
+        <div class="pipe-meta">
+          <div class="pipe-step-label">Step 6</div>
+          <div class="pipe-squad-label">Squad 3</div>
+        </div>
+        <div class="pipe-content">
+          <div class="pipe-text">
+            <div class="pipe-name">Biomechanics script — angles, tempo, stability</div>
+            <div class="pipe-io">Converts landmarks → knee/hip/ankle angles · tempo · stability · back angle · bottom_frame + bottom_timestamp_ms per rep</div>
+            <div style="margin-top:5px;"><a href="https://amritabalaji-11.github.io/kinetic-docs/biomechanics_script_spec.html" target="_blank" style="font-size:9.5px;color:#059669;text-decoration:none;display:inline-flex;align-items:center;gap:4px;padding:2px 7px;background:#030d06;border:1px solid #059669;border-radius:4px;">↗ Biomechanics Script Spec</a></div>
+            <div class="pipe-tags">
+              <span class="pipe-tag tag-db-write">form_analysis_results: biomechanics_json (all angles + per-rep timestamps)</span>
+            </div>
+            <div class="pipe-sse">biomechanics_complete</div>
+          </div>
+          <div class="pipe-visual">
+            <div class="pv-header">Output · per rep</div>
+            <div class="pv-body">
+              <div class="pv-row"><span class="pv-key">rep_number</span><span class="pv-val blue">3</span></div>
+              <div class="pv-row"><span class="pv-key">knee_angle</span><span class="pv-val amber">88.2°</span></div>
+              <div class="pv-row"><span class="pv-key">hip_angle</span><span class="pv-val green">86.5°</span></div>
+              <div class="pv-row"><span class="pv-key">dorsiflexion</span><span class="pv-val red">22.1°</span></div>
+              <div class="pv-row"><span class="pv-key">tempo</span><span class="pv-val" style="color:#94a3b8;">1.37s</span></div>
+              <div class="pv-row"><span class="pv-key">bottom_ms</span><span class="pv-val amber">5700</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pipe-spacer"></div>
+
+      <!-- STEP 7 -->
+      <div class="pipe-row sq2">
+        <div class="pipe-meta">
+          <div class="pipe-step-label">Step 7</div>
+          <div class="pipe-squad-label">Squad 2</div>
+        </div>
+        <div class="pipe-content">
+          <div class="pipe-text">
+            <div class="pipe-name">Nemotron 3 Nano Omni</div>
+            <div class="pipe-io">IN: overlay video + biomechanics JSON · OUT: per-rep scores · worst_rep_number · identified issues · chain-of-thought</div>
+            <div class="pipe-sse">nemotron_started → nemotron_complete</div>
+          </div>
+          <div class="pipe-visual">
+            <div class="pv-header">Nemotron output</div>
+            <div class="pv-body">
+              <div class="pv-row"><span class="pv-key">overall_score</span><span class="pv-val amber">72</span></div>
+              <div class="pv-row"><span class="pv-key">worst_rep</span><span class="pv-val red">3</span></div>
+              <div class="pv-divider"></div>
+              <div style="font-size:8px;color:#334155;margin-bottom:3px;text-transform:uppercase;letter-spacing:0.3px;">Issues identified</div>
+              <div><span class="pv-tag pv-issue">knee_valgus</span></div>
+              <div><span class="pv-tag pv-issue">ankle_dorsiflexion</span></div>
+              <div class="pv-divider"></div>
+              <div class="pv-row"><span class="pv-key">rep scores</span><span class="pv-val" style="color:#94a3b8;">82·79·68·74·71…</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pipe-spacer"></div>
+
+      <!-- STEP 8 -->
+      <div class="pipe-row sq3">
+        <div class="pipe-meta">
+          <div class="pipe-step-label">Step 8</div>
+          <div class="pipe-squad-label">Squad 3</div>
+        </div>
+        <div class="pipe-content">
+          <div class="pipe-text">
+            <div class="pipe-name">OpenCV Part 2 — worst-rep frame extraction</div>
+            <div class="pipe-io">Seeks to worst rep's bottom_timestamp_ms · extracts raw frame · overlays actual angles + gold standard · saves annotated image — shown to user</div>
+            <div class="pipe-tags">
+              <span class="pipe-tag tag-db-read">gold_standard_biomechanics: ideal angle ranges for comparison</span>
+              <span class="pipe-tag tag-db-read">form_analysis_results: bottom_timestamp_ms for worst rep</span>
+              <span class="pipe-tag tag-db-write">form_analysis_results: annotated_frame_url</span>
+            </div>
+            <div class="pipe-sse">frames_extracting → frames_ready (+ frame_url)</div>
+          </div>
+          <div class="pipe-visual">
+            <div class="pv-header">Annotated frame · worst rep</div>
+            <div class="pv-body" style="padding:6px;">
+              <div style="background:#0d1117;border:1px solid #1e2433;border-radius:5px;padding:7px;position:relative;min-height:70px;">
+                <div style="font-size:8px;color:#475569;margin-bottom:5px;">User at bottom of squat</div>
+                <div style="display:flex;flex-direction:column;gap:3px;">
+                  <div style="display:flex;align-items:center;gap:5px;">
+                    <div style="width:7px;height:7px;border-radius:50%;background:#4ade80;border:1px solid #22c55e;flex-shrink:0;"></div>
+                    <span style="font-size:8px;color:#94a3b8;">Hip &nbsp;<span style="color:#4ade80;">86° </span><span style="color:#475569;">/ 80–95°</span></span>
+                  </div>
+                  <div style="display:flex;align-items:center;gap:5px;">
+                    <div style="width:7px;height:7px;border-radius:50%;background:#fbbf24;border:1px solid #f59e0b;flex-shrink:0;"></div>
+                    <span style="font-size:8px;color:#94a3b8;">Knee <span style="color:#fbbf24;">88° </span><span style="color:#475569;">/ 80–95°</span></span>
+                  </div>
+                  <div style="display:flex;align-items:center;gap:5px;">
+                    <div style="width:7px;height:7px;border-radius:50%;background:#f87171;border:1px solid #ef4444;flex-shrink:0;"></div>
+                    <span style="font-size:8px;color:#94a3b8;">Ankle <span style="color:#f87171;">22° </span><span style="color:#475569;">/ ≥25°</span></span>
+                  </div>
+                </div>
+              </div>
+              <div style="font-size:8px;color:#475569;text-align:center;margin-top:4px;">This image appears on Results screen</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pipe-spacer"></div>
+
+      <!-- STEP 9 -->
+      <div class="pipe-row sq2">
+        <div class="pipe-meta">
+          <div class="pipe-step-label">Step 9</div>
+          <div class="pipe-squad-label">Squad 2</div>
+        </div>
+        <div class="pipe-content">
+          <div class="pipe-text">
+            <div class="pipe-name">Claude Sonnet — coaching + progression recommendation</div>
+            <div class="pipe-io">Receives Nemotron analysis + DB weight history + RAG coaching context · produces coaching paragraphs + weight-specific progression recommendation</div>
+            <div class="pipe-tags">
+              <span class="pipe-tag tag-db-read">workout_logs: past weights + form scores → weight-based reasoning</span>
+              <span class="pipe-tag tag-rag">5–10 MD coaching docs in system prompt (coaching language + form cues)</span>
+              <span class="pipe-tag tag-db-write">form_analysis_results: coaching_output, progression_recommendation, status: complete</span>
+            </div>
+            <div style="margin-top:6px;padding:7px 9px;background:#0a1205;border:1px solid #166534;border-radius:6px;font-size:9.5px;color:#86efac;line-height:1.5;">
+              <strong style="color:#4ade80;">Weight history → Claude, not Nemotron.</strong> Claude needs past sessions to say <em style="color:#64748b;">"Form at 12kg solid across 3 sessions → ready for 14kg"</em> or <em style="color:#64748b;">"Tempo degrades at rep 6 at 16kg → hold weight."</em>
+            </div>
+            <div class="pipe-sse">claude_started → claude_complete → analysis_complete</div>
+          </div>
+          <div class="pipe-visual">
+            <div class="pv-header">Claude output</div>
+            <div class="pv-body">
+              <div class="pv-coaching">"At 12kg your posture holds well but ankle dorsiflexion limits your depth from rep 5 onwards. This is typical at this load — your heel is compensating."</div>
+              <div class="pv-divider"></div>
+              <div style="font-size:8px;color:#334155;text-transform:uppercase;letter-spacing:0.3px;margin-bottom:2px;">Progression</div>
+              <div class="pv-rec rec-hold">HOLD WEIGHT AT 12KG</div>
+              <div style="font-size:8px;color:#475569;margin-top:3px;text-align:center;">Improve ankle mobility first</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Squad legend sidebar -->
+    <div style="position:sticky;top:72px;background:#0d1117;border:1px solid #1e2433;border-radius:10px;padding:16px;">
+      <div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:0.7px;color:#334155;margin-bottom:12px;">Squad ownership</div>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div style="width:10px;height:10px;border-radius:50%;background:#3b82f6;flex-shrink:0;"></div>
+          <div>
+            <div style="font-size:11px;font-weight:700;color:#93c5fd;">Squad 1 — Frontend</div>
+            <div style="font-size:10px;color:#475569;">React · Tailwind · SSE client</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div style="width:10px;height:10px;border-radius:50%;background:#22c55e;flex-shrink:0;"></div>
+          <div>
+            <div style="font-size:11px;font-weight:700;color:#86efac;">Squad 2 — Backend</div>
+            <div style="font-size:10px;color:#475569;">FastAPI · GCS · Nemotron · Claude</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div style="width:10px;height:10px;border-radius:50%;background:#f97316;flex-shrink:0;"></div>
+          <div>
+            <div style="font-size:11px;font-weight:700;color:#fdba74;">Squad 3 — Data</div>
+            <div style="font-size:10px;color:#475569;">MediaPipe · OpenCV · Biomechanics</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div style="width:10px;height:10px;border-radius:50%;background:#ef4444;flex-shrink:0;"></div>
+          <div>
+            <div style="font-size:11px;font-weight:700;color:#fca5a5;">Quality Gate</div>
+            <div style="font-size:10px;color:#475569;">Blocks bad videos before AI</div>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:14px;padding-top:12px;border-top:1px solid #1e2433;">
+        <div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:0.7px;color:#334155;margin-bottom:8px;">SSE events</div>
+        <div style="font-size:10px;color:#475569;line-height:1.7;">Real-time progress pushed to the frontend at every stage. Frontend never polls — server pushes.</div>
+      </div>
+      <div style="margin-top:14px;padding-top:12px;border-top:1px solid #1e2433;">
+        <div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:0.7px;color:#334155;margin-bottom:8px;">Data layer</div>
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          <div style="display:flex;align-items:center;gap:6px;">
+            <div style="width:8px;height:8px;border-radius:2px;background:#5b21b6;flex-shrink:0;"></div>
+            <div style="font-size:10px;color:#c4b5fd;">↑ DB Write</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;">
+            <div style="width:8px;height:8px;border-radius:2px;background:#0e7490;flex-shrink:0;"></div>
+            <div style="font-size:10px;color:#67e8f9;">↓ DB Read</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;">
+            <div style="width:8px;height:8px;border-radius:2px;background:#92400e;flex-shrink:0;"></div>
+            <div style="font-size:10px;color:#fde68a;">📄 RAG / Prompt</div>
+          </div>
+        </div>
+        <div style="margin-top:10px;padding:8px;background:#080c12;border-radius:6px;border:1px solid #1e2433;font-size:9.5px;color:#475569;line-height:1.6;">
+          <strong style="color:#94a3b8;display:block;margin-bottom:4px;">DB tables used</strong>
+          form_sessions<br>
+          form_analysis_results<br>
+          workout_logs<br>
+          gold_standard_biomechanics
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ══════════════════════════
+     SECTION 5 — SCOPE
+══════════════════════════ -->
+<div class="section" id="s5">
+  <div class="section-num">Section 05 — Scope Decisions</div>
+  <div class="section-title">What we kept, simplified, and dropped — and why</div>
+  <div class="section-sub">Every decision made to reduce complexity without reducing demo value</div>
+
+  <div class="scope-grid">
+
+    <div class="scope-card simplified">
+      <div class="scope-card-header">
+        <span class="scope-tag tag-simplified">Simplified</span>
+        <div class="scope-title">RAG — Vector DB → MD files in system prompt</div>
+      </div>
+      <div class="scope-what">Originally: Pinecone/Weaviate vector DB · embedding model · ingestion pipeline · retrieval endpoint · chunking strategy.<br>Now: 5–10 curated coaching documents converted to MD files, injected directly into Claude's system prompt.</div>
+      <div>
+        <div class="scope-why-label">Why</div>
+        <div class="scope-why">1 exercise + &lt;10 documents = vector DB is overkill at this scale. The RAG purpose is coaching language grounding, not biomechanics analysis. System prompt injection achieves the same outcome with a fraction of the build effort. Can scale to vector DB when exercises multiply.</div>
+      </div>
+    </div>
+
+    <div class="scope-card dropped">
+      <div class="scope-card-header">
+        <span class="scope-tag tag-dropped">Dropped</span>
+        <div class="scope-title">Authentication — JWT + Supabase Auth</div>
+      </div>
+      <div class="scope-what">Originally: sign up, login, JWT middleware, Supabase Auth, session management, auth screens on frontend.</div>
+      <div>
+        <div class="scope-why-label">Why</div>
+        <div class="scope-why">Judges and users are not evaluating login flows. Adds significant Squad 1 + Squad 2 build effort with zero demo value. Replaced with 2–3 hardcoded user IDs seeded in the DB — form comparison, session history, and dashboard all work as expected in a controlled demo environment.</div>
+      </div>
+    </div>
+
+    <div class="scope-card simplified">
+      <div class="scope-card-header">
+        <span class="scope-tag tag-simplified">Simplified</span>
+        <div class="scope-title">User identity — hardcoded demo users with dropdown</div>
+      </div>
+      <div class="scope-what">Originally: authenticated user_id from JWT token per request.<br>Now: 2–3 user IDs seeded in DB (user_001, user_002, user_003). Frontend dropdown lets demo operator switch users to show different progression histories.</div>
+      <div>
+        <div class="scope-why-label">Why</div>
+        <div class="scope-why">Gives the demo full control — switch to user_002 to show a user whose form is degrading at higher weights, switch to user_003 to show a strong progression story. More compelling than a single user with limited history.</div>
+      </div>
+    </div>
+
+    <div class="scope-card dropped">
+      <div class="scope-card-header">
+        <span class="scope-tag tag-dropped">Dropped</span>
+        <div class="scope-title">Profile screen backend + Auth screens</div>
+      </div>
+      <div class="scope-what">Originally: full profile/preferences backend endpoints, login + signup screens built and connected to auth system.</div>
+      <div>
+        <div class="scope-why-label">Why</div>
+        <div class="scope-why">Profile screen exists as a frontend shell (shows dummy data, is routable, looks complete). Auth screens removed entirely — demo starts at Upload. Neither is part of the core product value being evaluated. Post-demo additions.</div>
+      </div>
+    </div>
+
+
+  </div>
+</div>
+
+
+<script>
+const sections = ['s1','s2','s3','s4','s5'];
+let current = 0;
+
+// Always presentation mode
+document.body.classList.add('pres');
+showSection(0);
+
+function showSection(idx) {
+  sections.forEach((id, i) => {
+    const el = document.getElementById(id);
+    el.classList.toggle('active', i === idx);
+  });
+  document.getElementById('pres-counter').textContent = (idx + 1) + ' / ' + sections.length;
+}
+
+function nextSection() {
+  current = Math.min(current + 1, sections.length - 1);
+  showSection(current);
+}
+
+function prevSection() {
+  current = Math.max(current - 1, 0);
+  showSection(current);
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') nextSection();
+  if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') prevSection();
+});
+</script>
+</body>
+</html>
