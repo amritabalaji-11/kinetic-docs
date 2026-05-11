@@ -227,6 +227,51 @@ h1 { font-size: 20px; font-weight: 700; color: #f8fafc; margin-bottom: 4px; }
   display: flex; align-items: center; gap: 0; margin-bottom: 4px;
 }
 
+/* ══ Scope Reduction Import ══ */
+.sr-section { margin-bottom: 52px; }
+.sr-section-label {
+  font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px;
+  color: #475569; margin-bottom: 16px; display: flex; align-items: center; gap: 12px;
+}
+.sr-section-label::after { content: ''; flex: 1; height: 1px; background: #1e2433; }
+.sr-section-title { font-size: 16px; font-weight: 800; color: #f1f5f9; margin-bottom: 6px; }
+.sr-legend { display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 28px; }
+.sr-legend-item { display: flex; align-items: center; gap: 7px; font-size: 11px; color: #94a3b8; }
+.sr-legend-dot { width: 12px; height: 12px; border-radius: 3px; flex-shrink: 0; }
+.ld-keep   { background: #14532d; border: 1px solid #22c55e; }
+.ld-simple { background: #78350f; border: 1px solid #f59e0b; }
+.ld-remove { background: #450a0a; border: 1px solid #ef4444; }
+.ld-new    { background: #1a0d2e; border: 1px solid #a78bfa; }
+.ld-same   { background: #0d1a2e; border: 1px solid #3b82f6; }
+.diagram-grid { display: grid; grid-template-columns: 140px 1fr 60px 1fr; gap: 0; align-items: stretch; }
+.pipe-connector { display: flex; align-items: center; justify-content: center; color: #1e2433; font-size: 20px; grid-column: 1 / -1; padding: 2px 0; }
+.col-header { text-align: center; font-size: 11px; font-weight: 800; padding: 10px 14px 14px; letter-spacing: 0.3px; }
+.col-original { color: #60a5fa; }
+.col-revised  { color: #4ade80; }
+.col-arrow { display: flex; align-items: center; justify-content: center; color: #1e2433; font-size: 18px; }
+.comp-cell { padding: 10px 12px; border: 1px solid #1e2433; margin: 3px; border-radius: 0; }
+.comp-row { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { display: inline-flex; align-items: center; gap: 5px; font-size: 10px; font-weight: 700; padding: 4px 10px; border-radius: 6px; white-space: nowrap; }
+.chip-keep   { background: #0a1f12; border: 1px solid #22c55e; color: #86efac; }
+.chip-simple { background: #1c1000; border: 1px solid #f59e0b; color: #fde68a; }
+.chip-remove { background: #150505; border: 1px solid #ef4444; color: #fca5a5; text-decoration: line-through; opacity: 0.7; }
+.chip-new    { background: #1a0d2e; border: 1px solid #a78bfa; color: #c4b5fd; }
+.chip-same   { background: #0d1a2e; border: 1px solid #3b82f6; color: #93c5fd; }
+.arrow-cell { display: flex; align-items: center; justify-content: center; color: #334155; font-size: 16px; padding: 4px; }
+.cell-original { background: #080c14; }
+.cell-revised  { background: #080d0a; }
+.feat-table { width: 100%; border-collapse: collapse; }
+.feat-table th { padding: 10px 14px; text-align: left; font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.6px; color: #475569; background: #0d1117; border-bottom: 2px solid #1e2433; }
+.feat-table td { padding: 12px 14px; border-bottom: 1px solid #0d1117; font-size: 11px; color: #94a3b8; vertical-align: top; line-height: 1.6; }
+.feat-table tr:nth-child(even) td { background: #080c12; }
+.status-keep   { display: inline-block; font-size: 9px; font-weight: 700; padding: 2px 8px; border-radius: 10px; background: #0a1f12; color: #4ade80; border: 1px solid #14532d; white-space: nowrap; }
+.status-simple { display: inline-block; font-size: 9px; font-weight: 700; padding: 2px 8px; border-radius: 10px; background: #1c1000; color: #fbbf24; border: 1px solid #78350f; white-space: nowrap; }
+.status-drop   { display: inline-block; font-size: 9px; font-weight: 700; padding: 2px 8px; border-radius: 10px; background: #150505; color: #f87171; border: 1px solid #7f1d1d; white-space: nowrap; }
+.status-new    { display: inline-block; font-size: 9px; font-weight: 700; padding: 2px 8px; border-radius: 10px; background: #1a0d2e; color: #c4b5fd; border: 1px solid #5b21b6; white-space: nowrap; }
+.status-defer  { display: inline-block; font-size: 9px; font-weight: 700; padding: 2px 8px; border-radius: 10px; background: #0d1117; color: #64748b; border: 1px solid #334155; white-space: nowrap; }
+.feat-name { font-weight: 700; color: #f1f5f9; display: block; margin-bottom: 2px; }
+.feat-sub  { font-size: 10px; color: #475569; }
+
 /* ── Mentor question box ── */
 .question-box {
   background: #130d1f;
@@ -250,194 +295,11 @@ h1 { font-size: 20px; font-weight: 700; color: #f8fafc; margin-bottom: 4px; }
 </head>
 <body>
 
-<h1>Kinetic — Tech Design Flow</h1>
-<p class="page-sub">Option A (Grouped Layers) · Option B (Pipeline Layers) · Option C (Squad Ownership — reference)</p>
+<h1>Kinetic — Tech Design Flow &amp; Scope Reduction</h1>
+<p class="page-sub">Scope Reduction (original vs revised) · Option A (Grouped Architecture Layers) · Option B (Pipeline Layer Colors) · Based on mentor review May 10, 2026</p>
 
 <div style="display:flex;flex-direction:column;">
 
-<!-- ════════════════════════════════════════
-     OPTION C — SQUAD OWNERSHIP (REFERENCE)
-     ════════════════════════════════════════ -->
-<div style="order:5;">
-<div class="option-header">
-  <span class="option-badge" style="background:#1f1005;color:#fdba74;border:1px solid #431407;">Option C</span>
-  <div>
-    <div class="option-title">Squad Ownership Colors (Reference)</div>
-    <div class="option-desc">Each node colored by which squad owns it — for reference only</div>
-  </div>
-</div>
-
-<div class="legend">
-  <div class="legend-item"><div class="legend-dot" style="background:#3b82f6"></div> Squad 1 — Frontend</div>
-  <div class="legend-item"><div class="legend-dot" style="background:#22c55e"></div> Squad 2 — Backend</div>
-  <div class="legend-item"><div class="legend-dot" style="background:#f97316"></div> Squad 3 — Data / Full Stack</div>
-</div>
-
-<div class="section-box">
-  <div class="section-title">① User Upload Pipeline — End to End</div>
-  <div class="flow-row">
-    <div class="node a-s1">
-      <div class="node-icon">📱</div>
-      <div class="node-title">User Uploads Video</div>
-      <div class="node-sub">+ weight entered<br>+ exercise selected</div>
-    </div>
-    <div class="arrow">→</div>
-    <div class="node a-s2">
-      <div class="node-icon">🪣</div>
-      <div class="node-title">S3 Bucket</div>
-      <div class="node-sub">Video stored<br>GCP / S3</div>
-    </div>
-    <div class="arrow">→</div>
-    <div class="node a-s2">
-      <div class="node-icon">🦴</div>
-      <div class="node-title">MediaPipe</div>
-      <div class="node-sub">Extracts x,y,z<br>joint keypoints</div>
-    </div>
-    <div class="arrow">→</div>
-    <div class="node a-s2">
-      <div class="node-icon">🐍</div>
-      <div class="node-title">Biomechanics Script</div>
-      <div class="node-sub">Knee angle, rep time,<br>stability, posture</div>
-    </div>
-    <div class="arrow">→</div>
-    <div class="node a-s2">
-      <div class="node-icon">🤖</div>
-      <div class="node-title">Nemotron 3 Nano Omni</div>
-      <div class="node-sub">Raw video +<br>biomechanics → JSON</div>
-    </div>
-    <div class="arrow">→</div>
-    <div class="node a-s2">
-      <div class="node-icon">🎞️</div>
-      <div class="node-title">OpenCV Frame Extraction</div>
-      <div class="node-sub">Timestamps → annotated<br>frames → GCS</div>
-    </div>
-    <div class="arrow">→</div>
-    <div class="node a-s2">
-      <div class="node-icon">💡</div>
-      <div class="node-title">Claude Sonnet 4.6</div>
-      <div class="node-sub">Reasoning &<br>coaching output</div>
-    </div>
-    <div class="arrow">→</div>
-    <div class="node a-s1">
-      <div class="node-icon">📊</div>
-      <div class="node-title">Coaching Output</div>
-      <div class="node-sub">Score, corrections,<br>weight rec, tips</div>
-    </div>
-  </div>
-
-  <!-- Inputs into Claude Sonnet -->
-  <div style="display:flex; gap:10px; margin-left: 842px; margin-top:4px;">
-    <div style="font-size:10px; color:#475569; display:flex; align-items:center; gap:6px;">
-      <span style="color:#334155; font-size:14px;">↑</span>
-      <span style="color:#fb923c; font-weight:600;">RAG retrieval (S3)</span>
-      &nbsp;+&nbsp;
-      <span style="color:#86efac; font-weight:600;">User data from Structured DB</span>
-      &nbsp;also feed into Claude Sonnet
-    </div>
-  </div>
-
-  <!-- Save record -->
-  <div style="display:flex; align-items:center; gap:8px; margin-top:10px; margin-left:692px;">
-    <div style="font-size:10px; color:#334155;">↓ also saved after Nemotron + OpenCV</div>
-    <div class="node a-s2" style="min-width:180px; max-width:220px;">
-      <div class="node-icon">💾</div>
-      <div class="node-title">Save Record</div>
-      <div class="node-sub">S3 video ref · MediaPipe output · Nemotron analysis · annotated frames (GCS)</div>
-    </div>
-  </div>
-</div>
-
-<div class="section-box">
-  <div class="section-title">② RAG Ingestion Pipeline — Reference Data</div>
-  <div style="display:flex; align-items:center; gap:10px;">
-    <div class="merge-inputs">
-      <div class="rag-source">
-        <div class="node a-s3" style="min-width:130px;">
-          <div class="node-icon">🎥</div>
-          <div class="node-title">20–30 Squat Videos</div>
-          <div class="node-sub">Good + bad form</div>
-        </div>
-        <div class="arrow">→</div>
-        <div class="node a-s2" style="min-width:105px;">
-          <div class="node-icon">🦴</div>
-          <div class="node-title">MediaPipe</div>
-          <div class="node-sub">x,y,z keypoints</div>
-        </div>
-        <div class="arrow">→</div>
-        <div class="node a-s2" style="min-width:115px;">
-          <div class="node-icon">🐍</div>
-          <div class="node-title">Biomechanics Data</div>
-          <div class="node-sub">Angles, reps,<br>timing</div>
-        </div>
-      </div>
-      <div class="rag-source">
-        <div class="node a-s3" style="min-width:130px;">
-          <div class="node-icon">🎥</div>
-          <div class="node-title">20–30 Squat Videos</div>
-          <div class="node-sub">Form reference</div>
-        </div>
-        <div class="arrow">→</div>
-        <div class="node a-s2" style="min-width:230px; max-width:240px;">
-          <div class="node-icon">🤖</div>
-          <div class="node-title">Nemotron 3 Nano Omni</div>
-          <div class="node-sub">JSON + paragraph + timestamps</div>
-        </div>
-      </div>
-      <div class="rag-source">
-        <div class="node a-s3" style="min-width:130px;">
-          <div class="node-icon">📹</div>
-          <div class="node-title">10–20 Tutorial Videos</div>
-          <div class="node-sub">Form guidance</div>
-        </div>
-        <div class="arrow">→</div>
-        <div class="node a-s3" style="min-width:230px; max-width:240px;">
-          <div class="node-icon">🎙️</div>
-          <div class="node-title">Audio Transcription</div>
-          <div class="node-sub">Good form tips → text</div>
-        </div>
-      </div>
-      <div class="rag-source">
-        <div class="node a-s3" style="min-width:130px;">
-          <div class="node-icon">🖼️</div>
-          <div class="node-title">Reference Images</div>
-          <div class="node-sub">Anatomy, form<br>diagrams</div>
-        </div>
-        <div class="arrow">→</div>
-        <div class="node a-s3" style="min-width:230px; max-width:240px;">
-          <div class="node-icon">⚡</div>
-          <div class="node-title">Gemini Flash</div>
-          <div class="node-sub">Image + text processing</div>
-        </div>
-      </div>
-    </div>
-    <div class="merge-arrow-right">→</div>
-    <div class="node a-s3" style="min-width:120px; min-height:160px;">
-      <div class="node-icon">🗄️</div>
-      <div class="node-title">Vector Database</div>
-      <div class="node-sub">Embeddings +<br>metadata<br><br>Pinecone /<br>Weaviate /<br>pgvector</div>
-    </div>
-  </div>
-</div>
-
-<div class="data-layers">
-  <div class="data-box a-data-s2">
-    <div class="data-box-title">Structured DB — User Data (Squad 2)</div>
-    <div class="data-item"><div class="data-dot"></div>Onboarding data (past injuries, goals)</div>
-    <div class="data-item"><div class="data-dot"></div>Weight input by user (current video)</div>
-    <div class="data-item"><div class="data-dot"></div>Past form analysis scores + insights</div>
-    <div class="data-item"><div class="data-dot"></div>Workout logs (exercise, sets, reps, weight)</div>
-  </div>
-  <div class="data-box a-data-s3">
-    <div class="data-box-title">Vector DB — RAG Data (Squad 3)</div>
-    <div class="data-item"><div class="data-dot"></div>Biomechanics reference data (angles, form cues)</div>
-    <div class="data-item"><div class="data-dot"></div>Nemotron-processed video analysis JSON</div>
-    <div class="data-item"><div class="data-dot"></div>Audio transcripts (good form tips)</div>
-    <div class="data-item"><div class="data-dot"></div>Image/text from Gemini Flash</div>
-  </div>
-</div>
-</div><!-- end Option C order:5 -->
-
-<div style="order:4;"><hr class="divider"></div>
 
 <!-- ════════════════════════════════════════
      OPTION B — PIPELINE LAYER COLORS
@@ -516,7 +378,7 @@ h1 { font-size: 20px; font-weight: 700; color: #f8fafc; margin-bottom: 4px; }
   <div style="display:flex; gap:10px; margin-left: 842px; margin-top:4px;">
     <div style="font-size:10px; color:#475569; display:flex; align-items:center; gap:6px;">
       <span style="color:#334155; font-size:14px;">↑</span>
-      <span style="color:#fcd34d; font-weight:600;">RAG retrieval (Vector DB)</span>
+      <span style="color:#fcd34d; font-weight:600;">MD files (system prompt)</span>
       &nbsp;+&nbsp;
       <span style="color:#bef264; font-weight:600;">User data (Structured DB)</span>
       &nbsp;also feed into Claude Sonnet
@@ -534,116 +396,57 @@ h1 { font-size: 20px; font-weight: 700; color: #f8fafc; margin-bottom: 4px; }
 </div>
 
 <div class="section-box">
-  <div class="section-title">② RAG Ingestion Pipeline — Reference Data</div>
-  <div style="display:flex; align-items:center; gap:10px;">
-    <div class="merge-inputs">
-      <div class="rag-source">
-        <div class="node b-rag" style="min-width:130px;">
-          <div class="node-icon">🎥</div>
-          <div class="node-title">20–30 Squat Videos</div>
-          <div class="node-sub">Good + bad form</div>
-        </div>
-        <div class="arrow">→</div>
-        <div class="node b-proc" style="min-width:105px;">
-          <div class="node-icon">🦴</div>
-          <div class="node-title">MediaPipe</div>
-          <div class="node-sub">x,y,z keypoints</div>
-        </div>
-        <div class="arrow">→</div>
-        <div class="node b-proc" style="min-width:115px;">
-          <div class="node-icon">🐍</div>
-          <div class="node-title">Biomechanics Data</div>
-          <div class="node-sub">Angles, reps,<br>timing</div>
-        </div>
-      </div>
-      <div class="rag-source">
-        <div class="node b-rag" style="min-width:130px;">
-          <div class="node-icon">🎥</div>
-          <div class="node-title">20–30 Squat Videos</div>
-          <div class="node-sub">Form reference</div>
-        </div>
-        <div class="arrow">→</div>
-        <div class="node b-ai" style="min-width:230px; max-width:240px;">
-          <div class="node-icon">🤖</div>
-          <div class="node-title">Nemotron 3 Nano Omni</div>
-          <div class="node-sub">JSON + paragraph + timestamps</div>
-        </div>
-      </div>
-      <div class="rag-source">
-        <div class="node b-rag" style="min-width:130px;">
-          <div class="node-icon">📹</div>
-          <div class="node-title">10–20 Tutorial Videos</div>
-          <div class="node-sub">Form guidance</div>
-        </div>
-        <div class="arrow">→</div>
-        <div class="node b-proc" style="min-width:230px; max-width:240px;">
-          <div class="node-icon">🎙️</div>
-          <div class="node-title">Audio Transcription</div>
-          <div class="node-sub">Good form tips → text</div>
-        </div>
-      </div>
-      <div class="rag-source">
-        <div class="node b-rag" style="min-width:130px;">
-          <div class="node-icon">🖼️</div>
-          <div class="node-title">Reference Images</div>
-          <div class="node-sub">Anatomy, form<br>diagrams</div>
-        </div>
-        <div class="arrow">→</div>
-        <div class="node b-ai" style="min-width:230px; max-width:240px;">
-          <div class="node-icon">⚡</div>
-          <div class="node-title">Gemini Flash</div>
-          <div class="node-sub">Image + text processing</div>
-        </div>
-      </div>
+  <div class="section-title">② Context Grounding — MD Files → Claude System Prompt <span style="font-size:9px;font-weight:700;padding:1px 8px;border-radius:3px;background:#1c1000;color:#fbbf24;border:1px solid #78350f;margin-left:8px;">Simplified from original</span></div>
+  <div style="display:flex; align-items:center; gap:16px; flex-wrap:wrap;">
+    <div class="node b-infra" style="min-width:160px;">
+      <div class="node-icon">📄</div>
+      <div class="node-title">5–10 Curated MD Files</div>
+      <div class="node-sub">Goblet squat form cues<br>PT coaching language<br>Gold standard angles</div>
     </div>
-    <div class="merge-arrow-right">→</div>
-    <div class="node b-rag" style="min-width:120px; min-height:160px;">
-      <div class="node-icon">🗄️</div>
-      <div class="node-title">Vector Database</div>
-      <div class="node-sub">Embeddings +<br>metadata<br><br>Pinecone /<br>Weaviate /<br>pgvector</div>
+    <div class="arrow">→</div>
+    <div class="node b-ai" style="min-width:180px;">
+      <div class="node-icon">💡</div>
+      <div class="node-title">Claude System Prompt</div>
+      <div class="node-sub">MD files injected directly<br>No retrieval · No embeddings<br>No Vector DB</div>
     </div>
+  </div>
+  <div style="margin-top:10px;font-size:10px;color:#475569;padding:8px 10px;background:#080c12;border-radius:6px;border:1px solid #1e2433;">
+    Vector DB, embedding model, ingestion pipeline, Gemini Flash, and audio transcription all removed from MVP scope. &lt;10 documents for a single exercise = system prompt injection is sufficient.
   </div>
 </div>
 
 <div class="data-layers">
   <div class="data-box b-data-ai">
     <div class="data-box-title">AI Models Used</div>
-    <div class="data-item"><div class="data-dot"></div>Nemotron 3 Nano Omni — video + biomechanics → structured JSON</div>
-    <div class="data-item"><div class="data-dot"></div>Claude Sonnet 4.6 — reasoning + coaching</div>
-    <div class="data-item"><div class="data-dot"></div>Gemini Flash — image + text (RAG ingestion only)</div>
+    <div class="data-item"><div class="data-dot"></div>Nemotron 3 Nano Omni — overlay video + biomechanics → structured JSON</div>
+    <div class="data-item"><div class="data-dot"></div>Claude Sonnet 4.6 — reasoning + coaching (MD files in system prompt)</div>
   </div>
   <div class="data-box b-data-db">
     <div class="data-box-title">Structured DB — User Data</div>
-    <div class="data-item"><div class="data-dot"></div>Onboarding data (past injuries, goals)</div>
+    <div class="data-item"><div class="data-dot"></div>Users — 2–3 seeded IDs (no auth)</div>
     <div class="data-item"><div class="data-dot"></div>Weight input by user (current video)</div>
     <div class="data-item"><div class="data-dot"></div>Past form analysis scores + insights</div>
     <div class="data-item"><div class="data-dot"></div>Workout logs (exercise, sets, reps, weight)</div>
-  </div>
-  <div class="data-box b-data-rag">
-    <div class="data-box-title">Vector DB — RAG Data</div>
-    <div class="data-item"><div class="data-dot"></div>Biomechanics reference data</div>
-    <div class="data-item"><div class="data-dot"></div>Nemotron analysis JSON + paragraphs</div>
-    <div class="data-item"><div class="data-dot"></div>Audio transcripts (good form tips)</div>
-    <div class="data-item"><div class="data-dot"></div>Image/text from Gemini Flash</div>
+    <div class="data-item"><div class="data-dot"></div>gold_standard_biomechanics (3–5 ref videos)</div>
   </div>
 </div>
 
-<!-- Open questions -->
+<!-- Scope decisions -->
 <div class="question-box" style="margin-top: 16px;">
-  <div class="question-title">Open Questions (from original diagram)</div>
-  <div class="question-item"><span class="q-num">Q1</span> Vector DB only for RAG, or hybrid of Vector + Structured DB?</div>
-  <div class="question-item"><span class="q-num">Q2</span> Should we pass only biomechanics/text into LLM, or also pass the raw video?</div>
-  <div class="question-item"><span class="q-num">Q3</span> If only good tips saved (no reference image/video), can the LLM reason about a user's video knee angle having good form?</div>
-  <div class="question-item"><span class="q-num">Q4</span> Some data structured (knee angle), some unstructured (image, audio) — hybrid storage needed?</div>
+  <div class="question-title">Scope decisions — May 2026 mentor review</div>
+  <div class="question-item"><span class="q-num">✓</span> RAG simplified — Vector DB dropped. 5–10 MD files injected into Claude system prompt directly.</div>
+  <div class="question-item"><span class="q-num">✓</span> Nemotron receives overlay video (green skeleton) + biomechanics JSON — confirmed more accurate than raw video.</div>
+  <div class="question-item"><span class="q-num">✓</span> Auth dropped — JWT + Supabase Auth removed. 2–3 hardcoded user IDs cover form comparison + session history for demo.</div>
+  <div class="question-item"><span class="q-num">✓</span> Gold standard added — 3–5 good-form reference videos → gold_standard_biomechanics table → used by OpenCV overlay + Claude prompt.</div>
 </div>
 
 
-</div><!-- end Option B order:3 -->
+</div><!-- end Option B -->
 
 <div style="order:2;"><hr class="divider"></div>
 
 <!-- ════════════════════════════════════════
-     OPTION A — GROUPED LAYERS
+     OPTION A — GROUPED ARCHITECTURE LAYERS (renders first via order:1)
      ════════════════════════════════════════ -->
 <div style="order:1;">
 <div class="option-header">
@@ -889,7 +692,7 @@ h1 { font-size: 20px; font-weight: 700; color: #f8fafc; margin-bottom: 4px; }
       <div class="node cn-proc" style="min-width:140px;max-width:160px;">
         <div class="node-icon">🎞️</div>
         <div class="node-title">Frame Extraction</div>
-        <div class="node-sub">OpenCV · top + bottom<br>frames → annotated<br>overlays → GCS</div>
+        <div class="node-sub">OpenCV · worst-rep<br>bottom frame → annotated<br>overlay → GCS</div>
       </div>
     </div>
   </div>
@@ -909,9 +712,8 @@ h1 { font-size: 20px; font-weight: 700; color: #f8fafc; margin-bottom: 4px; }
       <div class="c-flow-label">
         <span class="c-flow-arrow c-flow-up">↑</span>
         <span class="c-flow-text">also pulls</span>
-        <span class="c-flow-tag ft-rag">RAG context</span>
         <span class="c-flow-tag ft-db">user history + weight</span>
-        <span class="c-flow-text">from Data layer</span>
+        <span class="c-flow-text">from Data layer · MD files via system prompt</span>
       </div>
     </div>
   </div>
@@ -947,8 +749,8 @@ h1 { font-size: 20px; font-weight: 700; color: #f8fafc; margin-bottom: 4px; }
       <div class="c-flow-label">
         <span class="c-flow-arrow c-flow-up">↑</span>
         <span class="c-flow-text">reads</span>
-        <span class="c-flow-tag ft-rag">RAG passages (Vector DB)</span>
         <span class="c-flow-tag ft-db">sessions · scores · weight history (Structured DB)</span>
+        <span class="c-flow-tag" style="background:#1a0e00;color:#fcd34d;">MD files (system prompt — no Vector DB)</span>
       </div>
       <div class="c-flow-label">
         <span class="c-flow-arrow c-flow-down">↓</span>
@@ -969,66 +771,43 @@ h1 { font-size: 20px; font-weight: 700; color: #f8fafc; margin-bottom: 4px; }
       <div class="node cn-api" style="min-width:150px;max-width:170px;">
         <div class="node-icon">🪣</div>
         <div class="node-title">GCS / S3</div>
-        <div class="node-sub">Raw video files<br>Annotated frames<br>MediaPipe output</div>
-      </div>
-      <div class="arrow" style="color:#1e2433;">·</div>
-      <div class="node cn-rag" style="min-width:150px;max-width:170px;">
-        <div class="node-icon">🗄️</div>
-        <div class="node-title">Vector DB</div>
-        <div class="node-sub">RAG corpus<br>Biomechanics refs<br>Form tips + transcripts</div>
+        <div class="node-sub">Raw video files<br>Overlay video<br>Annotated frame (worst rep)</div>
       </div>
       <div class="arrow" style="color:#1e2433;">·</div>
       <div class="node cn-data" style="min-width:150px;max-width:170px;">
         <div class="node-icon">💾</div>
         <div class="node-title">Structured DB</div>
-        <div class="node-sub">Users · sessions<br>Form scores · history<br>Workout logs</div>
+        <div class="node-sub">Users (2–3 seeded) · sessions<br>Form scores · history<br>Workout logs<br>gold_standard_biomechanics</div>
+      </div>
+      <div class="arrow" style="color:#1e2433;">·</div>
+      <div class="node cn-rag" style="min-width:150px;max-width:170px;opacity:0.5;">
+        <div class="node-icon">🗄️</div>
+        <div class="node-title">Vector DB</div>
+        <div class="node-sub">Future milestone<br>Multi-exercise RAG<br>(dropped from MVP)</div>
       </div>
     </div>
   </div>
 
-  <!-- ── RAG Ingestion (offline) ── -->
+  <!-- ── Context Grounding (replaces RAG ingestion) ── -->
   <div class="c-offline">
     <div class="c-offline-label">
-      <span style="background:#1e293b;color:#64748b;padding:1px 7px;border-radius:3px;font-size:9px;font-weight:800;">Offline</span>
-      RAG Ingestion Pipeline — populates Vector DB before live pipeline runs
+      <span style="background:#1c1000;color:#fbbf24;padding:1px 7px;border-radius:3px;font-size:9px;font-weight:800;border:1px solid #78350f;">Simplified</span>
+      Context Grounding — replaces Vector DB RAG pipeline
     </div>
     <div class="c-nodes">
-      <div class="node cn-rag" style="min-width:120px;">
-        <div class="node-icon">🎥</div>
-        <div class="node-title">Squat Videos</div>
-        <div class="node-sub">20–30 good<br>+ bad form</div>
-      </div>
-      <div class="arrow" style="color:#334155;">+</div>
-      <div class="node cn-rag" style="min-width:120px;">
-        <div class="node-icon">📹</div>
-        <div class="node-title">Tutorial Videos</div>
-        <div class="node-sub">Form guidance<br>transcripts</div>
-      </div>
-      <div class="arrow" style="color:#334155;">+</div>
-      <div class="node cn-rag" style="min-width:120px;">
-        <div class="node-icon">🖼️</div>
-        <div class="node-title">Reference Images</div>
-        <div class="node-sub">Anatomy<br>form diagrams</div>
+      <div class="node cn-rag" style="min-width:160px;">
+        <div class="node-icon">📄</div>
+        <div class="node-title">5–10 Curated MD Files</div>
+        <div class="node-sub">Goblet squat form cues<br>PT coaching language<br>Gold standard angles</div>
       </div>
       <div class="arrow">→</div>
-      <div class="node cn-proc" style="min-width:130px;">
-        <div class="node-icon">⚙️</div>
-        <div class="node-title">Processing</div>
-        <div class="node-sub">MediaPipe · Audio<br>transcription<br>Gemini Flash</div>
-      </div>
-      <div class="arrow">→</div>
-      <div class="node cn-rag" style="min-width:130px;">
-        <div class="node-icon">📦</div>
-        <div class="node-title">Embed + Index</div>
-        <div class="node-sub">Chunk · embed<br>metadata tag<br>store in Vector DB</div>
-      </div>
-      <div class="arrow">→</div>
-      <div class="node cn-rag" style="min-width:120px;">
-        <div class="node-icon">🗄️</div>
-        <div class="node-title">Vector DB</div>
-        <div class="node-sub">Ready for<br>RAG retrieval</div>
+      <div class="node cn-ai" style="min-width:180px;">
+        <div class="node-icon">💡</div>
+        <div class="node-title">Claude System Prompt</div>
+        <div class="node-sub">Injected directly at runtime<br>No embeddings · No retrieval<br>No Vector DB needed</div>
       </div>
     </div>
+    <div style="margin-top:10px;font-size:10px;color:#475569;">Vector DB, embedding model, ingestion pipeline, Gemini Flash dropped from MVP. Documented for future multi-exercise milestone.</div>
   </div>
 
 </div>
@@ -1042,9 +821,394 @@ h1 { font-size: 20px; font-weight: 700; color: #f8fafc; margin-bottom: 4px; }
   <div class="question-item"><span class="q-num">→</span> RAG ingestion is genuinely offline — it has no live-path connection to Layer 1 (UI), which is correct</div>
 </div>
 
-</div><!-- end Option A order:1 -->
+</div><!-- end Option A -->
 
 </div><!-- end flex container -->
+
+<hr class="divider">
+
+<!-- ════════════════════════════════════════
+     SCOPE REDUCTION — imported from scope_reduction_diagram.html
+     ════════════════════════════════════════ -->
+
+<div style="max-width:1200px;margin:0 auto;padding:40px 0 16px;">
+  <div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:0.8px;color:#334155;margin-bottom:20px;padding-bottom:8px;border-bottom:1px solid #1e2433;">Scope Reduction — Original vs Revised MVP</div>
+
+  <div class="sr-legend">
+    <div class="sr-legend-item"><div class="sr-legend-dot ld-keep"></div> Kept — unchanged</div>
+    <div class="sr-legend-item"><div class="sr-legend-dot ld-simple"></div> Simplified — approach changed</div>
+    <div class="sr-legend-item"><div class="sr-legend-dot ld-remove"></div> Removed from scope</div>
+    <div class="sr-legend-item"><div class="sr-legend-dot ld-new"></div> New addition</div>
+    <div class="sr-legend-item"><div class="sr-legend-dot ld-same"></div> Frontend shell only</div>
+  </div>
+
+  <!-- Section 1 — Architecture comparison -->
+  <div class="sr-section">
+    <div class="sr-section-label">Section 1 — Architecture comparison</div>
+    <div class="sr-section-title" style="margin-bottom:20px;">Original design vs revised scope — layer by layer</div>
+
+    <div class="diagram-grid">
+
+      <div style="padding:0 14px 14px 0;"></div>
+      <div class="col-header col-original">⬤ &nbsp;Original Design</div>
+      <div></div>
+      <div class="col-header col-revised">⬤ &nbsp;Revised MVP Scope</div>
+
+      <!-- Frontend -->
+      <div class="layer-label" style="padding-top:10px;padding-bottom:10px;">Frontend</div>
+      <div class="comp-cell cell-original">
+        <div class="comp-row">
+          <span class="chip chip-keep">React + Tailwind</span>
+          <span class="chip chip-keep">Vercel</span>
+          <span class="chip chip-keep">SSE client</span>
+          <span class="chip chip-keep">Upload screen</span>
+          <span class="chip chip-keep">Results screen</span>
+          <span class="chip chip-keep">Dashboard</span>
+          <span class="chip chip-keep">History</span>
+          <span class="chip chip-keep">Auth screens</span>
+          <span class="chip chip-keep">Profile screen</span>
+          <span class="chip chip-keep">Workout Logger</span>
+        </div>
+      </div>
+      <div class="arrow-cell">→</div>
+      <div class="comp-cell cell-revised">
+        <div class="comp-row">
+          <span class="chip chip-keep">React + Tailwind</span>
+          <span class="chip chip-keep">Vercel</span>
+          <span class="chip chip-keep">SSE client</span>
+          <span class="chip chip-keep">Upload screen</span>
+          <span class="chip chip-keep">Results screen</span>
+          <span class="chip chip-keep">Dashboard</span>
+          <span class="chip chip-keep">History</span>
+          <span class="chip chip-remove">Auth screens</span>
+          <span class="chip chip-same">Profile screen</span>
+          <span class="chip chip-keep">Workout Logger</span>
+        </div>
+      </div>
+
+      <div class="pipe-connector" style="color:#1e2433;">↓</div>
+
+      <!-- API Layer -->
+      <div class="layer-label">API Layer</div>
+      <div class="comp-cell cell-original">
+        <div class="comp-row">
+          <span class="chip chip-keep">FastAPI · Python</span>
+          <span class="chip chip-keep">Cloud Run</span>
+          <span class="chip chip-keep">API Gateway</span>
+          <span class="chip chip-keep">JWT middleware</span>
+          <span class="chip chip-keep">Supabase Auth</span>
+          <span class="chip chip-keep">SSE stream endpoint</span>
+        </div>
+      </div>
+      <div class="arrow-cell">→</div>
+      <div class="comp-cell cell-revised">
+        <div class="comp-row">
+          <span class="chip chip-keep">FastAPI · Python</span>
+          <span class="chip chip-keep">Cloud Run</span>
+          <span class="chip chip-keep">API Gateway</span>
+          <span class="chip chip-remove">JWT middleware</span>
+          <span class="chip chip-remove">Supabase Auth</span>
+          <span class="chip chip-keep">SSE stream endpoint</span>
+          <span class="chip chip-simple">Hardcoded user IDs (2–3)</span>
+        </div>
+      </div>
+
+      <div class="pipe-connector">↓</div>
+
+      <!-- Video Processing -->
+      <div class="layer-label">Video Processing</div>
+      <div class="comp-cell cell-original">
+        <div class="comp-row">
+          <span class="chip chip-keep">GCS · raw video</span>
+          <span class="chip chip-keep">MediaPipe Pose</span>
+          <span class="chip chip-keep">Visibility quality gate</span>
+          <span class="chip chip-keep">OpenCV overlay video</span>
+          <span class="chip chip-keep">Biomechanics script</span>
+          <span class="chip chip-keep">OpenCV frame extraction</span>
+        </div>
+      </div>
+      <div class="arrow-cell">→</div>
+      <div class="comp-cell cell-revised">
+        <div class="comp-row">
+          <span class="chip chip-keep">GCS · raw video</span>
+          <span class="chip chip-keep">MediaPipe Pose</span>
+          <span class="chip chip-keep">Visibility quality gate</span>
+          <span class="chip chip-keep">OpenCV overlay video</span>
+          <span class="chip chip-keep">Biomechanics script</span>
+          <span class="chip chip-keep">OpenCV frame extraction</span>
+          <span class="chip chip-new">Gold standard DB (3–5 ref videos)</span>
+        </div>
+      </div>
+
+      <div class="pipe-connector">↓</div>
+
+      <!-- AI Pipeline -->
+      <div class="layer-label">AI Pipeline</div>
+      <div class="comp-cell cell-original">
+        <div class="comp-row">
+          <span class="chip chip-keep">Nemotron 3 Nano Omni</span>
+          <span class="chip chip-keep">Per-rep scoring</span>
+          <span class="chip chip-keep">Claude Sonnet</span>
+          <span class="chip chip-keep">Coaching output</span>
+          <span class="chip chip-keep">Progression recommendation</span>
+        </div>
+      </div>
+      <div class="arrow-cell">→</div>
+      <div class="comp-cell cell-revised">
+        <div class="comp-row">
+          <span class="chip chip-keep">Nemotron 3 Nano Omni</span>
+          <span class="chip chip-keep">Per-rep scoring</span>
+          <span class="chip chip-keep">Claude Sonnet</span>
+          <span class="chip chip-keep">Coaching output</span>
+          <span class="chip chip-keep">Progression recommendation</span>
+        </div>
+        <div style="font-size:10px;color:#475569;margin-top:4px;">No changes — core AI pipeline unchanged</div>
+      </div>
+
+      <div class="pipe-connector">↓</div>
+
+      <!-- RAG / Grounding -->
+      <div class="layer-label">RAG · Grounding</div>
+      <div class="comp-cell cell-original">
+        <div class="comp-row">
+          <span class="chip chip-keep">20–30 source documents</span>
+          <span class="chip chip-keep">Vector DB (Pinecone/Weaviate)</span>
+          <span class="chip chip-keep">Embedding model</span>
+          <span class="chip chip-keep">Ingestion pipeline</span>
+          <span class="chip chip-keep">Chunking strategy</span>
+          <span class="chip chip-keep">Retrieval endpoint</span>
+          <span class="chip chip-keep">Metadata filtering</span>
+        </div>
+      </div>
+      <div class="arrow-cell">→</div>
+      <div class="comp-cell cell-revised">
+        <div class="comp-row">
+          <span class="chip chip-simple">5–10 curated documents</span>
+          <span class="chip chip-remove">Vector DB</span>
+          <span class="chip chip-remove">Embedding model</span>
+          <span class="chip chip-remove">Ingestion pipeline</span>
+          <span class="chip chip-remove">Chunking strategy</span>
+          <span class="chip chip-remove">Retrieval endpoint</span>
+          <span class="chip chip-simple">MD files → Claude system prompt</span>
+        </div>
+      </div>
+
+      <div class="pipe-connector">↓</div>
+
+      <!-- Data Storage -->
+      <div class="layer-label">Data Storage</div>
+      <div class="comp-cell cell-original">
+        <div class="comp-row">
+          <span class="chip chip-keep">GCS · videos + frames</span>
+          <span class="chip chip-keep">PostgreSQL (Supabase)</span>
+          <span class="chip chip-keep">users table</span>
+          <span class="chip chip-keep">form_sessions table</span>
+          <span class="chip chip-keep">form_analysis_results table</span>
+          <span class="chip chip-keep">workout_logs table</span>
+          <span class="chip chip-keep">Vector DB index</span>
+        </div>
+      </div>
+      <div class="arrow-cell">→</div>
+      <div class="comp-cell cell-revised">
+        <div class="comp-row">
+          <span class="chip chip-keep">GCS · videos + frames</span>
+          <span class="chip chip-keep">PostgreSQL (Supabase)</span>
+          <span class="chip chip-simple">users table (no auth — 2–3 rows seeded)</span>
+          <span class="chip chip-keep">form_sessions table</span>
+          <span class="chip chip-keep">form_analysis_results table</span>
+          <span class="chip chip-keep">workout_logs table</span>
+          <span class="chip chip-remove">Vector DB index</span>
+          <span class="chip chip-new">gold_standard_biomechanics table</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Section 2 — Feature decisions -->
+  <div class="sr-section">
+    <div class="sr-section-label">Section 2 — Feature decisions</div>
+    <div class="sr-section-title" style="margin-bottom:20px;">What we're keeping, simplifying, and dropping — and why</div>
+
+    <table class="feat-table">
+      <thead>
+        <tr>
+          <th style="width:22%;">Feature / Component</th>
+          <th style="width:12%;">Decision</th>
+          <th style="width:33%;">What remains</th>
+          <th style="width:33%;">Why</th>
+        </tr>
+      </thead>
+      <tbody>
+
+        <tr><td colspan="4" style="background:#0d1117;padding:8px 14px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:0.7px;color:#334155;">Core AI Pipeline</td></tr>
+
+        <tr>
+          <td><span class="feat-name">Video upload + GCS storage</span><span class="feat-sub">POST /upload → GCS → analysis_id</span></td>
+          <td><span class="status-keep">Kept</span></td>
+          <td>Unchanged. Video stored at GCS path, form_sessions record written, SSE stream opened.</td>
+          <td>Entry point to the entire product. Cannot be cut.</td>
+        </tr>
+        <tr>
+          <td><span class="feat-name">MediaPipe pose extraction + quality gate</span><span class="feat-sub">Landmarks, rep segmentation, visibility scoring</span></td>
+          <td><span class="status-keep">Kept</span></td>
+          <td>Unchanged. Quality gate rejects bad-angle videos before processing starts.</td>
+          <td>Foundation of all downstream analysis. No pipeline without it.</td>
+        </tr>
+        <tr>
+          <td><span class="feat-name">OpenCV Part 1 — overlay video</span><span class="feat-sub">Full video with green skeleton lines</span></td>
+          <td><span class="status-keep">Kept</span></td>
+          <td>Already built. Full video with skeleton overlay saved to GCS as overlay_video_url.</td>
+          <td>This is what goes into Nemotron. Confirmed more accurate than raw video.</td>
+        </tr>
+        <tr>
+          <td><span class="feat-name">Biomechanics script</span><span class="feat-sub">Knee, hip, ankle angles · tempo · stability</span></td>
+          <td><span class="status-keep">Kept</span></td>
+          <td>Unchanged. Requires adding bottom_frame + bottom_timestamp_ms per rep (data gap fix).</td>
+          <td>Structured input for Nemotron. Also used for gold standard comparison and frame extraction.</td>
+        </tr>
+        <tr>
+          <td><span class="feat-name">Nemotron 3 Nano Omni</span><span class="feat-sub">Overlay video + biomechanics JSON → per-rep scoring</span></td>
+          <td><span class="status-keep">Kept</span></td>
+          <td>Unchanged. Receives overlay_video_url + biomechanics JSON. Returns per-rep scores, issues, chain-of-thought.</td>
+          <td>Core AI layer. Differentiator vs single-rep competitors.</td>
+        </tr>
+        <tr>
+          <td><span class="feat-name">OpenCV Part 2 — frame extraction</span><span class="feat-sub">Worst-rep still image with angle overlay</span></td>
+          <td><span class="status-keep">Kept — Option 3</span></td>
+          <td>Skeleton lines + joint markers + actual angles + gold standard text. ~70% already built from Part 1. Estimated 3–4 days remaining.</td>
+          <td>Key Results screen visual. Shows user exactly what went wrong on their worst rep.</td>
+        </tr>
+        <tr>
+          <td><span class="feat-name">Claude Sonnet — coaching output</span><span class="feat-sub">Nemotron output + grounding → coaching + progression</span></td>
+          <td><span class="status-keep">Kept</span></td>
+          <td>Unchanged. Receives Nemotron output + MD file context via system prompt. Returns coaching paragraphs + weight recommendation.</td>
+          <td>User-facing output. The "coach" experience. Cannot be cut.</td>
+        </tr>
+
+        <tr><td colspan="4" style="background:#0d1117;padding:8px 14px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:0.7px;color:#334155;">RAG · Grounding</td></tr>
+
+        <tr>
+          <td><span class="feat-name">RAG — coaching style + language grounding</span><span class="feat-sub">Purpose: ground Claude's language, not analysis</span></td>
+          <td><span class="status-simple">Simplified</span></td>
+          <td>5–10 curated documents (PT coaching language, form cues, goblet squat references) converted to MD files and injected directly into Claude's system prompt. No retrieval. No embeddings.</td>
+          <td>1 exercise + &lt;10 documents = system prompt injection is sufficient. Saves 3+ weeks of Squad 3 infra work.</td>
+        </tr>
+        <tr>
+          <td><span class="feat-name">Vector DB</span><span class="feat-sub">Pinecone / Weaviate / pgvector</span></td>
+          <td><span class="status-drop">Dropped</span></td>
+          <td>Not built for MVP. Architecture documented for future milestone when &gt;1 exercise is added.</td>
+          <td>Not needed for &lt;10 documents. Adds significant setup, cost, and operational complexity for no gain at this scale.</td>
+        </tr>
+        <tr>
+          <td><span class="feat-name">Embedding model + ingestion pipeline</span><span class="feat-sub">Chunking, metadata tagging, vector indexing</span></td>
+          <td><span class="status-drop">Dropped</span></td>
+          <td>Not built. MD files need no chunking — they go directly into the prompt.</td>
+          <td>Chunking is a vector DB concept. Irrelevant when using system prompt injection.</td>
+        </tr>
+
+        <tr><td colspan="4" style="background:#0d1117;padding:8px 14px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:0.7px;color:#334155;">Gold Standard</td></tr>
+
+        <tr>
+          <td><span class="feat-name">Gold standard biomechanics</span><span class="feat-sub">Reference angles for comparison + overlay</span></td>
+          <td><span class="status-keep">Kept</span></td>
+          <td>3–5 good-form Goblet Squat videos run through MediaPipe + biomechanics script. Outputs stored in gold_standard_biomechanics table. Used by OpenCV Part 2 overlay and Claude system prompt as reference values. W6: data prep. W7: integrated into pipeline.</td>
+          <td>Grounds angle comparisons in real biomechanics data rather than hardcoded values. More credible for demo and accuracy validation.</td>
+        </tr>
+
+        <tr><td colspan="4" style="background:#0d1117;padding:8px 14px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:0.7px;color:#334155;">Authentication · User Identity</td></tr>
+
+        <tr>
+          <td><span class="feat-name">Authentication — JWT + Supabase Auth</span><span class="feat-sub">Sign up, login, session management</span></td>
+          <td><span class="status-drop">Dropped</span></td>
+          <td>Not built for demo. No login screens, no JWT middleware, no auth endpoints.</td>
+          <td>Adds ~1.5 weeks of Squad 2 + Squad 1 work with zero demo value. Can be added post-demo.</td>
+        </tr>
+        <tr>
+          <td><span class="feat-name">User identity for form comparison</span><span class="feat-sub">Persistent user_id across sessions</span></td>
+          <td><span class="status-simple">Simplified</span></td>
+          <td>2–3 user IDs hardcoded in the DB. Frontend sends a fixed user_id on all requests. Form comparison, session history, and progression work as normal.</td>
+          <td>Same demo outcome — multiple sessions per user, progression visible — without any auth infrastructure.</td>
+        </tr>
+
+        <tr><td colspan="4" style="background:#0d1117;padding:8px 14px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:0.7px;color:#334155;">Frontend Screens</td></tr>
+
+        <tr>
+          <td><span class="feat-name">Results screen</span><span class="feat-sub">Form score, coaching, worst-rep frame, rep chart</span></td>
+          <td><span class="status-keep">Kept</span></td>
+          <td>Full build. Real data from pipeline. Worst-rep annotated frame shown. Coaching output from Claude. Progression recommendation chip.</td>
+          <td>Primary product screen. The moment the user sees value. Must be real, not dummy.</td>
+        </tr>
+        <tr>
+          <td><span class="feat-name">Dashboard + Session History</span><span class="feat-sub">Progression trend, form score over time, weight vs form</span></td>
+          <td><span class="status-keep">Kept</span></td>
+          <td>Real build using 2–3 seeded user IDs with pre-loaded session history. Shows form score trend, weight progression, per-parameter trends.</td>
+          <td>The product story — not just one analysis but the journey over time. Seeded data makes it compelling from day one of the demo.</td>
+        </tr>
+        <tr>
+          <td><span class="feat-name">Workout Logger</span><span class="feat-sub">Log sets, reps, weight · link to form sessions</span></td>
+          <td><span class="status-simple">Simplified</span></td>
+          <td>This helps with progression recommendation logic. For today's demo, we've reducing scope to just frontend with dummy data. No backend endpoints.</td>
+          <td>Required for the progression recommendation to be meaningful.</td>
+        </tr>
+        <tr>
+          <td><span class="feat-name">Auth screens — Login + Sign up</span><span class="feat-sub">Onboarding flow, form fields, validation</span></td>
+          <td><span class="status-drop">Dropped</span></td>
+          <td>Not built. Demo starts directly on the Upload screen.</td>
+          <td>No auth system to connect to. Screens have no function without backend auth.</td>
+        </tr>
+        <tr>
+          <td><span class="feat-name">Profile / Preferences screen</span><span class="feat-sub">Name, training frequency, injury notes</span></td>
+          <td><span class="status-defer">Frontend shell only</span></td>
+          <td>Screen exists and is routable. Displays dummy data. No backend endpoints. Not interactive.</td>
+          <td>Shows product completeness in demo without requiring backend work. Backend endpoints deferred post-demo.</td>
+        </tr>
+
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Section 3 — Freed capacity -->
+  <div class="sr-section">
+    <div class="sr-section-label">Section 3 — Freed capacity</div>
+    <div class="sr-section-title" style="margin-bottom:16px;">Where the saved development time should go</div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;">
+
+      <div style="background:#0d1117;border:1px solid #1e2433;border-radius:10px;padding:16px;">
+        <div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:0.7px;color:#ef4444;margin-bottom:10px;">Removed from scope</div>
+        <div style="display:flex;flex-direction:column;gap:6px;font-size:11px;color:#94a3b8;">
+          <div>→ Vector DB + embedding model + ingestion pipeline</div>
+          <div>→ Auth — JWT + Supabase Auth</div>
+          <div>→ Auth screens (Squad 1)</div>
+          <div>→ Profile backend endpoints</div>
+          <div>→ RAG retrieval endpoint</div>
+        </div>
+      </div>
+
+      <div style="background:#0d1117;border:1px solid #1e2433;border-radius:10px;padding:16px;">
+        <div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:0.7px;color:#f59e0b;margin-bottom:10px;">Added to scope</div>
+        <div style="display:flex;flex-direction:column;gap:6px;font-size:11px;color:#94a3b8;">
+          <div>→ MD file curation (5–10 coaching documents)</div>
+          <div>→ Seed DB with 2–3 hardcoded user IDs + session history</div>
+        </div>
+      </div>
+
+      <div style="background:#0a1f12;border:1px solid #14532d;border-radius:10px;padding:16px;">
+        <div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:0.7px;color:#22c55e;margin-bottom:10px;">Redirect capacity to</div>
+        <div style="display:flex;flex-direction:column;gap:6px;font-size:11px;color:#86efac;">
+          <div>→ OpenCV Part 2 frame extraction polish for visual proof</div>
+          <div>→ A/B/C test LLM/VLM model with JSON, video, frame inputs to identify the most optimal one for latency + form analysis</div>
+          <div>→ Claude prompt engineering — coaching language quality</div>
+          <div>→ End-to-end pipeline latency (30–40s target)</div>
+          <div>→ Dashboard seeding + demo run-throughs</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
 
 </body>
 </html>
