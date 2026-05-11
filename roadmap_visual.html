@@ -130,6 +130,10 @@
   .dep-tag    { display: inline-block; font-size: 8.5px; font-weight: 700; padding: 1px 5px; border-radius: 4px; background: #0c3344; color: #67e8f9; margin-bottom: 3px; letter-spacing: 0.3px; }
   .design-tag { display: inline-block; font-size: 8.5px; font-weight: 700; padding: 1px 5px; border-radius: 4px; background: #2d1657; color: #e879f9; margin-bottom: 3px; letter-spacing: 0.3px; }
   .new-tag    { display: inline-block; font-size: 8.5px; font-weight: 700; padding: 1px 5px; border-radius: 4px; background: #1c1f2e; color: #38bdf8; margin-bottom: 3px; letter-spacing: 0.3px; }
+  .cut-tag    { display: inline-block; font-size: 8.5px; font-weight: 700; padding: 1px 5px; border-radius: 4px; background: #1a1000; color: #f59e0b; margin-bottom: 3px; letter-spacing: 0.3px; border: 1px solid #78350f; }
+  .task-cut   { opacity: 0.42; text-decoration: line-through; }
+  .task-updated { border-left-color: #22c55e !important; }
+  .updated-tag { display: inline-block; font-size: 8.5px; font-weight: 700; padding: 1px 5px; border-radius: 4px; background: #0a1f12; color: #4ade80; margin-bottom: 3px; letter-spacing: 0.3px; border: 1px solid #14532d; }
   .decision-tag { display: inline-block; font-size: 8.5px; font-weight: 700; padding: 1px 5px; border-radius: 4px; background: #3b1f05; color: #fb923c; margin-bottom: 3px; letter-spacing: 0.3px; }
   .task-design   { border-left-color: #a855f7 !important; background: #1a0d2e !important; }
   .task-decision { border-left-color: #fb923c !important; }
@@ -290,6 +294,8 @@
   <div class="legend-item"><div class="legend-dot" style="background:#06b6d4"></div> Cross-squad dependency</div>
   <div class="legend-item"><div class="legend-dot" style="background:#a855f7"></div> Design handoff</div>
   <div class="legend-item"><div class="legend-dot" style="background:#64748b"></div> Friday — integration testing</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#f59e0b; border-radius:2px;"></div> Scope reduced / dropped — task struck through</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#22c55e; border-radius:2px;"></div> Updated scope — task revised</div>
   <div class="legend-item"><div class="legend-dot" style="background:#a78bfa"></div> Thursday merge</div>
   <div class="legend-item"><div class="legend-dot" style="background:#06b6d4; border-radius:2px;"></div> Iterative pipeline tests &nbsp;<span style="font-size:10px;color:#64748b;">FF = free-form &nbsp;P/F = pass/fail</span></div>
 </div>
@@ -307,17 +313,17 @@
   <div class="week-header">
     <div class="week-label">WEEK 6</div>
     <div class="week-dates">May 11–17</div>
-    <div class="milestone-badge badge-blue">1st E2E Slice</div>
+    <div class="milestone-badge badge-blue">1st E2E Slice + Nemotron Tests</div>
   </div>
   <div class="week-header">
     <div class="week-label">WEEK 7</div>
     <div class="week-dates">May 18–24</div>
-    <div class="milestone-badge badge-purple">Full Pipeline</div>
+    <div class="milestone-badge badge-purple">Full Pipeline Live</div>
   </div>
   <div class="week-header">
     <div class="week-label">WEEK 8</div>
     <div class="week-dates">May 25–31</div>
-    <div class="milestone-badge badge-orange">Progression + Auth</div>
+    <div class="milestone-badge badge-orange">Progression + Lifecycle</div>
   </div>
   <div class="week-header">
     <div class="week-label">WEEK 9</div>
@@ -360,7 +366,7 @@
     <div class="task task-sq1" style="opacity:0.4;text-decoration:line-through;"><span class="task-id">S1-W6-02</span>Moved to W5 — see S1-W5-08</div>
     <div class="task task-sq1"><span class="task-id">S1-W6-03</span>Wire SSE to real processing states — test against Squad 2 stub endpoint</div>
     <div class="task task-sq1"><span class="task-id">S1-W6-04</span>Build Results screen using dummy data: score, joint corrections, coaching tips</div>
-    <div class="task task-sq1"><span class="task-id">S1-W6-05</span>Build Onboarding screen: collect name, email, training frequency, exercise preferences — store locally for auth handoff W7</div>
+    <div class="task task-sq1 task-updated"><span class="task-id">S1-W6-05</span><div class="updated-tag">UPDATED</div>Build Demo User Selection screen — proxy for auth. Shows 2–3 named demo users, select one to load their session history + dashboard. user_id stored in session + sent as header on all requests.</div>
     <div class="task task-sq1"><span class="task-id">S1-W6-06</span>Build Home/Dashboard screen: dummy session history + score trend chart</div>
     <div class="task task-sq1 task-dep"><span class="task-id">S1-W6-07</span><div class="dep-tag">RECEIVES ←</div> End of week: replace Upload with real /upload endpoint</div>
   </div>
@@ -368,16 +374,16 @@
   <div class="cell sq1">
     <div class="task task-sq1 task-design"><span class="task-id">S1-W7-01</span><div class="design-tag">DESIGN HANDOFF</div> Onboarding · Dashboard · Workout Builder & Tracker — all design handoffs complete by end of W7</div>
     <div class="task task-sq1 task-dep"><span class="task-id">S1-W7-02</span><div class="dep-tag">RECEIVES ←</div> Replace dummy data on Results with real pipeline output</div>
-    <div class="task task-sq1"><span class="task-id">S1-W7-03</span>Complete Onboarding / Sign-up screen: wire to real auth endpoint — submit name, email, password + profile preferences</div>
-    <div class="task task-sq1"><span class="task-id">S1-W7-04</span>Build Workout Builder screen: create plan, add exercises, set target sets/reps/weights — POST to /workout-plans</div>
-    <div class="task task-sq1"><span class="task-id">S1-W7-05</span>Build Track Workout screen: log actual sets, reps, weight per exercise; link to form session — POST to /workout-sessions</div>
-    <div class="task task-sq1"><span class="task-id">S1-W7-06</span>Build User Profile screen: display + edit training preferences</div>
+    <div class="task task-sq1 task-cut"><span class="task-id">S1-W7-03</span><div class="cut-tag">AUTH DROPPED</div>Complete Onboarding / Sign-up screen: wire to real auth endpoint — auth removed for demo. Replaced by demo user selection screen (S1-W6-05).</div>
+    <div class="task task-sq1 task-updated"><span class="task-id">S1-W7-04</span><div class="updated-tag">FE ONLY</div>Build Workout Builder screen: create plan, add exercises, set target sets/reps/weights. Frontend only — no backend. No data saved. Shows product vision.</div>
+    <div class="task task-sq1 task-updated"><span class="task-id">S1-W7-05</span><div class="updated-tag">FE ONLY</div>Build Track Workout screen: log sets, reps, weight. Frontend only — no backend integration, no data saved. UI complete for demo.</div>
+    <div class="task task-sq1 task-updated"><span class="task-id">S1-W7-06</span><div class="updated-tag">SHELL ONLY</div>Build Profile screen: frontend shell only. Routable, displays dummy data, no save functionality. Signals future personalisation without backend build.</div>
     <div class="task task-sq1"><span class="task-id">S1-W7-07</span>Update Dashboard with real session data (once auth lands)</div>
     <div class="task task-sq1"><span class="task-id">S1-W7-08</span>Build History screen: past sessions list + form score trend line</div>
   </div>
 
   <div class="cell sq1">
-    <div class="task task-sq1 task-dep"><span class="task-id">S1-W8-01</span><div class="dep-tag">RECEIVES ←</div> Wire auth flow: Onboarding connects to real auth endpoints</div>
+    <div class="task task-sq1 task-dep task-cut"><span class="task-id">S1-W8-01</span><div class="cut-tag">AUTH DROPPED</div><div class="dep-tag">RECEIVES ←</div> Wire auth flow: Onboarding connects to real auth endpoints — removed. Demo user selector replaces auth.</div>
     <div class="task task-sq1 task-dep"><span class="task-id">S1-W8-02</span><div class="dep-tag">RECEIVES ←</div> Display weight-based progression recommendation prominently on Results</div>
     <div class="task task-sq1"><span class="task-id">S1-W8-03</span>Complete Workout Planner / Tracker: log entries, link to form sessions</div>
     <div class="task task-sq1"><span class="task-id">S1-W8-04</span>Finalise all prototype screens — design sign-off</div>
@@ -396,7 +402,7 @@
     <div class="task task-sq1"><span class="task-id">S1-W10-01</span>UAT with real test users (VOC participants)</div>
     <div class="task task-sq1"><span class="task-id">S1-W10-02</span>Final UI polish pass</div>
     <div class="task task-sq1"><span class="task-id">S1-W10-03</span>Confirm all screens match approved prototype</div>
-    <div class="task task-sq1"><span class="task-id">S1-W10-04</span>E2E test: sign up → upload → results → log workout → history → recommendation</div>
+    <div class="task task-sq1"><span class="task-id">S1-W10-04</span>E2E test: select demo user → upload → results → form comparison → progression recommendation → dashboard story</div>
     <div class="task task-sq1"><span class="task-id">S1-W10-05</span>Final pitch demo prep</div>
   </div>
 
@@ -427,10 +433,10 @@
   </div>
 
   <div class="cell sq2">
-    <div style="font-size:8.5px;font-weight:700;color:#4ade80;text-transform:uppercase;letter-spacing:0.5px;padding:2px 0 4px 0;">▶ Main Track — MediaPipe</div>
+    <div style="font-size:8.5px;font-weight:700;color:#4ade80;text-transform:uppercase;letter-spacing:0.5px;padding:2px 0 4px 0;">▶ Main Track — Stitch Pipeline (receive from Squad 3)</div>
     <div class="task task-sq2"><span class="task-id">S2-W6-01</span>Video upload endpoint: receive video, store to GCS, return SSE stream</div>
     <div class="task task-sq2"><span class="task-id">S2-W6-02</span>On upload: write form_sessions record to DB</div>
-    <div class="task task-sq2"><span class="task-id">S2-W6-03</span>Complete MediaPipe pipeline: frame selection + video quality gate (bad angle → retake message to user) + biomechanics script using PT-01 params (knee angle, hip angle, rep count, rep time, tempo)</div>
+    <div class="task task-sq2 task-updated"><span class="task-id">S2-W6-03</span><div class="updated-tag">UPDATED</div>Receive process_video() from Squad 3. Stitch pipeline: call S3 function → handle quality gate errors → receive overlay_video_url + biomechanics_json → store to DB → trigger Nemotron tests. Squad 3 owns MediaPipe/OpenCV/Biomechanics code.</div>
     <div class="task task-sq2 task-dep"><span class="task-id">S2-W6-04</span><div class="dep-tag">OUTPUTS →</div> Return real biomechanics JSON from /analyze (replaces stub)</div>
     <div class="task task-sq2 task-dep"><span class="task-id">S2-W6-06</span><div class="dep-tag">OUTPUTS →</div> Emit correct SSE events at each pipeline stage</div>
     <div style="font-size:8.5px;font-weight:700;color:#22d3ee;text-transform:uppercase;letter-spacing:0.5px;padding:4px 0 4px 0;border-top:1px dashed #0e7490;margin-top:2px;">▶ Parallel Track — Nemotron Input Tests</div>
@@ -441,17 +447,17 @@
 
   <div class="cell sq2">
     <div class="task task-sq2"><span class="task-id">S2-W7-01</span>Complete Nemotron integration: full JSON output + word-level timestamps + chain-of-thought</div>
-    <div class="task task-sq2 task-dep"><span class="task-id">S2-W7-02</span><div class="dep-tag">RECEIVES ←</div> On Nemotron output: call Squad 3's RAG retrieval endpoint</div>
+    <div class="task task-sq2 task-dep task-updated"><span class="task-id">S2-W7-02</span><div class="updated-tag">UPDATED</div><div class="dep-tag">RECEIVES ←</div> On Nemotron output: inject MD coaching files into Claude system prompt (replaces RAG retrieval endpoint). No vector DB call.</div>
     <div class="task task-sq2"><span class="task-id">S2-W7-03</span>Query structured DB: retrieve user weight history + past form sessions</div>
     <div class="task task-sq2"><span class="task-id">S2-W7-04</span>Pass Nemotron output + RAG + user history + weight → Claude Sonnet → coaching output</div>
-    <div class="task task-sq2 task-dep"><span class="task-id">S2-W7-05</span><div class="dep-tag">OUTPUTS →</div> Auth endpoints: POST /auth/signup (write users record), POST /auth/login (return JWT)</div>
-    <div class="task task-sq2 task-dep"><span class="task-id">S2-W7-06</span><div class="dep-tag">OUTPUTS →</div> Onboarding endpoint: POST /users/profile — write user_profiles record</div>
+    <div class="task task-sq2 task-dep task-cut"><span class="task-id">S2-W7-05</span><div class="cut-tag">AUTH DROPPED</div><div class="dep-tag">OUTPUTS →</div> Auth endpoints: POST /auth/signup, POST /auth/login — removed for demo. Using hardcoded user IDs.</div>
+    <div class="task task-sq2 task-dep task-cut"><span class="task-id">S2-W7-06</span><div class="cut-tag">AUTH DROPPED</div><div class="dep-tag">OUTPUTS →</div> Onboarding endpoint: POST /users/profile — removed. No auth = no onboarding flow. Profile is frontend shell only.</div>
   </div>
 
   <div class="cell sq2">
     <div class="task task-sq2"><span class="task-id">S2-W8-01</span>Implement progression recommendation logic: compare form scores across weights → ready / hold / drop</div>
-    <div class="task task-sq2 task-dep"><span class="task-id">S2-W8-02</span><div class="dep-tag">OUTPUTS →</div> Workout Builder endpoints: POST /workout-plans (write workout_plans + workout_plan_exercises)</div>
-    <div class="task task-sq2 task-dep"><span class="task-id">S2-W8-03</span><div class="dep-tag">OUTPUTS →</div> Track Workout endpoints: POST /workout-sessions + POST /workout-sessions/:id/log</div>
+    <div class="task task-sq2 task-dep task-cut"><span class="task-id">S2-W8-02</span><div class="cut-tag">FE ONLY</div><div class="dep-tag">OUTPUTS →</div> Workout Builder endpoints — removed. Workout Builder is frontend only for demo, no backend integration.</div>
+    <div class="task task-sq2 task-dep task-cut"><span class="task-id">S2-W8-03</span><div class="cut-tag">FE ONLY</div><div class="dep-tag">OUTPUTS →</div> Track Workout endpoints — removed. Workout Tracker is frontend only for demo.</div>
     <div class="task task-sq2"><span class="task-id">S2-W8-04</span>User history query endpoint: all past form sessions per exercise with weights + scores</div>
     <div class="task task-sq2"><span class="task-id">S2-W8-05</span>Refine Claude Sonnet prompt engineering: specific, actionable coaching language</div>
     <div class="task task-sq2"><span class="task-id">S2-W8-06</span>Error handling: MediaPipe keypoint failure, Nemotron timeout, RAG no-results</div>
@@ -487,48 +493,52 @@
   </div>
 
   <div class="cell sq3">
-    <div class="task task-sq3"><span class="task-id">S3-W5-01</span>Collect 20–30 RAG sources for Goblet Squat: research papers, YouTube transcripts, Kaggle, biomechanics refs, muscle anatomy images</div>
-    <div class="task task-sq3 task-dep"><span class="task-id">S3-W5-02</span><div class="dep-tag">OUTPUTS →</div> Define vector DB schema: doc structure, metadata (exercise, source type, angle params), embedding strategy</div>
+    <div class="task task-sq3 task-cut"><span class="task-id">S3-W5-01</span><div class="cut-tag">SCOPE REDUCED</div>Collect 20–30 RAG sources — replaced by 5–10 MD coaching files injected directly into Claude system prompt. No vector DB corpus needed.</div>
+    <div class="task task-sq3 task-dep task-cut"><span class="task-id">S3-W5-02</span><div class="cut-tag">SCOPE REDUCED</div><div class="dep-tag">OUTPUTS →</div> Define vector DB schema: doc structure, metadata (exercise, source type, angle params), embedding strategy</div>
     <div class="task task-sq3 task-dep"><span class="task-id">S3-W5-03</span><div class="dep-tag">COORDS →</div> Align structured DB schema with Squad 2 (single source of truth)</div>
-    <div class="task task-sq3"><span class="task-id">S3-W5-04</span>Evaluate + select vector DB: Pinecone / Weaviate / pgvector — document rationale</div>
-    <div class="task task-sq3"><span class="task-id">S3-W5-05</span>Define ingestion pipeline: chunking strategy, embedding model, metadata tagging</div>
+    <div class="task task-sq3 task-cut"><span class="task-id">S3-W5-04</span><div class="cut-tag">SCOPE REDUCED</div>Evaluate + select vector DB: Pinecone / Weaviate / pgvector — not needed. MD files in system prompt replaces vector DB.</div>
+    <div class="task task-sq3 task-cut"><span class="task-id">S3-W5-05</span><div class="cut-tag">SCOPE REDUCED</div>Define ingestion pipeline: chunking strategy, embedding model, metadata tagging — not needed. No vector DB.</div>
     <div class="task task-sq3"><span class="task-id">S3-W5-08</span>Set up OpenCV Python wrapper: video ingestion, frame extraction, timestamp calculation</div>
     <div class="task task-sq3 task-dep"><span class="task-id">S3-W5-06</span><div class="dep-tag">NEEDS S3-W5-08</div> Define MediaPipe raw output for Goblet Squat: landmarks, coordinate system, confidence — spike on sample video</div>
     <div class="task task-sq3 task-dep"><span class="task-id">S3-W5-07</span><div class="dep-tag">NEEDS S3-W5-06</div> Define Python biomechanics script logic: angle formulas, rep segmentation algorithm, metrics list</div>
   </div>
 
   <div class="cell sq3">
-    <div class="task task-sq3"><span class="task-id">S3-W6-01</span>Ingest Goblet Squat corpus into vector DB: chunk, embed, store with metadata</div>
-    <div class="task task-sq3"><span class="task-id">S3-W6-02</span>Implement + test RAG retrieval: given biomechanics query → return top-k relevant passages</div>
-    <div class="task task-sq3"><span class="task-id">S3-W6-03</span>Manually validate retrieval quality: top results relevant + grounded</div>
-    <div class="task task-sq3 task-dep"><span class="task-id">S3-W6-04</span><div class="dep-tag">OUTPUTS →</div> Expose RAG retrieval endpoint for Squad 2 to call</div>
+    <div class="task task-sq3 task-cut"><span class="task-id">S3-W6-01</span><div class="cut-tag">SCOPE REDUCED</div>Ingest Goblet Squat corpus into vector DB: chunk, embed, store with metadata — replaced by MD files in Claude system prompt.</div>
+    <div class="task task-sq3 task-cut"><span class="task-id">S3-W6-02</span><div class="cut-tag">SCOPE REDUCED</div>Implement + test RAG retrieval: given biomechanics query → return top-k relevant passages — no vector DB retrieval needed.</div>
+    <div class="task task-sq3 task-cut"><span class="task-id">S3-W6-03</span><div class="cut-tag">SCOPE REDUCED</div>Manually validate retrieval quality: top results relevant + grounded — not applicable without vector DB.</div>
+    <div class="task task-sq3 task-dep task-cut"><span class="task-id">S3-W6-04</span><div class="cut-tag">SCOPE REDUCED</div><div class="dep-tag">OUTPUTS →</div> Expose RAG retrieval endpoint for Squad 2 — replaced by MD files in Claude system prompt. No retrieval endpoint needed.</div>
+    <div class="task task-sq3 task-dep task-updated"><span class="task-id">S3-W6-05</span><div class="updated-tag">NEW</div><div class="dep-tag">OUTPUTS →</div> Expose process_video(gcs_path, analysis_id) to Squad 2: returns {overlay_video_url, biomechanics_json} on success or {error_code, affected_landmarks} on quality gate failure. Confirm file path + function signature + dependencies.</div>
+    <div class="task task-sq3 task-updated"><span class="task-id">S3-W6-06</span><div class="updated-tag">NEW</div> Curate 5–10 MD coaching files for Claude system prompt: PT coaching language, Goblet Squat form cues, progression principles. Commit to repo.</div>
+    <div class="task task-sq3 task-updated"><span class="task-id">S3-W6-07</span><div class="updated-tag">NEW</div> Gold standard data prep: identify 3–5 good-form Goblet Squat videos → run through MediaPipe + Biomechanics pipeline → store angle distributions in gold_standard_biomechanics DB table. Two purposes: (1) LLM angle reference for Claude, (2) visual overlay comparison for OpenCV Part 2.</div>
+    <div class="task task-sq3 task-updated"><span class="task-id">S3-W6-08</span><div class="updated-tag">NEW</div> Model eval testing — run Nemotron A/B/C + Option C (angles only → Claude) comparison. Log output quality, per-rep scores, and latency. Feed findings to PM to confirm architecture before W7 build. Ref: pipeline_architecture_discussion.html</div>
   </div>
 
   <div class="cell sq3">
-    <div class="task task-sq3"><span class="task-id">S3-W7-01</span>Enhance RAG corpus: add audio transcripts from form videos, muscle anatomy images, biomechanics edge cases</div>
-    <div class="task task-sq3"><span class="task-id">S3-W7-02</span>Refine retrieval: tune chunking, re-rank, improve relevance for joint-angle-specific queries</div>
-    <div class="task task-sq3"><span class="task-id">S3-W7-03</span>Define 20–30 good/bad Goblet Squat scenarios for sample video validation (Week 9)</div>
-    <div class="task task-sq3"><span class="task-id">S3-W7-04</span>Stress-test RAG endpoint under concurrent requests</div>
+    <div class="task task-sq3 task-cut"><span class="task-id">S3-W7-01</span><div class="cut-tag">SCOPE REDUCED</div>Enhance RAG corpus: add audio transcripts, anatomy images — no vector DB corpus to enhance. MD files curated in W6 are sufficient.</div>
+    <div class="task task-sq3 task-cut"><span class="task-id">S3-W7-02</span><div class="cut-tag">SCOPE REDUCED</div>Refine retrieval: tune chunking, re-rank — no retrieval pipeline. MD files are static system prompt context.</div>
+    <div class="task task-sq3 task-updated"><span class="task-id">S3-W7-03</span><div class="updated-tag">UPDATED</div>Define 3–5 gold standard + 3–5 known-bad Goblet Squat videos for accuracy validation (W9 PT expert review). Smaller set, higher quality bar.</div>
+    <div class="task task-sq3 task-cut"><span class="task-id">S3-W7-04</span><div class="cut-tag">SCOPE REDUCED</div>Stress-test RAG endpoint — no RAG endpoint. MD files loaded at Claude call time, no separate service to stress-test.</div>
   </div>
 
   <div class="cell sq3">
-    <div class="task task-sq3"><span class="task-id">S3-W8-01</span>Collect sample test videos (Goblet Squat): 20–30 videos, good + bad form scenarios</div>
+    <div class="task task-sq3 task-updated"><span class="task-id">S3-W8-01</span><div class="updated-tag">UPDATED</div>Finalise test video set: gold standard (3–5 good-form) + known-fault videos (3–5 bad-form scenarios). Labels confirmed with PT expert before W9 validation run.</div>
     <div class="task task-sq3"><span class="task-id">S3-W8-02</span>Label ground truth for each video: expected form scores, joint corrections</div>
-    <div class="task task-sq3"><span class="task-id">S3-W8-03</span>Refine ingestion if retrieval gaps found from full pipeline testing</div>
-    <div class="task task-sq3"><span class="task-id">S3-W8-04</span>Test RAG-to-Claude-Sonnet flow: does retrieval context meaningfully improve coaching vs. no RAG?</div>
+    <div class="task task-sq3 task-cut"><span class="task-id">S3-W8-03</span><div class="cut-tag">SCOPE REDUCED</div>Refine ingestion if retrieval gaps — no ingestion pipeline. MD files updated directly if coaching quality gaps found.</div>
+    <div class="task task-sq3 task-updated"><span class="task-id">S3-W8-04</span><div class="updated-tag">UPDATED</div>Test MD files → Claude Sonnet coaching quality: do coaching reference files meaningfully improve specificity vs no context? Adjust MD content if gaps found.</div>
   </div>
 
   <div class="cell sq3">
-    <div class="task task-sq3 task-dep"><span class="task-id">S3-W9-01</span><div class="dep-tag">OUTPUTS →</div> Run accuracy validation: test pipeline on 20–30 labeled videos. Target ≥80% expert agreement on form scores, ≥90% rep count accuracy</div>
+    <div class="task task-sq3 task-dep task-updated"><span class="task-id">S3-W9-01</span><div class="updated-tag">UPDATED</div><div class="dep-tag">OUTPUTS →</div> Run accuracy validation: 3–5 gold standard + 3–5 bad-form videos through full pipeline. PT Expert review: does coaching match expert expectation? ≥80% agreement target for demo-day bar.</div>
     <div class="task task-sq3 task-dep"><span class="task-id">S3-W9-02</span><div class="dep-tag">OUTPUTS →</div> Document failures + edge cases → feed to Squad 2 for prompt/RAG refinement</div>
-    <div class="task task-sq3"><span class="task-id">S3-W9-03</span>Final RAG refinement pass based on validation gaps</div>
+    <div class="task task-sq3 task-updated"><span class="task-id">S3-W9-03</span><div class="updated-tag">UPDATED</div>Final MD coaching file refinement based on validation gaps — update MD content directly if PT expert review surfaces coaching quality issues.</div>
   </div>
 
   <div class="cell sq3">
     <div class="task task-sq3"><span class="task-id">S3-W10-01</span>UAT + E2E testing support</div>
-    <div class="task task-sq3"><span class="task-id">S3-W10-02</span>Final RAG retrieval quality check</div>
-    <div class="task task-sq3"><span class="task-id">S3-W10-03</span>Confirm vector DB performance under load</div>
-    <div class="task task-sq3"><span class="task-id">S3-W10-04</span>Document RAG corpus + ingestion pipeline for handoff</div>
+    <div class="task task-sq3 task-cut"><span class="task-id">S3-W10-02</span><div class="cut-tag">SCOPE REDUCED</div>Final RAG retrieval quality check — no vector DB retrieval. MD files reviewed for content completeness instead.</div>
+    <div class="task task-sq3 task-cut"><span class="task-id">S3-W10-03</span><div class="cut-tag">SCOPE REDUCED</div>Confirm vector DB performance under load — no vector DB. Not applicable.</div>
+    <div class="task task-sq3 task-updated"><span class="task-id">S3-W10-04</span><div class="updated-tag">UPDATED</div>Document MD coaching files + biomechanics pipeline + gold standard DB for handoff. No ingestion pipeline to document.</div>
   </div>
 
   <!-- FRIDAY ROW -->
@@ -544,15 +554,15 @@
   </div>
 
   <div class="cell-friday">
-    <div class="task task-friday"><span class="task-id" style="color:#67e8f9;">FRI-W6-01</span><div class="friday-tag">POST-MERGE</div> Test thin E2E slice: upload video → MediaPipe processes → SSE events fire → biomechanics JSON displayed in browser. Troubleshoot cross-squad connections. Fix integration blockers same day.</div>
+    <div class="task task-friday"><span class="task-id" style="color:#67e8f9;">FRI-W6-01</span><div class="friday-tag">POST-MERGE</div> Test thin E2E slice: upload video → GCS → Squad 3 pipeline (MediaPipe → quality gate → OpenCV overlay → biomechanics) → biomechanics JSON on Results screen + best Nemotron test scenario basic output wired to FE. Fix integration blockers same day.</div>
   </div>
 
   <div class="cell-friday">
-    <div class="task task-friday"><span class="task-id" style="color:#67e8f9;">FRI-W7-01</span><div class="friday-tag">POST-MERGE</div> Test full AI pipeline together: video → Nemotron → RAG retrieval → Claude Sonnet coaching → results on screen. Verify auth flow works end-to-end. Troubleshoot data persistence.</div>
+    <div class="task task-friday"><span class="task-id" style="color:#67e8f9;">FRI-W7-01</span><div class="friday-tag">POST-MERGE</div> Test full AI pipeline: video → Nemotron → MD files → Claude Sonnet coaching → results + visual proof on screen. Weight-specific advice references DB history. Verify demo user selector loads correct session data.</div>
   </div>
 
   <div class="cell-friday">
-    <div class="task task-friday"><span class="task-id" style="color:#67e8f9;">FRI-W8-01</span><div class="friday-tag">POST-MERGE</div> Test auth + onboarding data storage, workout builder saves correctly to DB, track workout logs linked to form sessions, progression recommendation surfacing. Fix data flow bugs.</div>
+    <div class="task task-friday"><span class="task-id" style="color:#67e8f9;">FRI-W8-01</span><div class="friday-tag">POST-MERGE</div> Test progression recommendation against real weight history from DB. Confirm dashboard seeded data shows compelling progression story for all 3 demo users. Workout Builder + Tracker UI complete (FE only). Fix data flow bugs.</div>
   </div>
 
   <div class="cell-friday">
@@ -579,14 +589,14 @@
   <!-- TEST W6 -->
   <div class="cell-test">
     <div class="task-test ff"><span class="task-id">TST-W6-01</span><div class="test-tag tt-nem">NEMOTRON · T1</div><div class="test-tag tt-ff">FF</div> Biomechanics JSON only → Nemotron. Does the model identify issues from structured data alone (no video)? Log what it understands and misses.<div class="test-owner">Owner: Squad 2 (Nicole/Valentin)</div></div>
-    <div class="task-test ff"><span class="task-id">TST-W6-02</span><div class="test-tag tt-rag">RAG · T1</div><div class="test-tag tt-ff">FF</div> First retrieval check: query vector DB with knee_valgus + goblet_squat. Are top-k results relevant? Note irrelevant passages and gaps.<div class="test-owner">Owner: Squad 3 (Anusha/Ezequiel)</div></div>
+    <div class="task-test ff" style="opacity:0.4;text-decoration:line-through;"><span class="task-id">TST-W6-02</span><div class="test-tag tt-rag">RAG · T1</div><div class="test-tag tt-ff">FF</div> First retrieval check: vector DB — not applicable. RAG replaced by MD files in Claude system prompt.<div class="test-owner">Owner: Squad 3</div></div>
   </div>
 
   <!-- TEST W7 -->
   <div class="cell-test">
     <div class="task-test pf"><span class="task-id">TST-W7-01</span><div class="test-tag tt-nem">NEMOTRON · T2</div><div class="test-tag tt-pf">P/F</div> Raw video only → Nemotron (no biomechanics). Pass: model detects ≥1 correct issue. Fail: hallucinated issues or missed obvious faults.<div class="test-owner">Owner: Squad 2</div></div>
     <div class="task-test pf"><span class="task-id">TST-W7-02</span><div class="test-tag tt-nem">NEMOTRON · T3</div><div class="test-tag tt-pf">P/F</div> Biomechanics + raw video → Nemotron (combined). Pass: output more accurate than T1 or T2 alone. Fail: no meaningful improvement from dual input.<div class="test-owner">Owner: Squad 2</div></div>
-    <div class="task-test pf"><span class="task-id">TST-W7-03</span><div class="test-tag tt-rag">RAG · T2</div><div class="test-tag tt-pf">P/F</div> Enhanced corpus (audio + images added). Re-run same queries as TST-W6-02. Pass: retrieval improves on ≥2 previously weak queries.<div class="test-owner">Owner: Squad 3</div></div>
+    <div class="task-test pf" style="opacity:0.4;text-decoration:line-through;"><span class="task-id">TST-W7-03</span><div class="test-tag tt-rag">RAG · T2</div><div class="test-tag tt-pf">P/F</div> Enhanced corpus retrieval — not applicable. No vector DB.<div class="test-owner">Owner: Squad 3</div></div>
     <div class="task-test pf"><span class="task-id">TST-W7-04</span><div class="test-tag tt-cla">CLAUDE · T1</div><div class="test-tag tt-pf">P/F</div> First coaching output review (full pipeline wired). Pass: coaching paragraph is actionable + progression rec is defensible to a human reviewer.<div class="test-owner">Owner: Squad 2 (Liwei/Amrita review)</div></div>
     <div class="task-test pf"><span class="task-id">TST-W7-05</span><div class="test-tag tt-e2e">E2E · T1</div><div class="test-tag tt-pf">P/F</div> Friday: thin E2E — upload video → results screen. Pass: pipeline completes without manual intervention. Measure total latency.<div class="test-owner">All squads · Friday</div></div>
   </div>
@@ -594,7 +604,7 @@
   <!-- TEST W8 -->
   <div class="cell-test">
     <div class="task-test pf"><span class="task-id">TST-W8-01</span><div class="test-tag tt-nem">NEMOTRON · T4</div><div class="test-tag tt-pf">P/F</div> Biomechanics + raw video + RAG retrieval → Nemotron (full input). Pass: output quality meaningfully better than T3. Document delta vs T3.<div class="test-owner">Owner: Squad 2</div></div>
-    <div class="task-test pf"><span class="task-id">TST-W8-02</span><div class="test-tag tt-rag">RAG · T3</div><div class="test-tag tt-pf">P/F</div> Full RAG → Claude Sonnet flow. Pass: retrieval context demonstrably improves coaching specificity vs no-RAG baseline.<div class="test-owner">Owner: Squad 3</div></div>
+    <div class="task-test pf" style="opacity:0.4;text-decoration:line-through;"><span class="task-id">TST-W8-02</span><div class="test-tag tt-rag">RAG · T3</div><div class="test-tag tt-pf">P/F</div> Full RAG → Claude flow — replaced by MD file quality test (S3-W8-04).<div class="test-owner">Owner: Squad 3</div></div>
     <div class="task-test pf"><span class="task-id">TST-W8-03</span><div class="test-tag tt-cla">CLAUDE · T2</div><div class="test-tag tt-pf">P/F</div> Progression recommendation review. Pass: hold/progress/drop logic matches expert expectation on 3 test cases.<div class="test-owner">Owner: Squad 2 (Liwei/Amrita)</div></div>
   </div>
 
@@ -619,9 +629,9 @@
   </div>
   <div class="dep-row" style="grid-column: 3 / 5; margin-top:2px;">
     <div class="dep-row-label">⬡ W6–7 Deps</div>
-    <div class="dep-chip">S3 → S2 <span>·</span> RAG endpoint live (W6)</div>
+    <div class="dep-chip" style="opacity:0.4;text-decoration:line-through;">S3 → S2 · RAG endpoint live (W6) — removed</div>
     <div class="dep-chip">S2 → S1 <span>·</span> /analyze real output (W6)</div>
-    <div class="dep-chip">S2 → S1 <span>·</span> Auth endpoints (W7)</div>
+    <div class="dep-chip" style="opacity:0.4;text-decoration:line-through;">S2 → S1 · Auth endpoints (W7) — removed</div>
     <div class="dep-chip">S2+S3 → S1 <span>·</span> Full pipeline output (W7)</div>
   </div>
   <div class="dep-row" style="grid-column: 5 / 8; margin-top:2px;">
@@ -633,7 +643,7 @@
   <!-- MERGE ROW -->
   <div class="merge-row">
     <div class="merge-label">⬡ Thursday Merges</div>
-    <div class="merge-note">W5: Scaffolds + contracts &nbsp;·&nbsp; W6: First thin E2E slice (video → MediaPipe → results on screen) &nbsp;·&nbsp; W7: Full pipeline live (Nemotron → RAG → Claude Sonnet) &nbsp;·&nbsp; W8: Auth + progression rec + workout tracker &nbsp;·&nbsp; W9: Accuracy validated + latency &lt;30s &nbsp;·&nbsp; W10: Release candidate</div>
+    <div class="merge-note">W5: Scaffolds + contracts &nbsp;·&nbsp; W6: First thin E2E slice (video → MediaPipe → results on screen) &nbsp;·&nbsp; W7: Full pipeline live (Nemotron → MD files → Claude Sonnet) &nbsp;·&nbsp; W8: Progression rec + lifecycle screens (FE only) &nbsp;·&nbsp; W9: Accuracy validated + latency &lt;30s &nbsp;·&nbsp; W10: Release candidate</div>
   </div>
 
 </div>

@@ -1,0 +1,1260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kinetic — ClickUp Task Descriptions · Week 6</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0a0d14; color: #e2e8f0; padding: 40px; min-width: 900px; }
+
+h1 { font-size: 22px; font-weight: 800; color: #f8fafc; letter-spacing: -0.5px; }
+.subtitle { font-size: 13px; color: #64748b; margin-top: 4px; margin-bottom: 32px; }
+
+.milestone-banner {
+  background: #0a1a10; border: 1.5px solid #22c55e; border-radius: 10px;
+  padding: 14px 20px; margin-bottom: 32px; display: flex; align-items: flex-start; gap: 16px;
+}
+.milestone-icon { font-size: 22px; flex-shrink: 0; margin-top: 2px; }
+.milestone-title { font-size: 13px; font-weight: 800; color: #86efac; margin-bottom: 4px; }
+.milestone-desc { font-size: 12px; color: #6b9980; line-height: 1.6; }
+
+/* Squad section */
+.squad-section { margin-bottom: 48px; }
+.squad-header {
+  display: flex; align-items: center; gap: 14px;
+  padding: 14px 18px; border-radius: 10px; margin-bottom: 16px;
+}
+.sq1-header { background: #0d1a2e; border: 1.5px solid #3b82f6; }
+.sq2-header { background: #0a1f12; border: 1.5px solid #22c55e; }
+.sq3-header { background: #1a1205; border: 1.5px solid #f97316; }
+.squad-title { font-size: 15px; font-weight: 800; }
+.sq1-header .squad-title { color: #93c5fd; }
+.sq2-header .squad-title { color: #86efac; }
+.sq3-header .squad-title { color: #fdba74; }
+.squad-meta { font-size: 11px; color: #64748b; margin-top: 2px; }
+.squad-pill {
+  font-size: 10px; font-weight: 700; padding: 3px 10px; border-radius: 20px;
+  margin-left: auto; flex-shrink: 0;
+}
+.sq1-pill { background: #1e3a5f; color: #93c5fd; }
+.sq2-pill { background: #14532d; color: #86efac; }
+.sq3-pill { background: #431407; color: #fdba74; }
+
+/* Task card */
+.task-card {
+  background: #0d1117; border: 1px solid #1e2433;
+  border-radius: 12px; margin-bottom: 12px; overflow: hidden;
+}
+.task-card-header {
+  padding: 14px 18px 10px; border-bottom: 1px solid #111827;
+  display: flex; align-items: flex-start; gap: 12px;
+}
+.task-id-badge {
+  font-family: 'SF Mono', monospace; font-size: 10px; font-weight: 700;
+  padding: 3px 8px; border-radius: 6px; flex-shrink: 0; margin-top: 2px;
+}
+.sq1-id { background: #0d1a2e; color: #60a5fa; border: 1px solid #1e3a5f; }
+.sq2-id { background: #0a1f12; color: #4ade80; border: 1px solid #14532d; }
+.sq3-id { background: #1a1205; color: #fb923c; border: 1px solid #431407; }
+.task-title { font-size: 14px; font-weight: 700; color: #f8fafc; line-height: 1.4; }
+
+.new-badge { display: inline-block; font-size: 9px; font-weight: 700; padding: 1px 6px; border-radius: 4px; background: #0c2a44; color: #38bdf8; border: 1px solid #0369a1; margin-left: 8px; vertical-align: middle; }
+.carry-badge { display: inline-block; font-size: 9px; font-weight: 700; padding: 1px 6px; border-radius: 4px; background: #1c1000; color: #fbbf24; border: 1px solid #92400e; margin-left: 8px; vertical-align: middle; }
+.partial-badge { display: inline-block; font-size: 9px; font-weight: 700; padding: 1px 6px; border-radius: 4px; background: #1a1205; color: #fb923c; border: 1px solid #78350f; margin-left: 8px; vertical-align: middle; }
+.moved-badge { display: inline-block; font-size: 9px; font-weight: 700; padding: 1px 6px; border-radius: 4px; background: #1a0d2e; color: #c4b5fd; border: 1px solid #5b21b6; margin-left: 8px; vertical-align: middle; }
+.e2e-badge { display: inline-block; font-size: 9px; font-weight: 700; padding: 1px 6px; border-radius: 4px; background: #052010; color: #4ade80; border: 1px solid #166534; margin-left: 8px; vertical-align: middle; }
+
+.task-card-body { padding: 14px 18px; display: flex; flex-direction: column; gap: 14px; }
+
+/* Carry-over banner */
+.carry-banner {
+  background: #141000; border: 1px solid #92400e; border-radius: 8px;
+  padding: 10px 14px; font-size: 11px; color: #fcd34d; line-height: 1.6;
+}
+.carry-banner strong { color: #fbbf24; }
+
+/* Squad change note */
+.moved-banner {
+  background: #100820; border: 1px solid #5b21b6; border-radius: 8px;
+  padding: 10px 14px; font-size: 11px; color: #c4b5fd; line-height: 1.6;
+}
+.moved-banner strong { color: #a78bfa; }
+
+/* Dependency block */
+.dep-block {
+  background: #051e26; border: 1px solid #0e7490;
+  border-radius: 8px; padding: 10px 14px;
+  display: flex; flex-direction: column; gap: 5px;
+}
+.dep-block-label { font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.6px; color: #22d3ee; margin-bottom: 2px; }
+.dep-row-item { font-size: 11px; color: #a5f3fc; display: flex; gap: 8px; align-items: baseline; }
+.dep-row-item .dep-dir { font-size: 9px; font-weight: 700; color: #0e7490; flex-shrink: 0; width: 70px; }
+.dep-none { font-size: 11px; color: #334155; font-style: italic; }
+
+/* Description */
+.desc-label { font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.6px; color: #475569; margin-bottom: 6px; }
+.desc-text { font-size: 12px; color: #94a3b8; line-height: 1.7; }
+
+/* AC list */
+.ac-block { background: #080d0a; border: 1px solid #14532d; border-radius: 8px; padding: 12px 14px; }
+.ac-label { font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.6px; color: #22c55e; margin-bottom: 8px; }
+.ac-list { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+.ac-item { display: flex; gap: 10px; align-items: baseline; font-size: 12px; color: #94a3b8; line-height: 1.5; }
+.ac-check { color: #22c55e; font-size: 11px; flex-shrink: 0; }
+
+/* Iterative test section */
+.tst-header { background: #041e1e; border: 1.5px solid #0e7490; }
+.tst-header .squad-title { color: #22d3ee; }
+.tst-pill { background: #062828; color: #22d3ee; border: 1px solid #0e7490; }
+.tst-id { background: #041e1e; color: #67e8f9; border: 1px solid #0e7490; font-family: 'SF Mono', monospace; font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 6px; flex-shrink: 0; margin-top: 2px; }
+.tst-type-badge { display: inline-block; font-size: 9px; font-weight: 700; padding: 2px 7px; border-radius: 4px; margin-right: 4px; }
+.tst-format-badge { display: inline-block; font-size: 9px; font-weight: 700; padding: 2px 7px; border-radius: 4px; }
+.tb-mp  { background: #0c3344; color: #67e8f9; }
+.tb-nem { background: #0c3344; color: #67e8f9; }
+.tb-rag { background: #2c1a06; color: #fed7aa; }
+.tb-e2e { background: #14532d; color: #86efac; }
+.tb-ff  { background: #1a1000; color: #fde68a; }
+.tb-pf  { background: #062020; color: #5eead4; }
+.tst-owner-block { font-size: 11px; color: #475569; background: #080d0a; border: 1px solid #1e293b; border-radius: 6px; padding: 6px 10px; }
+.tst-owner-label { font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.6px; color: #334155; margin-bottom: 2px; }
+.pf-block { border-radius: 8px; padding: 12px 14px; display: flex; flex-direction: column; gap: 8px; }
+.pf-pass { background: #030d06; border: 1px solid #166534; }
+.pf-fail { background: #0d0500; border: 1px solid #7c2d12; }
+.pf-label { font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 4px; }
+.pf-pass .pf-label { color: #22c55e; }
+.pf-fail .pf-label { color: #f97316; }
+.pf-list { list-style: none; display: flex; flex-direction: column; gap: 5px; }
+.pf-item { display: flex; gap: 8px; align-items: baseline; font-size: 12px; color: #94a3b8; line-height: 1.5; }
+.pf-check { flex-shrink: 0; font-size: 11px; }
+.pf-pass .pf-check { color: #22c55e; }
+.pf-fail .pf-check { color: #f97316; }
+.ff-notes-block { background: #0a0800; border: 1px solid #78350f; border-radius: 8px; padding: 12px 14px; }
+.ff-notes-label { font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.6px; color: #f59e0b; margin-bottom: 6px; }
+.ff-list { list-style: none; display: flex; flex-direction: column; gap: 5px; }
+.ff-item { display: flex; gap: 8px; align-items: baseline; font-size: 12px; color: #94a3b8; line-height: 1.5; }
+.ff-bullet { color: #f59e0b; flex-shrink: 0; }
+
+/* Section divider for carry-overs */
+.carry-section-label {
+  font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px;
+  color: #92400e; padding: 6px 0 10px; display: flex; align-items: center; gap: 10px;
+}
+.carry-section-label::after {
+  content: ''; flex: 1; height: 1px; background: #1c1200;
+}
+.w6-section-label {
+  font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px;
+  color: #166534; padding: 6px 0 10px; display: flex; align-items: center; gap: 10px;
+}
+.w6-section-label::after {
+  content: ''; flex: 1; height: 1px; background: #0a1a10;
+}
+
+@media print {
+  body { background: white; color: #111; padding: 20px; }
+}
+</style>
+</head>
+<body>
+
+<h1>Kinetic — ClickUp Task Descriptions</h1>
+<p class="subtitle">Week 6 &nbsp;·&nbsp; May 11–17, 2026 &nbsp;·&nbsp; 22 squad tasks + 4 pipeline tests &nbsp;·&nbsp; Format: Description + Acceptance Criteria + Dependencies</p>
+
+<div class="milestone-banner">
+  <div class="milestone-icon">◎</div>
+  <div>
+    <div class="milestone-title">Week 6 Milestone — First Thin E2E Slice (Thursday May 17)</div>
+    <div class="milestone-desc">
+      Upload a real Goblet Squat video → video stored in GCS → MediaPipe runs → biomechanics JSON produced → SSE events fire at each stage → Squad 1 renders real biomechanics data on the Results screen.<br>
+      <strong style="color:#86efac;">Nemotron and Claude Sonnet are NOT required for this milestone</strong> — the goal is real video in, real structured data out, visible on the frontend. RAG endpoint live is a parallel W6 deliverable from Squad 3.
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+     SQUAD 1 — FRONT END
+══════════════════════════════════ -->
+<div class="squad-section">
+  <div class="squad-header sq1-header">
+    <div>
+      <div class="squad-title">Squad 1 — Front End &amp; Testing</div>
+      <div class="squad-meta">PM: Chaitanya &nbsp;·&nbsp; Design: John (Lead), Tsion (0.7), Why'et (0.7) &nbsp;·&nbsp; Dev: Allex, Karthik (0.3)</div>
+    </div>
+    <div class="squad-pill sq1-pill">7 tasks</div>
+  </div>
+
+  <!-- S1-W6-01 -->
+  <div class="task-card">
+    <div class="task-card-header">
+      <span class="task-id-badge sq1-id">S1-W6-01</span>
+      <div class="task-title">Design handoff — Homepage · Auth · Profile screens (wireframes → dev-ready by Thu)</div>
+    </div>
+    <div class="task-card-body">
+      <div class="dep-block">
+        <div class="dep-block-label">Dependencies</div>
+        <div class="dep-row-item"><span class="dep-dir">Needs →</span> None — design track runs in parallel with build tasks</div>
+        <div class="dep-row-item"><span class="dep-dir">Unblocks →</span> S1-W6-06 (History/Dashboard schema — needs to see Homepage design), S1-W7-01 (Onboarding build in W7), S1-W7-03 (Dashboard build in W7)</div>
+      </div>
+      <div>
+        <div class="desc-label">Description</div>
+        <div class="desc-text">Design team delivers final, dev-ready designs for three screens needed in the Week 7 build: Homepage (logged-in and logged-out states, entry point to upload flow and session history), Authentication (sign-up and login, including field validation states and error messages), and User Profile (display name, training frequency, injury notes, account settings). These screens are not yet being built by engineering this week — designs are the deliverable. Must include dev specs: spacing, colour tokens, component names, and interaction states.</div>
+      </div>
+      <div class="ac-block">
+        <div class="ac-label">Acceptance Criteria</div>
+        <ul class="ac-list">
+          <li class="ac-item"><span class="ac-check">✓</span> Homepage, Auth, and Profile screens delivered in Figma with dev-ready specs</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Both Homepage states covered: logged-in (dashboard entry) and logged-out (marketing/sign-up CTA)</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Auth screens include field validation and error states (wrong password, email already in use)</li>
+          <li class="ac-item"><span class="ac-check">✓</span> All component names in Figma match Squad 1 naming convention</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Reviewed and approved by PM (Chaitanya) before Thursday merge</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Figma link shared with Squad 1 engineers by Wednesday</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- S1-W6-02 -->
+  <div class="task-card">
+    <div class="task-card-header">
+      <span class="task-id-badge sq1-id">S1-W6-02</span>
+      <div class="task-title">Build Upload screen — exercise selector, weight input, file upload, filming tips modal</div>
+    </div>
+    <div class="task-card-body">
+      <div class="dep-block">
+        <div class="dep-block-label">Dependencies</div>
+        <div class="dep-row-item"><span class="dep-dir">Needs →</span> S1-W5-01 (W5 Figma designs for Upload screen), S1-W5-05 (screen shell must exist)</div>
+        <div class="dep-row-item"><span class="dep-dir">Unblocks →</span> S1-W6-07 (real endpoint wiring — built on top of this screen's components)</div>
+      </div>
+      <div>
+        <div class="desc-label">Description</div>
+        <div class="desc-text">Build the full Upload screen as a working, interactive component using dummy data and the Squad 2 stub endpoint from W5. Components to build: exercise selector dropdown (Goblet Squat only for MVP — others greyed out), weight input field (kg, numeric only, validation for range 1–200kg), video file upload area (drag-and-drop + click-to-browse, accepted types: .mp4 .mov, max 500MB, show file name and size on selection), and filming tips modal (triggered by "How to film" link — guidance on camera angle, distance, lighting). Upload button is disabled until both a video file and weight are provided. Show file size warning if video exceeds 200MB.</div>
+      </div>
+      <div class="ac-block">
+        <div class="ac-label">Acceptance Criteria</div>
+        <ul class="ac-list">
+          <li class="ac-item"><span class="ac-check">✓</span> Exercise selector renders with Goblet Squat selected by default; other exercises visually disabled with "coming soon" tooltip</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Weight input validates: rejects non-numeric, shows error for values outside 1–200kg</li>
+          <li class="ac-item"><span class="ac-check">✓</span> File upload accepts .mp4 and .mov only — rejects other formats with an inline error message</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Selected file name + size displayed after selection</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Upload button disabled until both weight and video file are provided</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Filming tips modal opens and closes correctly; tips are readable placeholder content (final copy in W9)</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Screen matches W5 Figma designs for layout and component placement</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Committed to dev branch by Thursday</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- S1-W6-03 -->
+  <div class="task-card">
+    <div class="task-card-header">
+      <span class="task-id-badge sq1-id">S1-W6-03</span>
+      <div class="task-title">Wire SSE to real processing states — test against Squad 2 live stub endpoint</div>
+    </div>
+    <div class="task-card-body">
+      <div class="dep-block">
+        <div class="dep-block-label">Dependencies</div>
+        <div class="dep-row-item"><span class="dep-dir">Needs →</span> S1-W5-06b (SSE client skeleton from W5 must be working), S2-W5-07b (stub SSE stream deployed in W5)</div>
+        <div class="dep-row-item"><span class="dep-dir">Unblocks →</span> S1-W6-07 (E2E slice — real upload + real SSE events)</div>
+      </div>
+      <div>
+        <div class="desc-label">Description</div>
+        <div class="desc-text">Validate that the W5 SSE client skeleton correctly handles all events from Squad 2's stub stream and update the upload processing UI to render realistic states for each event. This is a test-and-polish task — the connection logic exists from W5 but the UI states and copy need to be confirmed against the agreed event contract. Specifically: each SSE event must trigger a visible UI state change (message update + progress bar movement); the error event must render the correct CTA based on the retryable flag; and the EventSource connection must close cleanly on analysis_complete. Test with the W5 stub endpoint before wiring to the real endpoint in S1-W6-07.</div>
+      </div>
+      <div class="ac-block">
+        <div class="ac-label">Acceptance Criteria</div>
+        <ul class="ac-list">
+          <li class="ac-item"><span class="ac-check">✓</span> All 10 SSE events from the W5 contract trigger correct UI state changes (message copy + progress %)</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Error event with <code style="background:#1e293b;padding:1px 4px;border-radius:3px;font-size:11px;">retryable: true</code> shows "Try again" CTA; <code style="background:#1e293b;padding:1px 4px;border-radius:3px;font-size:11px;">false</code> shows "Re-film and upload"</li>
+          <li class="ac-item"><span class="ac-check">✓</span> EventSource closes cleanly on <code style="background:#1e293b;padding:1px 4px;border-radius:3px;font-size:11px;">analysis_complete</code> — no dangling connection</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Progress bar animates smoothly between stages — no jumps or backwards movement</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Tested against Squad 2 stub endpoint and confirmed working before Thursday</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- S1-W6-04 -->
+  <div class="task-card">
+    <div class="task-card-header">
+      <span class="task-id-badge sq1-id">S1-W6-04</span>
+      <div class="task-title">Build Analysis Results screen — form score, joint corrections, coaching tips, rep chart (dummy data)</div>
+    </div>
+    <div class="task-card-body">
+      <div class="dep-block">
+        <div class="dep-block-label">Dependencies</div>
+        <div class="dep-row-item"><span class="dep-dir">Needs →</span> S1-W5-03 (form analysis JSON schema agreed), S1-W5-04 (dummy data fixtures), S1-W5-05 (Results screen shell)</div>
+        <div class="dep-row-item"><span class="dep-dir">Unblocks →</span> S1-W7-01 (W7: swap dummy data for real pipeline output)</div>
+      </div>
+      <div>
+        <div class="desc-label">Description</div>
+        <div class="desc-text">Build the full Results screen using fixture data from S1-W5-04. Components required: overall form score ring (0–100 with colour banding — red/amber/green), verdict text (1–2 sentences), four parameter cards (Posture, Stability, Movement Quality, Tempo — each with score, affirmation, observation, and 2–3 tip chips), rep-by-rep score chart (bar or line, rendered using fixture rep_scores array), weight progression chip (placeholder text for now: "Your form at this weight is solid — keep going"), and annotated frame placeholder (greyed-out image area with caption "Frame analysis coming soon"). All data sourced from fixtures — no API calls on this screen yet. Ensure the layout handles edge cases from fixtures: a session with no issues, and a session with 2 issues.</div>
+      </div>
+      <div class="ac-block">
+        <div class="ac-label">Acceptance Criteria</div>
+        <ul class="ac-list">
+          <li class="ac-item"><span class="ac-check">✓</span> Overall score ring renders with correct colour: 0–49 red, 50–74 amber, 75–100 green</li>
+          <li class="ac-item"><span class="ac-check">✓</span> All four parameter cards render with score, affirmation, observation, and tips from fixture data</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Rep-by-rep chart renders correctly for both 6-rep and 10-rep fixture datasets</li>
+          <li class="ac-item"><span class="ac-check">✓</span> "No issues" fixture renders a clean results view without empty/broken parameter cards</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Weight progression chip placeholder is visible and styled correctly</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Screen matches W5 Figma designs; no console errors</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Committed to dev branch by Thursday</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- S1-W6-05 -->
+  <div class="task-card">
+    <div class="task-card-header">
+      <span class="task-id-badge sq1-id">S1-W6-05</span>
+      <div class="task-title">Build Dashboard shell — dummy session history list + form score trend chart</div>
+    </div>
+    <div class="task-card-body">
+      <div class="dep-block">
+        <div class="dep-block-label">Dependencies</div>
+        <div class="dep-row-item"><span class="dep-dir">Needs →</span> S1-W5-05 (Dashboard stub shell), S1-W6-06 (Dashboard schema — see below)</div>
+        <div class="dep-row-item"><span class="dep-dir">Unblocks →</span> S1-W7-03 (W7: connect Dashboard to real session data once auth lands)</div>
+      </div>
+      <div>
+        <div class="desc-label">Description</div>
+        <div class="desc-text">Build the Dashboard screen with dummy data. Required components: session history list (3–5 dummy sessions, each showing exercise name, date, weight used, overall score, and a "View results" link), form score trend chart (line chart plotting overall score over the last 5 sessions — show an upward trend in the dummy data to validate the visual), and a prominent "Analyse new session" CTA button linking to the Upload screen. This is a dummy-data build — no API calls. Session history cards must be reusable as they'll be used on the History screen in W7.</div>
+      </div>
+      <div class="ac-block">
+        <div class="ac-label">Acceptance Criteria</div>
+        <ul class="ac-list">
+          <li class="ac-item"><span class="ac-check">✓</span> Dashboard renders 3–5 dummy session cards with all required fields (exercise, date, weight, score)</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Score trend chart renders correctly with dummy 5-session dataset</li>
+          <li class="ac-item"><span class="ac-check">✓</span> "Analyse new session" CTA navigates to Upload screen</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Session card component is built as a reusable component (not inline JSX)</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Empty state (zero sessions) renders a call to action rather than a blank screen</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Committed to dev branch by Thursday</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- S1-W6-06 -->
+  <div class="task-card">
+    <div class="task-card-header">
+      <span class="task-id-badge sq1-id">S1-W6-06</span>
+      <div class="task-title">Complete JSON schema — History, Dashboard, Workout endpoints &nbsp;<span class="carry-badge">CARRY OVER S1-W5-03</span></div>
+    </div>
+    <div class="task-card-body">
+      <div class="carry-banner">
+        <strong>Carry-over from S1-W5-03 (pending items).</strong> The form analysis, auth, and profile schemas are done. These three endpoints were blocked on the W6 design handoff — now unblocked. Complete before building Dashboard (S1-W6-05) or History in W7.
+      </div>
+      <div class="dep-block">
+        <div class="dep-block-label">Dependencies</div>
+        <div class="dep-row-item"><span class="dep-dir">Needs →</span> S1-W6-01 (Homepage/Dashboard designs — schema must match what the screen will display)</div>
+        <div class="dep-row-item"><span class="dep-dir">Unblocks →</span> S1-W6-05 (Dashboard dummy fixtures), S2-W6-XX (Squad 2 implements these endpoints in W7), S1-W7-03 (Dashboard connected to real data)</div>
+      </div>
+      <div>
+        <div class="desc-label">Description</div>
+        <div class="desc-text">Define and document the remaining three API response schemas in FE_Response_Schemas.md. (1) Session History — GET /users/{id}/sessions: paginated list of past form sessions, each with session_id, exercise_name, weight_kg, created_at, overall_score, verdict. (2) Dashboard — GET /users/{id}/dashboard: last 5 sessions (same shape as history) plus a score_trend array (session_id, date, overall_score) for the chart. (3) Workout Logger — GET + POST /users/{id}/workout-logs: log entry shape (log_id, exercise, sets, reps, weight_kg, session_id if linked to a form analysis, created_at). Align with Squad 2 (Nicole) before Thursday.</div>
+      </div>
+      <div class="ac-block">
+        <div class="ac-label">Acceptance Criteria</div>
+        <ul class="ac-list">
+          <li class="ac-item"><span class="ac-check">✓</span> All three schemas committed to FE_Response_Schemas.md with typed fields, required vs optional, and example payloads</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Dashboard schema includes score_trend array for chart rendering</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Pagination strategy defined for history endpoint (cursor or page-based)</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Workout log schema confirms how a log entry links to a form session (session_id nullable)</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Reviewed and confirmed by Squad 2 (Nicole) before Thursday merge</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- S1-W6-07 -->
+  <div class="task-card">
+    <div class="task-card-header">
+      <span class="task-id-badge sq1-id">S1-W6-07</span>
+      <div class="task-title">E2E slice — wire real /upload endpoint, render biomechanics JSON on Results screen &nbsp;<span class="e2e-badge">E2E MILESTONE</span></div>
+    </div>
+    <div class="task-card-body">
+      <div class="dep-block">
+        <div class="dep-block-label">Dependencies</div>
+        <div class="dep-row-item"><span class="dep-dir">Needs →</span> S1-W6-02 (Upload screen built), S1-W6-03 (SSE wired), S1-W6-04 (Results screen built), S2-W6-01 (real upload endpoint live), S2-W6-02 (real SSE events firing)</div>
+        <div class="dep-row-item"><span class="dep-dir">Unblocks →</span> Thursday merge — this is the W6 milestone deliverable</div>
+      </div>
+      <div>
+        <div class="desc-label">Description</div>
+        <div class="desc-text">Replace stub calls with real endpoints for the first E2E slice. Two swaps: (1) Upload — change the POST target from the W5 stub to Squad 2's real /upload endpoint; video file is sent, GCS storage happens, and analysis_id is returned. (2) Results — replace fixture data with the real biomechanics JSON returned from Squad 2's /analyze endpoint (via SSE analysis_complete payload or a follow-up GET). The coaching output (Nemotron → Claude Sonnet) is NOT expected yet — render the biomechanics fields that are available (joint angles, rep count, per-rep scores) and display "Analysis in progress" or grayed placeholders for coaching fields. The goal is real data on the screen, even if incomplete.</div>
+      </div>
+      <div class="ac-block">
+        <div class="ac-label">Acceptance Criteria</div>
+        <ul class="ac-list">
+          <li class="ac-item"><span class="ac-check">✓</span> Uploading a real Goblet Squat video from the browser triggers a POST to Squad 2's live /upload endpoint</li>
+          <li class="ac-item"><span class="ac-check">✓</span> SSE stream fires and the upload processing UI updates at each pipeline stage</li>
+          <li class="ac-item"><span class="ac-check">✓</span> On analysis_complete, Results screen renders real biomechanics fields (rep count, at least one joint angle) — not fixture data</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Coaching fields not yet available display a clear placeholder state (not broken UI or blank white space)</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Confirmed working in a browser on Thursday — all three squad PMs present for sign-off</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Committed to main branch at Thursday merge</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+<!-- ══════════════════════════════════
+     SQUAD 2 — BACK END PIPELINE
+══════════════════════════════════ -->
+<div class="squad-section">
+  <div class="squad-header sq2-header">
+    <div>
+      <div class="squad-title">Squad 2 — Back End Pipeline</div>
+      <div class="squad-meta">PM: Liwei, Amrita (0.5) &nbsp;·&nbsp; Dev: Nicole (0.8), Valentin, Karthik (0.7)</div>
+    </div>
+    <div class="squad-pill sq2-pill">7 tasks</div>
+  </div>
+
+  <!-- S2-W6-P1 — PRIORITY 1 -->
+  <div class="task-card" style="border-left: 3px solid #f59e0b;">
+    <div class="task-card-header">
+      <span class="task-id-badge sq2-id">S2-W6-P1</span>
+      <div class="task-title">🔴 START TODAY — Integration meeting with Squad 3: agree process_video() contract before any pipeline code is written</div>
+    </div>
+    <div class="task-card-body">
+      <div style="background:#1a1000;border:1px solid #92400e;border-radius:6px;padding:10px 12px;font-size:11px;color:#fde68a;line-height:1.6;">
+        <strong style="color:#f59e0b;">Why this is first:</strong> Squad 2 cannot write a single line of pipeline integration code until this contract is agreed. Every other S2-W6 task depends on knowing the exact function signature Squad 3 is exposing.
+      </div>
+      <div class="dep-block">
+        <div class="dep-block-label">Dependencies</div>
+        <div class="dep-row-item"><span class="dep-dir">Needs →</span> Squad 3 to have their process_video() function ready to share (S3-W6-P1)</div>
+        <div class="dep-row-item"><span class="dep-dir">Unblocks →</span> S2-W6-01 (real upload endpoint), S2-W6-02 (SSE events), S2-W6-P2 (pipeline stitch) — nothing else can start without this</div>
+      </div>
+      <div>
+        <div class="desc-label">What to agree in this meeting (30 minutes max)</div>
+        <div class="desc-text">
+          <strong style="color:#f1f5f9;">1. Function signature</strong> — exact inputs and return shape:<br>
+          <code style="background:#0d1117;padding:4px 8px;border-radius:4px;display:block;margin:6px 0;font-size:10px;color:#86efac;">
+            def process_video(gcs_path: str, analysis_id: str) -> dict<br>
+            # Success: {"status": "success", "overlay_video_url": "gs://...", "biomechanics_json": {...}}<br>
+            # Failure: {"status": "failed", "error_code": "BAD_ANGLE", "affected_landmarks": [...]}
+          </code>
+          <strong style="color:#f1f5f9;">2. Where the code lives</strong> — exact file path in the repo (e.g. <code style="background:#0d1117;padding:1px 4px;border-radius:3px;">backend/pipeline/process_video.py</code>)<br><br>
+          <strong style="color:#f1f5f9;">3. Dependencies</strong> — any packages Squad 3's code needs that must be added to requirements.txt<br><br>
+          <strong style="color:#f1f5f9;">4. SSE event pattern</strong> — Option A (callback), B (sequential calls), or C (single call, fewer events). Squad 3 recommends based on what's cleanest for their code. See pipeline_architecture_discussion.html Section 0.
+        </div>
+      </div>
+      <div class="ac-block">
+        <div class="ac-label">Acceptance Criteria</div>
+        <ul class="ac-list">
+          <li class="ac-item"><span class="ac-check">✓</span> Function signature written down and agreed — exact parameter names, types, return dict shape</li>
+          <li class="ac-item"><span class="ac-check">✓</span> File path in repo confirmed and shared in Slack/Teams</li>
+          <li class="ac-item"><span class="ac-check">✓</span> requirements.txt updated with any new dependencies from Squad 3's code</li>
+          <li class="ac-item"><span class="ac-check">✓</span> SSE event approach agreed (A, B, or C) — Squad 2 knows how to emit intermediate events</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Meeting done Monday morning — S2-W6-P2 starts immediately after</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- S2-W6-P2 — PRIORITY 2 -->
+  <div class="task-card" style="border-left: 3px solid #f59e0b;">
+    <div class="task-card-header">
+      <span class="task-id-badge sq2-id">S2-W6-P2</span>
+      <div class="task-title">Stitch the full upload → pipeline → DB → SSE sequence using Squad 3's process_video() function</div>
+    </div>
+    <div class="task-card-body">
+      <div class="dep-block">
+        <div class="dep-block-label">Dependencies</div>
+        <div class="dep-row-item"><span class="dep-dir">Needs →</span> S2-W6-P1 (contract agreed) · S3-W6-P1 (process_video() committed to repo)</div>
+        <div class="dep-row-item"><span class="dep-dir">Unblocks →</span> S1-W6-07 (E2E slice — Squad 1 calls real endpoint) · S2-W6-05 (Nemotron tests need real biomechanics JSON as input)</div>
+      </div>
+      <div>
+        <div class="desc-label">What Squad 2 builds — the full sequence</div>
+        <div class="desc-text">
+          Once the function contract is agreed, Squad 2 wires everything together in this order:<br><br>
+          <strong style="color:#f1f5f9;">Step 1 — POST /upload:</strong> Accept multipart (video + exercise_id + weight_value + weight_unit). Save video to GCS → generate analysis_id → write form_sessions to DB (status: processing) → return {analysis_id} immediately. Emit upload_received SSE.<br><br>
+          <strong style="color:#f1f5f9;">Step 2 — Async background task:</strong> Call Squad 3's <code style="background:#0d1117;padding:1px 4px;border-radius:3px;">process_video(gcs_path, analysis_id)</code>. Emit mediapipe_started SSE before the call.<br><br>
+          <strong style="color:#f1f5f9;">Step 3 — Handle return:</strong><br>
+          &nbsp;&nbsp;• If <code style="background:#0d1117;padding:1px 4px;border-radius:3px;">status == "failed"</code>: update form_sessions status → "failed", emit error SSE with error_code<br>
+          &nbsp;&nbsp;• If <code style="background:#0d1117;padding:1px 4px;border-radius:3px;">status == "success"</code>: write biomechanics_json to form_analysis_results DB, emit biomechanics_complete SSE<br><br>
+          <strong style="color:#f1f5f9;">Step 4 — Serve results:</strong> GET /analysis/{id}/result returns the stored biomechanics JSON so Squad 1 can render it on the Results screen.
+        </div>
+      </div>
+      <div class="ac-block">
+        <div class="ac-label">Acceptance Criteria</div>
+        <ul class="ac-list">
+          <li class="ac-item"><span class="ac-check">✓</span> POST /upload accepts video + exercise_id + weight_value + weight_unit, saves to GCS, writes DB record, returns {analysis_id} in under 500ms</li>
+          <li class="ac-item"><span class="ac-check">✓</span> process_video() called asynchronously — upload response not blocked by pipeline processing</li>
+          <li class="ac-item"><span class="ac-check">✓</span> On success: biomechanics_json written to form_analysis_results. GET /analysis/{id}/result returns it with all fields from Kinetic_Biomechanics_Output_Schema.json</li>
+          <li class="ac-item"><span class="ac-check">✓</span> On quality gate failure: form_sessions status set to "failed", error SSE emitted with correct error_code</li>
+          <li class="ac-item"><span class="ac-check">✓</span> SSE events fire in correct sequence — upload_received → mediapipe_started → biomechanics_complete (or error)</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Squad 1 confirms real biomechanics data appears on Results screen before Thursday merge</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- S2-W6-01 -->
+  <div class="task-card">
+    <div class="task-card-header">
+      <span class="task-id-badge sq2-id">S2-W6-01</span>
+      <div class="task-title">Implement real POST /upload endpoint — save video to GCS, trigger pipeline, return analysis_id + SSE stream</div>
+    </div>
+    <div class="task-card-body">
+      <div class="dep-block">
+        <div class="dep-block-label">Dependencies</div>
+        <div class="dep-row-item"><span class="dep-dir">Needs →</span> S2-W5-07a (stub endpoint pattern), S2-W5-08 (DB live), S2-W5-02 (GCS bucket provisioned)</div>
+        <div class="dep-row-item"><span class="dep-dir">Unblocks →</span> S2-W6-02 (SSE events come after upload triggers pipeline), S1-W6-07 (Squad 1 calls this endpoint for E2E slice)</div>
+      </div>
+      <div>
+        <div class="desc-label">Description</div>
+        <div class="desc-text">Upgrade the W5 stub /upload endpoint into the real implementation. Accept multipart POST (video file + exercise + weight). Save the video to GCS using the agreed path structure (videos/{analysis_id}/{filename}). Write the form_sessions record to DB with status: processing. Return {analysis_id} immediately — no waiting for the pipeline. In a background async task, trigger the MediaPipe pipeline (call Squad 3's biomechanics processing function or service). Emit SSE events as each pipeline stage completes. Keep the upload response fast (&lt;500ms) — all heavy processing happens asynchronously after the response is sent.</div>
+      </div>
+      <div class="ac-block">
+        <div class="ac-label">Acceptance Criteria</div>
+        <ul class="ac-list">
+          <li class="ac-item"><span class="ac-check">✓</span> POST /upload accepts multipart: video file + exercise (string) + weight (float)</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Video stored in GCS at <code style="background:#1e293b;padding:1px 4px;border-radius:3px;font-size:11px;">videos/{analysis_id}/{filename}</code> — GCS path stored in DB</li>
+          <li class="ac-item"><span class="ac-check">✓</span> form_sessions record written: session_id, user_id (stub for now), exercise_name, weight_kg, status: processing, video_gcs_path, created_at</li>
+          <li class="ac-item"><span class="ac-check">✓</span> {analysis_id} returned in &lt;500ms — pipeline runs asynchronously, not blocking the response</li>
+          <li class="ac-item"><span class="ac-check">✓</span> File size checked server-side — reject files &gt;500MB with 413 error before attempting GCS write</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Deployed to Cloud Run dev env and URL shared with Squad 1 by Wednesday</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- S2-W6-02 -->
+  <div class="task-card">
+    <div class="task-card-header">
+      <span class="task-id-badge sq2-id">S2-W6-02</span>
+      <div class="task-title">Emit SSE events at each real pipeline stage — replace stub stream with live events</div>
+    </div>
+    <div class="task-card-body">
+      <div class="dep-block">
+        <div class="dep-block-label">Dependencies</div>
+        <div class="dep-row-item"><span class="dep-dir">Needs →</span> S2-W5-07b (stub stream pattern), S2-W6-01 (real upload triggers real pipeline), S3-W6-01 (MediaPipe must emit stage signals for Squad 2 to relay over SSE)</div>
+        <div class="dep-row-item"><span class="dep-dir">Unblocks →</span> S1-W6-07 (E2E slice — Squad 1 watches these events fire live)</div>
+      </div>
+      <div>
+        <div class="desc-label">Description</div>
+        <div class="desc-text">Replace the fake timed events in the W5 stub SSE stream with real events emitted as the pipeline progresses. The GET /analysis/{id}/stream endpoint must stay open and emit events triggered by actual pipeline milestones. Events to emit this week (biomechanics slice): upload_received (on POST /upload success), mediapipe_started (when MediaPipe processing begins), mediapipe_complete (with real rep_count from MediaPipe output), biomechanics_complete (with landmark quality summary), analysis_complete (when biomechanics JSON is ready and stored). Events for Nemotron and Claude stages are wired in W7. Each event payload must include analysis_id and the agreed fields from the SSE contract.</div>
+      </div>
+      <div class="ac-block">
+        <div class="ac-label">Acceptance Criteria</div>
+        <ul class="ac-list">
+          <li class="ac-item"><span class="ac-check">✓</span> All 5 biomechanics-stage events fire in correct sequence when a real video is uploaded</li>
+          <li class="ac-item"><span class="ac-check">✓</span> mediapipe_complete event carries real rep_count from MediaPipe output (not hardcoded)</li>
+          <li class="ac-item"><span class="ac-check">✓</span> analysis_complete fires only after biomechanics JSON is written to DB — not before</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Cache-Control: no-cache and X-Accel-Buffering: no headers present on stream response</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Tested end-to-end with Squad 1 SSE client before Thursday — events visible in browser DevTools EventSource log</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- S2-W6-03 -->
+  <div class="task-card">
+    <div class="task-card-header">
+      <span class="task-id-badge sq2-id">S2-W6-03</span>
+      <div class="task-title">Integrate Squad 3 biomechanics JSON into /analyze response — store to DB, serve to frontend</div>
+    </div>
+    <div class="task-card-body">
+      <div class="dep-block">
+        <div class="dep-block-label">Dependencies</div>
+        <div class="dep-row-item"><span class="dep-dir">Needs →</span> S3-W6-02 (biomechanics script must produce the agreed JSON format), S3-W5-07 (Kinetic_Biomechanics_Output_Schema.json — the agreed schema)</div>
+        <div class="dep-row-item"><span class="dep-dir">Unblocks →</span> S1-W6-07 (Squad 1 reads this JSON on the Results screen), S2-W7-01 (Nemotron integration receives this JSON as input)</div>
+      </div>
+      <div>
+        <div class="desc-label">Description</div>
+        <div class="desc-text">Wire the biomechanics JSON produced by Squad 3's script into the Squad 2 pipeline. Two steps: (1) Receive — accept the biomechanics JSON output from Squad 3's MediaPipe processing (either via direct function call if co-located in the same service, or via an internal HTTP call if Squad 3 exposes it as a separate service — agree the integration pattern with Squad 3 by Monday). (2) Store — write the biomechanics JSON to the form_analysis_results table in DB against the analysis_id. (3) Serve — expose GET /analysis/{id}/result returning the biomechanics JSON so Squad 1 can fetch it after analysis_complete fires. This is the endpoint Squad 1 calls to populate the Results screen in the E2E slice.</div>
+      </div>
+      <div class="ac-block">
+        <div class="ac-label">Acceptance Criteria</div>
+        <ul class="ac-list">
+          <li class="ac-item"><span class="ac-check">✓</span> Integration pattern agreed with Squad 3 by Monday (function call vs internal service call) and documented</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Biomechanics JSON written to form_analysis_results table after MediaPipe completes</li>
+          <li class="ac-item"><span class="ac-check">✓</span> GET /analysis/{id}/result returns the stored biomechanics JSON — returns 404 if analysis is still processing</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Response includes all fields from Kinetic_Biomechanics_Output_Schema.json: rep_count, per_rep data, joint angles, stability scores</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Deployed to Cloud Run dev env — Squad 1 fetches real data successfully before Thursday</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- S2-W6-04 -->
+  <div class="task-card">
+    <div class="task-card-header">
+      <span class="task-id-badge sq2-id">S2-W6-04</span>
+      <div class="task-title">Video quality gate — return retake errors over SSE when MediaPipe cannot analyse the video</div>
+    </div>
+    <div class="task-card-body">
+      <div class="dep-block">
+        <div class="dep-block-label">Dependencies</div>
+        <div class="dep-row-item"><span class="dep-dir">Needs →</span> S3-W6-01 (MediaPipe quality gate logic — Squad 3 produces the quality signals, Squad 2 relays them), S2-W6-02 (SSE error event must be wired)</div>
+        <div class="dep-row-item"><span class="dep-dir">Unblocks →</span> S1-W6-03 (Squad 1 must render the retryable: false error state correctly for retake CTAs)</div>
+      </div>
+      <div>
+        <div class="desc-label">Description</div>
+        <div class="desc-text">When Squad 3's MediaPipe quality gate determines a video cannot be reliably analysed (bad camera angle, low joint confidence, partial body out of frame, low lighting), Squad 2 must relay this as a structured SSE error event so the frontend can show the correct retake message. Use the error event format from the W5 SSE contract: {event: "error", analysis_id, error_code, retryable: "false", message}. Error codes to handle: BAD_ANGLE, LOW_CONFIDENCE, PARTIAL_OCCLUSION, VIDEO_TOO_SHORT. Map each to the appropriate message from Quality_Gate_Error_Messages.html. Update the form_sessions DB record status to "failed" with the error_code stored.</div>
+      </div>
+      <div class="ac-block">
+        <div class="ac-label">Acceptance Criteria</div>
+        <ul class="ac-list">
+          <li class="ac-item"><span class="ac-check">✓</span> Error SSE event fires with correct error_code when MediaPipe quality gate rejects a video</li>
+          <li class="ac-item"><span class="ac-check">✓</span> All 4 error codes handled: BAD_ANGLE, LOW_CONFIDENCE, PARTIAL_OCCLUSION, VIDEO_TOO_SHORT</li>
+          <li class="ac-item"><span class="ac-check">✓</span> form_sessions record updated to status: "failed" with error_code stored</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Tested with a deliberately bad video (filmed at wrong angle) — error event confirmed in browser DevTools</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Confirmed Squad 1 error UI renders the correct retake message for at least 2 error codes</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- S2-W6-05 -->
+  <div class="task-card">
+    <div class="task-card-header">
+      <span class="task-id-badge sq2-id">S2-W6-05</span>
+      <div class="task-title">Execute Nemotron Tests A, B, C — compare input combinations, log findings, feed to PM &nbsp;<span class="moved-badge">MOVED BACK TO S2</span></div>
+    </div>
+    <div class="task-card-body">
+      <div class="moved-banner">
+        <strong>Squad ownership note:</strong> This task was previously assigned to a Squad 3 developer. It is now returned to Squad 2, who wrote the test plan (S2-W5-10), have NVIDIA NIM API access, and have spare capacity this week. Squad 3 refocuses on RAG pipeline carry-overs and MediaPipe completion.
+      </div>
+      <div class="dep-block">
+        <div class="dep-block-label">Dependencies</div>
+        <div class="dep-row-item"><span class="dep-dir">Needs →</span> S2-W5-09 (NVIDIA NIM API access confirmed — done in W5), S2-W5-10 (test plan + scripts written — done in W5), S3-W6-02 (real biomechanics JSON from W6 MediaPipe work — needed for Test B and C)</div>
+        <div class="dep-row-item"><span class="dep-dir">Unblocks →</span> W7 pipeline architecture decision — PM uses findings to choose the final Nemotron input format before W7 full integration build</div>
+      </div>
+      <div>
+        <div class="desc-label">Description</div>
+        <div class="desc-text">Execute the three Nemotron input test scenarios defined in S2-W5-10 using the test scripts already written. Use a real Goblet Squat video + real biomechanics JSON from Squad 3's W6 pipeline output (not dummy data — real MediaPipe output makes the comparison meaningful).<br><br>
+        <strong style="color:#e2e8f0;">Test A — Joint overlay video only:</strong> Send the joint overlay video with no JSON. Record: response time, which form issues Nemotron identified, field completeness against the agreed Nemotron output schema, chain-of-thought quality.<br><br>
+        <strong style="color:#e2e8f0;">Test B — Biomechanics JSON only:</strong> Send the structured JSON with no video. Same measurements. This isolates what the model can determine from numbers alone.<br><br>
+        <strong style="color:#e2e8f0;">Test C — Both inputs together:</strong> Send video + JSON as dual inputs. Same measurements. This is the intended production architecture — confirm whether it meaningfully outperforms B alone.<br><br>
+        Commit a comparison summary doc: which combination gives the best output quality? Is the video adding value over JSON alone? What is the latency difference? This directly informs whether the production pipeline sends video to Nemotron or JSON only.</div>
+      </div>
+      <div class="ac-block">
+        <div class="ac-label">Acceptance Criteria</div>
+        <ul class="ac-list">
+          <li class="ac-item"><span class="ac-check">✓</span> All three test scenarios executed against NVIDIA NIM API using real MediaPipe biomechanics JSON from this week</li>
+          <li class="ac-item"><span class="ac-check">✓</span> For each scenario: response time recorded, Nemotron output schema field completeness checked (present / missing / malformed)</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Comparison summary committed to <code style="background:#1e293b;padding:1px 4px;border-radius:3px;font-size:11px;">/tests/weekly-results/W6-Nemotron-ABC-comparison.md</code></li>
+          <li class="ac-item"><span class="ac-check">✓</span> Summary answers: (1) which input combination produces best output quality? (2) does video add meaningful value over JSON alone? (3) what is the latency tradeoff?</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Raw input + output for each test scenario saved alongside the summary doc</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Findings shared with PM (Amrita / Liwei) by Thursday — architecture decision made before W7 starts</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+<!-- ══════════════════════════════════
+     SQUAD 3 — DATA / FULL STACK
+══════════════════════════════════ -->
+<div class="squad-section">
+  <div class="squad-header sq3-header">
+    <div>
+      <div class="squad-title">Squad 3 — Data / Full Stack</div>
+      <div class="squad-meta">PM: Blessing, Amrita (0.5) &nbsp;·&nbsp; Dev: Anusha, Ezequiel, Nicole (0.2)</div>
+    </div>
+    <div class="squad-pill sq3-pill">12 tasks (2 priority + 4 carry-overs + 6 W6)</div>
+  </div>
+
+  <!-- S3-W6-P1 — PRIORITY 1 -->
+  <div class="task-card" style="border-left: 3px solid #f59e0b;">
+    <div class="task-card-header">
+      <span class="task-id-badge sq3-id">S3-W6-P1</span>
+      <div class="task-title">🔴 START TODAY — Expose process_video() as a callable function and hand off to Squad 2</div>
+    </div>
+    <div class="task-card-body">
+      <div style="background:#1a1000;border:1px solid #92400e;border-radius:6px;padding:10px 12px;font-size:11px;color:#fde68a;line-height:1.6;">
+        <strong style="color:#f59e0b;">Why this is first:</strong> Squad 3 has built the pipeline (OpenCV, MediaPipe, Biomechanics). Squad 2 is waiting to stitch it. Every hour this handoff is delayed is an hour Squad 2 cannot work. This task unblocks the entire W6 E2E slice.
+      </div>
+      <div class="dep-block">
+        <div class="dep-block-label">Dependencies</div>
+        <div class="dep-row-item"><span class="dep-dir">Needs →</span> MediaPipe + OpenCV + Biomechanics scripts already built (done in W5)</div>
+        <div class="dep-row-item"><span class="dep-dir">Unblocks →</span> S2-W6-P1 (integration meeting) · S2-W6-P2 (pipeline stitch) · everything in the E2E slice</div>
+      </div>
+      <div>
+        <div class="desc-label">What to deliver to Squad 2</div>
+        <div class="desc-text">
+          Wrap the existing MediaPipe → quality gate → OpenCV overlay → Biomechanics script sequence into a single callable Python function that Squad 2 can import and call from their FastAPI pipeline.<br><br>
+          <strong style="color:#f1f5f9;">The function signature to expose:</strong>
+          <code style="background:#0d1117;padding:8px 12px;border-radius:4px;display:block;margin:8px 0;font-size:10px;color:#fdba74;">
+            def process_video(gcs_path: str, analysis_id: str) -> dict:<br>
+            &nbsp;&nbsp;"""<br>
+            &nbsp;&nbsp;Runs: OpenCV wrapper → MediaPipe → quality gate → OpenCV overlay → Biomechanics script<br>
+            &nbsp;&nbsp;<br>
+            &nbsp;&nbsp;Returns on success:<br>
+            &nbsp;&nbsp;  {"status": "success", "overlay_video_url": "gs://...", "biomechanics_json": {...}}<br>
+            &nbsp;&nbsp;<br>
+            &nbsp;&nbsp;Returns on quality gate failure:<br>
+            &nbsp;&nbsp;  {"status": "failed", "error_code": "BAD_ANGLE", "affected_landmarks": ["left_knee"]}<br>
+            &nbsp;&nbsp;"""
+          </code>
+          <strong style="color:#f1f5f9;">Share with Squad 2:</strong><br>
+          1. Exact file path in the repo (e.g. <code style="background:#0d1117;padding:1px 4px;border-radius:3px;">backend/pipeline/process_video.py</code>)<br>
+          2. Any new packages needed in requirements.txt<br>
+          3. A sample success return dict from a real test run<br>
+          4. Confirm biomechanics_json includes <code style="background:#0d1117;padding:1px 4px;border-radius:3px;">bottom_frame</code> and <code style="background:#0d1117;padding:1px 4px;border-radius:3px;">bottom_timestamp_ms</code> per rep — needed for OpenCV Part 2 later
+        </div>
+      </div>
+      <div class="ac-block">
+        <div class="ac-label">Acceptance Criteria</div>
+        <ul class="ac-list">
+          <li class="ac-item"><span class="ac-check">✓</span> process_video(gcs_path, analysis_id) is a callable Python function — not a standalone script that only runs from the terminal</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Returns a dict with "status", "overlay_video_url", and "biomechanics_json" on success</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Returns a dict with "status", "error_code", and "affected_landmarks" on quality gate failure</li>
+          <li class="ac-item"><span class="ac-check">✓</span> biomechanics_json includes bottom_frame and bottom_timestamp_ms per rep</li>
+          <li class="ac-item"><span class="ac-check">✓</span> File committed to repo and path shared with Squad 2 (Nicole) by Monday morning</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Squad 2 confirms successful import and test call before end of day Monday</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- S3-W6-P2 — PRIORITY 2 -->
+  <div class="task-card" style="border-left: 3px solid #f59e0b;">
+    <div class="task-card-header">
+      <span class="task-id-badge sq3-id">S3-W6-P2</span>
+      <div class="task-title">Gold standard data prep — run 3–5 good-form videos through pipeline, save to DB</div>
+    </div>
+    <div class="task-card-body">
+      <div class="dep-block">
+        <div class="dep-block-label">Dependencies</div>
+        <div class="dep-row-item"><span class="dep-dir">Needs →</span> MediaPipe + Biomechanics script already built — run the same pipeline Squad 2 will call</div>
+        <div class="dep-row-item"><span class="dep-dir">Unblocks →</span> Claude angle comparison (W7) · OpenCV Part 2 gold standard overlay (W7) · PT expert validation (W9)</div>
+      </div>
+      <div>
+        <div class="desc-label">Description</div>
+        <div class="desc-text">
+          Identify 3–5 Goblet Squat videos that demonstrate correct form (confirmed by PM or PT reference). Run each through the existing MediaPipe + Biomechanics pipeline. Save the biomechanics JSON outputs to the <code style="background:#0d1117;padding:1px 4px;border-radius:3px;">gold_standard_biomechanics</code> DB table.<br><br>
+          <strong style="color:#f1f5f9;">This data serves two purposes:</strong><br>
+          1. <strong>LLM angle reference</strong> — Claude uses gold standard angle distributions to compare against the user's angles when generating coaching (e.g. "your knee angle of 88° is within the ideal range of 80–95°")<br>
+          2. <strong>Visual overlay</strong> — OpenCV Part 2 queries these values to show "Ideal: 80–95°" next to the user's actual angle on the annotated frame<br><br>
+          <strong style="color:#f1f5f9;">gold_standard_biomechanics table fields to populate:</strong><br>
+          exercise_id, joint (knee / hip / ankle), angle_at_bottom_mean, angle_at_bottom_min, angle_at_bottom_max, source_video_count
+        </div>
+      </div>
+      <div class="ac-block">
+        <div class="ac-label">Acceptance Criteria</div>
+        <ul class="ac-list">
+          <li class="ac-item"><span class="ac-check">✓</span> 3–5 good-form videos identified and agreed with PM (Amrita/Blessing) before running</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Each video processed through the existing MediaPipe + Biomechanics pipeline successfully</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Angle distributions stored in gold_standard_biomechanics table: knee, hip, ankle angles at bottom position — mean, min, max across all reference videos</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Reference values confirmed as sensible: knee 80–95°, hip 80–95°, ankle dorsiflexion ≥25° (adjust if pipeline outputs differ from research benchmarks)</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Table queryable by Squad 2 and OpenCV Part 2 code before end of W6</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="carry-section-label">Carry-overs from Week 5 — complete first, these unblock W6 RAG tasks</div>
+
+  <!-- S3-W6-C1 -->
+  <div class="task-card" style="border-left: 3px solid #92400e;">
+    <div class="task-card-header">
+      <span class="task-id-badge sq3-id">S3-W6-C1</span>
+      <div class="task-title">Collect 20–30 RAG sources for Goblet Squat &nbsp;<span class="carry-badge">CARRY OVER S3-W5-01</span></div>
+    </div>
+    <div class="task-card-body">
+      <div class="carry-banner">
+        <strong>Not completed in W5</strong> — Squad 3 developer was reassigned to MediaPipe/Nemotron work. This is now the highest priority for the Squad 3 data developer (Anusha/Ezequiel) this week. Start Monday — no dependencies. Blocks S3-W6-C2 and S3-W6-04 (corpus ingestion cannot begin without sources).
+      </div>
+      <div class="dep-block">
+        <div class="dep-block-label">Dependencies</div>
+        <div class="dep-row-item"><span class="dep-dir">Needs →</span> None — can start immediately Monday</div>
+        <div class="dep-row-item"><span class="dep-dir">Unblocks →</span> S3-W6-C2 (vector DB schema needs source types confirmed), S3-W6-04 (corpus ingestion cannot start without sources)</div>
+      </div>
+      <div>
+        <div class="desc-label">Description</div>
+        <div class="desc-text">Source and curate 20–30 high-quality documents for the Goblet Squat biomechanics RAG corpus. Required types: peer-reviewed research papers (knee valgus, ankle dorsiflexion, goblet squat mechanics), YouTube tutorial transcripts (certified PTs or strength coaches only), Kaggle or public biomechanics datasets with pose/joint data, credentialed fitness coach tutorials, muscle anatomy references (hip abductors, quadriceps, glutes, ankle stabilisers). For each source record: title, URL or DOI, source type, credibility rating (1–3), and which form issues it addresses (knee_valgus, depth, torso_lean, ankle_dorsiflexion, hip_hinge).</div>
+      </div>
+      <div class="ac-block">
+        <div class="ac-label">Acceptance Criteria</div>
+        <ul class="ac-list">
+          <li class="ac-item"><span class="ac-check">✓</span> 20–30 sources catalogued in a spreadsheet or markdown doc committed to repo</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Each source tagged with: type, credibility (1–3), and form issues covered</li>
+          <li class="ac-item"><span class="ac-check">✓</span> At least 5 peer-reviewed research papers included</li>
+          <li class="ac-item"><span class="ac-check">✓</span> All 5 issue tags covered by at least 2 sources each: knee_valgus, depth, torso_lean, ankle_dorsiflexion, hip_hinge</li>
+          <li class="ac-item"><span class="ac-check">✓</span> No sources from uncredentialed or anonymous creators</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Reviewed and approved by PM (Blessing) — needed before corpus ingestion starts mid-week</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- S3-W6-C2 -->
+  <div class="task-card" style="border-left: 3px solid #92400e;">
+    <div class="task-card-header">
+      <span class="task-id-badge sq3-id">S3-W6-C2</span>
+      <div class="task-title">Define vector DB schema — metadata fields, embedding strategy, chunking &nbsp;<span class="carry-badge">CARRY OVER S3-W5-02</span></div>
+    </div>
+    <div class="task-card-body">
+      <div class="carry-banner">
+        <strong>Not completed in W5</strong> — blocked on S3-W6-C1 (source types inform metadata fields). Complete this as soon as S3-W6-C1 is done — vector DB cannot be configured or ingested without this schema.
+      </div>
+      <div class="dep-block">
+        <div class="dep-block-label">Dependencies</div>
+        <div class="dep-row-item"><span class="dep-dir">Needs →</span> S3-W6-C1 (source types must be known), S3-W5-04 (vector DB selection must be confirmed — if not done, do it first)</div>
+        <div class="dep-row-item"><span class="dep-dir">Unblocks →</span> S3-W6-C3 (ingestion pipeline), S3-W6-04 (corpus ingestion)</div>
+      </div>
+      <div>
+        <div class="desc-label">Description</div>
+        <div class="desc-text">Design the document structure and metadata schema for the vector DB. Every ingested chunk carries: text content, embedding vector, and metadata fields for filtered retrieval. Required metadata: exercise (goblet_squat), issue_tags (array), source_type, source_credibility (1–3), joint_references (array), source_title, source_url. Define: embedding model selection with written justification (must handle biomechanics domain language), chunk size and overlap strategy. Critical: align the issue_tags vocabulary with Squad 2 — Nemotron's output tags must map directly to RAG retrieval tags (same strings, same values).</div>
+      </div>
+      <div class="ac-block">
+        <div class="ac-label">Acceptance Criteria</div>
+        <ul class="ac-list">
+          <li class="ac-item"><span class="ac-check">✓</span> Vector DB schema document committed with all metadata fields, types, and example values</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Embedding model selected with written justification</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Chunking strategy defined: chunk size, overlap, and rationale documented</li>
+          <li class="ac-item"><span class="ac-check">✓</span> issue_tag vocabulary aligned with Squad 2 — confirmed match before ingestion begins</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Reviewed by Squad 2 for query compatibility</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- S3-W6-C3 -->
+  <div class="task-card" style="border-left: 3px solid #92400e;">
+    <div class="task-card-header">
+      <span class="task-id-badge sq3-id">S3-W6-C3</span>
+      <div class="task-title">Define ingestion pipeline architecture — chunking, embedding, metadata tagging &nbsp;<span class="carry-badge">CARRY OVER S3-W5-05</span></div>
+    </div>
+    <div class="task-card-body">
+      <div class="carry-banner">
+        <strong>Not completed in W5.</strong> Depends on S3-W6-C1 (source types) and S3-W6-C2 (schema). This is a planning/architecture doc task — once written, S3-W6-04 (actual ingestion) can begin.
+      </div>
+      <div class="dep-block">
+        <div class="dep-block-label">Dependencies</div>
+        <div class="dep-row-item"><span class="dep-dir">Needs →</span> S3-W6-C1 (source types determine extraction method per type), S3-W6-C2 (schema defines metadata to tag during ingestion), S3-W5-04 (vector DB selected)</div>
+        <div class="dep-row-item"><span class="dep-dir">Unblocks →</span> S3-W6-04 (corpus ingestion runs the pipeline defined here)</div>
+      </div>
+      <div>
+        <div class="desc-label">Description</div>
+        <div class="desc-text">Document the ingestion pipeline architecture. Define how each source type is processed: PDFs (research papers) → text extraction → chunking; YouTube transcripts → clean transcript text → chunking; anatomy images → alt-text or caption extraction (or skip in MVP). Define the Python ingestion script flow: load source → extract text → chunk (size + overlap from S3-W6-C2) → generate embedding → write chunk + metadata to vector DB. Define how to handle re-ingestion (overwrite by source_url, not duplicate). The architecture doc becomes the spec for S3-W6-04 (the actual ingestion run).</div>
+      </div>
+      <div class="ac-block">
+        <div class="ac-label">Acceptance Criteria</div>
+        <ul class="ac-list">
+          <li class="ac-item"><span class="ac-check">✓</span> Ingestion pipeline architecture committed to repo as a doc or inline script comments</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Per-source-type extraction strategy defined for all types in the S3-W6-C1 source list</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Re-ingestion / deduplication strategy defined</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Python ingestion script scaffolded — runnable with a single command against one test source before S3-W6-04 begins</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- S3-W6-C4 -->
+  <div class="task-card" style="border-left: 3px solid #92400e;">
+    <div class="task-card-header">
+      <span class="task-id-badge sq3-id">S3-W6-C4</span>
+      <div class="task-title">Complete and commit OpenCV Python wrapper &nbsp;<span class="partial-badge">PARTIALLY DONE S3-W5-08</span></div>
+    </div>
+    <div class="task-card-body">
+      <div class="carry-banner">
+        <strong>Core implementation exists</strong> (done while working on MediaPipe). What remains: edge case handling (file not found, FPS = 0, cap.read() returning None) and committing the spike script with output fields documented. Estimated: 1–2 hours. Do this Monday to unblock the MediaPipe completion task.
+      </div>
+      <div class="dep-block">
+        <div class="dep-block-label">Dependencies</div>
+        <div class="dep-row-item"><span class="dep-dir">Needs →</span> Core implementation already done — just needs hardening + commit</div>
+        <div class="dep-row-item"><span class="dep-dir">Unblocks →</span> S3-W6-01 (MediaPipe pipeline completion builds directly on top of this wrapper)</div>
+      </div>
+      <div>
+        <div class="desc-label">Description</div>
+        <div class="desc-text">Wrap up and commit the OpenCV video ingestion wrapper. The core logic (VideoCapture, frame extraction, BGR→RGB conversion, timestamp calculation) is already written. Remaining items: (1) Handle edge cases — file not found raises a clear exception; FPS reads as zero falls back gracefully rather than dividing by zero; cap.read() returning None (corrupted/missing frame) skips the frame and logs a warning. (2) Commit the spike script that reads a sample Goblet Squat video end-to-end and logs frame_index and timestamp_ms for every frame. (3) Document output fields: frame_index, timestamp_ms, fps, total_frames — so any teammate can build on this wrapper without re-implementing video ingestion.</div>
+      </div>
+      <div class="ac-block">
+        <div class="ac-label">Acceptance Criteria</div>
+        <ul class="ac-list">
+          <li class="ac-item"><span class="ac-check">✓</span> Spike script committed — reads a sample video end-to-end without errors</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Timestamp calculation correct: <code style="background:#1e293b;padding:1px 4px;border-radius:3px;font-size:11px;">timestamp_ms = (frame_index / fps) × 1000</code> verified against known video duration</li>
+          <li class="ac-item"><span class="ac-check">✓</span> BGR → RGB conversion applied before each frame is passed to MediaPipe</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Edge cases handled: missing file, FPS = 0, corrupted frame (cap.read() = None)</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Output fields documented in comments or a short README: frame_index, timestamp_ms, fps, total_frames</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="w6-section-label">Week 6 tasks — MediaPipe · Biomechanics · RAG pipeline</div>
+
+  <!-- S3-W6-01 -->
+  <div class="task-card">
+    <div class="task-card-header">
+      <span class="task-id-badge sq3-id">S3-W6-01</span>
+      <div class="task-title">Complete MediaPipe pipeline — frame selection, landmark quality gate, rep segmentation &nbsp;<span class="moved-badge">FROM S2 PLAN</span></div>
+    </div>
+    <div class="task-card-body">
+      <div class="moved-banner">
+        <strong>Originally planned as a Squad 2 task.</strong> Assigned to the Squad 3 developer who has been working on this. Completing it here keeps context with the developer who has the most knowledge of the current state.
+      </div>
+      <div class="dep-block">
+        <div class="dep-block-label">Dependencies</div>
+        <div class="dep-row-item"><span class="dep-dir">Needs →</span> S3-W6-C4 (OpenCV wrapper committed and working), S3-W5-06 (MediaPipe landmark output documented — likely done alongside this work)</div>
+        <div class="dep-row-item"><span class="dep-dir">Unblocks →</span> S3-W6-02 (biomechanics script reads the pipeline output), S2-W6-02 (SSE events for MediaPipe stages), S2-W6-04 (quality gate errors relayed over SSE)</div>
+      </div>
+      <div>
+        <div class="desc-label">Description</div>
+        <div class="desc-text">Complete the MediaPipe Pose processing pipeline for the Goblet Squat. Frame selection: not every frame is processed — implement stride-based or keyframe selection to balance accuracy and speed (document the chosen strategy). Landmark quality gate: for each frame, check visibility and presence scores for all 10 SQUAT_LANDMARKS against the defined thresholds (VISIBILITY_THRESHOLD = 0.70, PRESENCE_THRESHOLD = 0.70 from S3-W5-06). If a critical landmark drops below threshold for more than 30% of frames, classify the video as unanalysable and emit the appropriate quality gate error code (BAD_ANGLE, LOW_CONFIDENCE, PARTIAL_OCCLUSION) to Squad 2. Rep segmentation: detect each squat rep by tracking hip Y-coordinate descent and ascent — output a list of rep objects with start_frame, bottom_frame, end_frame, and timestamp_ms values. All outputs feed into S3-W6-02.</div>
+      </div>
+      <div class="ac-block">
+        <div class="ac-label">Acceptance Criteria</div>
+        <ul class="ac-list">
+          <li class="ac-item"><span class="ac-check">✓</span> Pipeline processes a 30-second Goblet Squat video in &lt;10s on the dev machine</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Rep segmentation detects correct rep count on 3 test videos (manually verified)</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Quality gate correctly rejects a video filmed at the wrong angle (landmark confidence below threshold)</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Quality gate signals emitted as structured output (error_code + affected_landmarks) — Squad 2 can relay these as SSE errors</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Output for a passing video includes: per-frame landmark data, rep list (start/bottom/end frames + timestamps), overall landmark quality summary</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Committed to repo with a sample video test included</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- S3-W6-02 -->
+  <div class="task-card">
+    <div class="task-card-header">
+      <span class="task-id-badge sq3-id">S3-W6-02</span>
+      <div class="task-title">Write biomechanics script — keypoints → knee angle, hip angle, rep time, tempo, stability score &nbsp;<span class="moved-badge">FROM S2 PLAN</span></div>
+    </div>
+    <div class="task-card-body">
+      <div class="dep-block">
+        <div class="dep-block-label">Dependencies</div>
+        <div class="dep-row-item"><span class="dep-dir">Needs →</span> S3-W6-01 (MediaPipe pipeline must output reliable landmark + rep data), S3-W5-07 (Kinetic_Biomechanics_Output_Schema.json — output must match this schema exactly)</div>
+        <div class="dep-row-item"><span class="dep-dir">Unblocks →</span> S3-W6-03 (expose to Squad 2 pipeline), S2-W6-05 (Nemotron tests need real biomechanics JSON)</div>
+      </div>
+      <div>
+        <div class="desc-label">Description</div>
+        <div class="desc-text">Convert raw MediaPipe landmark coordinates into the computed biomechanics metrics defined in Kinetic_Biomechanics_Output_Schema.json. Calculations required for each rep: knee angle at bottom of squat (angle between hip–knee–ankle vectors, computed at the bottom_frame from S3-W6-01), hip angle at bottom (angle between shoulder–hip–knee), ankle dorsiflexion angle (heel–ankle–shin vector). Session-level metrics: average and minimum per-rep knee angle, rep count, rep tempo (bottom_frame timestamp delta between reps), overall stability score (variance in knee angle across reps — low variance = high stability). Use the vector cosine / dot product method for angle computation. Output must be valid against Kinetic_Biomechanics_Output_Schema.json — Squad 2 passes this directly to Nemotron and stores it in the DB.</div>
+      </div>
+      <div class="ac-block">
+        <div class="ac-label">Acceptance Criteria</div>
+        <ul class="ac-list">
+          <li class="ac-item"><span class="ac-check">✓</span> Knee angle, hip angle, and ankle dorsiflexion computed for every rep using the correct vector method</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Rep time and tempo computed from bottom_frame timestamps</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Stability score computed as per-rep knee angle variance (documented formula)</li>
+          <li class="ac-item"><span class="ac-check">✓</span> JSON output validated against Kinetic_Biomechanics_Output_Schema.json — no missing required fields</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Tested on 3 sample videos: one good form, one with known knee valgus, one with shallow depth — outputs look plausible</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Unit tests for angle computation functions committed</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- S3-W6-03 -->
+  <div class="task-card">
+    <div class="task-card-header">
+      <span class="task-id-badge sq3-id">S3-W6-03</span>
+      <div class="task-title">Expose biomechanics output to Squad 2 pipeline — agree integration pattern, deliver JSON &nbsp;<span class="e2e-badge">E2E MILESTONE</span></div>
+    </div>
+    <div class="task-card-body">
+      <div class="dep-block">
+        <div class="dep-block-label">Dependencies</div>
+        <div class="dep-row-item"><span class="dep-dir">Needs →</span> S3-W6-02 (biomechanics JSON must be producible), S2-W6-03 (Squad 2 must agree the integration pattern by Monday)</div>
+        <div class="dep-row-item"><span class="dep-dir">Unblocks →</span> S2-W6-03 (Squad 2 stores and serves this JSON), S1-W6-07 (E2E slice — real data on Results screen)</div>
+      </div>
+      <div>
+        <div class="desc-label">Description</div>
+        <div class="desc-text">Agree and implement the handoff between Squad 3's biomechanics script and Squad 2's API pipeline. Two options: (A) Direct function call — Squad 3's biomechanics module is imported into the Squad 2 Python service and called inline during pipeline processing. (B) Internal service — Squad 3 exposes an internal HTTP endpoint that Squad 2 calls asynchronously. Decide by Monday with Squad 2 (Nicole). For the W6 E2E slice, Option A (direct function call) is recommended — it avoids networking complexity and gets the slice working faster. Option B can be refactored later if needed. Deliver: the biomechanics function callable from Squad 2's code, with typed inputs (GCS video path) and typed outputs (biomechanics JSON matching the schema).</div>
+      </div>
+      <div class="ac-block">
+        <div class="ac-label">Acceptance Criteria</div>
+        <ul class="ac-list">
+          <li class="ac-item"><span class="ac-check">✓</span> Integration pattern agreed with Squad 2 by Monday and documented</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Biomechanics function callable from Squad 2's pipeline code: accepts GCS video path, returns typed biomechanics JSON</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Squad 2 confirms successful call from their pipeline code before Wednesday</li>
+          <li class="ac-item"><span class="ac-check">✓</span> End-to-end: upload video in browser → Squad 2 triggers biomechanics function → JSON returned → stored in DB by Thursday</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- S3-W6-04 -->
+  <div class="task-card">
+    <div class="task-card-header">
+      <span class="task-id-badge sq3-id">S3-W6-04</span>
+      <div class="task-title">Ingest Goblet Squat corpus into vector DB — chunk, embed, store with metadata</div>
+    </div>
+    <div class="task-card-body">
+      <div class="dep-block">
+        <div class="dep-block-label">Dependencies</div>
+        <div class="dep-row-item"><span class="dep-dir">Needs →</span> S3-W6-C1 (sources collected), S3-W6-C2 (vector DB schema defined), S3-W6-C3 (ingestion pipeline architecture defined), S3-W5-04 (vector DB provisioned and connectivity confirmed)</div>
+        <div class="dep-row-item"><span class="dep-dir">Unblocks →</span> S3-W6-05 (RAG retrieval — nothing to query without corpus ingested), TST-W6-02 (RAG T1 test)</div>
+      </div>
+      <div>
+        <div class="desc-label">Description</div>
+        <div class="desc-text">Run the ingestion pipeline defined in S3-W6-C3 against all sources from S3-W6-C1. Process each source: extract text, chunk using the agreed strategy, generate embeddings, store chunks with full metadata (exercise, issue_tags, source_type, source_credibility, joint_references, source_title, source_url). Log ingestion results: total chunks ingested, chunks per source, any sources that failed to ingest. All 20–30 sources must be ingested before the RAG retrieval test (TST-W6-02) runs. Priority order: research papers first (highest credibility, most likely to ground retrieval), then tutorials, then anatomy references.</div>
+      </div>
+      <div class="ac-block">
+        <div class="ac-label">Acceptance Criteria</div>
+        <ul class="ac-list">
+          <li class="ac-item"><span class="ac-check">✓</span> All 20–30 sources from S3-W6-C1 ingested into vector DB</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Each chunk stored with all required metadata fields from S3-W6-C2 schema</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Ingestion log committed: chunk count per source, any failed sources with error notes</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Spot-check: query vector DB for "knee valgus" and confirm ≥1 relevant result returned</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Ingestion script committed to repo — reproducible from scratch with a single command</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- S3-W6-05 -->
+  <div class="task-card">
+    <div class="task-card-header">
+      <span class="task-id-badge sq3-id">S3-W6-05</span>
+      <div class="task-title">Implement RAG retrieval endpoint — biomechanics query → top-k relevant passages</div>
+    </div>
+    <div class="task-card-body">
+      <div class="dep-block">
+        <div class="dep-block-label">Dependencies</div>
+        <div class="dep-row-item"><span class="dep-dir">Needs →</span> S3-W6-04 (corpus must be ingested before retrieval can be tested)</div>
+        <div class="dep-row-item"><span class="dep-dir">Unblocks →</span> S3-W6-06 (retrieval quality manual check), TST-W6-02 (RAG T1 test), S2-W7-02 (Squad 2 calls this endpoint in W7 full pipeline)</div>
+      </div>
+      <div>
+        <div class="desc-label">Description</div>
+        <div class="desc-text">Build the RAG retrieval endpoint that Squad 2 will call in W7. Input: a list of issue_tags from Nemotron's output (e.g. ["knee_valgus", "ankle_dorsiflexion"]) and optionally a free-text biomechanics context string. Output: top-k (default k=5) ranked passages with their metadata (source_title, source_type, source_credibility, chunk text). Retrieval logic: embed the query, perform vector similarity search filtered by exercise = goblet_squat and issue_tags matching the input tags, return ranked results. Expose as a POST endpoint callable from Squad 2's pipeline. Include latency logging — target &lt;500ms per retrieval call.</div>
+      </div>
+      <div class="ac-block">
+        <div class="ac-label">Acceptance Criteria</div>
+        <ul class="ac-list">
+          <li class="ac-item"><span class="ac-check">✓</span> POST /rag/retrieve accepts: {issue_tags: string[], context: string, k: int} — all fields documented</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Returns top-k passages with: chunk_text, source_title, source_type, source_credibility, similarity_score</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Filtered by exercise = goblet_squat — no off-exercise content returned</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Retrieval latency &lt;500ms for a standard 2-tag query (logged)</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Endpoint deployed and URL shared with Squad 2 (Nicole) before Thursday merge</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Error handled: empty issue_tags list returns a graceful empty result, not a 500</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- S3-W6-06 -->
+  <div class="task-card">
+    <div class="task-card-header">
+      <span class="task-id-badge sq3-id">S3-W6-06</span>
+      <div class="task-title">Validate retrieval quality manually — spot-check top results for relevance and groundedness</div>
+    </div>
+    <div class="task-card-body">
+      <div class="dep-block">
+        <div class="dep-block-label">Dependencies</div>
+        <div class="dep-row-item"><span class="dep-dir">Needs →</span> S3-W6-05 (retrieval endpoint must be live)</div>
+        <div class="dep-row-item"><span class="dep-dir">Unblocks →</span> TST-W6-02 (this is the W6 RAG quality test), W7 corpus enhancement (gaps identified here get filled in W7)</div>
+      </div>
+      <div>
+        <div class="desc-label">Description</div>
+        <div class="desc-text">Run manual retrieval quality checks against the five primary Goblet Squat issue tags: knee_valgus, depth, torso_lean, ankle_dorsiflexion, hip_hinge. For each tag, query the retrieval endpoint and inspect the top-3 results. Rate each result: relevant (directly addresses the issue), partial (related but not specific), or irrelevant (wrong exercise or wrong topic). Log corpus gaps — issue tags where no useful results are returned. Check for cross-contamination — passages from other exercises appearing in squat queries. This is a free-form observation exercise: the goal is to understand what the RAG layer knows before connecting it to the LLM in W7.</div>
+      </div>
+      <div class="ac-block">
+        <div class="ac-label">Acceptance Criteria</div>
+        <ul class="ac-list">
+          <li class="ac-item"><span class="ac-check">✓</span> All 5 issue tags queried and top-3 results rated (relevant / partial / irrelevant) for each</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Corpus gaps identified and documented: which tags return no useful results?</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Cross-contamination check: no off-exercise content returned for any squat query</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Results committed to <code style="background:#1e293b;padding:1px 4px;border-radius:3px;font-size:11px;">/tests/weekly-results/W6-TST-W6-02.md</code></li>
+          <li class="ac-item"><span class="ac-check">✓</span> Gaps shared with PM (Blessing) before Thursday — inform W7 corpus enhancement backlog</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+<!-- ══════════════════════════════════
+     PIPELINE TESTS — W6
+══════════════════════════════════ -->
+<div class="squad-section">
+  <div class="squad-header tst-header">
+    <div>
+      <div class="squad-title">Pipeline Tests — Week 6</div>
+      <div class="squad-meta">Results logged in: GitHub <code style="background:#041e1e;padding:1px 4px;border-radius:3px;font-size:10px;">/tests/weekly-results/</code> + Friday shared doc &nbsp;·&nbsp; FF = free-form notes &nbsp;·&nbsp; P/F = pass/fail against criteria</div>
+    </div>
+    <div class="squad-pill tst-pill">4 tests</div>
+  </div>
+
+  <!-- TST-W6-00 -->
+  <div class="task-card" style="border-left: 3px solid #06b6d4;">
+    <div class="task-card-header">
+      <span class="tst-id">TST-W6-00</span>
+      <div>
+        <div style="display:flex;gap:6px;margin-bottom:6px;flex-wrap:wrap;">
+          <span class="tst-type-badge tb-mp">MEDIAPIPE · QUALITY GATE</span>
+          <span class="tst-format-badge tb-pf">PASS / FAIL</span>
+        </div>
+        <div class="task-title">MediaPipe quality gate — bad video correctly rejected, good video passes through</div>
+      </div>
+    </div>
+    <div class="task-card-body">
+      <div class="dep-block">
+        <div class="dep-block-label">Dependencies</div>
+        <div class="dep-row-item"><span class="dep-dir">Needs →</span> S3-W6-01 (MediaPipe quality gate implemented), S2-W6-04 (error SSE event wired)</div>
+        <div class="dep-row-item"><span class="dep-dir">Unblocks →</span> TST-W6-01 (Nemotron test only meaningful if input quality is validated)</div>
+      </div>
+      <div>
+        <div class="desc-label">Description</div>
+        <div class="desc-text">Validate the quality gate works correctly at both extremes. Test with: (1) a clearly bad video — filmed at a wrong horizontal angle where knees and hips are not visible simultaneously; and (2) a clearly good video — correct frontal/45° angle, full body in frame. The bad video must trigger the SSE error event with a correct error_code. The good video must pass through to biomechanics computation without any quality gate rejection.</div>
+      </div>
+      <div class="tst-owner-block">
+        <div class="tst-owner-label">Owner</div>
+        Squad 3 — Anusha / Ezequiel (run) &nbsp;·&nbsp; Blessing / Amrita (review)
+      </div>
+      <div class="pf-block pf-pass">
+        <div class="pf-label">Pass criteria</div>
+        <ul class="pf-list">
+          <li class="pf-item"><span class="pf-check">✓</span> Bad video triggers SSE error event with error_code BAD_ANGLE or LOW_CONFIDENCE (not a silent failure)</li>
+          <li class="pf-item"><span class="pf-check">✓</span> Good video completes MediaPipe processing and produces biomechanics JSON with no quality gate rejection</li>
+          <li class="pf-item"><span class="pf-check">✓</span> Results logged to <code style="background:#1e293b;padding:1px 4px;border-radius:3px;font-size:11px;">/tests/weekly-results/W6-TST-W6-00.md</code></li>
+        </ul>
+      </div>
+      <div class="pf-block pf-fail">
+        <div class="pf-label">Fail criteria</div>
+        <ul class="pf-list">
+          <li class="pf-item"><span class="pf-check">✗</span> Bad video passes the quality gate and produces biomechanics output (false positive)</li>
+          <li class="pf-item"><span class="pf-check">✗</span> Bad video causes a silent failure with no error event emitted</li>
+          <li class="pf-item"><span class="pf-check">✗</span> Good video is incorrectly rejected by the quality gate (false negative)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- TST-W6-01 -->
+  <div class="task-card" style="border-left: 3px solid #06b6d4;">
+    <div class="task-card-header">
+      <span class="tst-id">TST-W6-01</span>
+      <div>
+        <div style="display:flex;gap:6px;margin-bottom:6px;flex-wrap:wrap;">
+          <span class="tst-type-badge tb-nem">NEMOTRON · T1</span>
+          <span class="tst-format-badge tb-ff">FREE-FORM</span>
+        </div>
+        <div class="task-title">Nemotron T1 — biomechanics JSON only (no video)</div>
+      </div>
+    </div>
+    <div class="task-card-body">
+      <div class="dep-block">
+        <div class="dep-block-label">Dependencies</div>
+        <div class="dep-row-item"><span class="dep-dir">Needs →</span> S3-W6-02 (real biomechanics JSON from W6 MediaPipe pipeline), S2-W6-05 (Squad 2 runs the tests)</div>
+        <div class="dep-row-item"><span class="dep-dir">Unblocks →</span> TST-W7-01, TST-W7-02 (T2/T3 comparisons are only meaningful once T1 baseline is logged)</div>
+      </div>
+      <div>
+        <div class="desc-label">Description</div>
+        <div class="desc-text">Send the real biomechanics JSON output (from Squad 3's W6 MediaPipe pipeline) into Nemotron — no video. Observe what the model produces from structured data alone. This is the T1 baseline in the A/B/C comparison. Free-form — no pass/fail criteria this week. Log what the model understands, what it misses, and any hallucinations. This is the same as Nemotron Test B from S2-W6-05 — they can be run together; the result is logged separately here for the pipeline test record.</div>
+      </div>
+      <div class="tst-owner-block">
+        <div class="tst-owner-label">Owner</div>
+        Squad 2 — Nicole / Valentin (run as part of S2-W6-05) &nbsp;·&nbsp; Liwei / Amrita (review)
+      </div>
+      <div class="ff-notes-block">
+        <div class="ff-notes-label">Log these observations (no pass/fail — document what you see)</div>
+        <ul class="ff-list">
+          <li class="ff-item"><span class="ff-bullet">→</span> Which form issues did Nemotron correctly identify from JSON alone?</li>
+          <li class="ff-item"><span class="ff-bullet">→</span> Which issues were missed that would be visible to a human reviewing the numbers?</li>
+          <li class="ff-item"><span class="ff-bullet">→</span> Did Nemotron hallucinate issues not supported by the JSON values?</li>
+          <li class="ff-item"><span class="ff-bullet">→</span> Was the chain-of-thought reasoning coherent and grounded in the input data?</li>
+          <li class="ff-item"><span class="ff-bullet">→</span> Response time (seconds) — log for latency baseline</li>
+          <li class="ff-item"><span class="ff-bullet">→</span> Save raw JSON input + full Nemotron output to <code style="background:#1e293b;padding:1px 4px;border-radius:3px;font-size:11px;">/tests/weekly-results/W6-TST-W6-01.md</code></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- TST-W6-02 -->
+  <div class="task-card" style="border-left: 3px solid #f97316;">
+    <div class="task-card-header">
+      <span class="tst-id">TST-W6-02</span>
+      <div>
+        <div style="display:flex;gap:6px;margin-bottom:6px;flex-wrap:wrap;">
+          <span class="tst-type-badge tb-rag">RAG · T1</span>
+          <span class="tst-format-badge tb-ff">FREE-FORM</span>
+        </div>
+        <div class="task-title">RAG T1 — first retrieval quality check across all 5 issue tags</div>
+      </div>
+    </div>
+    <div class="task-card-body">
+      <div class="dep-block">
+        <div class="dep-block-label">Dependencies</div>
+        <div class="dep-row-item"><span class="dep-dir">Needs →</span> S3-W6-05 (RAG retrieval endpoint live with corpus ingested), S3-W6-06 (manual validation done — this test formalises those findings)</div>
+        <div class="dep-row-item"><span class="dep-dir">Unblocks →</span> TST-W7-03 (RAG T2 compares enhanced corpus against this T1 baseline)</div>
+      </div>
+      <div>
+        <div class="desc-label">Description</div>
+        <div class="desc-text">Formalise the retrieval quality observations from S3-W6-06 into the test record. Query the retrieval endpoint for each of the 5 primary issue tags and rate the top-3 results. Log gaps for corpus enhancement in W7. This is a free-form test — no pass/fail criteria yet. The W7 RAG T2 test will be pass/fail, comparing the enhanced corpus against this baseline.</div>
+      </div>
+      <div class="tst-owner-block">
+        <div class="tst-owner-label">Owner</div>
+        Squad 3 — Anusha / Ezequiel (run) &nbsp;·&nbsp; Blessing / Amrita (review)
+      </div>
+      <div class="ff-notes-block">
+        <div class="ff-notes-label">Log these observations for each of the 5 issue tags</div>
+        <ul class="ff-list">
+          <li class="ff-item"><span class="ff-bullet">→</span> For each tag (knee_valgus, depth, torso_lean, ankle_dorsiflexion, hip_hinge): are the top-3 results relevant? Rate each: relevant / partial / irrelevant</li>
+          <li class="ff-item"><span class="ff-bullet">→</span> Which tags return no useful results? These are corpus gaps to fill in W7</li>
+          <li class="ff-item"><span class="ff-bullet">→</span> Are any passages returned from the wrong exercise? (cross-contamination check)</li>
+          <li class="ff-item"><span class="ff-bullet">→</span> Average retrieval latency per query (target &lt;500ms)</li>
+          <li class="ff-item"><span class="ff-bullet">→</span> Save query list + full result set to <code style="background:#1e293b;padding:1px 4px;border-radius:3px;font-size:11px;">/tests/weekly-results/W6-TST-W6-02.md</code></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- TST-W6-03 -->
+  <div class="task-card" style="border-left: 3px solid #22c55e;">
+    <div class="task-card-header">
+      <span class="tst-id">TST-W6-03</span>
+      <div>
+        <div style="display:flex;gap:6px;margin-bottom:6px;flex-wrap:wrap;">
+          <span class="tst-type-badge tb-e2e">E2E · SLICE T1</span>
+          <span class="tst-format-badge tb-pf">PASS / FAIL</span>
+        </div>
+        <div class="task-title">E2E Slice T1 — upload real video → MediaPipe → biomechanics JSON visible on Results screen</div>
+      </div>
+    </div>
+    <div class="task-card-body">
+      <div class="dep-block">
+        <div class="dep-block-label">Dependencies</div>
+        <div class="dep-row-item"><span class="dep-dir">Needs →</span> S1-W6-07 (Squad 1 wired to real endpoint), S2-W6-01 (real upload live), S2-W6-02 (real SSE events), S3-W6-03 (biomechanics JSON available to Squad 2)</div>
+        <div class="dep-row-item"><span class="dep-dir">Unblocks →</span> Thursday merge — this is the W6 milestone confirmation test. TST-W7-05 (full E2E in W7 builds on this confirmed slice)</div>
+      </div>
+      <div>
+        <div class="desc-label">Description</div>
+        <div class="desc-text">Thursday all-squad integration test. Upload a real Goblet Squat video through the Squad 1 frontend in a browser. Watch SSE events fire through the processing screen. Confirm that real biomechanics JSON (rep count, at least one joint angle value) appears on the Results screen. All three squad PMs should be present. This does not need to be a perfect form analysis — the goal is real data flowing through the system for the first time. Nemotron and Claude Sonnet output is NOT expected this week.</div>
+      </div>
+      <div class="tst-owner-block">
+        <div class="tst-owner-label">Owner</div>
+        All squads &nbsp;·&nbsp; Thursday integration session &nbsp;·&nbsp; Amrita (facilitates)
+      </div>
+      <div class="pf-block pf-pass">
+        <div class="pf-label">Pass criteria</div>
+        <ul class="pf-list">
+          <li class="pf-item"><span class="pf-check">✓</span> Real Goblet Squat video uploaded from browser and stored in GCS — GCS path confirmed in DB</li>
+          <li class="pf-item"><span class="pf-check">✓</span> SSE events fire and the upload processing UI updates visibly at each biomechanics pipeline stage</li>
+          <li class="pf-item"><span class="pf-check">✓</span> Results screen displays real rep count and at least one real joint angle value (not fixture data)</li>
+          <li class="pf-item"><span class="pf-check">✓</span> Coaching fields not yet available show a clear placeholder — no broken UI or unhandled errors</li>
+          <li class="pf-item"><span class="pf-check">✓</span> Wall-clock time from upload submit to Results screen load measured and logged (no target yet — establish baseline)</li>
+          <li class="pf-item"><span class="pf-check">✓</span> Results committed to <code style="background:#1e293b;padding:1px 4px;border-radius:3px;font-size:11px;">/tests/weekly-results/W6-TST-W6-03.md</code></li>
+        </ul>
+      </div>
+      <div class="pf-block pf-fail">
+        <div class="pf-label">Fail criteria</div>
+        <ul class="pf-list">
+          <li class="pf-item"><span class="pf-check">✗</span> Results screen shows fixture/dummy data rather than real pipeline output</li>
+          <li class="pf-item"><span class="pf-check">✗</span> SSE stream fails — processing screen hangs or shows an unhandled error</li>
+          <li class="pf-item"><span class="pf-check">✗</span> Pipeline completes but Results screen is blank or broken</li>
+          <li class="pf-item"><span class="pf-check">✗</span> Video upload fails to reach GCS</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<p style="font-size:10px;color:#1e293b;text-align:right;margin-top:24px;">
+  Kinetic · Week 6 ClickUp Tasks · 22 squad tasks + 4 pipeline tests · Generated May 9, 2026
+</p>
+
+</body>
+</html>
