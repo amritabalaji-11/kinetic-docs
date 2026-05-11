@@ -1371,904 +1371,171 @@ nemotron_input = {<br>
   <!-- 3. Open Decisions -->
 
 
-  <!-- Overlay spec -->
-  <div class="detail-card">
-    <div class="detail-card-header">
-      <div class="detail-card-title">Section 2b — What to overlay on the extracted frame</div>
-    </div>
-    <div class="detail-card-body">
-      <div style="font-size:12px;color:#64748b;margin-bottom:12px;">Three layers are drawn on the raw frame in order. Each layer adds more context for the user.</div>
-      <table class="overlay-table">
-        <thead>
-          <tr>
-            <th>Layer</th>
-            <th>What is drawn</th>
-            <th>Data source</th>
-            <th>Visual style</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td style="color:#f1f5f9;font-weight:700;">1 · Joint markers</td>
-            <td>Dots at knee, hip, and ankle joint positions on the user's body</td>
-            <td>MediaPipe landmark coordinates for the <code style="background:#0d1117;padding:1px 4px;border-radius:3px;font-size:10px;">bottom_frame</code> — stored in biomechanics JSON</td>
-            <td>Small filled circles · colour matches angle status (red = issue, green = good)</td>
-          </tr>
-          <tr>
-            <td style="color:#f1f5f9;font-weight:700;">2 · Actual angle arcs</td>
-            <td>Arc drawn at each joint showing the user's measured angle at bottom position</td>
-            <td>
-              <code style="background:#0d1117;padding:1px 4px;border-radius:3px;font-size:10px;">knee_angle_at_bottom</code><br>
-              <code style="background:#0d1117;padding:1px 4px;border-radius:3px;font-size:10px;">hip_angle_at_bottom</code><br>
-              <code style="background:#0d1117;padding:1px 4px;border-radius:3px;font-size:10px;">dorsiflexion_at_bottom</code><br>
-              from worst rep in biomechanics JSON
-            </td>
-            <td><span class="tag-actual">ACTUAL</span> Blue arc · angle value in white text next to arc e.g. <code>142°</code></td>
-          </tr>
-          <tr>
-            <td style="color:#f1f5f9;font-weight:700;">3 · Gold standard reference</td>
-            <td>Target angle range shown alongside the actual arc so the user can see the gap</td>
-            <td>
-              Hardcoded gold standard values for Goblet Squat MVP:<br>
-              Knee: 80–95° at bottom<br>
-              Hip: 80–95° at bottom<br>
-              Ankle dorsiflexion: ≥25°<br>
-              <span style="font-size:10px;color:#475569;">(to be confirmed against biomechanics research corpus)</span>
-            </td>
-            <td><span class="tag-gold">IDEAL</span> Green reference arc or dashed line · target range in green text e.g. <code>Ideal: 80–95°</code></td>
-          </tr>
-        </tbody>
-      </table>
-
-      <div class="callout callout-warn" style="margin-top:14px;">
-        <div class="callout-icon">⚠</div>
-        <div class="callout-text"><strong>Gold standard values need confirmation.</strong> The reference angles above are indicative. Before implementation, Squad 3 should confirm the exact target ranges against the biomechanics research corpus ingested into the RAG vector DB. These values will also inform what Nemotron and Claude use as reference points.</div>
-      </div>
-    </div>
-  </div>
-</div>
-
-
-<!-- ══════════════════════════════════
-     SECTION 3 — THE DATA GAP
+  <!-- 2. Steps 1-9 Handoffs -->
+  <div class="content-section" id="section-steps">
+    <!-- ══════════════════════════════════
+     SECTION 1 — FULL PIPELINE SEQUENCE
 ══════════════════════════════════ -->
 <div class="section">
-  <div class="section-label">Section 3 — The data gap</div>
-  <div class="section-title">Why OpenCV Step 2 cannot be built as the pipeline currently stands</div>
-  <div class="section-desc">OpenCV Step 2 needs to seek to the exact frame in the video where the worst rep hit its bottom position. To do that it needs <code style="background:#0d1117;padding:1px 4px;border-radius:3px;font-size:11px;">bottom_timestamp_ms</code> for that rep. Here is why that data is currently unavailable when it's needed.</div>
+  <div class="section-label">Section 1 — Full pipeline sequence</div>
+  <div class="section-title">Where everything fits end to end</div>
+  <div class="section-desc">Read this top to bottom. Each step shows what goes in, what comes out, and which squad owns it. The two OpenCV steps are highlighted — Step 1 (video overlay) is existing work; Step 2 (frame extraction) is what this brief is about.</div>
 
-  <div class="gap-block" style="margin-bottom: 16px;">
-    <div class="gap-label">The gap</div>
-    <div class="gap-text">
-      MediaPipe computes <code style="background:#150505;padding:1px 4px;border-radius:3px;">bottom_frame</code> and <code style="background:#150505;padding:1px 4px;border-radius:3px;">bottom_timestamp_ms</code> for every rep during rep segmentation. This data exists in memory at Step 3 and is used immediately by:<br><br>
-      &nbsp;&nbsp;→ OpenCV Step 1 (video overlay) — uses landmark positions to draw the skeleton<br>
-      &nbsp;&nbsp;→ Biomechanics script — uses the timing to compute tempo data<br><br>
-      But neither step <strong>saves</strong> the bottom_frame or bottom_timestamp_ms anywhere. Once Step 5 and Step 6 are done, the MediaPipe data is gone from memory.<br><br>
-      By Step 8 (OpenCV Step 2), which runs after Nemotron at Step 7, there is <strong>no way to recover which frame number corresponds to rep 3's bottom position.</strong>
-    </div>
-  </div>
+  <div class="pipeline">
 
-  <div class="detail-card">
-    <div class="detail-card-header">
-      <div class="detail-card-title">What the current biomechanics JSON schema has vs what's needed</div>
-    </div>
-    <div class="detail-card-body">
-      <div style="font-size:12px;color:#94a3b8;margin-bottom:14px;">The biomechanics JSON already stores rich per-rep data — angles, tempo, stability. The gap is two missing fields that MediaPipe computes but the schema doesn't capture.</div>
-      <div class="schema-diff">
-        <div>
-          <div class="code-block diff-before" style="border: 1px solid #7f1d1d;">
-            <div class="diff-label">Current schema — per rep object</div>
-<span class="jp">{</span><br>
-&nbsp;&nbsp;<span class="jk">"rep_number"</span><span class="jp">:</span> <span class="jn">3</span><span class="jp">,</span><br>
-&nbsp;&nbsp;<span class="jk">"median_frame_reliability"</span><span class="jp">:</span> <span class="jn">0.89</span><span class="jp">,</span><br>
-&nbsp;&nbsp;<span class="jk">"tempo_data"</span><span class="jp">:</span> <span class="jp">{</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="jk">"eccentric"</span><span class="jp">:</span> <span class="jn">0.10</span><span class="jp">,</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="jk">"pause"</span><span class="jp">:</span> <span class="jn">0.77</span><span class="jp">,</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="jk">"total"</span><span class="jp">:</span> <span class="jn">1.37</span><br>
-&nbsp;&nbsp;<span class="jp">},</span><br>
-&nbsp;&nbsp;<span class="jk">"depth_data"</span><span class="jp">:</span> <span class="jp">{</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="jk">"knee_angle_at_bottom"</span><span class="jp">:</span> <span class="jn">88.2</span><span class="jp">,</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="jk">"hip_angle_at_bottom"</span><span class="jp">:</span> <span class="jn">86.5</span><br>
-&nbsp;&nbsp;<span class="jp">},</span><br>
-&nbsp;&nbsp;<span class="jp">...</span><br>
-&nbsp;&nbsp;<span class="jc">// ✗ no bottom_frame</span><br>
-&nbsp;&nbsp;<span class="jc">// ✗ no bottom_timestamp_ms</span><br>
-<span class="jp">}</span>
-          </div>
-        </div>
-        <div>
-          <div class="code-block diff-after" style="border: 1px solid #14532d;">
-            <div class="diff-label">Proposed schema — per rep object</div>
-<span class="jp">{</span><br>
-&nbsp;&nbsp;<span class="jk">"rep_number"</span><span class="jp">:</span> <span class="jn">3</span><span class="jp">,</span><br>
-&nbsp;&nbsp;<span class="added"><span class="jk">"bottom_frame"</span><span class="jp">:</span> <span class="jn">342</span><span class="jp">,</span></span><br>
-&nbsp;&nbsp;<span class="added"><span class="jk">"bottom_timestamp_ms"</span><span class="jp">:</span> <span class="jn">5700.0</span><span class="jp">,</span></span><br>
-&nbsp;&nbsp;<span class="jk">"median_frame_reliability"</span><span class="jp">:</span> <span class="jn">0.89</span><span class="jp">,</span><br>
-&nbsp;&nbsp;<span class="jk">"tempo_data"</span><span class="jp">:</span> <span class="jp">{</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="jk">"eccentric"</span><span class="jp">:</span> <span class="jn">0.10</span><span class="jp">,</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="jk">"pause"</span><span class="jp">:</span> <span class="jn">0.77</span><span class="jp">,</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="jk">"total"</span><span class="jp">:</span> <span class="jn">1.37</span><br>
-&nbsp;&nbsp;<span class="jp">},</span><br>
-&nbsp;&nbsp;<span class="jk">"depth_data"</span><span class="jp">:</span> <span class="jp">{</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="jk">"knee_angle_at_bottom"</span><span class="jp">:</span> <span class="jn">88.2</span><span class="jp">,</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="jk">"hip_angle_at_bottom"</span><span class="jp">:</span> <span class="jn">86.5</span><br>
-&nbsp;&nbsp;<span class="jp">},</span><br>
-&nbsp;&nbsp;<span class="jp">...</span><br>
-<span class="jp">}</span>
-          </div>
-        </div>
+    <div class="pipe-step">
+      <div class="pipe-meta">
+        <div class="pipe-step-num">Step 1</div>
+        <div class="pipe-step-name">User uploads video</div>
+        <div class="pipe-owner">Frontend</div>
+        <div class="pipe-badge badge-s1">Squad 1</div>
       </div>
-      <div style="margin-top:12px;font-size:11px;color:#64748b;">
-        <strong style="color:#fde68a;">bottom_frame</strong> — integer frame index (e.g. 342). Used to verify the correct position was identified.<br>
-        <strong style="color:#fde68a;">bottom_timestamp_ms</strong> — float timestamp in milliseconds (e.g. 5700.0). Used by <code>cap.set(cv2.CAP_PROP_POS_MSEC, bottom_timestamp_ms)</code> in OpenCV Step 2 to seek to the exact frame.
-      </div>
-    </div>
-  </div>
-</div>
-
-
-<!-- ══════════════════════════════════
-     SECTION 4 — PROPOSED CHANGE
-══════════════════════════════════ -->
-<div class="section">
-  <div class="section-label">Section 4 — Proposed change</div>
-  <div class="section-title">What needs to change and who does it</div>
-
-  <div class="fix-block" style="margin-bottom: 16px;">
-    <div class="fix-label">The fix — one schema change, no new storage</div>
-    <div class="fix-text">
-      No new tables, no new services. The biomechanics JSON is already saved to the DB. The fix is to include <code style="background:#0a1f12;padding:1px 4px;border-radius:3px;">bottom_frame</code> and <code style="background:#0a1f12;padding:1px 4px;border-radius:3px;">bottom_timestamp_ms</code> in each rep object when the biomechanics script writes its output.<br><br>
-      MediaPipe already computes both values during rep segmentation — they just need to be passed through to the output JSON instead of being discarded.
-    </div>
-  </div>
-
-  <div class="detail-card">
-    <div class="detail-card-header">
-      <div class="detail-card-title">Changes required — by squad</div>
-    </div>
-    <div class="detail-card-body">
-
-      <div style="margin-bottom:16px;">
-        <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:0.6px;color:#fb923c;margin-bottom:10px;">Squad 3 — Biomechanics script</div>
-        <div style="font-size:12px;color:#94a3b8;margin-bottom:8px;">When the biomechanics script processes each rep, it already has access to the rep's bottom_frame from MediaPipe's rep segmentation output. Add these two fields to the rep object before returning the JSON.</div>
-        <div class="code-block">
-<span class="jc"># In the rep segmentation loop — Squad 3 already computes this</span><br>
-for rep in segmented_reps:<br>
-&nbsp;&nbsp;bottom_frame = rep.bottom_frame_index      <span class="jc"># already computed by MediaPipe</span><br>
-&nbsp;&nbsp;bottom_timestamp_ms = (bottom_frame / fps) * 1000  <span class="jc"># same formula as OpenCV wrapper</span><br>
-&nbsp;&nbsp;<br>
-&nbsp;&nbsp;rep_output = {<br>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="jk">"rep_number"</span><span class="jp">:</span> rep.number<span class="jp">,</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="added"><span class="jk">"bottom_frame"</span><span class="jp">:</span> bottom_frame<span class="jp">,</span>          <span class="jc"># ADD THIS</span></span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="added"><span class="jk">"bottom_timestamp_ms"</span><span class="jp">:</span> bottom_timestamp_ms<span class="jp">,</span>  <span class="jc"># ADD THIS</span></span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="jk">"tempo_data"</span><span class="jp">:</span> ...<span class="jp">,</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="jk">"depth_data"</span><span class="jp">:</span> ...<br>
-&nbsp;&nbsp;}
-        </div>
-      </div>
-
-      <div style="margin-bottom:16px;">
-        <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:0.6px;color:#4ade80;margin-bottom:10px;">Squad 2 — Pipeline orchestration</div>
-        <div style="font-size:12px;color:#94a3b8;margin-bottom:8px;">After Nemotron returns per-rep scores, Squad 2 identifies the worst rep and queries the stored biomechanics JSON from the DB to get that rep's <code style="background:#0d1117;padding:1px 4px;border-radius:3px;font-size:11px;">bottom_timestamp_ms</code>. This is then passed to Squad 3's frame extraction function.</div>
-        <div class="code-block">
-<span class="jc"># After nemotron_complete — Squad 2 pipeline code</span><br>
-rep_scores = nemotron_output[<span class="js">"rep_scores"</span>]<br>
-worst_rep_number = min(rep_scores, key=lambda r: r[<span class="js">"score"</span>])[<span class="js">"rep_number"</span>]<br>
-<br>
-<span class="jc"># Look up timestamp from DB — biomechanics JSON already stored</span><br>
-biomechanics = db.query(<span class="js">"SELECT biomechanics_json FROM form_analysis_results WHERE analysis_id = %s"</span>)<br>
-worst_rep_data = next(r for r in biomechanics[<span class="js">"reps"</span>] if r[<span class="js">"rep_number"</span>] == worst_rep_number)<br>
-bottom_timestamp_ms = worst_rep_data[<span class="js">"bottom_timestamp_ms"</span>]<br>
-<br>
-<span class="jc"># Call Squad 3's frame extraction function</span><br>
-frame_url = extract_worst_rep_frame(raw_video_url, bottom_timestamp_ms, worst_rep_data)
-        </div>
-      </div>
-
-      <div class="ac-block">
-        <div class="ac-label">Acceptance Criteria for this change</div>
-        <ul class="ac-list">
-          <li class="ac-item"><span class="ac-check">✓</span> <code style="background:#1e293b;padding:1px 4px;border-radius:3px;font-size:11px;">bottom_frame</code> and <code style="background:#1e293b;padding:1px 4px;border-radius:3px;font-size:11px;">bottom_timestamp_ms</code> present in every rep object in the biomechanics JSON output</li>
-          <li class="ac-item"><span class="ac-check">✓</span> <code style="background:#1e293b;padding:1px 4px;border-radius:3px;font-size:11px;">bottom_timestamp_ms</code> computed using <code style="background:#1e293b;padding:1px 4px;border-radius:3px;font-size:11px;">(bottom_frame / fps) × 1000</code> — same formula as OpenCV wrapper</li>
-          <li class="ac-item"><span class="ac-check">✓</span> <code style="background:#1e293b;padding:1px 4px;border-radius:3px;font-size:11px;">Kinetic_Biomechanics_Output_Schema.json</code> updated with these two fields before any code is written</li>
-          <li class="ac-item"><span class="ac-check">✓</span> OpenCV Step 2 can seek to <code style="background:#1e293b;padding:1px 4px;border-radius:3px;font-size:11px;">bottom_timestamp_ms</code> and extract the correct frame — verified against a known video where the worst-rep bottom position is visually identifiable</li>
-          <li class="ac-item"><span class="ac-check">✓</span> Annotated frame saved to GCS and <code style="background:#1e293b;padding:1px 4px;border-radius:3px;font-size:11px;">annotated_frame_url</code> written to DB</li>
-          <li class="ac-item"><span class="ac-check">✓</span> Gold standard angle values confirmed against biomechanics research corpus before overlaying</li>
-        </ul>
-      </div>
-
-    </div>
-  </div>
-</div>
-
-<!-- ══════════════════════════════════
-     SECTION 5 — OPENCV CAPABILITIES RESEARCH
-══════════════════════════════════ -->
-<div class="section">
-  <div class="section-label">Section 5 — OpenCV capabilities research</div>
-  <div class="section-title">What OpenCV can and cannot do for this overlay — and a second data gap</div>
-  <div class="section-desc">Research on the specific OpenCV functions needed, their limitations on real video frames, and an additional data requirement that only becomes visible when you try to implement the overlay.</div>
-
-  <!-- 5a: coordinate conversion -->
-  <div class="detail-card" style="margin-bottom:16px;">
-    <div class="detail-card-header">
-      <div class="detail-card-title">5a — MediaPipe coordinates → pixel positions</div>
-    </div>
-    <div class="detail-card-body">
-      <div style="font-size:12px;color:#94a3b8;line-height:1.7;margin-bottom:12px;">
-        MediaPipe outputs landmark positions as <strong style="color:#f1f5f9;">normalised floats (0.0–1.0)</strong> relative to the image dimensions — not pixel coordinates. Every OpenCV drawing function requires pixel integers. The conversion is one multiplication per axis, applied to every landmark before any drawing call.
-      </div>
-      <div class="code-block">
-<span class="jc"># MediaPipe landmark for, say, the left knee</span><br>
-lm = results.pose_landmarks.landmark[mp_pose.PoseLandmark.LEFT_KNEE]<br>
-<br>
-h, w, _ = frame.shape  <span class="jc"># frame height and width in pixels</span><br>
-<br>
-knee_px = (int(lm.x * w), int(lm.y * h))  <span class="jc"># → e.g. (382, 540)</span><br>
-<br>
-<span class="jc"># Repeat for hip and ankle — these three points define the knee angle</span><br>
-hip_px  = (int(hip_lm.x  * w), int(hip_lm.y  * h))<br>
-ankle_px = (int(ankle_lm.x * w), int(ankle_lm.y * h))
-      </div>
-      <div class="callout callout-warn" style="margin-top:12px;">
-        <div class="callout-icon">⚠</div>
-        <div class="callout-text"><strong>Second data gap — landmark pixel positions at bottom_frame are not stored.</strong> The biomechanics JSON stores computed angle values (e.g. <code style="background:#1a1000;padding:1px 4px;border-radius:3px;">knee_angle_at_bottom: 88.2</code>) but not the pixel coordinates of each joint at that specific frame. To draw the angle arc in the correct location on the image, the drawing code needs to know WHERE the knee is on the extracted frame — not just what the angle is. See Section 5e for options.</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- 5b: drawing toolkit -->
-  <div class="detail-card" style="margin-bottom:16px;">
-    <div class="detail-card-header">
-      <div class="detail-card-title">5b — OpenCV drawing functions available</div>
-    </div>
-    <div class="detail-card-body">
-      <table class="overlay-table">
-        <thead>
-          <tr>
-            <th>Function</th>
-            <th>What it does</th>
-            <th>Used for</th>
-            <th>Gotchas</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td style="font-family:monospace;color:#93c5fd;font-weight:700;">cv2.circle</td>
-            <td>Filled or outline circle at a pixel position</td>
-            <td>Joint position markers at knee, hip, ankle</td>
-            <td>None — simplest call in the toolkit</td>
-          </tr>
-          <tr>
-            <td style="font-family:monospace;color:#93c5fd;font-weight:700;">cv2.line</td>
-            <td>Straight line between two pixel points</td>
-            <td>Limb lines (hip→knee, knee→ankle) to show body segments</td>
-            <td>Use <code>cv2.LINE_AA</code> for anti-aliasing on diagonal lines</td>
-          </tr>
-          <tr>
-            <td style="font-family:monospace;color:#93c5fd;font-weight:700;">cv2.ellipse</td>
-            <td>Draws an arc or filled sector of an ellipse</td>
-            <td>Angle arc at joint — shows the measured angle visually</td>
-            <td><strong style="color:#fbbf24;">Angles are clockwise from the 3 o'clock position</strong> — not the same as mathematical/screen angles. Requires conversion from arctan2 output. See 5c.</td>
-          </tr>
-          <tr>
-            <td style="font-family:monospace;color:#93c5fd;font-weight:700;">cv2.putText</td>
-            <td>Draws a text string at a pixel position</td>
-            <td>Angle values ("88°"), labels ("Knee", "Ideal: 80–95°")</td>
-            <td>Only Hershey fonts — no custom fonts. Text is illegible on busy backgrounds without a backing rectangle.</td>
-          </tr>
-          <tr>
-            <td style="font-family:monospace;color:#93c5fd;font-weight:700;">cv2.rectangle</td>
-            <td>Draws a filled or outline rectangle</td>
-            <td>Background box behind text for readability</td>
-            <td>Use with <code>cv2.addWeighted</code> for semi-transparency</td>
-          </tr>
-          <tr>
-            <td style="font-family:monospace;color:#93c5fd;font-weight:700;">cv2.addWeighted</td>
-            <td>Blends two images with a given opacity ratio</td>
-            <td>Semi-transparent background behind text/arcs</td>
-            <td>Must draw on a copy, then blend — cannot apply to just a region without cropping</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-
-  <!-- 5c: angle arc -->
-  <div class="detail-card" style="margin-bottom:16px;">
-    <div class="detail-card-header">
-      <div class="detail-card-title">5c — Drawing a joint angle arc with cv2.ellipse</div>
-    </div>
-    <div class="detail-card-body">
-      <div style="font-size:12px;color:#94a3b8;line-height:1.7;margin-bottom:12px;">
-        The angle arc at a joint (e.g. the knee) is drawn at the joint pixel position, spanning from the direction of the lower limb (knee→ankle) to the direction of the upper limb (knee→hip). The key step is converting the limb directions to the angle convention that <code>cv2.ellipse</code> expects.
-      </div>
-      <div class="code-block">
-<span class="jc"># Step 1 — calculate the angle at the joint (hip–knee–ankle)</span><br>
-import numpy as np<br>
-<br>
-def joint_angle(a, b, c):<br>
-&nbsp;&nbsp;<span class="jc">"""a = hip_px, b = knee_px (vertex), c = ankle_px"""</span><br>
-&nbsp;&nbsp;a, b, c = np.array(a), np.array(b), np.array(c)<br>
-&nbsp;&nbsp;radians = np.arctan2(c[1]-b[1], c[0]-b[0]) - np.arctan2(a[1]-b[1], a[0]-b[0])<br>
-&nbsp;&nbsp;angle = np.abs(radians * 180.0 / np.pi)<br>
-&nbsp;&nbsp;if angle > 180.0: angle = 360 - angle<br>
-&nbsp;&nbsp;return angle<br>
-<br>
-<span class="jc"># Step 2 — compute the directions of each limb from the joint, in degrees</span><br>
-angle_to_hip   = np.degrees(np.arctan2(hip_px[1]   - knee_px[1], hip_px[0]   - knee_px[0]))<br>
-angle_to_ankle = np.degrees(np.arctan2(ankle_px[1] - knee_px[1], ankle_px[0] - knee_px[0]))<br>
-<br>
-<span class="jc"># Step 3 — draw arc at the joint position</span><br>
-arc_radius = 30  <span class="jc"># pixels — scale with image resolution</span><br>
-cv2.ellipse(<br>
-&nbsp;&nbsp;frame,<br>
-&nbsp;&nbsp;knee_px,                          <span class="jc"># centre = joint pixel position</span><br>
-&nbsp;&nbsp;(arc_radius, arc_radius),          <span class="jc"># axes (circle arc)</span><br>
-&nbsp;&nbsp;0,                                 <span class="jc"># rotation of ellipse = 0</span><br>
-&nbsp;&nbsp;min(angle_to_hip, angle_to_ankle), <span class="jc"># startAngle</span><br>
-&nbsp;&nbsp;max(angle_to_hip, angle_to_ankle), <span class="jc"># endAngle</span><br>
-&nbsp;&nbsp;(38, 191, 255),                    <span class="jc"># colour — blue for actual</span><br>
-&nbsp;&nbsp;2                                  <span class="jc"># thickness</span><br>
-)<br>
-<br>
-<span class="jc"># Step 4 — draw angle value as text near the arc</span><br>
-angle_value = joint_angle(hip_px, knee_px, ankle_px)<br>
-label_pos = (knee_px[0] + arc_radius + 5, knee_px[1])<br>
-cv2.putText(frame, f<span class="js">"{angle_value:.0f}°"</span>, label_pos, cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255,255,255), 2, cv2.LINE_AA)
-      </div>
-      <div style="margin-top:10px;font-size:11px;color:#475569;line-height:1.6;">
-        <strong style="color:#fbbf24;">Important:</strong> cv2.ellipse angles are clockwise from the 3 o'clock position — the same convention as screen coordinates (y-axis points down). arctan2 already works in this space so no further conversion is needed as long as you compute angles using pixel coordinates (not normalised ones).
-      </div>
-    </div>
-  </div>
-
-  <!-- 5d: text readability -->
-  <div class="detail-card" style="margin-bottom:16px;">
-    <div class="detail-card-header">
-      <div class="detail-card-title">5d — Text readability on real video frames</div>
-    </div>
-    <div class="detail-card-body">
-      <div style="font-size:12px;color:#94a3b8;line-height:1.7;margin-bottom:12px;">
-        Real video frames have varied, unpredictable backgrounds — gym floors, walls, clothing. White text on a white wall is invisible. The standard pattern is a semi-transparent dark rectangle behind each text label, blended using <code>cv2.addWeighted</code>.
-      </div>
-      <div class="code-block">
-<span class="jc"># Pattern: draw text with semi-transparent background</span><br>
-def draw_label(img, text, position, alpha=0.6):<br>
-&nbsp;&nbsp;overlay = img.copy()<br>
-&nbsp;&nbsp;<br>
-&nbsp;&nbsp;<span class="jc"># measure text size to size the background rectangle</span><br>
-&nbsp;&nbsp;(tw, th), baseline = cv2.getTextSize(text, cv2.FONT_HERSHEY_SIMPLEX, 0.55, 1)<br>
-&nbsp;&nbsp;x, y = position<br>
-&nbsp;&nbsp;pad = 4<br>
-&nbsp;&nbsp;<br>
-&nbsp;&nbsp;<span class="jc"># draw dark background on overlay copy</span><br>
-&nbsp;&nbsp;cv2.rectangle(overlay, (x-pad, y-th-pad), (x+tw+pad, y+baseline+pad), (0, 0, 0), -1)<br>
-&nbsp;&nbsp;<br>
-&nbsp;&nbsp;<span class="jc"># blend overlay back into image at given alpha (0 = transparent, 1 = opaque)</span><br>
-&nbsp;&nbsp;cv2.addWeighted(overlay, alpha, img, 1-alpha, 0, img)<br>
-&nbsp;&nbsp;<br>
-&nbsp;&nbsp;<span class="jc"># draw text on top of blended image</span><br>
-&nbsp;&nbsp;cv2.putText(img, text, (x, y), cv2.FONT_HERSHEY_SIMPLEX, 0.55, (255,255,255), 1, cv2.LINE_AA)
-      </div>
-      <div style="margin-top:12px;">
-        <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:0.6px;color:#475569;margin-bottom:8px;">Additional readability rules for real video</div>
-        <div style="display:flex;flex-direction:column;gap:6px;font-size:11px;color:#94a3b8;">
-          <div>→ <strong style="color:#f1f5f9;">Font scale should be proportional to image height</strong> — not hardcoded. A scale of <code style="background:#0d1117;padding:1px 4px;border-radius:3px;">image_height / 720 * 0.6</code> keeps text the same visual size regardless of resolution.</div>
-          <div>→ <strong style="color:#f1f5f9;">Use cv2.LINE_AA</strong> on all text and line drawing calls for anti-aliased edges.</div>
-          <div>→ <strong style="color:#f1f5f9;">Always draw a white outline before drawing coloured text</strong> — draw the same text string in white at thickness+1 first, then draw the coloured text on top. This creates a visible border against any background.</div>
-          <div>→ <strong style="color:#f1f5f9;">Keep annotations away from the body</strong> — draw labels to the side of the joint, not on top of the limb. Offset the label position by arc_radius + 8px.</div>
+      <div class="pipe-content">
+        <div class="pipe-io">
+          <div class="io-row"><div class="io-dir io-out">OUT</div><div class="io-val">POST /upload · video file + exercise_id + weight_kg</div></div>
+          <div class="io-row"><div class="io-dir io-sse">SSE</div><div class="io-val">upload_received → { analysis_id, session_id, user_id, filename, size_mb, created_at }</div></div>
         </div>
       </div>
     </div>
-  </div>
 
-  <!-- 5e: second data gap -->
-  <div class="detail-card" style="margin-bottom:16px;">
-    <div class="detail-card-header">
-      <div class="detail-card-title">5e — Second data gap: landmark pixel positions needed for overlay placement</div>
-    </div>
-    <div class="detail-card-body">
-      <div class="gap-block" style="margin-bottom:14px;">
-        <div class="gap-label">The gap</div>
-        <div class="gap-text">
-          The biomechanics JSON stores <strong>computed angles</strong> (e.g. <code style="background:#150505;padding:1px 4px;border-radius:3px;">knee_angle_at_bottom: 88.2</code>). To draw the angle arc in the right location on the extracted frame, OpenCV Step 2 also needs the <strong>pixel coordinates</strong> of each joint at that specific frame — i.e. where on the image is the knee, hip, and ankle. These are not stored anywhere. The biomechanics script computes angles from the landmarks but discards the raw positions.
-        </div>
+    <div class="pipe-step">
+      <div class="pipe-meta">
+        <div class="pipe-step-num">Step 2</div>
+        <div class="pipe-step-name">Save to GCS + write DB record</div>
+        <div class="pipe-owner">Backend</div>
+        <div class="pipe-badge badge-s2">Squad 2</div>
       </div>
-
-      <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:0.6px;color:#475569;margin-bottom:12px;">Three options — bring to the developer meeting</div>
-
-      <div style="display:flex;flex-direction:column;gap:10px;">
-
-        <div style="background:#080c12;border:1px solid #1e2433;border-radius:8px;padding:12px 14px;">
-          <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
-            <div style="font-size:10px;font-weight:800;color:#4ade80;background:#0a1f12;border:1px solid #14532d;border-radius:4px;padding:1px 8px;">Option A — Recommended</div>
-            <div style="font-size:11px;font-weight:700;color:#f1f5f9;">Re-run MediaPipe on the single extracted bottom frame</div>
-          </div>
-          <div style="font-size:11px;color:#94a3b8;line-height:1.6;">After seeking to <code style="background:#0d1117;padding:1px 4px;border-radius:3px;">bottom_timestamp_ms</code> and extracting the frame, run MediaPipe Pose on that one image. MediaPipe is fast on a single frame (~50–100ms). This gives fresh, accurate pixel coordinates for all landmarks — no schema changes needed.</div>
-          <div style="margin-top:8px;font-size:10px;color:#475569;">Pro: no additional stored data. Con: one extra MediaPipe call after Nemotron completes — small latency cost.</div>
-        </div>
-
-        <div style="background:#080c12;border:1px solid #1e2433;border-radius:8px;padding:12px 14px;">
-          <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
-            <div style="font-size:10px;font-weight:800;color:#fbbf24;background:#141000;border:1px solid #92400e;border-radius:4px;padding:1px 8px;">Option B</div>
-            <div style="font-size:11px;font-weight:700;color:#f1f5f9;">Store key landmark positions for bottom_frame in biomechanics JSON</div>
-          </div>
-          <div style="font-size:11px;color:#94a3b8;line-height:1.6;">Add a <code style="background:#0d1117;padding:1px 4px;border-radius:3px;">landmarks_at_bottom</code> block to each rep in the biomechanics JSON — normalised x/y for left_knee, right_knee, left_hip, right_hip, left_ankle, right_ankle. These are already known at the time the biomechanics script runs.</div>
-          <div class="code-block" style="margin-top:8px;font-size:10px;">
-<span class="jk">"landmarks_at_bottom"</span><span class="jp">:</span> <span class="jp">{</span><br>
-&nbsp;&nbsp;<span class="jk">"left_knee"</span><span class="jp">:</span>  <span class="jp">{</span><span class="jk">"x"</span><span class="jp">:</span> <span class="jn">0.48</span><span class="jp">,</span> <span class="jk">"y"</span><span class="jp">:</span> <span class="jn">0.71</span><span class="jp">},</span><br>
-&nbsp;&nbsp;<span class="jk">"left_hip"</span><span class="jp">:</span>   <span class="jp">{</span><span class="jk">"x"</span><span class="jp">:</span> <span class="jn">0.46</span><span class="jp">,</span> <span class="jk">"y"</span><span class="jp">:</span> <span class="jn">0.52</span><span class="jp">},</span><br>
-&nbsp;&nbsp;<span class="jk">"left_ankle"</span><span class="jp">:</span> <span class="jp">{</span><span class="jk">"x"</span><span class="jp">:</span> <span class="jn">0.49</span><span class="jp">,</span> <span class="jk">"y"</span><span class="jp">:</span> <span class="jn">0.89</span><span class="jp">}</span><br>
-<span class="jp">}</span>
-          </div>
-          <div style="margin-top:6px;font-size:10px;color:#475569;">Pro: no extra processing at frame extraction time. Con: larger biomechanics JSON, more schema changes needed.</div>
-        </div>
-
-        <div style="background:#080c12;border:1px solid #1e2433;border-radius:8px;padding:12px 14px;">
-          <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
-            <div style="font-size:10px;font-weight:800;color:#94a3b8;background:#0d1117;border:1px solid #334155;border-radius:4px;padding:1px 8px;">Option C</div>
-            <div style="font-size:11px;font-weight:700;color:#f1f5f9;">Skip position-accurate arcs — use a fixed annotation panel</div>
-          </div>
-          <div style="font-size:11px;color:#94a3b8;line-height:1.6;">Instead of drawing arcs at the joint positions, add a fixed semi-transparent panel at the side or bottom of the image showing the three angle values as text. No landmark positions needed — uses only the computed angles already in the biomechanics JSON.</div>
-          <div style="margin-top:6px;font-size:10px;color:#475569;">Pro: simplest implementation. Con: less informative — the user cannot see where on their body the issue is. Not recommended for the Results screen.</div>
+      <div class="pipe-content">
+        <div class="pipe-io">
+          <div class="io-row"><div class="io-dir io-in">IN</div><div class="io-val">video file · exercise_id · weight_kg</div></div>
+          <div class="io-row"><div class="io-dir io-out">OUT</div><div class="io-val">video_url = gs://kinetic-videos/videos/{user_id}/{analysis_id}/original.mp4</div></div>
+          <div class="io-row"><div class="io-dir io-out">DB</div><div class="io-val">form_sessions: analysis_id, exercise_id, weight_kg, video_url, status: processing</div></div>
+          <div class="io-row"><div class="io-dir io-sse">SSE</div><div class="io-val">mediapipe_started → { analysis_id, session_id, user_id, video_url }</div></div>
         </div>
       </div>
     </div>
-  </div>
 
-  <!-- 5f: full overlay render order -->
-  <div class="detail-card">
-    <div class="detail-card-header">
-      <div class="detail-card-title">5f — Recommended render order for the final annotated image</div>
-    </div>
-    <div class="detail-card-body">
-      <div style="font-size:12px;color:#64748b;margin-bottom:14px;">Draw in this order — each layer sits on top of the previous one. Later layers must not obscure earlier ones.</div>
-      <table class="overlay-table">
-        <thead>
-          <tr><th>#</th><th>What</th><th>OpenCV call</th><th>Colour</th></tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td style="color:#94a3b8;font-weight:700;">1</td>
-            <td>Raw extracted frame (base)</td>
-            <td><code>frame = cap.read()</code></td>
-            <td>—</td>
-          </tr>
-          <tr>
-            <td style="color:#94a3b8;font-weight:700;">2</td>
-            <td>Limb lines — hip→knee, knee→ankle</td>
-            <td><code>cv2.line</code></td>
-            <td>White, thickness 2, LINE_AA</td>
-          </tr>
-          <tr>
-            <td style="color:#94a3b8;font-weight:700;">3</td>
-            <td>Joint markers at knee, hip, ankle</td>
-            <td><code>cv2.circle</code></td>
-            <td>Colour by status: red = issue, green = good, amber = borderline</td>
-          </tr>
-          <tr>
-            <td style="color:#94a3b8;font-weight:700;">4</td>
-            <td>Actual angle arc at each joint</td>
-            <td><code>cv2.ellipse</code></td>
-            <td><span class="tag-actual">ACTUAL</span> Blue (#26bfff)</td>
-          </tr>
-          <tr>
-            <td style="color:#94a3b8;font-weight:700;">5</td>
-            <td>Gold standard reference arc at each joint</td>
-            <td><code>cv2.ellipse</code> dashed (draw as dots)</td>
-            <td><span class="tag-gold">IDEAL</span> Green (#22c55e)</td>
-          </tr>
-          <tr>
-            <td style="color:#94a3b8;font-weight:700;">6</td>
-            <td>Actual angle label + gold standard range</td>
-            <td><code>draw_label()</code> using addWeighted</td>
-            <td>White text on semi-transparent dark background</td>
-          </tr>
-          <tr>
-            <td style="color:#94a3b8;font-weight:700;">7</td>
-            <td>Joint name label (Knee / Hip / Ankle)</td>
-            <td><code>cv2.putText</code></td>
-            <td>Light grey (#94a3b8), smaller font scale</td>
-          </tr>
-        </tbody>
-      </table>
-      <div class="callout callout-info" style="margin-top:14px;">
-        <div class="callout-icon">ℹ</div>
-        <div class="callout-text"><strong>Gold standard arcs as dashed lines:</strong> cv2.ellipse cannot natively draw dashed arcs. To simulate: draw points at short angular intervals around the arc rather than a continuous line. Alternatively, draw the gold standard as two short lines from the joint showing the ideal angle boundaries — simpler and just as readable.</div>
+    <div class="pipe-step">
+      <div class="pipe-meta">
+        <div class="pipe-step-num">Step 3</div>
+        <div class="pipe-step-name">MediaPipe — joint keypoint extraction</div>
+        <div class="pipe-owner">Data / Full Stack</div>
+        <div class="pipe-badge badge-s3">Squad 3</div>
+      </div>
+      <div class="pipe-content">
+        <div class="pipe-io">
+          <div class="io-row"><div class="io-dir io-in">IN</div><div class="io-val">video_url (raw video from GCS)</div></div>
+          <div class="io-row"><div class="io-dir io-out">OUT</div><div class="io-val">per-frame landmarks (x, y, z, visibility, presence) · per-rep segments (start_frame, <strong style="color:#fde68a;">bottom_frame</strong>, end_frame, timestamps)</div></div>
+          <div class="io-note" style="margin-left:52px;color:#f59e0b;font-size:10px;">⚠ bottom_frame and bottom_timestamp_ms computed here — see Section 3 for the gap</div>
+          <div class="io-row"><div class="io-dir io-sse">SSE</div><div class="io-val">mediapipe_complete → { analysis_id, session_id, user_id, rep_count, fps, keypoints_detected, frames_processed }</div></div>
+        </div>
       </div>
     </div>
-  </div>
 
-</div>
-
-<p style="font-size:10px;color:#1e293b;text-align:right;margin-top:24px;">
-  Kinetic · Pipeline Integration Guide · Generated May 11, 2026 · Merged from pipeline_integration_guide + opencv_frame_extraction_brief · Review with all three squads
-</p>
-
-</body>
-</html>
-  </div>
-
-  <!-- 4. OpenCV Scope & Status -->
-
-
-  <!-- 5. OpenCV Step 2 Logic -->
-
-
-  <!-- Overlay spec -->
-  <div class="detail-card">
-    <div class="detail-card-header">
-      <div class="detail-card-title">Section 2b — What to overlay on the extracted frame</div>
-    </div>
-    <div class="detail-card-body">
-      <div style="font-size:12px;color:#64748b;margin-bottom:12px;">Three layers are drawn on the raw frame in order. Each layer adds more context for the user.</div>
-      <table class="overlay-table">
-        <thead>
-          <tr>
-            <th>Layer</th>
-            <th>What is drawn</th>
-            <th>Data source</th>
-            <th>Visual style</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td style="color:#f1f5f9;font-weight:700;">1 · Joint markers</td>
-            <td>Dots at knee, hip, and ankle joint positions on the user's body</td>
-            <td>MediaPipe landmark coordinates for the <code style="background:#0d1117;padding:1px 4px;border-radius:3px;font-size:10px;">bottom_frame</code> — stored in biomechanics JSON</td>
-            <td>Small filled circles · colour matches angle status (red = issue, green = good)</td>
-          </tr>
-          <tr>
-            <td style="color:#f1f5f9;font-weight:700;">2 · Actual angle arcs</td>
-            <td>Arc drawn at each joint showing the user's measured angle at bottom position</td>
-            <td>
-              <code style="background:#0d1117;padding:1px 4px;border-radius:3px;font-size:10px;">knee_angle_at_bottom</code><br>
-              <code style="background:#0d1117;padding:1px 4px;border-radius:3px;font-size:10px;">hip_angle_at_bottom</code><br>
-              <code style="background:#0d1117;padding:1px 4px;border-radius:3px;font-size:10px;">dorsiflexion_at_bottom</code><br>
-              from worst rep in biomechanics JSON
-            </td>
-            <td><span class="tag-actual">ACTUAL</span> Blue arc · angle value in white text next to arc e.g. <code>142°</code></td>
-          </tr>
-          <tr>
-            <td style="color:#f1f5f9;font-weight:700;">3 · Gold standard reference</td>
-            <td>Target angle range shown alongside the actual arc so the user can see the gap</td>
-            <td>
-              Hardcoded gold standard values for Goblet Squat MVP:<br>
-              Knee: 80–95° at bottom<br>
-              Hip: 80–95° at bottom<br>
-              Ankle dorsiflexion: ≥25°<br>
-              <span style="font-size:10px;color:#475569;">(to be confirmed against biomechanics research corpus)</span>
-            </td>
-            <td><span class="tag-gold">IDEAL</span> Green reference arc or dashed line · target range in green text e.g. <code>Ideal: 80–95°</code></td>
-          </tr>
-        </tbody>
-      </table>
-
-      <div class="callout callout-warn" style="margin-top:14px;">
-        <div class="callout-icon">⚠</div>
-        <div class="callout-text"><strong>Gold standard values need confirmation.</strong> The reference angles above are indicative. Before implementation, Squad 3 should confirm the exact target ranges against the biomechanics research corpus ingested into the RAG vector DB. These values will also inform what Nemotron and Claude use as reference points.</div>
+    <div class="pipe-step">
+      <div class="pipe-meta">
+        <div class="pipe-step-num">Step 4</div>
+        <div class="pipe-step-name">Visibility quality gate</div>
+        <div class="pipe-owner">Data / Full Stack</div>
+        <div class="pipe-badge badge-s3">Squad 3</div>
+      </div>
+      <div class="pipe-content">
+        <div class="pipe-io">
+          <div class="io-row"><div class="io-dir io-in">IN</div><div class="io-val">per-frame landmark visibility + presence scores</div></div>
+          <div class="io-row"><div class="io-dir io-out">FAIL</div><div class="io-val" style="color:#f87171;">error SSE fired · pipeline stops · form_sessions status → failed</div></div>
+          <div class="io-row"><div class="io-dir io-out">PASS</div><div class="io-val" style="color:#4ade80;">pipeline continues to Step 5</div></div>
+        </div>
       </div>
     </div>
+
+    <div class="pipe-step highlight">
+      <div class="pipe-meta">
+        <div class="pipe-step-num">Step 5 · OpenCV Step 1</div>
+        <div class="pipe-step-name">OpenCV — full video overlay</div>
+        <div class="pipe-owner">Data / Full Stack</div>
+        <div class="pipe-badge badge-s3">Squad 3</div>
+      </div>
+      <div class="pipe-content">
+        <div class="pipe-io">
+          <div class="io-row"><div class="io-dir io-in">IN</div><div class="io-val">raw video (from GCS) · MediaPipe landmarks per frame</div></div>
+          <div class="io-row"><div class="io-dir io-out">OUT</div><div class="io-val">overlay_video_url — full video with green skeleton lines drawn on every frame · saved to GCS</div></div>
+          <div class="io-row"><div class="io-dir io-sse">SSE</div><div class="io-val">overlay_complete → { analysis_id, session_id, user_id, overlay_video_url }</div></div>
+          <div class="io-note" style="margin-left:52px;font-size:10px;">This overlay video goes to Nemotron — NOT shown to the user</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pipe-step">
+      <div class="pipe-meta">
+        <div class="pipe-step-num">Step 6</div>
+        <div class="pipe-step-name">Biomechanics script — angles + metrics</div>
+        <div class="pipe-owner">Data / Full Stack</div>
+        <div class="pipe-badge badge-s3">Squad 3</div>
+      </div>
+      <div class="pipe-content">
+        <div class="pipe-io">
+          <div class="io-row"><div class="io-dir io-in">IN</div><div class="io-val">MediaPipe landmarks · rep segments</div></div>
+          <div class="io-row"><div class="io-dir io-out">OUT</div><div class="io-val">biomechanics JSON — knee/hip/ankle angles · tempo · stability · per-rep data · <span style="color:#fde68a;">bottom_frame + bottom_timestamp_ms per rep (proposed addition)</span></div></div>
+          <div class="io-row"><div class="io-dir io-out">DB</div><div class="io-val">form_analysis_results: biomechanics JSON stored</div></div>
+          <div class="io-row"><div class="io-dir io-sse">SSE</div><div class="io-val">biomechanics_complete → { analysis_id, session_id, user_id, rep_count, joints_computed, avg_confidence }</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pipe-step">
+      <div class="pipe-meta">
+        <div class="pipe-step-num">Step 7</div>
+        <div class="pipe-step-name">Nemotron — video analysis</div>
+        <div class="pipe-owner">Backend</div>
+        <div class="pipe-badge badge-s2">Squad 2</div>
+      </div>
+      <div class="pipe-content">
+        <div class="pipe-io">
+          <div class="io-row"><div class="io-dir io-in">IN</div><div class="io-val">overlay_video_url · biomechanics JSON</div></div>
+          <div class="io-row"><div class="io-dir io-out">OUT</div><div class="io-val">per-rep scores · overall_score · issues · chain-of-thought · <strong style="color:#fde68a;">worst_rep_number</strong></div></div>
+          <div class="io-row"><div class="io-dir io-sse">SSE</div><div class="io-val">nemotron_started · nemotron_complete → { analysis_id, session_id, user_id, overall_score, issues_count }</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pipe-step highlight-new">
+      <div class="pipe-meta">
+        <div class="pipe-step-num">Step 8 · OpenCV Step 2</div>
+        <div class="pipe-step-name">OpenCV — worst-rep frame extraction</div>
+        <div class="pipe-owner">Data / Full Stack</div>
+        <div class="pipe-badge badge-s3">Squad 3</div>
+        <div class="pipe-badge badge-new">NEW STEP</div>
+      </div>
+      <div class="pipe-content">
+        <div class="pipe-io">
+          <div class="io-row"><div class="io-dir io-in">IN</div><div class="io-val">raw video (from GCS) · worst_rep_number (from Nemotron) · bottom_timestamp_ms for that rep (from DB — biomechanics JSON)</div></div>
+          <div class="io-row"><div class="io-dir io-out">OUT</div><div class="io-val">annotated still image — user's worst-rep bottom frame with actual vs gold standard angles overlaid · saved to GCS</div></div>
+          <div class="io-row"><div class="io-dir io-out">DB</div><div class="io-val">form_analysis_results: annotated_frame_url updated</div></div>
+          <div class="io-row"><div class="io-dir io-sse">SSE</div><div class="io-val">frames_extracting · frames_ready → { analysis_id, session_id, user_id, video_url, frames_total } / { …, frame_url }</div></div>
+          <div class="io-note" style="margin-left:52px;font-size:10px;">This image IS shown to the user in the Results screen</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pipe-step">
+      <div class="pipe-meta">
+        <div class="pipe-step-num">Step 9</div>
+        <div class="pipe-step-name">RAG retrieval + Claude Sonnet</div>
+        <div class="pipe-owner">Squad 2 + Squad 3</div>
+        <div class="pipe-badge badge-s2">Squad 2</div>
+      </div>
+      <div class="pipe-content">
+        <div class="pipe-io">
+          <div class="io-row"><div class="io-dir io-in">IN</div><div class="io-val">Nemotron output · RAG passages · user history · weight_kg</div></div>
+          <div class="io-row"><div class="io-dir io-out">OUT</div><div class="io-val">coaching paragraphs · progression recommendation (ready / hold / drop)</div></div>
+          <div class="io-row"><div class="io-dir io-sse">SSE</div><div class="io-val">rag_started · rag_complete · claude_started · claude_complete · analysis_complete</div></div>
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>
   </div>
 
-  <!-- 6. Data Gap & Schema Fix -->
-
-
-  <!-- 7. OpenCV Capabilities -->
-
-
-  <!-- 5a: coordinate conversion -->
-  <div class="detail-card" style="margin-bottom:16px;">
-    <div class="detail-card-header">
-      <div class="detail-card-title">5a — MediaPipe coordinates → pixel positions</div>
-    </div>
-    <div class="detail-card-body">
-      <div style="font-size:12px;color:#94a3b8;line-height:1.7;margin-bottom:12px;">
-        MediaPipe outputs landmark positions as <strong style="color:#f1f5f9;">normalised floats (0.0–1.0)</strong> relative to the image dimensions — not pixel coordinates. Every OpenCV drawing function requires pixel integers. The conversion is one multiplication per axis, applied to every landmark before any drawing call.
-      </div>
-      <div class="code-block">
-<span class="jc"># MediaPipe landmark for, say, the left knee</span><br>
-lm = results.pose_landmarks.landmark[mp_pose.PoseLandmark.LEFT_KNEE]<br>
-<br>
-h, w, _ = frame.shape  <span class="jc"># frame height and width in pixels</span><br>
-<br>
-knee_px = (int(lm.x * w), int(lm.y * h))  <span class="jc"># → e.g. (382, 540)</span><br>
-<br>
-<span class="jc"># Repeat for hip and ankle — these three points define the knee angle</span><br>
-hip_px  = (int(hip_lm.x  * w), int(hip_lm.y  * h))<br>
-ankle_px = (int(ankle_lm.x * w), int(ankle_lm.y * h))
-      </div>
-      <div class="callout callout-warn" style="margin-top:12px;">
-        <div class="callout-icon">⚠</div>
-        <div class="callout-text"><strong>Second data gap — landmark pixel positions at bottom_frame are not stored.</strong> The biomechanics JSON stores computed angle values (e.g. <code style="background:#1a1000;padding:1px 4px;border-radius:3px;">knee_angle_at_bottom: 88.2</code>) but not the pixel coordinates of each joint at that specific frame. To draw the angle arc in the correct location on the image, the drawing code needs to know WHERE the knee is on the extracted frame — not just what the angle is. See Section 5e for options.</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- 5b: drawing toolkit -->
-  <div class="detail-card" style="margin-bottom:16px;">
-    <div class="detail-card-header">
-      <div class="detail-card-title">5b — OpenCV drawing functions available</div>
-    </div>
-    <div class="detail-card-body">
-      <table class="overlay-table">
-        <thead>
-          <tr>
-            <th>Function</th>
-            <th>What it does</th>
-            <th>Used for</th>
-            <th>Gotchas</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td style="font-family:monospace;color:#93c5fd;font-weight:700;">cv2.circle</td>
-            <td>Filled or outline circle at a pixel position</td>
-            <td>Joint position markers at knee, hip, ankle</td>
-            <td>None — simplest call in the toolkit</td>
-          </tr>
-          <tr>
-            <td style="font-family:monospace;color:#93c5fd;font-weight:700;">cv2.line</td>
-            <td>Straight line between two pixel points</td>
-            <td>Limb lines (hip→knee, knee→ankle) to show body segments</td>
-            <td>Use <code>cv2.LINE_AA</code> for anti-aliasing on diagonal lines</td>
-          </tr>
-          <tr>
-            <td style="font-family:monospace;color:#93c5fd;font-weight:700;">cv2.ellipse</td>
-            <td>Draws an arc or filled sector of an ellipse</td>
-            <td>Angle arc at joint — shows the measured angle visually</td>
-            <td><strong style="color:#fbbf24;">Angles are clockwise from the 3 o'clock position</strong> — not the same as mathematical/screen angles. Requires conversion from arctan2 output. See 5c.</td>
-          </tr>
-          <tr>
-            <td style="font-family:monospace;color:#93c5fd;font-weight:700;">cv2.putText</td>
-            <td>Draws a text string at a pixel position</td>
-            <td>Angle values ("88°"), labels ("Knee", "Ideal: 80–95°")</td>
-            <td>Only Hershey fonts — no custom fonts. Text is illegible on busy backgrounds without a backing rectangle.</td>
-          </tr>
-          <tr>
-            <td style="font-family:monospace;color:#93c5fd;font-weight:700;">cv2.rectangle</td>
-            <td>Draws a filled or outline rectangle</td>
-            <td>Background box behind text for readability</td>
-            <td>Use with <code>cv2.addWeighted</code> for semi-transparency</td>
-          </tr>
-          <tr>
-            <td style="font-family:monospace;color:#93c5fd;font-weight:700;">cv2.addWeighted</td>
-            <td>Blends two images with a given opacity ratio</td>
-            <td>Semi-transparent background behind text/arcs</td>
-            <td>Must draw on a copy, then blend — cannot apply to just a region without cropping</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-
-  <!-- 5c: angle arc -->
-  <div class="detail-card" style="margin-bottom:16px;">
-    <div class="detail-card-header">
-      <div class="detail-card-title">5c — Drawing a joint angle arc with cv2.ellipse</div>
-    </div>
-    <div class="detail-card-body">
-      <div style="font-size:12px;color:#94a3b8;line-height:1.7;margin-bottom:12px;">
-        The angle arc at a joint (e.g. the knee) is drawn at the joint pixel position, spanning from the direction of the lower limb (knee→ankle) to the direction of the upper limb (knee→hip). The key step is converting the limb directions to the angle convention that <code>cv2.ellipse</code> expects.
-      </div>
-      <div class="code-block">
-<span class="jc"># Step 1 — calculate the angle at the joint (hip–knee–ankle)</span><br>
-import numpy as np<br>
-<br>
-def joint_angle(a, b, c):<br>
-&nbsp;&nbsp;<span class="jc">"""a = hip_px, b = knee_px (vertex), c = ankle_px"""</span><br>
-&nbsp;&nbsp;a, b, c = np.array(a), np.array(b), np.array(c)<br>
-&nbsp;&nbsp;radians = np.arctan2(c[1]-b[1], c[0]-b[0]) - np.arctan2(a[1]-b[1], a[0]-b[0])<br>
-&nbsp;&nbsp;angle = np.abs(radians * 180.0 / np.pi)<br>
-&nbsp;&nbsp;if angle > 180.0: angle = 360 - angle<br>
-&nbsp;&nbsp;return angle<br>
-<br>
-<span class="jc"># Step 2 — compute the directions of each limb from the joint, in degrees</span><br>
-angle_to_hip   = np.degrees(np.arctan2(hip_px[1]   - knee_px[1], hip_px[0]   - knee_px[0]))<br>
-angle_to_ankle = np.degrees(np.arctan2(ankle_px[1] - knee_px[1], ankle_px[0] - knee_px[0]))<br>
-<br>
-<span class="jc"># Step 3 — draw arc at the joint position</span><br>
-arc_radius = 30  <span class="jc"># pixels — scale with image resolution</span><br>
-cv2.ellipse(<br>
-&nbsp;&nbsp;frame,<br>
-&nbsp;&nbsp;knee_px,                          <span class="jc"># centre = joint pixel position</span><br>
-&nbsp;&nbsp;(arc_radius, arc_radius),          <span class="jc"># axes (circle arc)</span><br>
-&nbsp;&nbsp;0,                                 <span class="jc"># rotation of ellipse = 0</span><br>
-&nbsp;&nbsp;min(angle_to_hip, angle_to_ankle), <span class="jc"># startAngle</span><br>
-&nbsp;&nbsp;max(angle_to_hip, angle_to_ankle), <span class="jc"># endAngle</span><br>
-&nbsp;&nbsp;(38, 191, 255),                    <span class="jc"># colour — blue for actual</span><br>
-&nbsp;&nbsp;2                                  <span class="jc"># thickness</span><br>
-)<br>
-<br>
-<span class="jc"># Step 4 — draw angle value as text near the arc</span><br>
-angle_value = joint_angle(hip_px, knee_px, ankle_px)<br>
-label_pos = (knee_px[0] + arc_radius + 5, knee_px[1])<br>
-cv2.putText(frame, f<span class="js">"{angle_value:.0f}°"</span>, label_pos, cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255,255,255), 2, cv2.LINE_AA)
-      </div>
-      <div style="margin-top:10px;font-size:11px;color:#475569;line-height:1.6;">
-        <strong style="color:#fbbf24;">Important:</strong> cv2.ellipse angles are clockwise from the 3 o'clock position — the same convention as screen coordinates (y-axis points down). arctan2 already works in this space so no further conversion is needed as long as you compute angles using pixel coordinates (not normalised ones).
-      </div>
-    </div>
-  </div>
-
-  <!-- 5d: text readability -->
-  <div class="detail-card" style="margin-bottom:16px;">
-    <div class="detail-card-header">
-      <div class="detail-card-title">5d — Text readability on real video frames</div>
-    </div>
-    <div class="detail-card-body">
-      <div style="font-size:12px;color:#94a3b8;line-height:1.7;margin-bottom:12px;">
-        Real video frames have varied, unpredictable backgrounds — gym floors, walls, clothing. White text on a white wall is invisible. The standard pattern is a semi-transparent dark rectangle behind each text label, blended using <code>cv2.addWeighted</code>.
-      </div>
-      <div class="code-block">
-<span class="jc"># Pattern: draw text with semi-transparent background</span><br>
-def draw_label(img, text, position, alpha=0.6):<br>
-&nbsp;&nbsp;overlay = img.copy()<br>
-&nbsp;&nbsp;<br>
-&nbsp;&nbsp;<span class="jc"># measure text size to size the background rectangle</span><br>
-&nbsp;&nbsp;(tw, th), baseline = cv2.getTextSize(text, cv2.FONT_HERSHEY_SIMPLEX, 0.55, 1)<br>
-&nbsp;&nbsp;x, y = position<br>
-&nbsp;&nbsp;pad = 4<br>
-&nbsp;&nbsp;<br>
-&nbsp;&nbsp;<span class="jc"># draw dark background on overlay copy</span><br>
-&nbsp;&nbsp;cv2.rectangle(overlay, (x-pad, y-th-pad), (x+tw+pad, y+baseline+pad), (0, 0, 0), -1)<br>
-&nbsp;&nbsp;<br>
-&nbsp;&nbsp;<span class="jc"># blend overlay back into image at given alpha (0 = transparent, 1 = opaque)</span><br>
-&nbsp;&nbsp;cv2.addWeighted(overlay, alpha, img, 1-alpha, 0, img)<br>
-&nbsp;&nbsp;<br>
-&nbsp;&nbsp;<span class="jc"># draw text on top of blended image</span><br>
-&nbsp;&nbsp;cv2.putText(img, text, (x, y), cv2.FONT_HERSHEY_SIMPLEX, 0.55, (255,255,255), 1, cv2.LINE_AA)
-      </div>
-      <div style="margin-top:12px;">
-        <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:0.6px;color:#475569;margin-bottom:8px;">Additional readability rules for real video</div>
-        <div style="display:flex;flex-direction:column;gap:6px;font-size:11px;color:#94a3b8;">
-          <div>→ <strong style="color:#f1f5f9;">Font scale should be proportional to image height</strong> — not hardcoded. A scale of <code style="background:#0d1117;padding:1px 4px;border-radius:3px;">image_height / 720 * 0.6</code> keeps text the same visual size regardless of resolution.</div>
-          <div>→ <strong style="color:#f1f5f9;">Use cv2.LINE_AA</strong> on all text and line drawing calls for anti-aliased edges.</div>
-          <div>→ <strong style="color:#f1f5f9;">Always draw a white outline before drawing coloured text</strong> — draw the same text string in white at thickness+1 first, then draw the coloured text on top. This creates a visible border against any background.</div>
-          <div>→ <strong style="color:#f1f5f9;">Keep annotations away from the body</strong> — draw labels to the side of the joint, not on top of the limb. Offset the label position by arc_radius + 8px.</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- 5e: second data gap -->
-  <div class="detail-card" style="margin-bottom:16px;">
-    <div class="detail-card-header">
-      <div class="detail-card-title">5e — Second data gap: landmark pixel positions needed for overlay placement</div>
-    </div>
-    <div class="detail-card-body">
-      <div class="gap-block" style="margin-bottom:14px;">
-        <div class="gap-label">The gap</div>
-        <div class="gap-text">
-          The biomechanics JSON stores <strong>computed angles</strong> (e.g. <code style="background:#150505;padding:1px 4px;border-radius:3px;">knee_angle_at_bottom: 88.2</code>). To draw the angle arc in the right location on the extracted frame, OpenCV Step 2 also needs the <strong>pixel coordinates</strong> of each joint at that specific frame — i.e. where on the image is the knee, hip, and ankle. These are not stored anywhere. The biomechanics script computes angles from the landmarks but discards the raw positions.
-        </div>
-      </div>
-
-      <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:0.6px;color:#475569;margin-bottom:12px;">Three options — bring to the developer meeting</div>
-
-      <div style="display:flex;flex-direction:column;gap:10px;">
-
-        <div style="background:#080c12;border:1px solid #1e2433;border-radius:8px;padding:12px 14px;">
-          <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
-            <div style="font-size:10px;font-weight:800;color:#4ade80;background:#0a1f12;border:1px solid #14532d;border-radius:4px;padding:1px 8px;">Option A — Recommended</div>
-            <div style="font-size:11px;font-weight:700;color:#f1f5f9;">Re-run MediaPipe on the single extracted bottom frame</div>
-          </div>
-          <div style="font-size:11px;color:#94a3b8;line-height:1.6;">After seeking to <code style="background:#0d1117;padding:1px 4px;border-radius:3px;">bottom_timestamp_ms</code> and extracting the frame, run MediaPipe Pose on that one image. MediaPipe is fast on a single frame (~50–100ms). This gives fresh, accurate pixel coordinates for all landmarks — no schema changes needed.</div>
-          <div style="margin-top:8px;font-size:10px;color:#475569;">Pro: no additional stored data. Con: one extra MediaPipe call after Nemotron completes — small latency cost.</div>
-        </div>
-
-        <div style="background:#080c12;border:1px solid #1e2433;border-radius:8px;padding:12px 14px;">
-          <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
-            <div style="font-size:10px;font-weight:800;color:#fbbf24;background:#141000;border:1px solid #92400e;border-radius:4px;padding:1px 8px;">Option B</div>
-            <div style="font-size:11px;font-weight:700;color:#f1f5f9;">Store key landmark positions for bottom_frame in biomechanics JSON</div>
-          </div>
-          <div style="font-size:11px;color:#94a3b8;line-height:1.6;">Add a <code style="background:#0d1117;padding:1px 4px;border-radius:3px;">landmarks_at_bottom</code> block to each rep in the biomechanics JSON — normalised x/y for left_knee, right_knee, left_hip, right_hip, left_ankle, right_ankle. These are already known at the time the biomechanics script runs.</div>
-          <div class="code-block" style="margin-top:8px;font-size:10px;">
-<span class="jk">"landmarks_at_bottom"</span><span class="jp">:</span> <span class="jp">{</span><br>
-&nbsp;&nbsp;<span class="jk">"left_knee"</span><span class="jp">:</span>  <span class="jp">{</span><span class="jk">"x"</span><span class="jp">:</span> <span class="jn">0.48</span><span class="jp">,</span> <span class="jk">"y"</span><span class="jp">:</span> <span class="jn">0.71</span><span class="jp">},</span><br>
-&nbsp;&nbsp;<span class="jk">"left_hip"</span><span class="jp">:</span>   <span class="jp">{</span><span class="jk">"x"</span><span class="jp">:</span> <span class="jn">0.46</span><span class="jp">,</span> <span class="jk">"y"</span><span class="jp">:</span> <span class="jn">0.52</span><span class="jp">},</span><br>
-&nbsp;&nbsp;<span class="jk">"left_ankle"</span><span class="jp">:</span> <span class="jp">{</span><span class="jk">"x"</span><span class="jp">:</span> <span class="jn">0.49</span><span class="jp">,</span> <span class="jk">"y"</span><span class="jp">:</span> <span class="jn">0.89</span><span class="jp">}</span><br>
-<span class="jp">}</span>
-          </div>
-          <div style="margin-top:6px;font-size:10px;color:#475569;">Pro: no extra processing at frame extraction time. Con: larger biomechanics JSON, more schema changes needed.</div>
-        </div>
-
-        <div style="background:#080c12;border:1px solid #1e2433;border-radius:8px;padding:12px 14px;">
-          <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
-            <div style="font-size:10px;font-weight:800;color:#94a3b8;background:#0d1117;border:1px solid #334155;border-radius:4px;padding:1px 8px;">Option C</div>
-            <div style="font-size:11px;font-weight:700;color:#f1f5f9;">Skip position-accurate arcs — use a fixed annotation panel</div>
-          </div>
-          <div style="font-size:11px;color:#94a3b8;line-height:1.6;">Instead of drawing arcs at the joint positions, add a fixed semi-transparent panel at the side or bottom of the image showing the three angle values as text. No landmark positions needed — uses only the computed angles already in the biomechanics JSON.</div>
-          <div style="margin-top:6px;font-size:10px;color:#475569;">Pro: simplest implementation. Con: less informative — the user cannot see where on their body the issue is. Not recommended for the Results screen.</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- 5f: full overlay render order -->
-  <div class="detail-card">
-    <div class="detail-card-header">
-      <div class="detail-card-title">5f — Recommended render order for the final annotated image</div>
-    </div>
-    <div class="detail-card-body">
-      <div style="font-size:12px;color:#64748b;margin-bottom:14px;">Draw in this order — each layer sits on top of the previous one. Later layers must not obscure earlier ones.</div>
-      <table class="overlay-table">
-        <thead>
-          <tr><th>#</th><th>What</th><th>OpenCV call</th><th>Colour</th></tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td style="color:#94a3b8;font-weight:700;">1</td>
-            <td>Raw extracted frame (base)</td>
-            <td><code>frame = cap.read()</code></td>
-            <td>—</td>
-          </tr>
-          <tr>
-            <td style="color:#94a3b8;font-weight:700;">2</td>
-            <td>Limb lines — hip→knee, knee→ankle</td>
-            <td><code>cv2.line</code></td>
-            <td>White, thickness 2, LINE_AA</td>
-          </tr>
-          <tr>
-            <td style="color:#94a3b8;font-weight:700;">3</td>
-            <td>Joint markers at knee, hip, ankle</td>
-            <td><code>cv2.circle</code></td>
-            <td>Colour by status: red = issue, green = good, amber = borderline</td>
-          </tr>
-          <tr>
-            <td style="color:#94a3b8;font-weight:700;">4</td>
-            <td>Actual angle arc at each joint</td>
-            <td><code>cv2.ellipse</code></td>
-            <td><span class="tag-actual">ACTUAL</span> Blue (#26bfff)</td>
-          </tr>
-          <tr>
-            <td style="color:#94a3b8;font-weight:700;">5</td>
-            <td>Gold standard reference arc at each joint</td>
-            <td><code>cv2.ellipse</code> dashed (draw as dots)</td>
-            <td><span class="tag-gold">IDEAL</span> Green (#22c55e)</td>
-          </tr>
-          <tr>
-            <td style="color:#94a3b8;font-weight:700;">6</td>
-            <td>Actual angle label + gold standard range</td>
-            <td><code>draw_label()</code> using addWeighted</td>
-            <td>White text on semi-transparent dark background</td>
-          </tr>
-          <tr>
-            <td style="color:#94a3b8;font-weight:700;">7</td>
-            <td>Joint name label (Knee / Hip / Ankle)</td>
-            <td><code>cv2.putText</code></td>
-            <td>Light grey (#94a3b8), smaller font scale</td>
-          </tr>
-        </tbody>
-      </table>
-      <div class="callout callout-info" style="margin-top:14px;">
-        <div class="callout-icon">ℹ</div>
-        <div class="callout-text"><strong>Gold standard arcs as dashed lines:</strong> cv2.ellipse cannot natively draw dashed arcs. To simulate: draw points at short angular intervals around the arc rather than a continuous line. Alternatively, draw the gold standard as two short lines from the joint showing the ideal angle boundaries — simpler and just as readable.</div>
-      </div>
-    </div>
-  </div>
-
-</div>
-  </div>
-
-</main>
-
-<script>
-const sections = ['overview','steps'];
-function show(id) {
-  sections.forEach(s => {
-    document.getElementById('section-' + s).classList.remove('active');
-    const b = document.getElementById('btn-' + s);
-    if (b) b.classList.remove('active');
-  });
-  document.getElementById('section-' + id).classList.add('active');
-  const b = document.getElementById('btn-' + id);
-  if (b) b.classList.add('active');
-  window.scrollTo(0, 0);
-}
-</script>
 </body>
 </html>
