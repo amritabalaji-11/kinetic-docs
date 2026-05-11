@@ -992,12 +992,13 @@ h1 { font-size:20px; font-weight:700; color:#f8fafc; }
     <span class="jk">"movement_quality_score"</span><span class="jp">:</span> <span class="jn">68</span><span class="jp">,</span>
     <span class="jk">"stability_score"</span><span class="jp">:</span> <span class="jn">75</span><span class="jp">,</span>
     <span class="jk">"posture_score"</span><span class="jp">:</span> <span class="jn">73</span><span class="jp">,</span>
+    <span class="jk">"tempo_score"</span><span class="jp">:</span> <span class="jn">71</span><span class="jp">,</span>              <span class="jc">// derived from biomechanics tempo_data passed as input</span>
     <span class="jk">"rep_count"</span><span class="jp">:</span> <span class="jn">8</span><span class="jp">,</span>
     <span class="jk">"avg_rep_duration_s"</span><span class="jp">:</span> <span class="jn">2.8</span><span class="jp">,</span>
     <span class="jk">"chain_of_thought"</span><span class="jp">:</span> <span class="js">"Athlete shows good depth but consistent knee valgus on ascent from rep 3..."</span>
   <span class="jp">},</span>
 
-  <span class="jk">"reps"</span><span class="jp">:</span> <span class="jp">[{</span>
+  <span class="jk">"reps"</span><span class="jp">:</span> <span class="jp">[{</span>                           <span class="jc">// OpenCV Step 5b reads these scores to identify lowest → worst rep for frame extraction</span>
     <span class="jk">"rep_number"</span><span class="jp">:</span> <span class="jn">1</span><span class="jp">,</span>
     <span class="jk">"start_ms"</span><span class="jp">:</span> <span class="jn">1200</span><span class="jp">,</span> <span class="jk">"end_ms"</span><span class="jp">:</span> <span class="jn">4000</span><span class="jp">,</span>
     <span class="jk">"form_score"</span><span class="jp">:</span> <span class="jn">85</span><span class="jp">,</span>
@@ -1048,8 +1049,8 @@ h1 { font-size:20px; font-weight:700; color:#f8fafc; }
       <span class="jk">"phase"</span><span class="jp">:</span> <span class="js">"ascent"</span><span class="jp">,</span>
       <span class="jk">"trigger"</span><span class="jp">:</span> <span class="js">"issue_detected"</span><span class="jp">,</span>
       <span class="jk">"issue_ref"</span><span class="jp">:</span> <span class="js">"issue_001"</span><span class="jp">,</span>
-      <span class="jk">"raw_frame_url"</span><span class="jp">:</span>        <span class="js">"gs://kinetic-videos/videos/{user_id}/{analysis_id}/frames/raw/f_001.jpg"</span><span class="jp">,</span>
-      <span class="jk">"annotated_frame_url"</span><span class="jp">:</span> <span class="js">"gs://kinetic-videos/videos/{user_id}/{analysis_id}/frames/annotated/f_001.jpg"</span>
+      <span class="jk">"raw_frame_url"</span><span class="jp">:</span>        <span class="js">"gs://kinetic-videos/videos/{user_id}/{analysis_id}/frames/raw/f_001.jpg"</span>
+      <span class="jc">// annotated_frame_url NOT here — produced by OpenCV Step 5b after this output, written to form_analysis_results</span>
     <span class="jp">}]</span>
   <span class="jp">},</span>
 
@@ -1410,7 +1411,7 @@ h1 { font-size:20px; font-weight:700; color:#f8fafc; }
   <!-- ═══ STEP 8: FRONTEND OUTPUT ═══ -->
   <div class="step frontend output">
     <div class="step-header">
-      <div class="step-num">8</div>
+      <div class="step-num">8a</div>
       <div class="step-icon">📊</div>
       <div><div class="step-title">Frontend — Analysis Results Screen</div><div class="step-squad">Squad 1 — Frontend</div></div>
     </div>
@@ -1420,42 +1421,209 @@ h1 { font-size:20px; font-weight:700; color:#f8fafc; }
         <div class="sse-row"><span class="sse-pill">analysis_complete → full result rendered</span></div>
       </div>
       <div class="sub-section">
-        <div class="sub-label">What the User Sees (from combined Nemotron + Claude output)</div>
+        <div class="sub-label">What the User Sees — Screen Layout &amp; Data Fields</div>
         <table class="db-table">
-          <tr><th>UI Component</th><th>Data Source</th><th>Field</th></tr>
-          <tr><td>Overall form score ring</td><td>Nemotron</td><td><span class="example">summary.overall_form_score</span></td></tr>
-          <tr><td>Sub-scores (Quality/Stability/Posture)</td><td>Nemotron</td><td><span class="example">summary.*_score</span></td></tr>
-          <tr><td>Rep count + avg duration</td><td>Nemotron</td><td><span class="example">summary.rep_count, avg_rep_duration_s</span></td></tr>
-          <tr><td>Issue cards with severity badge</td><td>Nemotron</td><td><span class="example">form_issues[].severity + severity_score</span></td></tr>
-          <tr><td>Annotated frame snapshots</td><td>Nemotron → S3</td><td><span class="example">form_issues[].key_frames[].annotated_frame_url</span></td></tr>
-          <tr><td>Angle overlay on frame</td><td>Nemotron</td><td><span class="example">key_frames[].overlay_annotations[]</span></td></tr>
-          <tr><td>Coaching paragraph</td><td>Claude Sonnet</td><td><span class="example">coaching.summary_paragraph</span></td></tr>
-          <tr><td>Per-issue cue + drill</td><td>Claude Sonnet</td><td><span class="example">coaching.issues[].cue + .drill</span></td></tr>
-          <tr><td>History context callout</td><td>Claude Sonnet</td><td><span class="example">coaching.issues[].context_from_history</span></td></tr>
-          <tr><td>Weight recommendation chip</td><td>Claude Sonnet</td><td><span class="example">progression.recommendation + suggested_weight_kg</span></td></tr>
-          <tr><td>Score trend chart</td><td>Claude Sonnet</td><td><span class="example">history_context.weight_progression[]</span></td></tr>
+          <tr>
+            <th style="width:32%">UI Element</th>
+            <th style="width:26%">Data Source</th>
+            <th style="width:28%">Field</th>
+            <th style="width:14%">Build</th>
+          </tr>
+
+          <!-- A: Session Context -->
+          <tr>
+            <td colspan="4" style="background:#0d1117;padding:6px 8px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:0.7px;color:#3b82f6;border-left:2px solid #3b82f6;">A — Session Context Row</td>
+          </tr>
+          <tr>
+            <td>Exercise Name</td>
+            <td>form_sessions → exercises</td>
+            <td><span class="example">exercise_id FK → exercises.display_name</span></td>
+            <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#0a1f12;color:#4ade80;border:1px solid #14532d;">W6</span></td>
+          </tr>
+          <tr>
+            <td>Date</td>
+            <td>form_sessions</td>
+            <td><span class="example">created_at</span></td>
+            <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#0a1f12;color:#4ade80;border:1px solid #14532d;">W6</span></td>
+          </tr>
+          <tr>
+            <td>Weight</td>
+            <td>form_sessions</td>
+            <td><span class="example">weight_value + weight_unit</span></td>
+            <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#0a1f12;color:#4ade80;border:1px solid #14532d;">W6</span></td>
+          </tr>
+
+          <!-- B: Visual Proof -->
+          <tr>
+            <td colspan="4" style="background:#0d1117;padding:6px 8px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:0.7px;color:#a855f7;border-left:2px solid #a855f7;">B — Visual Proof</td>
+          </tr>
+          <tr>
+            <td>Annotated image — user's worst rep at bottom position, with joint angle overlays drawn on their own body</td>
+            <td>OpenCV Step 5b → form_analysis_results</td>
+            <td><span class="example">annotated_frame_url</span></td>
+            <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#0d1a2e;color:#60a5fa;border:1px solid #1e3a5f;">W6 dummy / W7 real</span></td>
+          </tr>
+
+          <!-- C: Overall Score -->
+          <tr>
+            <td colspan="4" style="background:#0d1117;padding:6px 8px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:0.7px;color:#22c55e;border-left:2px solid #22c55e;">C — Overall Score</td>
+          </tr>
+          <tr>
+            <td>Form score /100</td>
+            <td>Nemotron</td>
+            <td><span class="example">summary.overall_form_score</span></td>
+            <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#0d1a2e;color:#60a5fa;border:1px solid #1e3a5f;">W6 dummy / W7 real</span></td>
+          </tr>
+
+          <!-- D: Personalised Summary -->
+          <tr>
+            <td colspan="4" style="background:#0d1117;padding:6px 8px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:0.7px;color:#f97316;border-left:2px solid #f97316;">D — Personalised Summary</td>
+          </tr>
+          <tr>
+            <td>1–2 sentence summary combining form quality + weight lifted<br><span style="font-size:9px;color:#475569;">e.g. "At 12kg your posture holds well across all reps, but your ankle dorsiflexion limits your depth from rep 5 onwards."</span></td>
+            <td>Claude Sonnet</td>
+            <td><span class="example">coaching.summary_paragraph</span></td>
+            <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#0d1a2e;color:#60a5fa;border:1px solid #1e3a5f;">W7</span></td>
+          </tr>
+
+          <!-- E: 4 Parameters -->
+          <tr>
+            <td colspan="4" style="background:#0d1117;padding:6px 8px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:0.7px;color:#f59e0b;border-left:2px solid #f59e0b;">E — 4 Parameters · Posture · Stability · Movement Quality · Tempo</td>
+          </tr>
+
+          <!-- Posture -->
+          <tr><td colspan="4" style="padding:4px 8px;font-size:9px;font-weight:700;color:#475569;background:#08090f;">Posture</td></tr>
+          <tr>
+            <td>Score /100</td>
+            <td>Nemotron</td>
+            <td><span class="example">summary.posture_score</span></td>
+            <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#0d1a2e;color:#60a5fa;border:1px solid #1e3a5f;">W7</span></td>
+          </tr>
+          <tr>
+            <td>What they're doing well — sentence affirmation</td>
+            <td>Claude Sonnet</td>
+            <td><span class="example">coaching.parameters.posture.affirmation</span> <span style="font-size:9px;color:#f59e0b;">⚠ field to add</span></td>
+            <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#1a1000;color:#fbbf24;border:1px solid #92400e;">iterate W7/8</span></td>
+          </tr>
+          <tr>
+            <td>What's off — specific observation</td>
+            <td>Claude Sonnet</td>
+            <td><span class="example">coaching.parameters.posture.observation</span> <span style="font-size:9px;color:#f59e0b;">⚠ field to add</span></td>
+            <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#1a1000;color:#fbbf24;border:1px solid #92400e;">iterate W7/8</span></td>
+          </tr>
+          <tr>
+            <td>Action — 1 concrete correction</td>
+            <td>Claude Sonnet</td>
+            <td><span class="example">coaching.parameters.posture.correction</span> <span style="font-size:9px;color:#f59e0b;">⚠ field to add</span></td>
+            <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#0d1a2e;color:#60a5fa;border:1px solid #1e3a5f;">W7</span></td>
+          </tr>
+
+          <!-- Stability -->
+          <tr><td colspan="4" style="padding:4px 8px;font-size:9px;font-weight:700;color:#475569;background:#08090f;">Stability</td></tr>
+          <tr>
+            <td>Score /100</td>
+            <td>Nemotron</td>
+            <td><span class="example">summary.stability_score</span></td>
+            <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#0d1a2e;color:#60a5fa;border:1px solid #1e3a5f;">W7</span></td>
+          </tr>
+          <tr>
+            <td>What they're doing well — sentence affirmation</td>
+            <td>Claude Sonnet</td>
+            <td><span class="example">coaching.parameters.stability.affirmation</span> <span style="font-size:9px;color:#f59e0b;">⚠ field to add</span></td>
+            <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#1a1000;color:#fbbf24;border:1px solid #92400e;">iterate W7/8</span></td>
+          </tr>
+          <tr>
+            <td>What's off — specific observation</td>
+            <td>Claude Sonnet</td>
+            <td><span class="example">coaching.parameters.stability.observation</span> <span style="font-size:9px;color:#f59e0b;">⚠ field to add</span></td>
+            <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#1a1000;color:#fbbf24;border:1px solid #92400e;">iterate W7/8</span></td>
+          </tr>
+          <tr>
+            <td>Action — 1 concrete correction</td>
+            <td>Claude Sonnet</td>
+            <td><span class="example">coaching.parameters.stability.correction</span> <span style="font-size:9px;color:#f59e0b;">⚠ field to add</span></td>
+            <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#0d1a2e;color:#60a5fa;border:1px solid #1e3a5f;">W7</span></td>
+          </tr>
+
+          <!-- Movement Quality -->
+          <tr><td colspan="4" style="padding:4px 8px;font-size:9px;font-weight:700;color:#475569;background:#08090f;">Movement Quality</td></tr>
+          <tr>
+            <td>Score /100</td>
+            <td>Nemotron</td>
+            <td><span class="example">summary.movement_quality_score</span></td>
+            <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#0d1a2e;color:#60a5fa;border:1px solid #1e3a5f;">W7</span></td>
+          </tr>
+          <tr>
+            <td>What they're doing well — sentence affirmation</td>
+            <td>Claude Sonnet</td>
+            <td><span class="example">coaching.parameters.movement_quality.affirmation</span> <span style="font-size:9px;color:#f59e0b;">⚠ field to add</span></td>
+            <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#1a1000;color:#fbbf24;border:1px solid #92400e;">iterate W7/8</span></td>
+          </tr>
+          <tr>
+            <td>What's off — specific observation</td>
+            <td>Claude Sonnet</td>
+            <td><span class="example">coaching.parameters.movement_quality.observation</span> <span style="font-size:9px;color:#f59e0b;">⚠ field to add</span></td>
+            <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#1a1000;color:#fbbf24;border:1px solid #92400e;">iterate W7/8</span></td>
+          </tr>
+          <tr>
+            <td>Action — 1 concrete correction</td>
+            <td>Claude Sonnet</td>
+            <td><span class="example">coaching.parameters.movement_quality.correction</span> <span style="font-size:9px;color:#f59e0b;">⚠ field to add</span></td>
+            <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#0d1a2e;color:#60a5fa;border:1px solid #1e3a5f;">W7</span></td>
+          </tr>
+
+          <!-- Tempo -->
+          <tr><td colspan="4" style="padding:4px 8px;font-size:9px;font-weight:700;color:#475569;background:#08090f;">Tempo</td></tr>
+          <tr>
+            <td>Score /100</td>
+            <td>Biomechanics script → Nemotron</td>
+            <td><span class="example">summary.tempo_score</span> <span style="font-size:9px;color:#f59e0b;">⚠ field to add to Nemotron schema — derived from biomechanics tempo_data</span></td>
+            <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#0d1a2e;color:#60a5fa;border:1px solid #1e3a5f;">W7</span></td>
+          </tr>
+          <tr>
+            <td>What they're doing well — sentence affirmation</td>
+            <td>Claude Sonnet</td>
+            <td><span class="example">coaching.parameters.tempo.affirmation</span> <span style="font-size:9px;color:#f59e0b;">⚠ field to add</span></td>
+            <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#1a1000;color:#fbbf24;border:1px solid #92400e;">iterate W7/8</span></td>
+          </tr>
+          <tr>
+            <td>What's off — specific observation</td>
+            <td>Claude Sonnet</td>
+            <td><span class="example">coaching.parameters.tempo.observation</span> <span style="font-size:9px;color:#f59e0b;">⚠ field to add</span></td>
+            <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#1a1000;color:#fbbf24;border:1px solid #92400e;">iterate W7/8</span></td>
+          </tr>
+          <tr>
+            <td>Action — 1 concrete correction</td>
+            <td>Claude Sonnet</td>
+            <td><span class="example">coaching.parameters.tempo.correction</span> <span style="font-size:9px;color:#f59e0b;">⚠ field to add</span></td>
+            <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#0d1a2e;color:#60a5fa;border:1px solid #1e3a5f;">W7</span></td>
+          </tr>
+
+          <!-- F: Rep-by-rep chart -->
+          <tr>
+            <td colspan="4" style="background:#0d1117;padding:6px 8px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:0.7px;color:#ec4899;border-left:2px solid #ec4899;">F — Rep-by-Rep Score Chart (x: rep number · y: form score /100)</td>
+          </tr>
+          <tr>
+            <td>Rep number (x-axis)</td>
+            <td>Nemotron</td>
+            <td><span class="example">reps[n].rep_number</span></td>
+            <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#0d1a2e;color:#60a5fa;border:1px solid #1e3a5f;">W7</span></td>
+          </tr>
+          <tr>
+            <td>Form score per rep (y-axis)</td>
+            <td>Nemotron</td>
+            <td><span class="example">reps[n].form_score</span></td>
+            <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#0d1a2e;color:#60a5fa;border:1px solid #1e3a5f;">W7</span></td>
+          </tr>
+
         </table>
-      </div>
-      <div class="sub-section">
-        <div class="sub-label">Frame Snapshot Cards — How Overlays Work</div>
-        <div class="frame-grid">
-          <div class="frame-card">
-            <div class="frame-thumb">🎬 Rep 3 · 8.4s · Ascent</div>
-            <div class="frame-badge fb-issue">Knee Valgus — Moderate</div>
-            <div class="frame-meta">Angle arc drawn on knee_left<br>Arrow: "Knee caving inward"<br>Joint highlight: red dot</div>
-          </div>
-          <div class="frame-card">
-            <div class="frame-thumb">🎬 Rep 1 · 2.5s · Bottom</div>
-            <div class="frame-badge fb-ok">Good Form</div>
-            <div class="frame-meta">No issue overlay<br>Label: "Depth achieved ✓"<br>Joint highlight: green dot</div>
-          </div>
-          <div class="frame-card">
-            <div class="frame-thumb">🎬 Rep 8 · 31.2s · Ascent</div>
-            <div class="frame-badge fb-issue">Torso Lean — Low</div>
-            <div class="frame-meta">Angle arc on torso<br>Arrow: "Leaning forward"<br>severity_score: 28 → yellow</div>
-          </div>
+
+        <div style="margin-top:10px;background:#141000;border:1px solid #92400e;border-radius:6px;padding:10px 12px;font-size:10px;color:#fcd34d;line-height:1.7;">
+          <strong style="color:#fbbf24;">Schema additions needed before W7 build:</strong>
+          (1) Add <code style="background:#1a1000;padding:1px 4px;border-radius:3px;">summary.tempo_score</code> to Nemotron output — derived from biomechanics <code style="background:#1a1000;padding:1px 4px;border-radius:3px;">tempo_data</code>.
+          (2) Add <code style="background:#1a1000;padding:1px 4px;border-radius:3px;">coaching.parameters</code> block to Claude Sonnet output — keyed by posture / stability / movement_quality / tempo, each with affirmation, observation, correction fields. The affirmation and observation sub-fields are W7/8 iteration — correction is required at W7.
+          <code style="background:#1a1000;padding:1px 4px;border-radius:3px;">tempo_score</code> is now confirmed in Nemotron output schema (Step 5).
         </div>
-        <div style="font-size:10px;color:#475569;margin-top:8px;">Frontend renders overlays from <code style="color:#93c5fd">overlay_annotations[]</code> using Canvas API, or displays pre-rendered <code style="color:#93c5fd">annotated_frame_url</code> from S3. Toggle allows user to show/hide angle numbers.</div>
       </div>
       <div class="sub-section">
         <div class="sub-label">Roadmap Task IDs</div>
@@ -1470,6 +1638,252 @@ h1 { font-size:20px; font-weight:700; color:#f8fafc; }
           <div class="task-map-row"><span class="task-map-role role-tests">Tests E2E</span><span class="tid tid-tst">TST-W10-01</span><span style="font-size:10px;color:#475569;">E2E UAT — real users, full flow, all launch criteria</span></div>
         </div>
       </div>
+    </div>
+  </div>
+
+  <div class="connector"><span>↓</span></div>
+
+  <div class="step frontend output">
+    <div class="step-header">
+      <div class="step-num">8b</div>
+      <div class="step-icon">🔀</div>
+      <div><div class="step-title">Frontend — Form Comparison</div><div class="step-squad">Squad 1 — Frontend</div></div>
+    </div>
+    <div class="step-body">
+
+      <div class="sub-section">
+        <div class="sub-label">How comparison_coaching Is Generated</div>
+        <div style="background:#080c12;border:1px solid #1e2433;border-radius:8px;padding:14px 16px;display:flex;flex-direction:column;gap:10px;">
+
+          <div style="display:flex;gap:10px;align-items:baseline;">
+            <div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:0.5px;color:#475569;flex-shrink:0;width:72px;">Trigger</div>
+            <div style="font-size:11px;color:#94a3b8;line-height:1.6;">Async background task spawned immediately after Claude Sonnet completes the main coaching output (Step 7). Runs in parallel with <code style="color:#c4b5fd;background:#150d24;padding:1px 4px;border-radius:3px;">analysis_complete</code> — does not block 8a from loading. Only runs if a previous completed analysis exists for the same <code style="color:#c4b5fd;background:#150d24;padding:1px 4px;border-radius:3px;">exercise_id</code> + <code style="color:#c4b5fd;background:#150d24;padding:1px 4px;border-radius:3px;">user_id</code>.</div>
+          </div>
+
+          <div style="display:flex;gap:10px;align-items:baseline;">
+            <div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:0.5px;color:#475569;flex-shrink:0;width:72px;">Claude Inputs</div>
+            <div style="font-size:11px;color:#94a3b8;line-height:1.6;">
+              <strong style="color:#f1f5f9;">Current analysis:</strong> full Nemotron output JSON — overall score, per-parameter scores (posture / stability / movement_quality / tempo), rep-level form scores, issues.<br>
+              <strong style="color:#f1f5f9;">Previous analysis:</strong> stored form data from DB — overall score, per-parameter scores, rep-level scores, parameter verdicts.<br>
+              <strong style="color:#f1f5f9;">User history context:</strong> same <code style="color:#c4b5fd;background:#150d24;padding:1px 4px;border-radius:3px;">history_context</code> passed to Claude in Step 7 — trends across sessions, weight progression.
+            </div>
+          </div>
+
+          <div style="display:flex;gap:10px;align-items:baseline;">
+            <div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:0.5px;color:#475569;flex-shrink:0;width:72px;">Claude Output</div>
+            <div style="font-size:11px;color:#94a3b8;line-height:1.6;"><code style="color:#c4b5fd;background:#150d24;padding:1px 4px;border-radius:3px;">comparison_coaching</code> block — <code style="color:#c4b5fd;background:#150d24;padding:1px 4px;border-radius:3px;">summary_paragraph</code> + <code style="color:#c4b5fd;background:#150d24;padding:1px 4px;border-radius:3px;">parameters.[posture|stability|movement_quality|tempo].observation_action</code></div>
+          </div>
+
+          <div style="display:flex;gap:10px;align-items:baseline;">
+            <div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:0.5px;color:#475569;flex-shrink:0;width:72px;">DB Write</div>
+            <div style="font-size:11px;color:#94a3b8;line-height:1.6;">UPDATE <code style="color:#c4b5fd;background:#150d24;padding:1px 4px;border-radius:3px;">form_analysis_results</code> — writes <code style="color:#c4b5fd;background:#150d24;padding:1px 4px;border-radius:3px;">comparison_coaching_output</code> (jsonb) on the current analysis row.</div>
+          </div>
+
+          <div style="display:flex;gap:10px;align-items:baseline;">
+            <div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:0.5px;color:#475569;flex-shrink:0;width:72px;">SSE Event</div>
+            <div style="font-size:11px;color:#94a3b8;line-height:1.6;"><span class="sse-pill">comparison_ready → { analysis_id, session_id, user_id }</span> — fires when comparison_coaching_output is written. Frontend listens and enables the Form Comparison tab on receipt.</div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="sub-section">
+        <div class="sub-label">Data Prerequisite — How "Previous Analysis" Is Resolved</div>
+        <div style="background:#080c12;border:1px solid #1e2433;border-radius:8px;padding:10px 14px;font-size:11px;color:#94a3b8;line-height:1.7;">
+          The right-side (previous) analysis is the most recent completed analysis for the same <code style="color:#c4b5fd;background:#150d24;padding:1px 4px;border-radius:3px;">exercise_id</code> and <code style="color:#c4b5fd;background:#150d24;padding:1px 4px;border-radius:3px;">user_id</code>, where <code style="color:#c4b5fd;background:#150d24;padding:1px 4px;border-radius:3px;">created_at &lt; current created_at</code> and <code style="color:#c4b5fd;background:#150d24;padding:1px 4px;border-radius:3px;">status = complete</code>. Resolved by backend at the time the comparison screen is loaded — not stored as a foreign key.
+        </div>
+      </div>
+
+      <div class="sub-section">
+        <div class="sub-label">What the User Sees — Screen Layout &amp; Data Fields</div>
+        <table class="db-table">
+          <tr>
+            <th style="width:32%">UI Element</th>
+            <th style="width:26%">Data Source</th>
+            <th style="width:28%">Field</th>
+            <th style="width:14%">Build</th>
+          </tr>
+
+          <!-- A: Exercise Name -->
+          <tr>
+            <td colspan="4" style="background:#0d1117;padding:6px 8px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:0.7px;color:#3b82f6;border-left:2px solid #3b82f6;">A — Exercise Name</td>
+          </tr>
+          <tr>
+            <td>Exercise Name (from Upload Screen selection)</td>
+            <td>form_sessions → exercises</td>
+            <td><span class="example">exercise_id FK → exercises.display_name</span></td>
+            <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#0d1a2e;color:#60a5fa;border:1px solid #1e3a5f;">W7</span></td>
+          </tr>
+
+          <!-- B: Left Side (Current) -->
+          <tr>
+            <td colspan="4" style="background:#0d1117;padding:6px 8px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:0.7px;color:#22c55e;border-left:2px solid #22c55e;">B — Left Side · Current Analysis</td>
+          </tr>
+          <tr>
+            <td>Date</td>
+            <td>form_sessions (current analysis_id)</td>
+            <td><span class="example">created_at</span></td>
+            <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#0d1a2e;color:#60a5fa;border:1px solid #1e3a5f;">W7</span></td>
+          </tr>
+          <tr>
+            <td>Weight (number + unit)</td>
+            <td>form_sessions (current analysis_id)</td>
+            <td><span class="example">weight_value + weight_unit</span></td>
+            <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#0d1a2e;color:#60a5fa;border:1px solid #1e3a5f;">W7</span></td>
+          </tr>
+          <tr>
+            <td>Visual Proof — annotated image with joint angles</td>
+            <td>OpenCV → form_analysis_results (current analysis_id)</td>
+            <td><span class="example">annotated_frame_url</span></td>
+            <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#0d1a2e;color:#60a5fa;border:1px solid #1e3a5f;">W7</span></td>
+          </tr>
+          <tr>
+            <td>Form Score /100</td>
+            <td>Nemotron output (current analysis_id)</td>
+            <td><span class="example">summary.overall_form_score</span></td>
+            <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#0d1a2e;color:#60a5fa;border:1px solid #1e3a5f;">W7</span></td>
+          </tr>
+
+          <!-- C: Right Side (Previous) -->
+          <tr>
+            <td colspan="4" style="background:#0d1117;padding:6px 8px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:0.7px;color:#f97316;border-left:2px solid #f97316;">C — Right Side · Previous Analysis (same exercise, most recent before current)</td>
+          </tr>
+          <tr>
+            <td>Date</td>
+            <td>form_sessions (previous analysis_id)</td>
+            <td><span class="example">created_at</span></td>
+            <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#0d1a2e;color:#60a5fa;border:1px solid #1e3a5f;">W7</span></td>
+          </tr>
+          <tr>
+            <td>Weight (number + unit)</td>
+            <td>form_sessions (previous analysis_id)</td>
+            <td><span class="example">weight_value + weight_unit</span></td>
+            <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#0d1a2e;color:#60a5fa;border:1px solid #1e3a5f;">W7</span></td>
+          </tr>
+          <tr>
+            <td>Visual Proof — annotated image with joint angles</td>
+            <td>DB — form_analysis_results (previous analysis_id)</td>
+            <td><span class="example">annotated_frame_url</span></td>
+            <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#0d1a2e;color:#60a5fa;border:1px solid #1e3a5f;">W7</span></td>
+          </tr>
+          <tr>
+            <td>Form Score /100</td>
+            <td>Claude Sonnet output</td>
+            <td><span class="example">summary.overall_form_score</span> — echoed from previous analysis stored in DB; passed to Claude as input and returned in comparison_coaching</td>
+            <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#0d1a2e;color:#60a5fa;border:1px solid #1e3a5f;">W7</span></td>
+          </tr>
+
+          <!-- D: Personalised Summary -->
+          <tr>
+            <td colspan="4" style="background:#0d1117;padding:6px 8px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:0.7px;color:#a855f7;border-left:2px solid #a855f7;">D — Personalised Comparison Summary</td>
+          </tr>
+          <tr>
+            <td>1–2 sentence comparison summary — what changed between sessions</td>
+            <td>Claude Sonnet</td>
+            <td><span class="example">comparison_coaching.summary_paragraph</span> <span style="font-size:9px;color:#f59e0b;">⚠ new Claude output field</span></td>
+            <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#0d1a2e;color:#60a5fa;border:1px solid #1e3a5f;">W7</span></td>
+          </tr>
+
+          <!-- E: 4 Parameters -->
+          <tr>
+            <td colspan="4" style="background:#0d1117;padding:6px 8px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:0.7px;color:#f59e0b;border-left:2px solid #f59e0b;">E — 4 Parameters · Posture · Stability · Movement Quality · Tempo</td>
+          </tr>
+
+          <!-- Posture -->
+          <tr><td colspan="4" style="padding:4px 8px;font-size:9px;font-weight:700;color:#475569;background:#08090f;">Posture</td></tr>
+          <tr>
+            <td>Score /100 — current analysis<br><span style="font-size:9px;color:#475569;">Variance vs previous shown inline e.g. 73 <span style="color:#4ade80;">+6</span></span></td>
+            <td>Nemotron output (current) · DB — form_analysis_results (previous)</td>
+            <td><span class="example">summary.posture_score</span> (both analysis_ids)<br><span style="font-size:9px;color:#475569;">Variance: calculated frontend — current minus previous</span></td>
+            <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#0d1a2e;color:#60a5fa;border:1px solid #1e3a5f;">W7</span></td>
+          </tr>
+          <tr>
+            <td>1–2 sentence observation + action verdict</td>
+            <td>Claude Sonnet</td>
+            <td><span class="example">comparison_coaching.parameters.posture.observation_action</span> <span style="font-size:9px;color:#f59e0b;">⚠ new field</span></td>
+            <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#0d1a2e;color:#60a5fa;border:1px solid #1e3a5f;">W7</span></td>
+          </tr>
+
+          <!-- Stability -->
+          <tr><td colspan="4" style="padding:4px 8px;font-size:9px;font-weight:700;color:#475569;background:#08090f;">Stability</td></tr>
+          <tr>
+            <td>Score /100 — current analysis<br><span style="font-size:9px;color:#475569;">Variance vs previous shown inline</span></td>
+            <td>Nemotron output (current) · DB — form_analysis_results (previous)</td>
+            <td><span class="example">summary.stability_score</span> (both analysis_ids)<br><span style="font-size:9px;color:#475569;">Variance: calculated frontend — current minus previous</span></td>
+            <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#0d1a2e;color:#60a5fa;border:1px solid #1e3a5f;">W7</span></td>
+          </tr>
+          <tr>
+            <td>1–2 sentence observation + action verdict</td>
+            <td>Claude Sonnet</td>
+            <td><span class="example">comparison_coaching.parameters.stability.observation_action</span> <span style="font-size:9px;color:#f59e0b;">⚠ new field</span></td>
+            <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#0d1a2e;color:#60a5fa;border:1px solid #1e3a5f;">W7</span></td>
+          </tr>
+
+          <!-- Movement Quality -->
+          <tr><td colspan="4" style="padding:4px 8px;font-size:9px;font-weight:700;color:#475569;background:#08090f;">Movement Quality</td></tr>
+          <tr>
+            <td>Score /100 — current analysis<br><span style="font-size:9px;color:#475569;">Variance vs previous shown inline</span></td>
+            <td>Nemotron output (current) · DB — form_analysis_results (previous)</td>
+            <td><span class="example">summary.movement_quality_score</span> (both analysis_ids)<br><span style="font-size:9px;color:#475569;">Variance: calculated frontend — current minus previous</span></td>
+            <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#0d1a2e;color:#60a5fa;border:1px solid #1e3a5f;">W7</span></td>
+          </tr>
+          <tr>
+            <td>1–2 sentence observation + action verdict</td>
+            <td>Claude Sonnet</td>
+            <td><span class="example">comparison_coaching.parameters.movement_quality.observation_action</span> <span style="font-size:9px;color:#f59e0b;">⚠ new field</span></td>
+            <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#0d1a2e;color:#60a5fa;border:1px solid #1e3a5f;">W7</span></td>
+          </tr>
+
+          <!-- Tempo -->
+          <tr><td colspan="4" style="padding:4px 8px;font-size:9px;font-weight:700;color:#475569;background:#08090f;">Tempo</td></tr>
+          <tr>
+            <td>Score /100 — current analysis<br><span style="font-size:9px;color:#475569;">Variance vs previous shown inline</span></td>
+            <td>Nemotron output (current) · DB — form_analysis_results (previous)</td>
+            <td><span class="example">summary.tempo_score</span> (both analysis_ids)<br><span style="font-size:9px;color:#475569;">Variance: calculated frontend — current minus previous</span></td>
+            <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#0d1a2e;color:#60a5fa;border:1px solid #1e3a5f;">W7</span></td>
+          </tr>
+          <tr>
+            <td>1–2 sentence observation + action verdict</td>
+            <td>Claude Sonnet</td>
+            <td><span class="example">comparison_coaching.parameters.tempo.observation_action</span> <span style="font-size:9px;color:#f59e0b;">⚠ new field</span></td>
+            <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#0d1a2e;color:#60a5fa;border:1px solid #1e3a5f;">W7</span></td>
+          </tr>
+
+          <!-- F: Rep-by-rep chart -->
+          <tr>
+            <td colspan="4" style="background:#0d1117;padding:6px 8px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:0.7px;color:#ec4899;border-left:2px solid #ec4899;">F — Rep-by-Rep Score Chart · Current vs Previous overlaid (x: rep number · y: form score /100)</td>
+          </tr>
+          <tr>
+            <td>Current analysis rep scores (plotted as one line)</td>
+            <td>DB — form_analysis_results (current analysis_id)</td>
+            <td><span class="example">reps[n].rep_number · reps[n].form_score</span></td>
+            <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#0d1a2e;color:#60a5fa;border:1px solid #1e3a5f;">W7</span></td>
+          </tr>
+          <tr>
+            <td>Previous analysis rep scores (plotted as second line)</td>
+            <td>DB — form_analysis_results (previous analysis_id)</td>
+            <td><span class="example">reps[n].rep_number · reps[n].form_score</span></td>
+            <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#0d1a2e;color:#60a5fa;border:1px solid #1e3a5f;">W7</span></td>
+          </tr>
+          <tr>
+            <td>Performance Over Reps % — aggregate improvement across all reps<br>
+              <span style="font-size:9px;color:#475569;">Formula: (Σ current reps form_score − Σ previous reps form_score) ÷ Σ previous reps form_score × 100</span><br>
+              <span style="font-size:9px;color:#475569;">Calculated frontend. Displayed as e.g. <span style="color:#4ade80;">+8.3%</span> or <span style="color:#f87171;">−2.1%</span></span>
+            </td>
+            <td>DB — form_analysis_results (both analysis_ids)</td>
+            <td><span class="example">reps[n].form_score</span> (both) — summed and divided frontend</td>
+            <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#0d1a2e;color:#60a5fa;border:1px solid #1e3a5f;">W7</span></td>
+          </tr>
+
+        </table>
+
+        <div style="margin-top:10px;background:#141000;border:1px solid #92400e;border-radius:6px;padding:10px 12px;font-size:10px;color:#fcd34d;line-height:1.7;">
+          <strong style="color:#fbbf24;">Schema additions needed before W7 build:</strong>
+          (1) <code style="background:#1a1000;padding:1px 4px;border-radius:3px;">comparison_coaching</code> is a new top-level block in the Claude Sonnet output — generated when Claude receives both current + previous Nemotron outputs. Requires a new or extended prompt. Fields: <code style="background:#1a1000;padding:1px 4px;border-radius:3px;">summary_paragraph</code> + <code style="background:#1a1000;padding:1px 4px;border-radius:3px;">parameters.[posture|stability|movement_quality|tempo].observation_action</code>.
+          (2) <code style="background:#1a1000;padding:1px 4px;border-radius:3px;">summary.tempo_score</code> must be added to Nemotron output (same requirement as 8a) — needed for both the current and previous analysis comparisons.
+        </div>
+      </div>
+
     </div>
   </div>
 
