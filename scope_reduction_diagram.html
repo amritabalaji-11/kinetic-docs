@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kinetic — Scope Reduction · Original vs Revised</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0a0d14; color: #e2e8f0; padding: 40px; max-width: 1200px; margin: 0 auto; }
+
+h1 { font-size: 22px; font-weight: 800; color: #f8fafc; letter-spacing: -0.5px; }
+.subtitle { font-size: 13px; color: #64748b; margin-top: 4px; margin-bottom: 32px; }
+
+/* Section */
+.section { margin-bottom: 52px; }
+.section-label {
+  font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px;
+  color: #475569; margin-bottom: 16px; display: flex; align-items: center; gap: 12px;
+}
+.section-label::after { content: ''; flex: 1; height: 1px; background: #1e2433; }
+.section-title { font-size: 16px; font-weight: 800; color: #f1f5f9; margin-bottom: 6px; }
+
+/* Legend */
+.legend { display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 28px; }
+.legend-item { display: flex; align-items: center; gap: 7px; font-size: 11px; color: #94a3b8; }
+.legend-dot { width: 12px; height: 12px; border-radius: 3px; flex-shrink: 0; }
+.ld-keep    { background: #14532d; border: 1px solid #22c55e; }
+.ld-simple  { background: #78350f; border: 1px solid #f59e0b; }
+.ld-remove  { background: #450a0a; border: 1px solid #ef4444; }
+.ld-new     { background: #1a0d2e; border: 1px solid #a78bfa; }
+.ld-same    { background: #0d1a2e; border: 1px solid #3b82f6; }
+
+/* Diagram grid */
+.diagram-grid {
+  display: grid;
+  grid-template-columns: 140px 1fr 60px 1fr;
+  gap: 0;
+  align-items: stretch;
+}
+
+/* Layer label */
+.layer-label {
+  display: flex; align-items: center; justify-content: flex-end;
+  padding: 0 14px 0 0; font-size: 9px; font-weight: 800;
+  text-transform: uppercase; letter-spacing: 0.6px; color: #334155;
+  text-align: right; border-right: 1px solid #1e2433;
+}
+
+/* Column headers */
+.col-header {
+  text-align: center; font-size: 11px; font-weight: 800;
+  padding: 10px 14px 14px; letter-spacing: 0.3px;
+}
+.col-original { color: #60a5fa; }
+.col-revised  { color: #4ade80; }
+.col-arrow { display: flex; align-items: center; justify-content: center; color: #1e2433; font-size: 18px; }
+
+/* Layer row */
+.layer-row {
+  display: contents;
+}
+
+/* Component cell */
+.comp-cell {
+  padding: 10px 12px;
+  border: 1px solid #1e2433;
+  margin: 3px;
+  border-radius: 0;
+}
+.comp-cell:first-of-type { border-radius: 8px 0 0 8px; }
+
+/* Individual component box */
+.comp-box {
+  display: flex; flex-direction: column; gap: 8px; height: 100%;
+}
+.comp-row { display: flex; flex-wrap: wrap; gap: 6px; }
+
+/* Component chip */
+.chip {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 10px; font-weight: 700; padding: 4px 10px;
+  border-radius: 6px; white-space: nowrap;
+}
+.chip-keep   { background: #0a1f12; border: 1px solid #22c55e; color: #86efac; }
+.chip-simple { background: #1c1000; border: 1px solid #f59e0b; color: #fde68a; }
+.chip-remove { background: #150505; border: 1px solid #ef4444; color: #fca5a5; text-decoration: line-through; opacity: 0.7; }
+.chip-new    { background: #1a0d2e; border: 1px solid #a78bfa; color: #c4b5fd; }
+.chip-same   { background: #0d1a2e; border: 1px solid #3b82f6; color: #93c5fd; }
+.chip-note   { font-size: 9px; font-weight: 400; color: #475569; font-style: italic; }
+
+/* Arrow cell */
+.arrow-cell {
+  display: flex; align-items: center; justify-content: center;
+  color: #334155; font-size: 16px; padding: 4px;
+}
+
+/* Cell backgrounds by status */
+.cell-original { background: #080c14; }
+.cell-revised  { background: #080d0a; }
+.cell-neutral  { background: #080a0e; }
+
+/* Pipe connector */
+.pipe-connector {
+  display: flex; align-items: center; justify-content: center;
+  color: #1e2433; font-size: 20px; grid-column: 1 / -1;
+  padding: 2px 0;
+}
+
+/* ── Feature table ── */
+.feat-table { width: 100%; border-collapse: collapse; }
+.feat-table th {
+  padding: 10px 14px; text-align: left; font-size: 9px; font-weight: 800;
+  text-transform: uppercase; letter-spacing: 0.6px; color: #475569;
+  background: #0d1117; border-bottom: 2px solid #1e2433;
+}
+.feat-table td {
+  padding: 12px 14px; border-bottom: 1px solid #0d1117;
+  font-size: 11px; color: #94a3b8; vertical-align: top; line-height: 1.6;
+}
+.feat-table tr:nth-child(even) td { background: #080c12; }
+.feat-table tr:hover td { background: #0d1117; }
+
+.status-keep    { display: inline-block; font-size: 9px; font-weight: 700; padding: 2px 8px; border-radius: 10px; background: #0a1f12; color: #4ade80; border: 1px solid #14532d; white-space: nowrap; }
+.status-simple  { display: inline-block; font-size: 9px; font-weight: 700; padding: 2px 8px; border-radius: 10px; background: #1c1000; color: #fbbf24; border: 1px solid #78350f; white-space: nowrap; }
+.status-drop    { display: inline-block; font-size: 9px; font-weight: 700; padding: 2px 8px; border-radius: 10px; background: #150505; color: #f87171; border: 1px solid #7f1d1d; white-space: nowrap; }
+.status-new     { display: inline-block; font-size: 9px; font-weight: 700; padding: 2px 8px; border-radius: 10px; background: #1a0d2e; color: #c4b5fd; border: 1px solid #5b21b6; white-space: nowrap; }
+.status-defer   { display: inline-block; font-size: 9px; font-weight: 700; padding: 2px 8px; border-radius: 10px; background: #0d1117; color: #64748b; border: 1px solid #334155; white-space: nowrap; }
+
+.feat-name { font-weight: 700; color: #f1f5f9; display: block; margin-bottom: 2px; }
+.feat-sub  { font-size: 10px; color: #475569; }
+
+/* Callout */
+.callout {
+  display: flex; gap: 12px; padding: 14px 16px; border-radius: 8px;
+  align-items: flex-start; margin-bottom: 24px;
+}
+.callout-win  { background: #030d06; border: 1px solid #14532d; }
+.callout-icon { font-size: 16px; flex-shrink: 0; }
+.callout-text { font-size: 12px; color: #94a3b8; line-height: 1.7; }
+.callout-text strong { color: #4ade80; }
+</style>
+</head>
+<body>
+
+<h1>Kinetic — Scope Reduction</h1>
+<p class="subtitle">Original tech design vs revised MVP scope &nbsp;·&nbsp; Based on mentor review · May 10, 2026</p>
+
+<!-- LEGEND -->
+<div class="legend">
+  <div class="legend-item"><div class="legend-dot ld-keep"></div> Kept — unchanged</div>
+  <div class="legend-item"><div class="legend-dot ld-simple"></div> Simplified — approach changed</div>
+  <div class="legend-item"><div class="legend-dot ld-remove"></div> Removed from scope</div>
+  <div class="legend-item"><div class="legend-dot ld-new"></div> New addition</div>
+  <div class="legend-item"><div class="legend-dot ld-same"></div> Frontend only / shell</div>
+</div>
+
+<!-- ══════════════════════════════════
+     SECTION 1 — TECH ARCHITECTURE DIAGRAM
+══════════════════════════════════ -->
+<div class="section">
+  <div class="section-label">Section 1 — Architecture comparison</div>
+  <div class="section-title" style="margin-bottom:20px;">Original design vs revised scope — layer by layer</div>
+
+  <div class="diagram-grid">
+
+    <!-- HEADERS -->
+    <div style="padding:0 14px 14px 0;"></div>
+    <div class="col-header col-original">⬤ &nbsp;Original Design</div>
+    <div></div>
+    <div class="col-header col-revised">⬤ &nbsp;Revised MVP Scope</div>
+
+    <!-- ── LAYER: FRONTEND ── -->
+    <div class="layer-label" style="padding-top:10px;padding-bottom:10px;">Frontend</div>
+    <div class="comp-cell cell-original">
+      <div class="comp-row">
+        <span class="chip chip-keep">React + Tailwind</span>
+        <span class="chip chip-keep">Vercel</span>
+        <span class="chip chip-keep">SSE client</span>
+        <span class="chip chip-keep">Upload screen</span>
+        <span class="chip chip-keep">Results screen</span>
+        <span class="chip chip-keep">Dashboard</span>
+        <span class="chip chip-keep">History</span>
+        <span class="chip chip-keep">Auth screens</span>
+        <span class="chip chip-keep">Profile screen</span>
+        <span class="chip chip-keep">Workout Logger</span>
+      </div>
+    </div>
+    <div class="arrow-cell">→</div>
+    <div class="comp-cell cell-revised">
+      <div class="comp-row">
+        <span class="chip chip-keep">React + Tailwind</span>
+        <span class="chip chip-keep">Vercel</span>
+        <span class="chip chip-keep">SSE client</span>
+        <span class="chip chip-keep">Upload screen</span>
+        <span class="chip chip-keep">Results screen</span>
+        <span class="chip chip-keep">Dashboard</span>
+        <span class="chip chip-keep">History</span>
+        <span class="chip chip-remove">Auth screens</span>
+        <span class="chip chip-same">Profile screen</span>
+        <span class="chip chip-keep">Workout Logger</span>
+      </div>
+    </div>
+
+    <div class="pipe-connector" style="color:#1e2433;">↓</div>
+
+    <!-- ── LAYER: API ── -->
+    <div class="layer-label">API Layer</div>
+    <div class="comp-cell cell-original">
+      <div class="comp-row">
+        <span class="chip chip-keep">FastAPI · Python</span>
+        <span class="chip chip-keep">Cloud Run</span>
+        <span class="chip chip-keep">API Gateway</span>
+        <span class="chip chip-keep">JWT middleware</span>
+        <span class="chip chip-keep">Supabase Auth</span>
+        <span class="chip chip-keep">SSE stream endpoint</span>
+      </div>
+    </div>
+    <div class="arrow-cell">→</div>
+    <div class="comp-cell cell-revised">
+      <div class="comp-row">
+        <span class="chip chip-keep">FastAPI · Python</span>
+        <span class="chip chip-keep">Cloud Run</span>
+        <span class="chip chip-keep">API Gateway</span>
+        <span class="chip chip-remove">JWT middleware</span>
+        <span class="chip chip-remove">Supabase Auth</span>
+        <span class="chip chip-keep">SSE stream endpoint</span>
+        <span class="chip chip-simple">Hardcoded user IDs (2–3)</span>
+      </div>
+    </div>
+
+    <div class="pipe-connector">↓</div>
+
+    <!-- ── LAYER: VIDEO PROCESSING ── -->
+    <div class="layer-label">Video Processing</div>
+    <div class="comp-cell cell-original">
+      <div class="comp-row">
+        <span class="chip chip-keep">GCS · raw video</span>
+        <span class="chip chip-keep">MediaPipe Pose</span>
+        <span class="chip chip-keep">Visibility quality gate</span>
+        <span class="chip chip-keep">OpenCV overlay video</span>
+        <span class="chip chip-keep">Biomechanics script</span>
+        <span class="chip chip-keep">OpenCV frame extraction</span>
+      </div>
+    </div>
+    <div class="arrow-cell">→</div>
+    <div class="comp-cell cell-revised">
+      <div class="comp-row">
+        <span class="chip chip-keep">GCS · raw video</span>
+        <span class="chip chip-keep">MediaPipe Pose</span>
+        <span class="chip chip-keep">Visibility quality gate</span>
+        <span class="chip chip-keep">OpenCV overlay video</span>
+        <span class="chip chip-keep">Biomechanics script</span>
+        <span class="chip chip-keep">OpenCV frame extraction</span>
+        <span class="chip chip-new">Gold standard DB (3–5 ref videos)</span>
+      </div>
+    </div>
+
+    <div class="pipe-connector">↓</div>
+
+    <!-- ── LAYER: AI PIPELINE ── -->
+    <div class="layer-label">AI Pipeline</div>
+    <div class="comp-cell cell-original">
+      <div class="comp-row">
+        <span class="chip chip-keep">Nemotron 3 Nano Omni</span>
+        <span class="chip chip-keep">Per-rep scoring</span>
+        <span class="chip chip-keep">Claude Sonnet</span>
+        <span class="chip chip-keep">Coaching output</span>
+        <span class="chip chip-keep">Progression recommendation</span>
+      </div>
+    </div>
+    <div class="arrow-cell">→</div>
+    <div class="comp-cell cell-revised">
+      <div class="comp-row">
+        <span class="chip chip-keep">Nemotron 3 Nano Omni</span>
+        <span class="chip chip-keep">Per-rep scoring</span>
+        <span class="chip chip-keep">Claude Sonnet</span>
+        <span class="chip chip-keep">Coaching output</span>
+        <span class="chip chip-keep">Progression recommendation</span>
+      </div>
+      <div style="font-size:10px;color:#475569;margin-top:4px;">No changes — core AI pipeline unchanged</div>
+    </div>
+
+    <div class="pipe-connector">↓</div>
+
+    <!-- ── LAYER: RAG / GROUNDING ── -->
+    <div class="layer-label">RAG · Grounding</div>
+    <div class="comp-cell cell-original">
+      <div class="comp-row">
+        <span class="chip chip-keep">20–30 source documents</span>
+        <span class="chip chip-keep">Vector DB (Pinecone/Weaviate)</span>
+        <span class="chip chip-keep">Embedding model</span>
+        <span class="chip chip-keep">Ingestion pipeline</span>
+        <span class="chip chip-keep">Chunking strategy</span>
+        <span class="chip chip-keep">Retrieval endpoint</span>
+        <span class="chip chip-keep">Metadata filtering</span>
+      </div>
+    </div>
+    <div class="arrow-cell">→</div>
+    <div class="comp-cell cell-revised">
+      <div class="comp-row">
+        <span class="chip chip-simple">5–10 curated documents</span>
+        <span class="chip chip-remove">Vector DB</span>
+        <span class="chip chip-remove">Embedding model</span>
+        <span class="chip chip-remove">Ingestion pipeline</span>
+        <span class="chip chip-remove">Chunking strategy</span>
+        <span class="chip chip-remove">Retrieval endpoint</span>
+        <span class="chip chip-simple">MD files → Claude system prompt</span>
+      </div>
+    </div>
+
+    <div class="pipe-connector">↓</div>
+
+    <!-- ── LAYER: DATA STORAGE ── -->
+    <div class="layer-label">Data Storage</div>
+    <div class="comp-cell cell-original">
+      <div class="comp-row">
+        <span class="chip chip-keep">GCS · videos + frames</span>
+        <span class="chip chip-keep">PostgreSQL (Supabase)</span>
+        <span class="chip chip-keep">users table</span>
+        <span class="chip chip-keep">form_sessions table</span>
+        <span class="chip chip-keep">form_analysis_results table</span>
+        <span class="chip chip-keep">workout_logs table</span>
+        <span class="chip chip-keep">Vector DB index</span>
+      </div>
+    </div>
+    <div class="arrow-cell">→</div>
+    <div class="comp-cell cell-revised">
+      <div class="comp-row">
+        <span class="chip chip-keep">GCS · videos + frames</span>
+        <span class="chip chip-keep">PostgreSQL (Supabase)</span>
+        <span class="chip chip-simple">users table (no auth — 2–3 rows seeded)</span>
+        <span class="chip chip-keep">form_sessions table</span>
+        <span class="chip chip-keep">form_analysis_results table</span>
+        <span class="chip chip-keep">workout_logs table</span>
+        <span class="chip chip-remove">Vector DB index</span>
+        <span class="chip chip-new">gold_standard_biomechanics table</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Impact summary -->
+</div>
+
+
+<!-- ══════════════════════════════════
+     SECTION 2 — FEATURE DECISION TABLE
+══════════════════════════════════ -->
+<div class="section">
+  <div class="section-label">Section 2 — Feature decisions</div>
+  <div class="section-title" style="margin-bottom:20px;">What we're keeping, simplifying, and dropping — and why</div>
+
+  <table class="feat-table">
+    <thead>
+      <tr>
+        <th style="width:22%;">Feature / Component</th>
+        <th style="width:12%;">Decision</th>
+        <th style="width:33%;">What remains</th>
+        <th style="width:33%;">Why</th>
+      </tr>
+    </thead>
+    <tbody>
+
+      <!-- ── CORE PIPELINE ── -->
+      <tr>
+        <td colspan="4" style="background:#0d1117;padding:8px 14px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:0.7px;color:#334155;">Core AI Pipeline</td>
+      </tr>
+
+      <tr>
+        <td><span class="feat-name">Video upload + GCS storage</span><span class="feat-sub">POST /upload → GCS → analysis_id</span></td>
+        <td><span class="status-keep">Kept</span></td>
+        <td>Unchanged. Video stored at GCS path, form_sessions record written, SSE stream opened.</td>
+        <td>Entry point to the entire product. Cannot be cut.</td>
+      </tr>
+
+      <tr>
+        <td><span class="feat-name">MediaPipe pose extraction + quality gate</span><span class="feat-sub">Landmarks, rep segmentation, visibility scoring</span></td>
+        <td><span class="status-keep">Kept</span></td>
+        <td>Unchanged. Quality gate rejects bad-angle videos before processing starts.</td>
+        <td>Foundation of all downstream analysis. No pipeline without it.</td>
+      </tr>
+
+      <tr>
+        <td><span class="feat-name">OpenCV Part 1 — overlay video</span><span class="feat-sub">Full video with green skeleton lines</span></td>
+        <td><span class="status-keep">Kept</span></td>
+        <td>Already built. Full video with skeleton overlay saved to GCS as overlay_video_url.</td>
+        <td>This is what goes into Nemotron. Confirmed more accurate than raw video.</td>
+      </tr>
+
+      <tr>
+        <td><span class="feat-name">Biomechanics script</span><span class="feat-sub">Knee, hip, ankle angles · tempo · stability</span></td>
+        <td><span class="status-keep">Kept</span></td>
+        <td>Unchanged. Requires adding bottom_frame + bottom_timestamp_ms per rep (data gap fix).</td>
+        <td>Structured input for Nemotron. Also used for gold standard comparison and frame extraction.</td>
+      </tr>
+
+      <tr>
+        <td><span class="feat-name">Nemotron 3 Nano Omni</span><span class="feat-sub">Overlay video + biomechanics JSON → per-rep scoring</span></td>
+        <td><span class="status-keep">Kept</span></td>
+        <td>Unchanged. Receives overlay_video_url + biomechanics JSON. Returns per-rep scores, issues, chain-of-thought.</td>
+        <td>Core AI layer. Differentiator vs single-rep competitors.</td>
+      </tr>
+
+      <tr>
+        <td><span class="feat-name">OpenCV Part 2 — frame extraction</span><span class="feat-sub">Worst-rep still image with angle overlay</span></td>
+        <td><span class="status-keep">Kept — Option 3</span></td>
+        <td>Skeleton lines + joint markers + actual angles + gold standard text. ~70% already built from Part 1. Estimated 3–4 days remaining.</td>
+        <td>Key Results screen visual. Shows user exactly what went wrong on their worst rep. Feasible given Part 1 foundation.</td>
+      </tr>
+
+      <tr>
+        <td><span class="feat-name">Claude Sonnet — coaching output</span><span class="feat-sub">Nemotron output + grounding → coaching + progression</span></td>
+        <td><span class="status-keep">Kept</span></td>
+        <td>Unchanged. Receives Nemotron output + MD file context via system prompt. Returns coaching paragraphs + weight recommendation.</td>
+        <td>User-facing output. The "coach" experience. Cannot be cut.</td>
+      </tr>
+
+      <!-- ── RAG ── -->
+      <tr>
+        <td colspan="4" style="background:#0d1117;padding:8px 14px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:0.7px;color:#334155;">RAG · Grounding</td>
+      </tr>
+
+      <tr>
+        <td><span class="feat-name">RAG — coaching style + language grounding</span><span class="feat-sub">Purpose: ground Claude's language, not analysis</span></td>
+        <td><span class="status-simple">Simplified</span></td>
+        <td>5–10 curated documents (PT coaching language, form cues, goblet squat references) converted to MD files and injected directly into Claude's system prompt. No retrieval. No embeddings.</td>
+        <td>1 exercise + &lt;10 documents = system prompt injection is sufficient. Full vector DB is overkill at this scale. Saves 3+ weeks of Squad 3 infra work.</td>
+      </tr>
+
+      <tr>
+        <td><span class="feat-name">Vector DB</span><span class="feat-sub">Pinecone / Weaviate / pgvector</span></td>
+        <td><span class="status-drop">Dropped</span></td>
+        <td>Not built for MVP. Architecture documented for future milestone when &gt;1 exercise is added.</td>
+        <td>Not needed for &lt;10 documents. Adds significant setup, cost, and operational complexity for no gain at this scale.</td>
+      </tr>
+
+      <tr>
+        <td><span class="feat-name">Embedding model + ingestion pipeline</span><span class="feat-sub">Chunking, metadata tagging, vector indexing</span></td>
+        <td><span class="status-drop">Dropped</span></td>
+        <td>Not built. MD files need no chunking — they go directly into the prompt.</td>
+        <td>Chunking is a vector DB concept. Irrelevant when using system prompt injection.</td>
+      </tr>
+
+      <!-- ── GOLD STANDARD ── -->
+      <tr>
+        <td colspan="4" style="background:#0d1117;padding:8px 14px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:0.7px;color:#334155;">Gold Standard</td>
+      </tr>
+
+      <tr>
+        <td><span class="feat-name">Gold standard biomechanics</span><span class="feat-sub">Reference angles for comparison + overlay</span></td>
+        <td><span class="status-new">New · added</span></td>
+        <td>3–5 good-form Goblet Squat videos run through MediaPipe + biomechanics script. Outputs stored in gold_standard_biomechanics table in PostgreSQL. Used by OpenCV Part 2 overlay and Claude system prompt as reference values. W6: data prep. W7: integrated into pipeline.</td>
+        <td>Grounds angle comparisons in real biomechanics data rather than hardcoded values. More credible for demo and accuracy validation. Low effort since the pipeline to produce the data is already being built.</td>
+      </tr>
+
+      <!-- ── AUTH + USERS ── -->
+      <tr>
+        <td colspan="4" style="background:#0d1117;padding:8px 14px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:0.7px;color:#334155;">Authentication · User Identity</td>
+      </tr>
+
+      <tr>
+        <td><span class="feat-name">Authentication — JWT + Supabase Auth</span><span class="feat-sub">Sign up, login, session management</span></td>
+        <td><span class="status-drop">Dropped</span></td>
+        <td>Not built for demo. No login screens, no JWT middleware, no auth endpoints.</td>
+        <td>Adds ~1.5 weeks of Squad 2 + Squad 1 work with zero demo value. Judges are not evaluating login flows. Can be added post-demo.</td>
+      </tr>
+
+      <tr>
+        <td><span class="feat-name">User identity for form comparison</span><span class="feat-sub">Persistent user_id across sessions</span></td>
+        <td><span class="status-simple">Simplified</span></td>
+        <td>2–3 user IDs hardcoded in the DB (e.g. user_001, user_002, user_003). Frontend sends a fixed user_id on all requests. Form comparison, session history, and progression work as normal.</td>
+        <td>Achieves the same demo outcome — multiple sessions per user, progression visible — without any auth infrastructure. Sufficient for a controlled demo environment.</td>
+      </tr>
+
+      <!-- ── SCREENS ── -->
+      <tr>
+        <td colspan="4" style="background:#0d1117;padding:8px 14px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:0.7px;color:#334155;">Frontend Screens</td>
+      </tr>
+
+      <tr>
+        <td><span class="feat-name">Results screen</span><span class="feat-sub">Form score, coaching, worst-rep frame, rep chart</span></td>
+        <td><span class="status-keep">Kept</span></td>
+        <td>Full build. Real data from pipeline. Worst-rep annotated frame shown. Coaching output from Claude. Progression recommendation chip.</td>
+        <td>Primary product screen. The moment the user sees value. Must be real, not dummy.</td>
+      </tr>
+
+      <tr>
+        <td><span class="feat-name">Dashboard + Session History</span><span class="feat-sub">Progression trend, form score over time, weight vs form</span></td>
+        <td><span class="status-keep">Kept</span></td>
+        <td>Real build using 2–3 seeded user IDs with pre-loaded session history. Shows form score trend, weight progression, per-parameter trends. Demonstrates Kinetic's longitudinal data differentiator.</td>
+        <td>This is the product story — not just one analysis but the journey over time. Seeded with hardcoded user IDs so it's compelling from day one of the demo without needing 4 weeks of real usage data.</td>
+      </tr>
+
+      <tr>
+        <td><span class="feat-name">Workout Logger</span><span class="feat-sub">Log sets, reps, weight · link to form sessions</span></td>
+        <td><span class="status-keep">Kept</span></td>
+        <td>Kept — feeds progression recommendation logic. User logs weight used → pipeline uses it for "ready to progress" decision.</td>
+        <td>Required for the progression recommendation to be meaningful. Without weight history, Claude cannot say "your form at 12kg is solid — try 14kg."</td>
+      </tr>
+
+      <tr>
+        <td><span class="feat-name">Auth screens — Login + Sign up</span><span class="feat-sub">Onboarding flow, form fields, validation</span></td>
+        <td><span class="status-drop">Dropped</span></td>
+        <td>Not built. Demo starts directly on the Upload screen.</td>
+        <td>No auth system to connect to. Screens have no function without backend auth.</td>
+      </tr>
+
+      <tr>
+        <td><span class="feat-name">Profile / Preferences screen</span><span class="feat-sub">Name, training frequency, injury notes</span></td>
+        <td><span class="status-defer">Frontend shell only</span></td>
+        <td>Screen exists and is routable. Displays dummy data. No backend endpoints. Not interactive.</td>
+        <td>Shows product completeness in demo without requiring backend work. Low effort for Squad 1 — reuse existing component patterns. Backend endpoints deferred post-demo.</td>
+      </tr>
+
+    </tbody>
+  </table>
+</div>
+
+
+<!-- ══════════════════════════════════
+     SECTION 3 — FREED CAPACITY
+══════════════════════════════════ -->
+<div class="section">
+  <div class="section-label">Section 3 — Freed capacity</div>
+  <div class="section-title" style="margin-bottom:16px;">Where the saved development time should go</div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;">
+
+    <div style="background:#0d1117;border:1px solid #1e2433;border-radius:10px;padding:16px;">
+      <div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:0.7px;color:#ef4444;margin-bottom:10px;">Removed from scope</div>
+      <div style="display:flex;flex-direction:column;gap:6px;font-size:11px;color:#94a3b8;">
+        <div>→ Vector DB + embedding model + ingestion pipeline</div>
+        <div>→ Auth — JWT + Supabase Auth</div>
+        <div>→ Auth screens (Squad 1)</div>
+        <div>→ Profile backend endpoints</div>
+        <div>→ RAG retrieval endpoint</div>
+      </div>
+    </div>
+
+    <div style="background:#0d1117;border:1px solid #1e2433;border-radius:10px;padding:16px;">
+      <div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:0.7px;color:#f59e0b;margin-bottom:10px;">Added to scope</div>
+      <div style="display:flex;flex-direction:column;gap:6px;font-size:11px;color:#94a3b8;">
+        <div>→ Gold standard data prep (3–5 good-form videos)</div>
+        <div>→ MD file curation (5–10 coaching documents)</div>
+        <div>→ Seed DB with 2–3 hardcoded user IDs + session history</div>
+      </div>
+    </div>
+
+    <div style="background:#0a1f12;border:1px solid #14532d;border-radius:10px;padding:16px;">
+      <div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:0.7px;color:#22c55e;margin-bottom:10px;">Redirect capacity to</div>
+      <div style="display:flex;flex-direction:column;gap:6px;font-size:11px;color:#86efac;">
+        <div>→ OpenCV Part 2 frame extraction polish</div>
+        <div>→ Nemotron A/B/C test results + pipeline architecture decision</div>
+        <div>→ Claude prompt engineering — coaching language quality</div>
+        <div>→ Accuracy validation (20–30 test videos)</div>
+        <div>→ End-to-end pipeline latency (&lt;30s target)</div>
+        <div>→ Dashboard seeding + demo run-throughs</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<p style="font-size:10px;color:#1e293b;text-align:right;margin-top:24px;">
+  Kinetic · Scope Reduction · Original vs Revised MVP · May 10, 2026
+</p>
+
+</body>
+</html>

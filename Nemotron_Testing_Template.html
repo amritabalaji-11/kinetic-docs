@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kinetic — Nemotron Test Log · Scenarios A / B / C</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0a0d14; color: #e2e8f0; padding: 28px; min-width: 900px; }
+
+h1 { font-size: 18px; font-weight: 700; color: #f8fafc; margin-bottom: 4px; }
+.subtitle { font-size: 12px; color: #64748b; margin-bottom: 20px; }
+
+/* ── Status banner ── */
+.status-banner { background: #1c1000; border: 1px solid #78350f; border-radius: 8px; padding: 10px 16px; margin-bottom: 20px; font-size: 12px; color: #fde68a; display: flex; gap: 10px; align-items: flex-start; }
+
+/* ── Setup card ── */
+.setup-card { background: #0d1117; border: 1.5px solid #1e2433; border-radius: 10px; padding: 16px 20px; margin-bottom: 20px; }
+.setup-title { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.6px; color: #475569; margin-bottom: 12px; }
+.setup-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.setup-item { display: flex; flex-direction: column; gap: 4px; }
+.setup-label { font-size: 10px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; }
+.setup-input { background: #070a0f; border: 1px solid #1e2433; border-radius: 5px; padding: 6px 10px; font-size: 12px; color: #e2e8f0; font-family: inherit; }
+.setup-input:focus { outline: none; border-color: #3b82f6; }
+
+/* ── Scenario tabs ── */
+.scenario-tabs { display: flex; gap: 8px; margin-bottom: 16px; }
+.tab { padding: 7px 18px; border-radius: 6px; font-size: 12px; font-weight: 700; cursor: pointer; border: 1.5px solid transparent; transition: all 0.15s; user-select: none; }
+.tab-a { border-color: #0e7490; color: #22d3ee; background: #041e1e; }
+.tab-b { border-color: #1e3a5f; color: #60a5fa; background: #0d1a2e; }
+.tab-c { border-color: #3b1f6e; color: #a78bfa; background: #130920; }
+.tab-a.active { background: #0e7490; color: #fff; }
+.tab-b.active { background: #1e3a5f; color: #fff; }
+.tab-c.active { background: #3b1f6e; color: #fff; }
+
+.scenario-panel { display: none; }
+.scenario-panel.active { display: block; }
+
+/* ── Scenario header ── */
+.sc-header { border-radius: 8px; padding: 12px 16px; margin-bottom: 14px; display: flex; align-items: flex-start; gap: 14px; }
+.sc-a { background: #041e1e; border: 1px solid #0e7490; }
+.sc-b { background: #0d1a2e; border: 1px solid #1e3a5f; }
+.sc-c { background: #130920; border: 1px solid #3b1f6e; }
+.sc-badge { font-size: 11px; font-weight: 800; padding: 3px 10px; border-radius: 5px; flex-shrink: 0; }
+.sc-a .sc-badge { background: #0e7490; color: #fff; }
+.sc-b .sc-badge { background: #1e3a5f; color: #93c5fd; }
+.sc-c .sc-badge { background: #3b1f6e; color: #d8b4fe; }
+.sc-desc { font-size: 12px; color: #94a3b8; line-height: 1.6; }
+.sc-desc strong { color: #f1f5f9; }
+
+/* ── Prompt boxes ── */
+.prompt-section { margin-bottom: 14px; }
+.prompt-label { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.6px; color: #475569; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
+.prompt-editable { background: #070a0f; border: 1px solid #1e2433; border-radius: 8px; padding: 12px 14px; font-family: 'SF Mono', monospace; font-size: 10.5px; color: #94a3b8; line-height: 1.7; white-space: pre-wrap; min-height: 80px; outline: none; }
+.prompt-editable:focus { border-color: #3b82f6; }
+.editable-hint { font-size: 9px; color: #334155; font-family: inherit; font-weight: 400; letter-spacing: 0; text-transform: none; }
+
+/* ── Test log table ── */
+.log-section { margin-top: 20px; }
+.log-title { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.6px; color: #475569; margin-bottom: 10px; display: flex; align-items: center; gap: 10px; }
+.log-title::after { content: ''; flex: 1; height: 1px; background: #1e2433; }
+
+.log-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+.log-table th { text-align: left; padding: 7px 10px; background: #0d1117; color: #475569; font-size: 9.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1.5px solid #1e2433; white-space: nowrap; }
+.log-table td { padding: 0; border-bottom: 1px solid #111827; vertical-align: top; }
+.log-table tr:last-child td { border-bottom: none; }
+.log-table tr:hover td { background: #0d1117; }
+
+.cell-input { width: 100%; background: transparent; border: none; padding: 7px 10px; color: #cbd5e1; font-size: 11px; font-family: inherit; outline: none; }
+.cell-input:focus { background: #070a0f; }
+.cell-select { width: 100%; background: transparent; border: none; padding: 7px 10px; color: #cbd5e1; font-size: 11px; font-family: inherit; outline: none; cursor: pointer; }
+.cell-select:focus { background: #070a0f; }
+.cell-textarea { width: 100%; background: transparent; border: none; padding: 7px 10px; color: #94a3b8; font-size: 10.5px; font-family: 'SF Mono', monospace; outline: none; resize: vertical; min-height: 60px; }
+.cell-textarea:focus { background: #070a0f; }
+
+.add-row-btn { background: #0d1117; border: 1px dashed #1e2433; border-radius: 6px; padding: 7px 14px; font-size: 11px; color: #475569; cursor: pointer; width: 100%; text-align: center; margin-top: 8px; transition: all 0.15s; }
+.add-row-btn:hover { border-color: #3b82f6; color: #60a5fa; }
+
+/* ── Setup snippet ── */
+.code-block { background: #070a0f; border: 1px solid #1e2433; border-radius: 8px; padding: 14px 16px; font-family: 'SF Mono', monospace; font-size: 10.5px; color: #94a3b8; line-height: 1.8; overflow-x: auto; margin-bottom: 12px; }
+.c-kw  { color: #f9a8d4; }
+.c-str { color: #86efac; }
+.c-com { color: #475569; font-style: italic; }
+.c-var { color: #fcd34d; }
+.c-fn  { color: #67e8f9; }
+
+/* ── Schema checklist ── */
+.schema-check { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+.sc-pill { font-size: 9px; font-weight: 700; padding: 2px 8px; border-radius: 4px; background: #1e2433; color: #475569; cursor: pointer; user-select: none; transition: all 0.1s; }
+.sc-pill.checked { background: #0a2015; color: #4ade80; border: 1px solid #14532d; }
+
+.divider { border: none; border-top: 1px solid #1e2433; margin: 24px 0; }
+</style>
+</head>
+<body>
+
+<h1>Kinetic — Nemotron Test Log</h1>
+<p class="subtitle">Scenarios A / B / C · Multiple testers · Capture video · prompt · latency · output</p>
+
+<div class="status-banner">
+  ⚠ <div><strong>API access not yet confirmed.</strong> Until NVIDIA NIM API is live, use <strong>OpenRouter</strong> with a vision-capable model (Claude 3.5 Sonnet / GPT-4V) as a proxy for initial testing. Record which model you used. Switch to Nemotron once API is confirmed via S2-W5-09. Results from proxy models are directional only.</div>
+</div>
+
+
+<!-- ── SESSION SETUP ── -->
+<div class="setup-card">
+  <div class="setup-title">Session Details — fill in before you start</div>
+  <div class="setup-grid">
+    <div class="setup-item">
+      <label class="setup-label">Your Name</label>
+      <input class="setup-input" type="text" placeholder="e.g. Anusha">
+    </div>
+    <div class="setup-item">
+      <label class="setup-label">Date</label>
+      <input class="setup-input" type="text" placeholder="e.g. 2026-05-10">
+    </div>
+    <div class="setup-item">
+      <label class="setup-label">Model Used</label>
+      <input class="setup-input" type="text" placeholder="e.g. Nemotron 3 Nano Omni · or · claude-3-5-sonnet (proxy)">
+    </div>
+    <div class="setup-item">
+      <label class="setup-label">API Endpoint</label>
+      <input class="setup-input" type="text" placeholder="https://integrate.api.nvidia.com/v1  ·or·  https://openrouter.ai/api/v1">
+    </div>
+  </div>
+</div>
+
+
+<!-- ── API SETUP SNIPPET ── -->
+<div class="setup-card">
+  <div class="setup-title">Quick API Setup — Python</div>
+  <div class="code-block">
+<span class="c-com"># Option 1 — NVIDIA NIM (once S2-W5-09 is confirmed)</span><br>
+<span class="c-var">BASE_URL</span> = <span class="c-str">"https://integrate.api.nvidia.com/v1/chat/completions"</span><br>
+<span class="c-var">API_KEY</span>  = <span class="c-str">"nvapi-YOUR-KEY-HERE"</span><br><br>
+<span class="c-com"># Option 2 — OpenRouter proxy (use now, until NIM access confirmed)</span><br>
+<span class="c-var">BASE_URL</span> = <span class="c-str">"https://openrouter.ai/api/v1/chat/completions"</span><br>
+<span class="c-var">API_KEY</span>  = <span class="c-str">"sk-or-YOUR-KEY-HERE"</span><br>
+<span class="c-var">MODEL</span>    = <span class="c-str">"anthropic/claude-3.5-sonnet"</span>  <span class="c-com"># or "openai/gpt-4o"</span><br><br>
+<span class="c-kw">import</span> requests, time, base64, json<br><br>
+<span class="c-kw">def</span> <span class="c-fn">run_test</span>(scenario, video_path=<span class="c-kw">None</span>, json_data=<span class="c-kw">None</span>, system_prompt=<span class="c-str">""</span>, user_prompt=<span class="c-str">""</span>):<br>
+&nbsp;&nbsp;content = [{"type": "text", "text": user_prompt}]<br><br>
+&nbsp;&nbsp;<span class="c-kw">if</span> video_path:  <span class="c-com"># attach video frame as image (extract key frame first)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-kw">with</span> open(video_path, "rb") <span class="c-kw">as</span> f:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b64 = base64.b64encode(f.read()).decode()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;content.insert(0, {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{b64}"}})<br><br>
+&nbsp;&nbsp;t_start = time.time()<br>
+&nbsp;&nbsp;resp = requests.post(BASE_URL, headers={"Authorization": f"Bearer {API_KEY}"},<br>
+&nbsp;&nbsp;&nbsp;&nbsp;json={"model": MODEL, "messages": [{"role": "system", "content": system_prompt}, {"role": "user", "content": content}]})<br>
+&nbsp;&nbsp;latency = round(time.time() - t_start, 2)<br><br>
+&nbsp;&nbsp;<span class="c-kw">return</span> {"latency_s": latency, "output": resp.json()["choices"][0]["message"]["content"]}<br><br>
+<span class="c-com"># Run Test A (video only)</span><br>
+result_a = <span class="c-fn">run_test</span>("A", video_path="overlay_video_frame.jpg")<br>
+<span class="c-com"># Run Test B (JSON only)</span><br>
+result_b = <span class="c-fn">run_test</span>("B", json_data=biomechanics_json)<br>
+<span class="c-com"># Run Test C (both)</span><br>
+result_c = <span class="c-fn">run_test</span>("C", video_path="overlay_video_frame.jpg", json_data=biomechanics_json)
+  </div>
+  <div style="font-size:11px;color:#64748b;line-height:1.6;">
+    <strong style="color:#cbd5e1;">Note on video:</strong> Until Nemotron's native video API is confirmed, extract one key frame from the joint overlay video (bottom of squat position) and pass as a JPEG image. Record "image frame" in the Video Input column.
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- ── SCENARIO TABS ── -->
+<div class="scenario-tabs">
+  <div class="tab tab-a active" onclick="showTab('a')">Test A — Video Only</div>
+  <div class="tab tab-b" onclick="showTab('b')">Test B — JSON Only</div>
+  <div class="tab tab-c active-later" onclick="showTab('c')">Test C — Both Together</div>
+</div>
+
+<!-- SCENARIO A -->
+<div class="scenario-panel active" id="panel-a">
+  <div class="sc-header sc-a">
+    <span class="sc-badge">Test A</span>
+    <div class="sc-desc"><strong>Input: Joint overlay video (or key frame) only — no biomechanics JSON.</strong><br>
+    Goal: Does the model identify form issues from visual input alone? What does it miss without structured data? Sets the baseline.</div>
+  </div>
+
+  <div class="prompt-section">
+    <div class="prompt-label">System Prompt <span class="editable-hint">(editable — capture any changes in the log)</span></div>
+    <div class="prompt-editable" contenteditable="true" spellcheck="false">You are a strength and movement coaching AI specialising in Goblet Squat biomechanics. You analyse video frames or images of a user performing a goblet squat and return a structured JSON analysis.
+
+── OUTPUT FORMAT ──────────────────────────────────────────
+Respond with valid JSON only. No prose outside the JSON object.
+
+{
+  "overall_score": &lt;0–100&gt;,
+  "rep_scores": [&lt;score per rep if multiple visible, else single value&gt;],
+  "issues": [
+    { "metric": "&lt;back_angle|depth|knee_valgus|tempo|ankle&gt;", "observation": "&lt;specific observation&gt;" }
+  ],
+  "coaching_tips": ["&lt;actionable tip 1&gt;", "&lt;actionable tip 2&gt;"],
+  "confidence": "&lt;high|medium|low&gt;",
+  "confidence_note": "&lt;reason if not high — e.g. angled camera, single frame only&gt;"
+}</div>
+  </div>
+
+  <div class="prompt-section">
+    <div class="prompt-label">User Prompt Template <span class="editable-hint">(replace placeholders before sending)</span></div>
+    <div class="prompt-editable" contenteditable="true" spellcheck="false">Analyse this goblet squat video/frame.
+
+Exercise  : Goblet Squat
+Weight    : {{weight_kg}} kg
+Notes     : {{any notes about the video — e.g. "10 reps, side view, angled camera"}}
+
+The image/video shows joint angle overlays (green lines on key joints).
+Return your analysis in the specified JSON format.</div>
+  </div>
+</div>
+
+<!-- SCENARIO B -->
+<div class="scenario-panel" id="panel-b">
+  <div class="sc-header sc-b">
+    <span class="sc-badge">Test B</span>
+    <div class="sc-desc"><strong>Input: Biomechanics JSON only — no video.</strong><br>
+    Goal: Does the model identify form issues from structured angle data alone? Fastest path — no video processing overhead. Measures JSON-only quality baseline.</div>
+  </div>
+
+  <div class="prompt-section">
+    <div class="prompt-label">System Prompt <span class="editable-hint">(editable)</span></div>
+    <div class="prompt-editable" contenteditable="true" spellcheck="false">You are a strength and movement coaching AI specialising in Goblet Squat biomechanics. You receive structured per-rep data extracted from video by MediaPipe and return a scored analysis in structured JSON.
+
+── THRESHOLDS — GOBLET SQUAT ─────────────────────────────
+Back angle: GOOD &lt;30° · ACCEPTABLE 30–45° · WARNING 45–60° · EXCESSIVE &gt;60°
+Eccentric: Controlled ≥1.5s · Acceptable 0.8–1.5s · Fast 0.5–0.8s · Dropped &lt;0.5s (major issue)
+Depth: DEEP=0 deduction · PARALLEL=minor · SHALLOW=major
+Fatigue: Flag if total rep time increases &gt;30% rep1→last
+
+── OUTPUT FORMAT ──────────────────────────────────────────
+Respond with valid JSON only.
+
+{
+  "overall_score": &lt;0–100&gt;,
+  "rep_scores": [&lt;score per rep, same order as input&gt;],
+  "issues": [
+    { "rep": &lt;rep_number or null&gt;, "metric": "&lt;field_name&gt;", "observation": "&lt;specific values referenced&gt;" }
+  ],
+  "coaching_tips": ["&lt;actionable tip 1&gt;", "&lt;actionable tip 2&gt;"],
+  "confidence": "&lt;high|medium|low&gt;",
+  "confidence_note": "&lt;reason if not high&gt;"
+}</div>
+  </div>
+
+  <div class="prompt-section">
+    <div class="prompt-label">User Prompt Template</div>
+    <div class="prompt-editable" contenteditable="true" spellcheck="false">Analyse the following Goblet Squat session.
+
+Exercise  : Goblet Squat
+Weight    : {{weight_kg}} kg
+Total reps: {{rep_count}}
+Camera    : {{camera_view}}
+
+MediaPipe biomechanics data:
+
+{{paste_biomechanics_json_here}}
+
+Return your analysis in the specified JSON format.</div>
+  </div>
+</div>
+
+<!-- SCENARIO C -->
+<div class="scenario-panel" id="panel-c">
+  <div class="sc-header sc-c">
+    <span class="sc-badge">Test C</span>
+    <div class="sc-desc"><strong>Input: Joint overlay video/frame AND biomechanics JSON together.</strong><br>
+    Goal: Is the combined output meaningfully better than B alone? This is the intended production architecture. Compare directly against Test B results from the same video.</div>
+  </div>
+
+  <div class="prompt-section">
+    <div class="prompt-label">System Prompt <span class="editable-hint">(same as Test B — editable)</span></div>
+    <div class="prompt-editable" contenteditable="true" spellcheck="false">You are a strength and movement coaching AI specialising in Goblet Squat biomechanics. You receive BOTH a visual input (joint overlay video or frame) AND structured per-rep biomechanics data. Cross-reference the visual and structured data to produce a more complete and accurate analysis than either input alone.
+
+── THRESHOLDS — GOBLET SQUAT ─────────────────────────────
+Back angle: GOOD &lt;30° · ACCEPTABLE 30–45° · WARNING 45–60° · EXCESSIVE &gt;60°
+Eccentric: Controlled ≥1.5s · Acceptable 0.8–1.5s · Fast 0.5–0.8s · Dropped &lt;0.5s (major issue)
+Depth: DEEP=0 deduction · PARALLEL=minor · SHALLOW=major
+Fatigue: Flag if total rep time increases &gt;30% rep1→last
+
+── OUTPUT FORMAT ──────────────────────────────────────────
+Respond with valid JSON only.
+
+{
+  "overall_score": &lt;0–100&gt;,
+  "rep_scores": [&lt;score per rep&gt;],
+  "issues": [
+    { "rep": &lt;rep_number or null&gt;, "metric": "&lt;field_name&gt;", "observation": "&lt;specific values or visual observations&gt;" }
+  ],
+  "coaching_tips": ["&lt;tip 1&gt;", "&lt;tip 2&gt;"],
+  "confidence": "&lt;high|medium|low&gt;",
+  "confidence_note": "&lt;reason if not high&gt;"
+}</div>
+  </div>
+
+  <div class="prompt-section">
+    <div class="prompt-label">User Prompt Template</div>
+    <div class="prompt-editable" contenteditable="true" spellcheck="false">Analyse the following Goblet Squat session using both the visual input and the structured data.
+
+Exercise  : Goblet Squat
+Weight    : {{weight_kg}} kg
+Total reps: {{rep_count}}
+Camera    : {{camera_view}}
+
+[Image/video attached above]
+
+MediaPipe biomechanics data:
+
+{{paste_biomechanics_json_here}}
+
+Return your analysis in the specified JSON format.</div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- ── TEST LOG ── -->
+<div class="log-section">
+  <div class="log-title">Test Log — one row per run</div>
+
+  <table class="log-table" id="logTable">
+    <thead>
+      <tr>
+        <th style="width:60px;">Test ID</th>
+        <th style="width:70px;">Scenario</th>
+        <th style="width:90px;">Tester</th>
+        <th style="width:160px;">Video / Input</th>
+        <th style="width:70px;">Weight (kg)</th>
+        <th style="width:70px;">Latency (s)</th>
+        <th style="width:130px;">Schema fields present</th>
+        <th>LLM Output (paste JSON)</th>
+        <th style="width:140px;">Notes / Observations</th>
+      </tr>
+    </thead>
+    <tbody id="logBody">
+      <tr>
+        <td><input class="cell-input" placeholder="TST-A-001"></td>
+        <td>
+          <select class="cell-select">
+            <option>A — Video</option>
+            <option>B — JSON</option>
+            <option>C — Both</option>
+          </select>
+        </td>
+        <td><input class="cell-input" placeholder="Name"></td>
+        <td><input class="cell-input" placeholder="filename or URL"></td>
+        <td><input class="cell-input" type="number" placeholder="20"></td>
+        <td><input class="cell-input" type="number" placeholder="0.0"></td>
+        <td>
+          <div class="schema-check">
+            <span class="sc-pill" onclick="this.classList.toggle('checked')">overall_score</span>
+            <span class="sc-pill" onclick="this.classList.toggle('checked')">rep_scores</span>
+            <span class="sc-pill" onclick="this.classList.toggle('checked')">issues</span>
+            <span class="sc-pill" onclick="this.classList.toggle('checked')">coaching_tips</span>
+            <span class="sc-pill" onclick="this.classList.toggle('checked')">confidence</span>
+          </div>
+        </td>
+        <td><textarea class="cell-textarea" placeholder="Paste raw JSON output here..."></textarea></td>
+        <td><textarea class="cell-textarea" placeholder="What was good / missing / surprising?"></textarea></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <button class="add-row-btn" onclick="addRow()">+ Add test run</button>
+</div>
+
+<hr class="divider">
+
+<!-- ── EVALUATION GUIDE ── -->
+<div class="setup-card">
+  <div class="setup-title">What to evaluate in each output</div>
+  <table style="width:100%;border-collapse:collapse;font-size:11px;">
+    <thead>
+      <tr style="background:#080b10;">
+        <th style="padding:7px 10px;text-align:left;color:#475569;font-size:9.5px;font-weight:700;border-bottom:1px solid #1e2433;">Check</th>
+        <th style="padding:7px 10px;text-align:left;color:#475569;font-size:9.5px;font-weight:700;border-bottom:1px solid #1e2433;">What to look for</th>
+        <th style="padding:7px 10px;text-align:left;color:#475569;font-size:9.5px;font-weight:700;border-bottom:1px solid #1e2433;">Red flag</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr style="border-bottom:1px solid #111827;"><td style="padding:7px 10px;color:#f1f5f9;font-weight:600;">Schema complete?</td><td style="padding:7px 10px;color:#94a3b8;">All 5 fields present: overall_score, rep_scores, issues, coaching_tips, confidence</td><td style="padding:7px 10px;color:#f87171;">Missing fields = model ignoring output spec</td></tr>
+      <tr style="border-bottom:1px solid #111827;"><td style="padding:7px 10px;color:#f1f5f9;font-weight:600;">Scores sensible?</td><td style="padding:7px 10px;color:#94a3b8;">overall_score 0–100, rep_scores match rep count, no outlier scores</td><td style="padding:7px 10px;color:#f87171;">Score of 100 for every rep = not reading data</td></tr>
+      <tr style="border-bottom:1px solid #111827;"><td style="padding:7px 10px;color:#f1f5f9;font-weight:600;">Issues specific?</td><td style="padding:7px 10px;color:#94a3b8;">References actual values ("eccentric 0.13s — well below 0.5s threshold") not generic ("keep back straight")</td><td style="padding:7px 10px;color:#f87171;">Generic advice = hallucination or ignoring data</td></tr>
+      <tr style="border-bottom:1px solid #111827;"><td style="padding:7px 10px;color:#f1f5f9;font-weight:600;">Catches fast descent?</td><td style="padding:7px 10px;color:#94a3b8;">The 0.07–0.17s eccentric times should be flagged as the primary issue in the sample data</td><td style="padding:7px 10px;color:#f87171;">Misses the fast descent = model not reading tempo data</td></tr>
+      <tr style="border-bottom:1px solid #111827;"><td style="padding:7px 10px;color:#f1f5f9;font-weight:600;">Fatigue detected?</td><td style="padding:7px 10px;color:#94a3b8;">Total rep time 1.4s → 1.93s = 38% increase → should be flagged</td><td style="padding:7px 10px;color:#f87171;">No fatigue mention = ignoring trend</td></tr>
+      <tr><td style="padding:7px 10px;color:#f1f5f9;font-weight:600;">B vs C delta</td><td style="padding:7px 10px;color:#94a3b8;">Does adding the video (C) add observations that B alone missed? E.g. visual form issues not in the JSON</td><td style="padding:7px 10px;color:#f87171;">Identical output for B and C = video not contributing</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div style="text-align:center;color:#1e2433;font-size:11px;padding-top:20px;margin-top:12px;">
+  Kinetic · Nemotron Test Log · May 8, 2026 · Scenarios A / B / C
+</div>
+
+<script>
+function showTab(t) {
+  ['a','b','c'].forEach(s => {
+    document.getElementById('panel-' + s).classList.remove('active');
+    document.querySelector('.tab-' + s).classList.remove('active');
+  });
+  document.getElementById('panel-' + t).classList.add('active');
+  document.querySelector('.tab-' + t).classList.add('active');
+}
+
+function addRow() {
+  const tbody = document.getElementById('logBody');
+  const row = tbody.rows[0].cloneNode(true);
+  // Clear inputs
+  row.querySelectorAll('input, textarea').forEach(el => el.value = '');
+  row.querySelectorAll('.sc-pill').forEach(el => el.classList.remove('checked'));
+  tbody.appendChild(row);
+  // Re-attach pill listeners
+  row.querySelectorAll('.sc-pill').forEach(pill =>
+    pill.addEventListener('click', () => pill.classList.toggle('checked'))
+  );
+}
+</script>
+
+</body>
+</html>

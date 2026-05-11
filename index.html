@@ -137,11 +137,11 @@
       <span class="doc-arrow">→</span>
     </a>
 
-    <a class="doc-card" href="Kinetic_Epics.html">
+    <a class="doc-card" href="Kinetic_Epics_v2.html">
       <div class="doc-icon" style="background:rgba(96,165,250,0.1)">🗺</div>
       <div class="doc-info">
-        <span class="doc-title">Epics, Delivery Plan & User Stories</span>
-        <span class="doc-desc">6 outcome-oriented epics · W5–W10 weekly delivery · 16 user stories with acceptance criteria</span>
+        <span class="doc-title">Epics & Delivery Plan v2</span>
+        <span class="doc-desc">Updated epics with form comparison, scope reduction applied — W5–W10 delivery</span>
       </div>
       <span class="doc-tag tag-product">Epics</span>
       <span class="doc-arrow">→</span>
@@ -161,7 +161,7 @@
       <div class="doc-icon" style="background:rgba(251,191,36,0.1)">🎯</div>
       <div class="doc-info">
         <span class="doc-title">Landmark Quality Framework</span>
-        <span class="doc-desc">Quality benchmarks and evaluation criteria</span>
+        <span class="doc-desc">MediaPipe visibility + presence thresholds · quality gate pass/fail criteria</span>
       </div>
       <span class="doc-tag tag-product">Quality</span>
       <span class="doc-arrow">→</span>
@@ -192,13 +192,33 @@
       <span class="doc-arrow">→</span>
     </a>
 
+    <a class="doc-card" href="scope_reduction_diagram.html">
+      <div class="doc-icon" style="background:rgba(251,191,36,0.1)">✂️</div>
+      <div class="doc-info">
+        <span class="doc-title">Scope Reduction — Original vs Revised MVP</span>
+        <span class="doc-desc">Layer-by-layer architecture comparison · feature decisions · freed capacity — May 2026 mentor review</span>
+      </div>
+      <span class="doc-tag tag-planning">Scope</span>
+      <span class="doc-arrow">→</span>
+    </a>
+
     <a class="doc-card" href="clickup_week5_tasks.html">
       <div class="doc-icon" style="background:rgba(34,211,238,0.1)">✅</div>
       <div class="doc-info">
         <span class="doc-title">Week 5 Tasks</span>
         <span class="doc-desc">Detailed task breakdown for Week 5 across all squads</span>
       </div>
-      <span class="doc-tag tag-planning">Tasks</span>
+      <span class="doc-tag tag-planning">W5</span>
+      <span class="doc-arrow">→</span>
+    </a>
+
+    <a class="doc-card" href="clickup_week6_tasks.html">
+      <div class="doc-icon" style="background:rgba(34,211,238,0.1)">✅</div>
+      <div class="doc-info">
+        <span class="doc-title">Week 6 Tasks</span>
+        <span class="doc-desc">Detailed task breakdown for Week 6 across all squads</span>
+      </div>
+      <span class="doc-tag tag-planning">W6</span>
       <span class="doc-arrow">→</span>
     </a>
   </div>
@@ -211,7 +231,7 @@
       <div class="doc-icon" style="background:rgba(251,146,60,0.1)">🗄</div>
       <div class="doc-info">
         <span class="doc-title">Technical Data Schema</span>
-        <span class="doc-desc">Database schema — users, sessions, exercises, form scores, workout logs</span>
+        <span class="doc-desc">Full pipeline — Steps 1–8b · DB tables · Nemotron + Claude output JSON · Results & Comparison screens</span>
       </div>
       <span class="doc-tag tag-tech">Schema</span>
       <span class="doc-arrow">→</span>
@@ -220,10 +240,60 @@
     <a class="doc-card" href="tech_flow_compare.html">
       <div class="doc-icon" style="background:rgba(251,146,60,0.1)">⚙️</div>
       <div class="doc-info">
-        <span class="doc-title">Tech Flow Comparison</span>
-        <span class="doc-desc">Pipeline architecture options and technical trade-offs</span>
+        <span class="doc-title">Tech Flow & Scope Reduction</span>
+        <span class="doc-desc">Grouped architecture layers · pipeline layer colors · original vs revised scope comparison</span>
       </div>
       <span class="doc-tag tag-tech">Tech</span>
+      <span class="doc-arrow">→</span>
+    </a>
+
+    <a class="doc-card" href="pipeline_integration_guide.html">
+      <div class="doc-icon" style="background:rgba(251,146,60,0.1)">🔗</div>
+      <div class="doc-info">
+        <span class="doc-title">Pipeline Integration Guide</span>
+        <span class="doc-desc">Steps 1–9 end-to-end · squad handoffs · SSE events · cross-squad data contracts</span>
+      </div>
+      <span class="doc-tag tag-tech">Pipeline</span>
+      <span class="doc-arrow">→</span>
+    </a>
+
+    <a class="doc-card" href="opencv_frame_extraction_brief.html">
+      <div class="doc-icon" style="background:rgba(251,146,60,0.1)">🎞️</div>
+      <div class="doc-info">
+        <span class="doc-title">OpenCV Frame Extraction — Developer Brief</span>
+        <span class="doc-desc">Full pipeline sequence · OpenCV Step 2 logic · data gap · schema change — for Squad 3</span>
+      </div>
+      <span class="doc-tag tag-tech">OpenCV</span>
+      <span class="doc-arrow">→</span>
+    </a>
+
+    <a class="doc-card" href="biomechanics_script_spec.html">
+      <div class="doc-icon" style="background:rgba(251,146,60,0.1)">🦴</div>
+      <div class="doc-info">
+        <span class="doc-title">Biomechanics Script Spec</span>
+        <span class="doc-desc">Angle computation · rep segmentation · tempo · output JSON schema for Goblet Squat</span>
+      </div>
+      <span class="doc-tag tag-tech">Biomech</span>
+      <span class="doc-arrow">→</span>
+    </a>
+
+    <a class="doc-card" href="Nemotron_Testing_Template.html">
+      <div class="doc-icon" style="background:rgba(251,146,60,0.1)">🤖</div>
+      <div class="doc-info">
+        <span class="doc-title">Nemotron Testing Template</span>
+        <span class="doc-desc">A/B/C test structure for LLM/VLM model evaluation — JSON, video, frame inputs</span>
+      </div>
+      <span class="doc-tag tag-tech">Testing</span>
+      <span class="doc-arrow">→</span>
+    </a>
+
+    <a class="doc-card" href="Quality_Gate_Error_Messages.html">
+      <div class="doc-icon" style="background:rgba(251,146,60,0.1)">🚦</div>
+      <div class="doc-info">
+        <span class="doc-title">Quality Gate Error Messages</span>
+        <span class="doc-desc">User-facing error copy for each quality gate failure state</span>
+      </div>
+      <span class="doc-tag tag-tech">UX Copy</span>
       <span class="doc-arrow">→</span>
     </a>
   </div>
@@ -231,7 +301,7 @@
   <!-- Footer -->
   <div class="footer">
     <a href="https://github.com/amritabalaji-11/kinetic-docs">github.com/amritabalaji-11/kinetic-docs</a>
-    &nbsp;·&nbsp; Last updated May 8, 2026
+    &nbsp;·&nbsp; Last updated May 12, 2026
   </div>
 
 </div>
