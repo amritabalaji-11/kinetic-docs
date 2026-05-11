@@ -3,8 +3,48 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kinetic — Pipeline Integration Guide · Steps 1–9</title>
+<title>Kinetic — Pipeline Integration Guide &amp; OpenCV Brief</title>
 <style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ── LAYOUT ── */
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0a0d14; color: #e2e8f0; display: flex; min-height: 100vh; }
+
+.sidebar {
+  position: fixed; left: 0; top: 0; bottom: 0; width: 214px;
+  background: #07090f; border-right: 1px solid #1e2433;
+  overflow-y: auto; z-index: 100; display: flex; flex-direction: column;
+  padding-bottom: 32px;
+}
+.sidebar-header { padding: 20px 16px 14px; border-bottom: 1px solid #1e2433; }
+.sidebar-logo { font-size: 12px; font-weight: 800; color: #f8fafc; letter-spacing: -0.3px; }
+.sidebar-logo span { color: #60a5fa; }
+.sidebar-sub { font-size: 9px; color: #475569; margin-top: 3px; line-height: 1.5; }
+
+.nav-group-label {
+  font-size: 8px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px;
+  color: #334155; padding: 14px 16px 5px;
+}
+.nav-btn {
+  display: flex; align-items: center; gap: 8px;
+  padding: 7px 14px 7px 16px; cursor: pointer;
+  border: none; border-left: 2px solid transparent;
+  background: none; width: 100%; text-align: left;
+  font-size: 11px; color: #64748b; line-height: 1.4;
+  transition: all 0.12s;
+}
+.nav-btn:hover { background: #0d1117; color: #94a3b8; }
+.nav-btn.active { background: #0d1a2e; color: #93c5fd; border-left-color: #3b82f6; font-weight: 600; }
+.nav-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+
+.main-content { margin-left: 214px; padding: 36px 48px 60px; flex: 1; max-width: 1100px; }
+.doc-title { font-size: 22px; font-weight: 800; color: #f8fafc; letter-spacing: -0.5px; }
+.doc-subtitle { font-size: 12px; color: #64748b; margin-top: 4px; margin-bottom: 28px; line-height: 1.6; }
+
+.content-section { display: none; }
+.content-section.active { display: block; }
+
+/* ── GUIDE CSS ── */
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0a0d14; color: #e2e8f0; padding: 40px; max-width: 1100px; margin: 0 auto; }
 
@@ -339,14 +379,613 @@ h1 { font-size: 22px; font-weight: 800; color: #f8fafc; letter-spacing: -0.5px; 
 .ac-item { display: flex; gap: 10px; align-items: baseline; font-size: 12px; color: #94a3b8; line-height: 1.5; }
 .ac-check { color: #22c55e; font-size: 11px; flex-shrink: 0; }
 
+
+
+/* ── PIPE-ROW + VISUAL PANEL CSS FROM TEAM BRIEF ── */
+/* Visual panels */
+.pipe-content { display: flex; gap: 14px; align-items: flex-start; }
+.pipe-text { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+.pipe-visual {
+  width: 168px; flex-shrink: 0;
+  background: #070a0f; border: 1px solid #1e2433; border-radius: 8px;
+  overflow: hidden;
+}
+.pv-header {
+  background: #0d1117; padding: 4px 9px;
+  font-size: 8px; font-weight: 800; text-transform: uppercase;
+  letter-spacing: 0.5px; color: #334155; border-bottom: 1px solid #1e2433;
+}
+.pv-body { padding: 8px 9px; font-size: 9.5px; display: flex; flex-direction: column; gap: 5px; }
+.pv-field {
+  display: flex; flex-direction: column; gap: 1px;
+}
+.pv-label { font-size: 8px; color: #334155; text-transform: uppercase; letter-spacing: 0.3px; }
+.pv-value {
+  background: #0d1117; border: 1px solid #1e2433; border-radius: 4px;
+  padding: 3px 7px; font-size: 9.5px; color: #94a3b8; font-family: 'SF Mono', monospace;
+}
+.pv-btn {
+  background: #1e3a5f; border: 1px solid #3b82f6; border-radius: 4px;
+  padding: 4px 7px; font-size: 9px; font-weight: 700; color: #60a5fa;
+  text-align: center; margin-top: 2px;
+}
+.pv-row { display: flex; justify-content: space-between; align-items: baseline; font-family: 'SF Mono', monospace; }
+.pv-key { font-size: 9px; color: #475569; }
+.pv-val { font-size: 9.5px; }
+.pv-val.green { color: #4ade80; }
+.pv-val.amber { color: #fbbf24; }
+.pv-val.red { color: #f87171; }
+.pv-val.blue { color: #60a5fa; }
+.pv-divider { height: 1px; background: #1e2433; margin: 2px 0; }
+.pv-tag {
+  display: inline-block; font-size: 8px; font-weight: 700; padding: 1px 5px;
+  border-radius: 3px; margin-right: 2px;
+}
+.pv-issue { background: #150505; color: #f87171; border: 1px solid #7f1d1d; }
+.pv-pass  { background: #030d06; color: #4ade80; border: 1px solid #14532d; }
+.pv-fail  { background: #150505; color: #f87171; border: 1px solid #7f1d1d; }
+
+/* Joint diagram */
+.pv-joints { position: relative; height: 100px; }
+.joint-line {
+  position: absolute; background: #22c55e; border-radius: 2px;
+}
+.joint-dot {
+  position: absolute; border-radius: 50%; border: 2px solid;
+  width: 10px; height: 10px; transform: translate(-50%, -50%);
+}
+.jd-green { border-color: #22c55e; background: #0a1f12; }
+.jd-red   { border-color: #ef4444; background: #150505; }
+.jd-amber { border-color: #f59e0b; background: #141000; }
+.joint-label { position: absolute; font-size: 8px; font-family: 'SF Mono', monospace; }
+
+/* Coaching snippet */
+.pv-coaching { font-size: 9px; color: #94a3b8; line-height: 1.5; font-style: italic; }
+.pv-rec { font-size: 9px; font-weight: 700; padding: 3px 7px; border-radius: 4px; text-align: center; margin-top: 4px; }
+.rec-hold  { background: #1c1000; color: #fbbf24; border: 1px solid #92400e; }
+.rec-prog  { background: #030d06; color: #4ade80; border: 1px solid #14532d; }
+
+/* Image placeholder */
+.pv-img-placeholder {
+  border: 1.5px dashed #334155; border-radius: 6px;
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: center; text-align: center; gap: 4px;
+  padding: 10px 8px; min-height: 90px;
+}
+
+/* Data layer tags */
+.pipe-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 5px; }
+.pipe-tag {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 9px; font-weight: 700; padding: 2px 8px;
+  border-radius: 10px; white-space: nowrap; font-family: 'SF Mono', monospace;
+}
+.tag-db-write { background: #150d2e; color: #c4b5fd; border: 1px solid #5b21b6; }
+.tag-db-read  { background: #051e26; color: #67e8f9; border: 1px solid #0e7490; }
+.tag-rag      { background: #1c1000; color: #fde68a; border: 1px solid #92400e; }
+.tag-db-write::before { content: '↑ DB WRITE · '; color: #7c3aed; }
+.tag-db-read::before  { content: '↓ DB READ · ';  color: #0e7490; }
+.tag-rag::before      { content: '📄 RAG · ';     }
+
+/* ── SECTION 5: SCOPE ── */
+.scope-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+.scope-card {
+  border-radius: 10px; padding: 16px 18px; display: flex; flex-direction: column; gap: 10px;
+}
+.scope-card.kept { background: #030d06; border: 1px solid #14532d; }
+.scope-card.simplified { background: #141000; border: 1px solid #92400e; }
+.scope-card.dropped { background: #0d0500; border: 1px solid #7f1d1d; }
+
+.scope-card-header { display: flex; align-items: center; gap: 8px; }
+.scope-tag {
+  font-size: 9px; font-weight: 700; padding: 2px 8px; border-radius: 10px;
+}
+.tag-kept      { background: #0a1f12; color: #4ade80; border: 1px solid #14532d; }
+.tag-simplified { background: #1c1000; color: #fbbf24; border: 1px solid #78350f; }
+.tag-dropped   { background: #150505; color: #f87171; border: 1px solid #7f1d1d; }
+
+.scope-title { font-size: 13px; font-weight: 800; }
+.scope-card.kept .scope-title { color: #4ade80; }
+.scope-card.simplified .scope-title { color: #fbbf24; }
+.scope-card.dropped .scope-title { color: #f87171; text-decoration: line-through; opacity: 0.8; }
+
+.scope-what { font-size: 11px; color: #94a3b8; line-height: 1.6; }
+.scope-why-label { font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: #334155; }
+.scope-why { font-size: 11px; line-height: 1.5; }
+.scope-card.kept .scope-why { color: #4ade80; }
+.scope-card.simplified .scope-why { color: #fde68a; }
+.scope-card.dropped .scope-why { color: #fca5a5; }
+
+.scope-full-row {
+  grid-column: 1 / -1;
+}
 </style>
 </head>
 <body>
 
-<h1>Kinetic — Pipeline Integration Guide &amp; OpenCV Brief</h1>
-<p class="subtitle">Steps 1–9 · Squad ownership · Cross-squad handoffs · OpenCV Step 2 scope &amp; data gap · Open decisions · Complete reference for team review</p>
+<nav class="sidebar">
+  <div class="sidebar-header">
+    <div class="sidebar-logo">Kinetic <span>·</span> Guide</div>
+    <div class="sidebar-sub">Pipeline integration &amp;<br>OpenCV brief · All squads</div>
+  </div>
 
-<div class="legend">
+  <div class="nav-group-label">Pipeline</div>
+  <button class="nav-btn active" onclick="show('overview')" id="btn-overview">
+    <div class="nav-dot" style="background:#3b82f6;"></div>How the pipeline runs
+  </button>
+
+  <div class="nav-group-label">Integration</div>
+  <button class="nav-btn" onclick="show('steps')" id="btn-steps">
+    <div class="nav-dot" style="background:#22c55e;"></div>Steps 1–9 &amp; handoffs
+  </button>
+  <button class="nav-btn" onclick="show('decisions')" id="btn-decisions">
+    <div class="nav-dot" style="background:#f59e0b;"></div>Open decisions
+  </button>
+
+  <div class="nav-group-label">OpenCV Brief</div>
+  <button class="nav-btn" onclick="show('scope')" id="btn-scope">
+    <div class="nav-dot" style="background:#22c55e;"></div>Scope &amp; status
+  </button>
+  <button class="nav-btn" onclick="show('logic')" id="btn-logic">
+    <div class="nav-dot" style="background:#a78bfa;"></div>Step 2 execution logic
+  </button>
+  <button class="nav-btn" onclick="show('gap')" id="btn-gap">
+    <div class="nav-dot" style="background:#ef4444;"></div>Data gap &amp; schema fix
+  </button>
+  <button class="nav-btn" onclick="show('research')" id="btn-research">
+    <div class="nav-dot" style="background:#22d3ee;"></div>OpenCV capabilities
+  </button>
+</nav>
+
+<main class="main-content">
+  <h1 class="doc-title">Kinetic — Pipeline Integration Guide &amp; OpenCV Brief</h1>
+  <p class="doc-subtitle">Complete reference for all three squads · Use the sidebar to navigate between sections.</p>
+
+  <!-- 1. Pipeline Overview -->
+  <div class="content-section active" id="section-overview">
+    <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:20px;align-items:center;">
+      <div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:0.7px;color:#334155;">Legend</div>
+      <span style="display:flex;align-items:center;gap:6px;font-size:11px;color:#94a3b8;"><span style="width:10px;height:10px;border-radius:50%;background:#3b82f6;display:inline-block;"></span> Squad 1 — Frontend</span>
+      <span style="display:flex;align-items:center;gap:6px;font-size:11px;color:#94a3b8;"><span style="width:10px;height:10px;border-radius:50%;background:#22c55e;display:inline-block;"></span> Squad 2 — Backend</span>
+      <span style="display:flex;align-items:center;gap:6px;font-size:11px;color:#94a3b8;"><span style="width:10px;height:10px;border-radius:50%;background:#f97316;display:inline-block;"></span> Squad 3 — Data</span>
+      <span style="display:flex;align-items:center;gap:6px;font-size:11px;color:#94a3b8;"><span style="width:10px;height:10px;border-radius:50%;background:#ef4444;display:inline-block;"></span> Quality Gate</span>
+      <span style="display:flex;align-items:center;gap:6px;font-size:11px;color:#94a3b8;"><span style="width:10px;height:10px;border-radius:2px;background:#5b21b6;display:inline-block;"></span> DB Write</span>
+      <span style="display:flex;align-items:center;gap:6px;font-size:11px;color:#94a3b8;"><span style="width:10px;height:10px;border-radius:2px;background:#0e7490;display:inline-block;"></span> DB Read</span>
+    </div>
+    <div class="section" id="s4">
+  <div class="section-num">Section 04 — Tech Architecture &amp; Sequence</div>
+  <div class="section-title">How the pipeline runs</div>
+  <div class="section-sub">Every step from video upload to results on screen — squad ownership and data flow</div>
+
+  <div style="display:grid;grid-template-columns:1fr 200px;gap:24px;align-items:start;">
+
+    <div class="pipeline">
+
+      <!-- STEP 1 -->
+      <div class="pipe-row sq1">
+        <div class="pipe-meta">
+          <div class="pipe-step-label">Step 1</div>
+          <div class="pipe-squad-label">Squad 1</div>
+        </div>
+        <div class="pipe-content">
+          <div class="pipe-text">
+            <div class="pipe-name">User uploads video</div>
+            <div class="pipe-io">POST /upload · video file + exercise_id + weight_value + weight_unit</div>
+            <div class="pipe-sse">upload_received</div>
+          </div>
+          <div class="pipe-visual">
+            <div class="pv-header">Upload screen</div>
+            <div class="pv-body">
+              <div class="pv-field">
+                <div class="pv-label">Exercise</div>
+                <div class="pv-value">Goblet Squat ▾</div>
+              </div>
+              <div class="pv-field">
+                <div class="pv-label">Weight</div>
+                <div class="pv-value">12 kg</div>
+              </div>
+              <div class="pv-field">
+                <div class="pv-label">Video file</div>
+                <div class="pv-value" style="color:#475569;">squat_session.mp4</div>
+              </div>
+              <div class="pv-btn">Upload →</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pipe-spacer"></div>
+
+      <!-- STEP 2 -->
+      <div class="pipe-row sq2">
+        <div class="pipe-meta">
+          <div class="pipe-step-label">Step 2</div>
+          <div class="pipe-squad-label">Squad 2</div>
+        </div>
+        <div class="pipe-content">
+          <div class="pipe-text">
+            <div class="pipe-name">Save to GCS + write DB record</div>
+            <div class="pipe-io">Generates analysis_id · saves video to GCS · returns {analysis_id} to frontend immediately</div>
+            <div class="pipe-tags">
+              <span class="pipe-tag tag-db-write">form_sessions: analysis_id, user_id, exercise_id, weight_kg, video_url, status: processing</span>
+            </div>
+            <div class="pipe-sse">mediapipe_started (+ video_url)</div>
+          </div>
+          <div class="pipe-visual">
+            <div class="pv-header">DB write · form_sessions</div>
+            <div class="pv-body">
+              <div class="pv-row"><span class="pv-key">analysis_id</span><span class="pv-val blue">550e…4000</span></div>
+              <div class="pv-row"><span class="pv-key">exercise_id</span><span class="pv-val" style="color:#94a3b8;">gob_squat</span></div>
+              <div class="pv-row"><span class="pv-key">weight_kg</span><span class="pv-val green">12.0</span></div>
+              <div class="pv-row"><span class="pv-key">video_url</span><span class="pv-val" style="color:#475569;">gs://…mp4</span></div>
+              <div class="pv-divider"></div>
+              <div class="pv-row"><span class="pv-key">status</span><span class="pv-val amber">processing</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pipe-spacer"></div>
+
+      <!-- STEP 3 -->
+      <div class="pipe-row sq3">
+        <div class="pipe-meta">
+          <div class="pipe-step-label">Step 3</div>
+          <div class="pipe-squad-label">Squad 3</div>
+        </div>
+        <div class="pipe-content">
+          <div class="pipe-text">
+            <div class="pipe-name">MediaPipe — joint keypoint extraction</div>
+            <div class="pipe-io">Reads raw video frame-by-frame · outputs per-frame landmarks + per-rep segments including bottom_frame and bottom_timestamp_ms</div>
+            <div class="pipe-sse">mediapipe_complete</div>
+          </div>
+          <div class="pipe-visual">
+            <div class="pv-header">Landmark output · per frame</div>
+            <div class="pv-body">
+              <div class="pv-row"><span class="pv-key">left_hip</span><span class="pv-val green">vis: 0.94</span></div>
+              <div class="pv-row"><span class="pv-key">left_knee</span><span class="pv-val green">vis: 0.91</span></div>
+              <div class="pv-row"><span class="pv-key">left_ankle</span><span class="pv-val green">vis: 0.88</span></div>
+              <div class="pv-divider"></div>
+              <div class="pv-row"><span class="pv-key">rep_count</span><span class="pv-val blue">8</span></div>
+              <div class="pv-row"><span class="pv-key">bottom_frame</span><span class="pv-val amber">342</span></div>
+              <div class="pv-row"><span class="pv-key">bottom_ms</span><span class="pv-val amber">5700</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pipe-spacer"></div>
+
+      <!-- STEP 4 -->
+      <div class="pipe-row gate">
+        <div class="pipe-meta">
+          <div class="pipe-step-label">Step 4</div>
+          <div class="pipe-squad-label">Quality Gate</div>
+        </div>
+        <div class="pipe-content">
+          <div class="pipe-text">
+            <div class="pipe-name">Visibility quality gate</div>
+            <div class="pipe-io">Checks landmark confidence across frames · FAIL → error SSE + pipeline stops · PASS → continues to Step 5</div>
+            <div style="margin-top:5px;"><a href="https://amritabalaji-11.github.io/kinetic-docs/landmark_quality_framework.html" target="_blank" style="font-size:9.5px;color:#0e7490;text-decoration:none;display:inline-flex;align-items:center;gap:4px;padding:2px 7px;background:#051e26;border:1px solid #0e7490;border-radius:4px;">↗ Landmark Quality Framework</a></div>
+          </div>
+          <div class="pipe-visual">
+            <div class="pv-header">Two outcomes</div>
+            <div class="pv-body">
+              <div style="background:#030d06;border:1px solid #14532d;border-radius:5px;padding:5px 7px;">
+                <div style="font-size:8px;font-weight:800;color:#22c55e;margin-bottom:2px;">✓ PASS</div>
+                <div style="font-size:9px;color:#86efac;">Good angle · joints detected · pipeline continues</div>
+              </div>
+              <div style="background:#150505;border:1px solid #7f1d1d;border-radius:5px;padding:5px 7px;">
+                <div style="font-size:8px;font-weight:800;color:#ef4444;margin-bottom:2px;">✗ FAIL</div>
+                <div style="font-size:9px;color:#fca5a5;">BAD_ANGLE detected · SSE error fired · user asked to re-film</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pipe-spacer"></div>
+
+      <!-- STEP 5 -->
+      <div class="pipe-row sq3">
+        <div class="pipe-meta">
+          <div class="pipe-step-label">Step 5</div>
+          <div class="pipe-squad-label">Squad 3</div>
+        </div>
+        <div class="pipe-content">
+          <div class="pipe-text">
+            <div class="pipe-name">OpenCV Part 1 — full video overlay</div>
+            <div class="pipe-io">Draws green skeleton lines on every frame of the raw video · saves full overlay video to GCS · sent to Nemotron, NOT shown to user</div>
+            <div class="pipe-sse">overlay_complete (+ overlay_video_url)</div>
+          </div>
+          <div class="pipe-visual">
+            <div class="pv-header">Output — overlay video</div>
+            <div class="pv-body" style="padding:6px;">
+              <img src="opencv_overlay_screenshot.jpg" style="width:100%;border-radius:5px;display:block;" alt="OpenCV overlay — green skeleton on video">
+              <div style="font-size:8px;color:#475569;text-align:center;margin-top:4px;">Full video · green skeleton lines · every frame</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pipe-spacer"></div>
+
+      <!-- STEP 6 -->
+      <div class="pipe-row sq3">
+        <div class="pipe-meta">
+          <div class="pipe-step-label">Step 6</div>
+          <div class="pipe-squad-label">Squad 3</div>
+        </div>
+        <div class="pipe-content">
+          <div class="pipe-text">
+            <div class="pipe-name">Biomechanics script — angles, tempo, stability</div>
+            <div class="pipe-io">Converts landmarks → knee/hip/ankle angles · tempo · stability · back angle · bottom_frame + bottom_timestamp_ms per rep</div>
+            <div style="margin-top:5px;"><a href="https://amritabalaji-11.github.io/kinetic-docs/biomechanics_script_spec.html" target="_blank" style="font-size:9.5px;color:#059669;text-decoration:none;display:inline-flex;align-items:center;gap:4px;padding:2px 7px;background:#030d06;border:1px solid #059669;border-radius:4px;">↗ Biomechanics Script Spec</a></div>
+            <div class="pipe-tags">
+              <span class="pipe-tag tag-db-write">form_analysis_results: biomechanics_json (all angles + per-rep timestamps)</span>
+            </div>
+            <div class="pipe-sse">biomechanics_complete</div>
+          </div>
+          <div class="pipe-visual">
+            <div class="pv-header">Output · per rep</div>
+            <div class="pv-body">
+              <div class="pv-row"><span class="pv-key">rep_number</span><span class="pv-val blue">3</span></div>
+              <div class="pv-row"><span class="pv-key">knee_angle</span><span class="pv-val amber">88.2°</span></div>
+              <div class="pv-row"><span class="pv-key">hip_angle</span><span class="pv-val green">86.5°</span></div>
+              <div class="pv-row"><span class="pv-key">dorsiflexion</span><span class="pv-val red">22.1°</span></div>
+              <div class="pv-row"><span class="pv-key">tempo</span><span class="pv-val" style="color:#94a3b8;">1.37s</span></div>
+              <div class="pv-row"><span class="pv-key">bottom_ms</span><span class="pv-val amber">5700</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pipe-spacer"></div>
+
+      <!-- STEP 7 -->
+      <div class="pipe-row sq2">
+        <div class="pipe-meta">
+          <div class="pipe-step-label">Step 7</div>
+          <div class="pipe-squad-label">Squad 2</div>
+        </div>
+        <div class="pipe-content">
+          <div class="pipe-text">
+            <div class="pipe-name">Nemotron 3 Nano Omni</div>
+            <div class="pipe-io">IN: overlay video + biomechanics JSON · OUT: per-rep scores · worst_rep_number · identified issues · chain-of-thought</div>
+            <div class="pipe-sse">nemotron_started → nemotron_complete</div>
+          </div>
+          <div class="pipe-visual">
+            <div class="pv-header">Nemotron output</div>
+            <div class="pv-body">
+              <div class="pv-row"><span class="pv-key">overall_score</span><span class="pv-val amber">72</span></div>
+              <div class="pv-row"><span class="pv-key">worst_rep</span><span class="pv-val red">3</span></div>
+              <div class="pv-divider"></div>
+              <div style="font-size:8px;color:#334155;margin-bottom:3px;text-transform:uppercase;letter-spacing:0.3px;">Issues identified</div>
+              <div><span class="pv-tag pv-issue">knee_valgus</span></div>
+              <div><span class="pv-tag pv-issue">ankle_dorsiflexion</span></div>
+              <div class="pv-divider"></div>
+              <div class="pv-row"><span class="pv-key">rep scores</span><span class="pv-val" style="color:#94a3b8;">82·79·68·74·71…</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pipe-spacer"></div>
+
+      <!-- STEP 8 -->
+      <div class="pipe-row sq3">
+        <div class="pipe-meta">
+          <div class="pipe-step-label">Step 8</div>
+          <div class="pipe-squad-label">Squad 3</div>
+        </div>
+        <div class="pipe-content">
+          <div class="pipe-text">
+            <div class="pipe-name">OpenCV Part 2 — worst-rep frame extraction</div>
+            <div class="pipe-io">Seeks to worst rep's bottom_timestamp_ms · extracts raw frame · overlays actual angles + gold standard · saves annotated image — shown to user</div>
+            <div class="pipe-tags">
+              <span class="pipe-tag tag-db-read">gold_standard_biomechanics: ideal angle ranges for comparison</span>
+              <span class="pipe-tag tag-db-read">form_analysis_results: bottom_timestamp_ms for worst rep</span>
+              <span class="pipe-tag tag-db-write">form_analysis_results: annotated_frame_url</span>
+            </div>
+            <div class="pipe-sse">frames_extracting → frames_ready (+ frame_url)</div>
+          </div>
+          <div class="pipe-visual">
+            <div class="pv-header">Annotated frame · worst rep</div>
+            <div class="pv-body" style="padding:6px;">
+              <div style="background:#0d1117;border:1px solid #1e2433;border-radius:5px;padding:7px;position:relative;min-height:70px;">
+                <div style="font-size:8px;color:#475569;margin-bottom:5px;">User at bottom of squat</div>
+                <div style="display:flex;flex-direction:column;gap:3px;">
+                  <div style="display:flex;align-items:center;gap:5px;">
+                    <div style="width:7px;height:7px;border-radius:50%;background:#4ade80;border:1px solid #22c55e;flex-shrink:0;"></div>
+                    <span style="font-size:8px;color:#94a3b8;">Hip &nbsp;<span style="color:#4ade80;">86° </span><span style="color:#475569;">/ 80–95°</span></span>
+                  </div>
+                  <div style="display:flex;align-items:center;gap:5px;">
+                    <div style="width:7px;height:7px;border-radius:50%;background:#fbbf24;border:1px solid #f59e0b;flex-shrink:0;"></div>
+                    <span style="font-size:8px;color:#94a3b8;">Knee <span style="color:#fbbf24;">88° </span><span style="color:#475569;">/ 80–95°</span></span>
+                  </div>
+                  <div style="display:flex;align-items:center;gap:5px;">
+                    <div style="width:7px;height:7px;border-radius:50%;background:#f87171;border:1px solid #ef4444;flex-shrink:0;"></div>
+                    <span style="font-size:8px;color:#94a3b8;">Ankle <span style="color:#f87171;">22° </span><span style="color:#475569;">/ ≥25°</span></span>
+                  </div>
+                </div>
+              </div>
+              <div style="font-size:8px;color:#475569;text-align:center;margin-top:4px;">This image appears on Results screen</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pipe-spacer"></div>
+
+      <!-- STEP 9 -->
+      <div class="pipe-row sq2">
+        <div class="pipe-meta">
+          <div class="pipe-step-label">Step 9</div>
+          <div class="pipe-squad-label">Squad 2</div>
+        </div>
+        <div class="pipe-content">
+          <div class="pipe-text">
+            <div class="pipe-name">Claude Sonnet — coaching + progression recommendation</div>
+            <div class="pipe-io">Receives Nemotron analysis + DB weight history + RAG coaching context · produces coaching paragraphs + weight-specific progression recommendation</div>
+            <div class="pipe-tags">
+              <span class="pipe-tag tag-db-read">workout_logs: past weights + form scores → weight-based reasoning</span>
+              <span class="pipe-tag tag-rag">5–10 MD coaching docs in system prompt (coaching language + form cues)</span>
+              <span class="pipe-tag tag-db-write">form_analysis_results: coaching_output, progression_recommendation, status: complete</span>
+            </div>
+            <div style="margin-top:6px;padding:7px 9px;background:#0a1205;border:1px solid #166534;border-radius:6px;font-size:9.5px;color:#86efac;line-height:1.5;">
+              <strong style="color:#4ade80;">Weight history → Claude, not Nemotron.</strong> Claude needs past sessions to say <em style="color:#64748b;">"Form at 12kg solid across 3 sessions → ready for 14kg"</em> or <em style="color:#64748b;">"Tempo degrades at rep 6 at 16kg → hold weight."</em>
+            </div>
+            <div class="pipe-sse">claude_started → claude_complete → analysis_complete</div>
+          </div>
+          <div class="pipe-visual">
+            <div class="pv-header">Claude output</div>
+            <div class="pv-body">
+              <div class="pv-coaching">"At 12kg your posture holds well but ankle dorsiflexion limits your depth from rep 5 onwards. This is typical at this load — your heel is compensating."</div>
+              <div class="pv-divider"></div>
+              <div style="font-size:8px;color:#334155;text-transform:uppercase;letter-spacing:0.3px;margin-bottom:2px;">Progression</div>
+              <div class="pv-rec rec-hold">HOLD WEIGHT AT 12KG</div>
+              <div style="font-size:8px;color:#475569;margin-top:3px;text-align:center;">Improve ankle mobility first</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Squad legend sidebar -->
+    <div style="position:sticky;top:72px;background:#0d1117;border:1px solid #1e2433;border-radius:10px;padding:16px;">
+      <div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:0.7px;color:#334155;margin-bottom:12px;">Squad ownership</div>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div style="width:10px;height:10px;border-radius:50%;background:#3b82f6;flex-shrink:0;"></div>
+          <div>
+            <div style="font-size:11px;font-weight:700;color:#93c5fd;">Squad 1 — Frontend</div>
+            <div style="font-size:10px;color:#475569;">React · Tailwind · SSE client</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div style="width:10px;height:10px;border-radius:50%;background:#22c55e;flex-shrink:0;"></div>
+          <div>
+            <div style="font-size:11px;font-weight:700;color:#86efac;">Squad 2 — Backend</div>
+            <div style="font-size:10px;color:#475569;">FastAPI · GCS · Nemotron · Claude</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div style="width:10px;height:10px;border-radius:50%;background:#f97316;flex-shrink:0;"></div>
+          <div>
+            <div style="font-size:11px;font-weight:700;color:#fdba74;">Squad 3 — Data</div>
+            <div style="font-size:10px;color:#475569;">MediaPipe · OpenCV · Biomechanics</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div style="width:10px;height:10px;border-radius:50%;background:#ef4444;flex-shrink:0;"></div>
+          <div>
+            <div style="font-size:11px;font-weight:700;color:#fca5a5;">Quality Gate</div>
+            <div style="font-size:10px;color:#475569;">Blocks bad videos before AI</div>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:14px;padding-top:12px;border-top:1px solid #1e2433;">
+        <div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:0.7px;color:#334155;margin-bottom:8px;">SSE events</div>
+        <div style="font-size:10px;color:#475569;line-height:1.7;">Real-time progress pushed to the frontend at every stage. Frontend never polls — server pushes.</div>
+      </div>
+      <div style="margin-top:14px;padding-top:12px;border-top:1px solid #1e2433;">
+        <div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:0.7px;color:#334155;margin-bottom:8px;">Data layer</div>
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          <div style="display:flex;align-items:center;gap:6px;">
+            <div style="width:8px;height:8px;border-radius:2px;background:#5b21b6;flex-shrink:0;"></div>
+            <div style="font-size:10px;color:#c4b5fd;">↑ DB Write</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;">
+            <div style="width:8px;height:8px;border-radius:2px;background:#0e7490;flex-shrink:0;"></div>
+            <div style="font-size:10px;color:#67e8f9;">↓ DB Read</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;">
+            <div style="width:8px;height:8px;border-radius:2px;background:#92400e;flex-shrink:0;"></div>
+            <div style="font-size:10px;color:#fde68a;">📄 RAG / Prompt</div>
+          </div>
+        </div>
+        <div style="margin-top:10px;padding:8px;background:#080c12;border-radius:6px;border:1px solid #1e2433;font-size:9.5px;color:#475569;line-height:1.6;">
+          <strong style="color:#94a3b8;display:block;margin-bottom:4px;">DB tables used</strong>
+          form_sessions<br>
+          form_analysis_results<br>
+          workout_logs<br>
+          gold_standard_biomechanics
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ══════════════════════════
+     SECTION 5 — SCOPE
+══════════════════════════ -->
+<div class="section" id="s5">
+  <div class="section-num">Section 05 — Scope Decisions</div>
+  <div class="section-title">What we kept, simplified, and dropped — and why</div>
+  <div class="section-sub">Every decision made to reduce complexity without reducing demo value</div>
+
+  <div class="scope-grid">
+
+    <div class="scope-card simplified">
+      <div class="scope-card-header">
+        <span class="scope-tag tag-simplified">Simplified</span>
+        <div class="scope-title">RAG — Vector DB → MD files in system prompt</div>
+      </div>
+      <div class="scope-what">Originally: Pinecone/Weaviate vector DB · embedding model · ingestion pipeline · retrieval endpoint · chunking strategy.<br>Now: 5–10 curated coaching documents converted to MD files, injected directly into Claude's system prompt.</div>
+      <div>
+        <div class="scope-why-label">Why</div>
+        <div class="scope-why">1 exercise + &lt;10 documents = vector DB is overkill at this scale. The RAG purpose is coaching language grounding, not biomechanics analysis. System prompt injection achieves the same outcome with a fraction of the build effort. Can scale to vector DB when exercises multiply.</div>
+      </div>
+    </div>
+
+    <div class="scope-card dropped">
+      <div class="scope-card-header">
+        <span class="scope-tag tag-dropped">Dropped</span>
+        <div class="scope-title">Authentication — JWT + Supabase Auth</div>
+      </div>
+      <div class="scope-what">Originally: sign up, login, JWT middleware, Supabase Auth, session management, auth screens on frontend.</div>
+      <div>
+        <div class="scope-why-label">Why</div>
+        <div class="scope-why">Judges and users are not evaluating login flows. Adds significant Squad 1 + Squad 2 build effort with zero demo value. Replaced with 2–3 hardcoded user IDs seeded in the DB — form comparison, session history, and dashboard all work as expected in a controlled demo environment.</div>
+      </div>
+    </div>
+
+    <div class="scope-card simplified">
+      <div class="scope-card-header">
+        <span class="scope-tag tag-simplified">Simplified</span>
+        <div class="scope-title">User identity — hardcoded demo users with dropdown</div>
+      </div>
+      <div class="scope-what">Originally: authenticated user_id from JWT token per request.<br>Now: 2–3 user IDs seeded in DB (user_001, user_002, user_003). Frontend dropdown lets demo operator switch users to show different progression histories.</div>
+      <div>
+        <div class="scope-why-label">Why</div>
+        <div class="scope-why">Gives the demo full control — switch to user_002 to show a user whose form is degrading at higher weights, switch to user_003 to show a strong progression story. More compelling than a single user with limited history.</div>
+      </div>
+    </div>
+
+    <div class="scope-card dropped">
+      <div class="scope-card-header">
+        <span class="scope-tag tag-dropped">Dropped</span>
+        <div class="scope-title">Profile screen backend + Auth screens</div>
+      </div>
+      <div class="scope-what">Originally: full profile/preferences backend endpoints, login + signup screens built and connected to auth system.</div>
+      <div>
+        <div class="scope-why-label">Why</div>
+        <div class="scope-why">Profile screen exists as a frontend shell (shows dummy data, is routable, looks complete). Auth screens removed entirely — demo starts at Upload. Neither is part of the core product value being evaluated. Post-demo additions.</div>
+      </div>
+    </div>
+
+
+  </div>
+</div>
+  </div>
+
+  <!-- 2. Steps 1-9 + Handoffs -->
+  <div class="content-section" id="section-steps">
+    <div class="legend">
   <div class="legend-item"><div class="legend-dot" style="background:#3b82f6;"></div> Squad 1 — Frontend</div>
   <div class="legend-item"><div class="legend-dot" style="background:#22c55e;"></div> Squad 2 — Backend</div>
   <div class="legend-item"><div class="legend-dot" style="background:#f97316;"></div> Squad 3 — Data / Full Stack</div>
@@ -454,9 +1093,8 @@ h1 { font-size: 22px; font-weight: 800; color: #f8fafc; letter-spacing: -0.5px; 
   </div>
 
 </div>
-
-
-<!-- ─────────────────────────────────
+    <div style="height:20px;"></div>
+    <!-- ─────────────────────────────────
      STEP 1
 ───────────────────────────────── -->
 <div class="step-card s1">
@@ -913,9 +1551,11 @@ nemotron_input = {<br>
     </div>
   </div>
 </div>
+  </div>
 
-
-<!-- ─────────────────────────────────
+  <!-- 3. Open Decisions -->
+  <div class="content-section" id="section-decisions">
+    <!-- ─────────────────────────────────
      OPEN DECISIONS SUMMARY
 ───────────────────────────────── -->
 <div style="margin-top:40px;background:#0d1117;border:1px solid #1e2433;border-radius:12px;padding:20px 22px;">
@@ -1558,5 +2198,1233 @@ def draw_label(img, text, position, alpha=0.6):<br>
   Kinetic · Pipeline Integration Guide &amp; OpenCV Brief · Generated May 11, 2026 · Merged from pipeline_integration_guide + opencv_frame_extraction_brief · Review with all three squads
 </p>
 
+</body>
+</html>
+  </div>
+
+  <!-- 4. OpenCV Scope & Status -->
+  <div class="content-section" id="section-scope">
+    <!-- ══════════════════════════════════
+     SCOPE & STATUS BANNER
+══════════════════════════════════ -->
+<div style="background:#0d1117;border:1px solid #1e2433;border-radius:12px;padding:20px 22px;margin-bottom:32px;">
+
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+    <div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:0.8px;color:#475569;">Agreed scope</div>
+    <div style="font-size:11px;font-weight:800;padding:2px 10px;border-radius:20px;background:#1a0d2e;color:#c4b5fd;border:1px solid #5b21b6;">Option 3 — Frame + skeleton + text labels</div>
+    <div style="font-size:11px;font-weight:700;padding:2px 10px;border-radius:20px;background:#0a1f12;color:#4ade80;border:1px solid #14532d;">Revised estimate: 3–4 days</div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+
+    <!-- Done -->
+    <div style="background:#030d06;border:1px solid #14532d;border-radius:8px;padding:14px 16px;">
+      <div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:0.7px;color:#22c55e;margin-bottom:10px;">Already built — OpenCV Part 1 (video overlay)</div>
+      <div style="display:flex;flex-direction:column;gap:7px;">
+        <div style="display:flex;gap:8px;align-items:baseline;font-size:11px;color:#86efac;">
+          <span style="color:#22c55e;flex-shrink:0;">✓</span> Green skeleton lines drawn between joints (hip → knee → ankle)
+        </div>
+        <div style="display:flex;gap:8px;align-items:baseline;font-size:11px;color:#86efac;">
+          <span style="color:#22c55e;flex-shrink:0;">✓</span> Joint dot markers at hip, knee, ankle positions
+        </div>
+        <div style="display:flex;gap:8px;align-items:baseline;font-size:11px;color:#86efac;">
+          <span style="color:#22c55e;flex-shrink:0;">✓</span> Angle computation — Hip, Knee, Back angles calculated per frame
+        </div>
+        <div style="display:flex;gap:8px;align-items:baseline;font-size:11px;color:#86efac;">
+          <span style="color:#22c55e;flex-shrink:0;">✓</span> Angle values displayed as text on the frame (cv2.putText)
+        </div>
+        <div style="display:flex;gap:8px;align-items:baseline;font-size:11px;color:#86efac;">
+          <span style="color:#22c55e;flex-shrink:0;">✓</span> Rep counter
+        </div>
+        <div style="display:flex;gap:8px;align-items:baseline;font-size:11px;color:#86efac;">
+          <span style="color:#22c55e;flex-shrink:0;">✓</span> State detection (STANDING / SQUATTING)
+        </div>
+        <div style="display:flex;gap:8px;align-items:baseline;font-size:11px;color:#86efac;">
+          <span style="color:#22c55e;flex-shrink:0;">✓</span> Camera view detection (side_right etc.)
+        </div>
+      </div>
+    </div>
+
+    <!-- Still needed -->
+    <div style="background:#080c12;border:1px solid #1e2433;border-radius:8px;padding:14px 16px;">
+      <div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:0.7px;color:#475569;margin-bottom:10px;">Still needed — OpenCV Part 2 (frame extraction)</div>
+      <div style="display:flex;flex-direction:column;gap:7px;">
+
+        <div style="display:flex;gap:8px;align-items:baseline;font-size:11px;color:#94a3b8;">
+          <span style="color:#f59e0b;flex-shrink:0;">○</span>
+          <div><strong style="color:#f1f5f9;">Seek to bottom_timestamp_ms + extract single frame</strong>
+          <div style="font-size:10px;color:#475569;margin-top:1px;">Wiring only — OpenCV wrapper already built. Requires bottom_timestamp_ms in biomechanics JSON (see data gap).</div></div>
+        </div>
+
+        <div style="display:flex;gap:8px;align-items:baseline;font-size:11px;color:#94a3b8;">
+          <span style="color:#f59e0b;flex-shrink:0;">○</span>
+          <div><strong style="color:#f1f5f9;">Re-run MediaPipe on that single frame</strong>
+          <div style="font-size:10px;color:#475569;margin-top:1px;">Gets landmark pixel positions for correct skeleton placement on the still image. ~50–100ms. Already know how to do this.</div></div>
+        </div>
+
+        <div style="display:flex;gap:8px;align-items:baseline;font-size:11px;color:#94a3b8;">
+          <span style="color:#f59e0b;flex-shrink:0;">○</span>
+          <div><strong style="color:#f1f5f9;">Apply existing Part 1 overlay to single frame</strong>
+          <div style="font-size:10px;color:#475569;margin-top:1px;">Reuse the skeleton + angle drawing functions already written. Adapt from video loop to single-frame call.</div></div>
+        </div>
+
+        <div style="display:flex;gap:8px;align-items:baseline;font-size:11px;color:#94a3b8;">
+          <span style="color:#f59e0b;flex-shrink:0;">○</span>
+          <div><strong style="color:#f1f5f9;">Add gold standard comparison text</strong>
+          <div style="font-size:10px;color:#475569;margin-top:1px;">Alongside actual angle: show ideal range and pass/fail. e.g. "Knee: 88° · Ideal: 80–95° ✓". New logic — not in Part 1.</div></div>
+        </div>
+
+        <div style="display:flex;gap:8px;align-items:baseline;font-size:11px;color:#94a3b8;">
+          <span style="color:#f59e0b;flex-shrink:0;">○</span>
+          <div><strong style="color:#f1f5f9;">Colour-code angles by status</strong>
+          <div style="font-size:10px;color:#475569;margin-top:1px;">Green = within ideal range · Amber = borderline · Red = outside range. Applied to joint markers and text.</div></div>
+        </div>
+
+        <div style="display:flex;gap:8px;align-items:baseline;font-size:11px;color:#94a3b8;">
+          <span style="color:#f59e0b;flex-shrink:0;">○</span>
+          <div><strong style="color:#f1f5f9;">Semi-transparent text backgrounds</strong>
+          <div style="font-size:10px;color:#475569;margin-top:1px;">Dark backing rectangle behind text for readability on any gym background (addWeighted pattern). Not in Part 1 — text currently sits directly on frame.</div></div>
+        </div>
+
+        <div style="display:flex;gap:8px;align-items:baseline;font-size:11px;color:#94a3b8;">
+          <span style="color:#f59e0b;flex-shrink:0;">○</span>
+          <div><strong style="color:#f1f5f9;">Save annotated image to GCS + write annotated_frame_url to DB</strong>
+          <div style="font-size:10px;color:#475569;margin-top:1px;">Output step — store image, update DB, trigger frames_ready SSE event.</div></div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Data gap callout -->
+  <div style="margin-top:14px;background:#141000;border:1px solid #92400e;border-radius:8px;padding:10px 14px;font-size:11px;color:#fcd34d;line-height:1.6;">
+    <strong style="color:#fbbf24;">Prerequisite before any of the above:</strong> Add <code style="background:#1a1000;padding:1px 4px;border-radius:3px;">bottom_frame</code> and <code style="background:#1a1000;padding:1px 4px;border-radius:3px;">bottom_timestamp_ms</code> per rep to the biomechanics JSON schema and output — see Section 3. Without this, the frame extraction step cannot know which frame to seek to.
+  </div>
+
+</div>
+
+
+<!-- ─────────────────────────────────
+     STEP 1
+───────────────────────────────── -->
+<div class="step-card s1">
+  <div class="step-header">
+    <span class="step-num">Step 1</span>
+    <div>
+      <div class="step-title">User uploads video</div>
+      <div class="step-squad">Squad 1 — Frontend · Upload screen</div>
+    </div>
+    <span class="step-badge badge-s1">Squad 1</span>
+  </div>
+  <div class="step-body">
+    <div class="io-block">
+      <div class="io-row"><div class="io-label io-in">IN</div><div class="io-val">User selects exercise (Goblet Squat), enters weight in kg, picks video file (.mp4 / .mov)</div></div>
+      <div class="io-row"><div class="io-label io-out">OUT</div><div class="io-val">Multipart POST to <code>/upload</code> with video file + exercise identifier + weight</div></div>
+      <div class="io-row"><div class="io-label io-sse">SSE</div><div class="io-val">Opens <code>EventSource</code> on <code>/analysis/{analysis_id}/stream</code> after receiving analysis_id from Step 2</div></div>
+    </div>
+    <div class="req-block">
+      <div class="req-label">What Squad 1 needs from Squad 2 before building</div>
+      <div class="req-list">
+        <div class="req-item">Exact URL for the <code>/upload</code> endpoint (Cloud Run dev URL)</div>
+        <div class="req-item">Multipart field names — <strong style="color:#4ade80;">confirmed in technical_data_schema.html</strong>: <code>video</code> (file) · <code>exercise_id</code> (string: <code>"ex_gob_squat_001"</code>) · <code>weight_value</code> (float) · <code>weight_unit</code> (string: <code>"kg"</code> | <code>"lb"</code>)</div>
+        <div class="req-item">Confirmed response shape — Squad 1 expects <code>{"analysis_id": "uuid"}</code> before opening the SSE stream</div>
+        <div class="req-item">SSE stream URL pattern — confirmed as <code>/analysis/{analysis_id}/stream</code></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="connector">↓</div>
+
+<!-- ─────────────────────────────────
+     HANDOFF A
+───────────────────────────────── -->
+<div class="handoff">
+  <div class="handoff-header">
+    <span class="handoff-badge">Handoff A</span>
+    <span class="handoff-title">Squad 1 → Squad 2 &nbsp;·&nbsp; <span class="chip-decided">Field names confirmed — from technical_data_schema.html</span></span>
+  </div>
+  <div class="handoff-desc">Squad 1 POSTs the video to Squad 2's endpoint. Field names are already defined in technical_data_schema.html — confirmed below. Remaining item for integration meeting: error response shape.</div>
+
+  <div class="code-block">
+<span class="jc"># What Squad 1 sends — field names confirmed from technical_data_schema.html</span><br>
+formData = FormData()<br>
+formData.append(<span class="js">"video"</span>, videoFile)                  <span class="jc"># multipart file field</span><br>
+formData.append(<span class="js">"exercise_id"</span>, <span class="js">"ex_gob_squat_001"</span>)    <span class="jc"># FK → exercises reference table</span><br>
+formData.append(<span class="js">"weight_value"</span>, <span class="js">"12.0"</span>)              <span class="jc"># float</span><br>
+formData.append(<span class="js">"weight_unit"</span>, <span class="js">"kg"</span>)                 <span class="jc"># "kg" | "lb"</span><br>
+<br>
+<span class="jc"># What Squad 2 returns — Squad 1 opens SSE stream immediately after</span><br>
+{ <span class="jk">"analysis_id"</span>: <span class="js">"550e8400-e29b-41d4-a716-446655440000"</span> }
+  </div>
+
+  <div style="margin-top:10px;">
+    <div class="sub-label">One remaining item for integration meeting</div>
+    <div style="display:flex;flex-direction:column;gap:5px;margin-top:6px;font-size:11px;color:#94a3b8;">
+      <div>→ Error response shape — what does Squad 1 receive if the upload fails (413 file too large, 400 bad request, 500 server error)? Squad 1 needs to know the shape to render the correct error state.</div>
+    </div>
+  </div>
+</div>
+
+<div class="connector">↓</div>
+
+
+<!-- ─────────────────────────────────
+     STEP 2
+───────────────────────────────── -->
+<div class="step-card s2">
+  <div class="step-header">
+    <span class="step-num">Step 2</span>
+    <div>
+      <div class="step-title">Save to GCS + write DB record</div>
+      <div class="step-squad">Squad 2 — Backend · /upload endpoint</div>
+    </div>
+    <span class="step-badge badge-s2">Squad 2</span>
+  </div>
+  <div class="step-body">
+    <div class="io-block">
+      <div class="io-row"><div class="io-label io-in">IN</div><div class="io-val">video file · exercise identifier · weight_kg — from Squad 1's POST</div></div>
+      <div class="io-row"><div class="io-label io-out">OUT</div><div class="io-val">Generates <code>analysis_id</code> (uuid4). Saves video to GCS at <code>videos/{user_id}/{analysis_id}/original.mp4</code>. Returns <code>{"analysis_id": "..."}</code> to frontend immediately.</div></div>
+      <div class="io-row"><div class="io-label io-db">DB</div><div class="io-val">Writes <code>form_sessions</code> record: analysis_id, user_id (hardcoded for demo), exercise_id, weight_kg, video_gcs_path, status: "processing", created_at</div></div>
+      <div class="io-row"><div class="io-label io-sse">SSE</div><div class="io-val"><code>upload_received</code> → { analysis_id, session_id, user_id, filename, size_mb, created_at }</div></div>
+    </div>
+    <div class="req-block">
+      <div class="req-label">What Squad 2 does immediately after GCS save completes</div>
+      <div class="req-list">
+        <div class="req-item">Emits <code>mediapipe_started</code> SSE event → { analysis_id, session_id, user_id, video_url }</div>
+        <div class="req-item">Calls Squad 3's pipeline function — passing <code>gcs_path</code> and <code>analysis_id</code></div>
+        <div class="req-item">This call is async / background — the <code>/upload</code> response has already been sent to Squad 1 before this runs</div>
+      </div>
+    </div>
+    <div class="q-block">
+      <div class="q-label">Discussion point — team meeting &nbsp;·&nbsp; user identity for demo</div>
+      <div class="q-list">
+        <div class="q-item">2–3 user IDs hardcoded in DB (user_001, user_002, user_003). <strong style="color:#fbbf24;">Discussion question:</strong> Can Squad 1 show a dropdown on the Upload screen to select between 2–3 test users? This lets the demo switch between users to show different progression histories on the dashboard — without any real auth. If yes, Squad 1 passes the selected user_id as a request header or form field. If no, Squad 2 uses a single fixed test ID on every request.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="connector">↓</div>
+
+<!-- ─────────────────────────────────
+     HANDOFF B
+───────────────────────────────── -->
+<div class="handoff">
+  <div class="handoff-header">
+    <span class="handoff-badge">Handoff B</span>
+    <span class="handoff-title">Squad 2 → Squad 3 &nbsp;·&nbsp; <span class="chip-open">Open — function contract must be agreed</span></span>
+  </div>
+  <div class="handoff-desc">Squad 2 triggers Squad 3's full processing pipeline (Steps 3–6) as a background async task. Squad 3 exposes their pipeline as a callable Python function. The exact inputs, outputs, and error signals must be agreed before either squad writes integration code.</div>
+
+  <div class="sub-label" style="margin-bottom:8px;">The agreed function contract — to be confirmed in meeting</div>
+  <div class="code-block">
+<span class="jc"># Squad 3 exposes this function — Squad 2 calls it</span><br>
+def process_video(<br>
+&nbsp;&nbsp;gcs_path: <span class="jv">str</span>,        <span class="jc"># full GCS path to raw video</span><br>
+&nbsp;&nbsp;analysis_id: <span class="jv">str</span>    <span class="jc"># uuid — used for naming output files in GCS</span><br>
+) -> <span class="jv">dict</span>:<br>
+&nbsp;&nbsp;<span class="jc"># Runs Steps 3, 4, 5, 6 internally</span><br>
+&nbsp;&nbsp;<span class="jc"># On success returns:</span><br>
+&nbsp;&nbsp;return {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="jk">"status"</span>: <span class="js">"success"</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="jk">"overlay_video_url"</span>: <span class="js">"gs://..."</span>,       <span class="jc"># Step 5 output — sent to Nemotron</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="jk">"biomechanics_json"</span>: { ... },            <span class="jc"># Step 6 output — stored in DB</span><br>
+&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;<span class="jc"># On quality gate failure returns:</span><br>
+&nbsp;&nbsp;return {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="jk">"status"</span>: <span class="js">"failed"</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="jk">"error_code"</span>: <span class="js">"BAD_ANGLE"</span>,          <span class="jc"># BAD_ANGLE / LOW_CONFIDENCE / PARTIAL_OCCLUSION / VIDEO_TOO_SHORT</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="jk">"affected_landmarks"</span>: [<span class="js">"left_knee"</span>]    <span class="jc"># which joints failed visibility check</span><br>
+&nbsp;&nbsp;}
+  </div>
+
+  <div style="margin-top:10px;">
+    <div class="sub-label" style="margin-bottom:8px;">What Squad 2 does with the return value</div>
+    <div style="display:flex;flex-direction:column;gap:5px;font-size:11px;color:#94a3b8;">
+      <div><strong style="color:#4ade80;">On success:</strong> stores biomechanics_json to DB · sends overlay_video_url to Nemotron · emits biomechanics_complete SSE</div>
+      <div><strong style="color:#f87171;">On failure:</strong> updates form_sessions status to "failed" · emits error SSE event with error_code and retryable: false</div>
+    </div>
+  </div>
+
+  <div style="margin-top:12px;">
+    <div class="sub-label" style="margin-bottom:8px;">SSE events during Steps 3–6 — developer recommendation needed &nbsp;<span class="chip-open">Ask Nicole + Anusha/Ezequiel</span></div>
+    <div style="font-size:11px;color:#67e8f9;margin-bottom:10px;line-height:1.6;">Squad 2 owns the SSE stream. Squad 3 runs the pipeline. The question is how Squad 3 signals progress back to Squad 2 so intermediate SSE events can fire. Below are three options from simplest to most robust — <strong style="color:#f1f5f9;">ask the developer which they recommend and why before deciding.</strong></div>
+    <div class="options">
+      <div class="option-card">
+        <div class="option-header">
+          <span class="option-tag opt-alt">Option C · Simplest</span>
+          <span class="option-name">Single call — Squad 2 fires SSE only at start and end</span>
+        </div>
+        <div class="option-desc">Squad 3 is one blocking function call. Squad 2 emits <code>mediapipe_started</code> before and <code>biomechanics_complete</code> after. No intermediate events. Progress bar jumps from 10% → 33% in one step. Fastest to build. Trade-off: frontend progress is less granular for the user.</div>
+      </div>
+      <div class="option-card">
+        <div class="option-header">
+          <span class="option-tag opt-alt">Option B · Medium</span>
+          <span class="option-name">Sequential calls — Squad 2 calls Squad 3 in stages</span>
+        </div>
+        <div class="option-desc">Squad 2 calls Squad 3 in three steps: <code>run_mediapipe()</code> → emit SSE → <code>run_overlay()</code> → emit SSE → <code>run_biomechanics()</code> → emit SSE. Squad 2 has full control but Squad 3 must expose three separate functions. Tighter coupling between squads.</div>
+      </div>
+      <div class="option-card recommended">
+        <div class="option-header">
+          <span class="option-tag opt-rec">Option A · Most robust</span>
+          <span class="option-name">Callback — Squad 3 signals Squad 2 at each internal stage</span>
+        </div>
+        <div class="option-desc">Squad 2 passes an <code>emit_event(name, payload)</code> callback into <code>process_video()</code>. Squad 3 calls it after each internal step. All four events fire in real time: <code>mediapipe_complete</code> · <code>overlay_complete</code> · <code>biomechanics_complete</code>. Squad 3 stays self-contained. Best user experience — live progress bar. Slightly more complex to wire initially.</div>
+      </div>
+    </div>
+    <div style="margin-top:8px;font-size:10px;color:#475569;padding:8px 10px;background:#080c12;border-radius:6px;border:1px solid #1e2433;">
+      <strong style="color:#94a3b8;">Note for developer meeting:</strong> Present all three options. Ask Nicole (S2) and Anusha/Ezequiel (S3) which they can implement fastest given current progress. For a demo, Option C is acceptable. For a product, Option A is the right long-term architecture.
+    </div>
+  </div>
+</div>
+
+<div class="connector">↓</div>
+
+
+<!-- ─────────────────────────────────
+     STEP 3
+───────────────────────────────── -->
+<div class="step-card s3">
+  <div class="step-header">
+    <span class="step-num">Step 3</span>
+    <div>
+      <div class="step-title">MediaPipe — joint keypoint extraction</div>
+      <div class="step-squad">Squad 3 — Data / Full Stack · Internal to process_video()</div>
+    </div>
+    <span class="step-badge badge-s3">Squad 3</span>
+  </div>
+  <div class="step-body">
+    <div class="io-block">
+      <div class="io-row"><div class="io-label io-in">IN</div><div class="io-val"><code>gcs_path</code> — raw video downloaded from GCS. OpenCV wrapper reads frame-by-frame.</div></div>
+      <div class="io-row"><div class="io-label io-out">OUT</div><div class="io-val">Per-frame landmarks (x, y, z normalised, visibility, presence) for all 10 SQUAT_LANDMARKS · per-rep segments (start_frame, <strong style="color:#fde68a;">bottom_frame</strong>, end_frame, <strong style="color:#fde68a;">bottom_timestamp_ms</strong>) · FPS + total frame count</div></div>
+      <div class="io-row"><div class="io-label io-sse">SSE</div><div class="io-val"><code>mediapipe_complete</code> → { analysis_id, session_id, user_id, rep_count, fps, keypoints_detected, frames_processed }</div></div>
+    </div>
+    <div class="gap-block">
+      <div class="gap-label">Data gap — developer not yet aware · review in meeting</div>
+      <div class="gap-text">MediaPipe computes <code>bottom_frame</code> and <code>bottom_timestamp_ms</code> for every rep during segmentation. These must be passed through to the biomechanics script output (Step 6) so they are saved to DB. Without them, OpenCV Step 2 (Step 8) cannot seek to the correct frame in the video.<br><br><strong style="color:#f87171;">Action for meeting:</strong> Walk the Squad 3 developer through the OpenCV frame extraction brief (opencv_frame_extraction_brief.html) — specifically Section 3 (data gap) and Section 4 (proposed fix). They need to add two fields to their biomechanics script output before building Step 6. Confirm they understand and agree with the fix before they write the script.</div>
+    </div>
+  </div>
+</div>
+
+<div class="connector">↓</div>
+
+
+<!-- ─────────────────────────────────
+     STEP 4
+───────────────────────────────── -->
+<div class="step-card s3">
+  <div class="step-header">
+    <span class="step-num">Step 4</span>
+    <div>
+      <div class="step-title">Visibility quality gate</div>
+      <div class="step-squad">Squad 3 — Data / Full Stack · Runs immediately after Step 3</div>
+    </div>
+    <span class="step-badge badge-s3">Squad 3</span>
+  </div>
+  <div class="step-body">
+    <div class="io-block">
+      <div class="io-row"><div class="io-label io-in">IN</div><div class="io-val">Per-frame landmark visibility + presence scores from Step 3</div></div>
+      <div class="io-row"><div class="io-label io-out">OUT — pass</div><div class="io-val" style="color:#4ade80;">Pipeline continues to Step 5. All critical landmarks visible across ≥70% of frames.</div></div>
+      <div class="io-row"><div class="io-label io-out">OUT — fail</div><div class="io-val" style="color:#f87171;">Returns error dict to Squad 2 with <code>error_code</code> and <code>affected_landmarks</code>. Pipeline stops. Squad 2 emits SSE error event and writes status: "failed" to DB.</div></div>
+    </div>
+    <div class="req-block">
+      <div class="req-label">Error codes Squad 3 must produce — Squad 2 maps these to SSE error events</div>
+      <div class="req-list">
+        <div class="req-item"><code>BAD_ANGLE</code> — camera angle prevents reliable landmark detection across key joints</div>
+        <div class="req-item"><code>LOW_CONFIDENCE</code> — landmark visibility below threshold for &gt;30% of frames</div>
+        <div class="req-item"><code>PARTIAL_OCCLUSION</code> — one or more critical joints obscured (clothing, object in frame)</div>
+        <div class="req-item"><code>VIDEO_TOO_SHORT</code> — fewer than 3 complete reps detected</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="connector">↓</div>
+
+
+<!-- ─────────────────────────────────
+     STEP 5
+───────────────────────────────── -->
+<div class="step-card s3">
+  <div class="step-header">
+    <span class="step-num">Step 5 · OpenCV Part 1</span>
+    <div>
+      <div class="step-title">OpenCV — full video overlay with green skeleton</div>
+      <div class="step-squad">Squad 3 — Data / Full Stack · Runs only if quality gate passes</div>
+    </div>
+    <span class="step-badge badge-s3">Squad 3</span>
+  </div>
+  <div class="step-body">
+    <div class="io-block">
+      <div class="io-row"><div class="io-label io-in">IN</div><div class="io-val">Raw video frames · MediaPipe landmark coordinates per frame from Step 3</div></div>
+      <div class="io-row"><div class="io-label io-out">OUT</div><div class="io-val">Full video with green skeleton lines drawn on every frame. Saved to GCS at <code>analyses/{analysis_id}/overlay.mp4</code>. Returns <code>overlay_video_url</code> to the pipeline.</div></div>
+      <div class="io-row"><div class="io-label io-sse">SSE</div><div class="io-val"><code>overlay_complete</code> → { analysis_id, session_id, user_id, overlay_video_url }</div></div>
+    </div>
+    <div class="req-block">
+      <div class="req-label">What Squad 2 receives from this step</div>
+      <div class="req-list">
+        <div class="req-item"><code>overlay_video_url</code> — the GCS path of the overlay video. Squad 2 passes this directly to Nemotron (Step 7) as the primary visual input.</div>
+        <div class="req-item">This video is NOT shown to the user — it is the AI input only.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="connector">↓</div>
+
+
+<!-- ─────────────────────────────────
+     STEP 6
+───────────────────────────────── -->
+<div class="step-card s3">
+  <div class="step-header">
+    <span class="step-num">Step 6</span>
+    <div>
+      <div class="step-title">Biomechanics script — angles, tempo, stability</div>
+      <div class="step-squad">Squad 3 — Data / Full Stack · Final step in process_video()</div>
+    </div>
+    <span class="step-badge badge-s3">Squad 3</span>
+  </div>
+  <div class="step-body">
+    <div class="io-block">
+      <div class="io-row"><div class="io-label io-in">IN</div><div class="io-val">MediaPipe landmarks + rep segments from Step 3 · FPS from OpenCV wrapper</div></div>
+      <div class="io-row"><div class="io-label io-out">OUT</div><div class="io-val">Biomechanics JSON — per-rep: knee/hip/ankle angles, tempo, stability, back angle, depth classification. Session-level: consolidated metrics. <strong style="color:#fde68a;">Must also include bottom_frame + bottom_timestamp_ms per rep.</strong></div></div>
+      <div class="io-row"><div class="io-label io-sse">SSE</div><div class="io-val"><code>biomechanics_complete</code> → { analysis_id, session_id, user_id, rep_count, joints_computed, avg_confidence }</div></div>
+    </div>
+    <div class="gap-block">
+      <div class="gap-label">Schema change required — add to every rep object</div>
+      <div class="gap-text">Two fields must be added to the biomechanics JSON output per rep. Without these, Step 8 (OpenCV frame extraction) cannot function.</div>
+    </div>
+    <div class="code-block" style="margin-top:0;">
+<span class="jc"># Current rep object — missing two fields</span><br>
+{<br>
+&nbsp;&nbsp;<span class="jk">"rep_number"</span>: <span class="jn">3</span>,<br>
+&nbsp;&nbsp;<span class="added"><span class="jk">"bottom_frame"</span>: <span class="jn">342</span>,</span>           <span class="jc"># ADD — frame index at bottom position</span><br>
+&nbsp;&nbsp;<span class="added"><span class="jk">"bottom_timestamp_ms"</span>: <span class="jn">5700.0</span>,</span>  <span class="jc"># ADD — (bottom_frame / fps) × 1000</span><br>
+&nbsp;&nbsp;<span class="jk">"depth_data"</span>: { <span class="jk">"knee_angle_at_bottom"</span>: <span class="jn">88.2</span>, ... },<br>
+&nbsp;&nbsp;<span class="jp">...</span><br>
+}
+    </div>
+    <div class="req-block" style="margin-top:0;">
+      <div class="req-label">What Squad 2 receives from process_video() — the full return dict</div>
+      <div class="req-list">
+        <div class="req-item"><code>overlay_video_url</code> — passed to Nemotron (Step 7)</div>
+        <div class="req-item"><code>biomechanics_json</code> — stored to DB in <code>form_analysis_results</code>. Squad 2 uses this in Step 8 to look up <code>bottom_timestamp_ms</code> for the worst rep.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="connector">↓</div>
+
+<!-- ─────────────────────────────────
+     HANDOFF C
+───────────────────────────────── -->
+<div class="handoff">
+  <div class="handoff-header">
+    <span class="handoff-badge">Handoff C</span>
+    <span class="handoff-title">Squad 3 → Squad 2 &nbsp;·&nbsp; <span class="chip-decided">Pattern agreed — function returns dict</span></span>
+  </div>
+  <div class="handoff-desc">Squad 3's <code>process_video()</code> returns its result dict to Squad 2. Squad 2 then: (1) stores biomechanics_json to DB, (2) emits biomechanics_complete SSE, (3) proceeds to call Nemotron with overlay_video_url.</div>
+  <div class="code-block">
+<span class="jc"># Squad 2 — after process_video() returns</span><br>
+result = await process_video(gcs_path, analysis_id)<br>
+<br>
+if result[<span class="js">"status"</span>] == <span class="js">"failed"</span>:<br>
+&nbsp;&nbsp;db.update_session(analysis_id, status=<span class="js">"failed"</span>)<br>
+&nbsp;&nbsp;sse.emit(<span class="js">"error"</span>, { error_code: result[<span class="js">"error_code"</span>], retryable: <span class="js">"false"</span> })<br>
+&nbsp;&nbsp;return<br>
+<br>
+<span class="jc"># Store biomechanics JSON to DB</span><br>
+db.store_biomechanics(analysis_id, result[<span class="js">"biomechanics_json"</span>])<br>
+sse.emit(<span class="js">"biomechanics_complete"</span>, { analysis_id, rep_count: ... })<br>
+<br>
+<span class="jc"># Hand off to Nemotron</span><br>
+nemotron_input = {<br>
+&nbsp;&nbsp;<span class="jk">"overlay_video_url"</span>: result[<span class="js">"overlay_video_url"</span>],<br>
+&nbsp;&nbsp;<span class="jk">"biomechanics_json"</span>: result[<span class="js">"biomechanics_json"</span>]<br>
+}
+  </div>
+</div>
+
+<div class="connector">↓</div>
+
+
+<!-- ─────────────────────────────────
+     STEP 7
+───────────────────────────────── -->
+<div class="step-card s2">
+  <div class="step-header">
+    <span class="step-num">Step 7</span>
+    <div>
+      <div class="step-title">Nemotron 3 Nano Omni — video + biomechanics analysis</div>
+      <div class="step-squad">Squad 2 — Backend · NVIDIA NIM API call</div>
+    </div>
+    <span class="step-badge badge-s2">Squad 2</span>
+  </div>
+  <div class="step-body">
+    <div class="io-block">
+      <div class="io-row"><div class="io-label io-in">IN</div><div class="io-val"><code>overlay_video_url</code> (from Step 5) + <code>biomechanics_json</code> (from Step 6) — dual input. Input format confirmed via S2-W5-09 (NVIDIA NIM API access task).</div></div>
+      <div class="io-row"><div class="io-label io-out">OUT</div><div class="io-val">Per-rep scores · overall_score · identified issues · chain-of-thought paragraphs · <code>worst_rep_number</code> (lowest scoring rep)</div></div>
+      <div class="io-row"><div class="io-label io-sse">SSE</div><div class="io-val"><code>nemotron_started</code> → { analysis_id, session_id, user_id, video_url* } &nbsp;·&nbsp; <code>nemotron_complete</code> → { analysis_id, session_id, user_id, overall_score, issues_count }</div></div>
+    </div>
+    <div class="decision-block">
+      <div class="decision-label">Confirmed — overlay video + biomechanics JSON (Test C)</div>
+      <div style="font-size:11px;color:#86efac;line-height:1.6;">Nemotron receives both inputs together: the <code>overlay_video_url</code> (green skeleton video from Step 5) and the <code>biomechanics_json</code> (from Step 6). This is the dual-input configuration — Test C from the A/B/C test plan. The A/B/C tests this week (S2-W6-05) will validate this is performing as expected, but the architecture decision is confirmed.</div>
+    </div>
+  </div>
+</div>
+
+<div class="connector">↓</div>
+
+
+<!-- ─────────────────────────────────
+     STEP 8
+───────────────────────────────── -->
+<div class="step-card s3">
+  <div class="step-header">
+    <span class="step-num">Step 8 · OpenCV Part 2</span>
+    <div>
+      <div class="step-title">OpenCV — worst-rep frame extraction + angle overlay</div>
+      <div class="step-squad">Squad 3 — Data / Full Stack · Runs after Nemotron completes</div>
+    </div>
+    <span class="step-badge badge-s3">Squad 3</span>
+    <span class="step-badge badge-new">NEW</span>
+  </div>
+  <div class="step-body">
+    <div class="io-block">
+      <div class="io-row"><div class="io-label io-in">IN</div><div class="io-val"><code>raw_video_url</code> (from GCS) · <code>worst_rep_number</code> (from Nemotron output) · <code>bottom_timestamp_ms</code> for that rep (looked up from biomechanics JSON in DB)</div></div>
+      <div class="io-row"><div class="io-label io-out">OUT</div><div class="io-val">Annotated still image — worst-rep bottom frame from raw video with: skeleton lines + joint markers + actual angle values + gold standard comparison text. Saved to GCS at <code>analyses/{analysis_id}/worst_rep_frame.jpg</code>.</div></div>
+      <div class="io-row"><div class="io-label io-db">DB</div><div class="io-val">Updates <code>form_analysis_results</code>: <code>annotated_frame_url</code> set to GCS image path.</div></div>
+      <div class="io-row"><div class="io-label io-sse">SSE</div><div class="io-val"><code>frames_extracting</code> → { analysis_id, session_id, user_id, video_url, frames_total } &nbsp;·&nbsp; <code>frames_ready</code> → { analysis_id, session_id, user_id, frame_url }</div></div>
+    </div>
+    <div class="req-block">
+      <div class="req-label">What Squad 2 passes to Squad 3's frame extraction function</div>
+      <div class="req-list">
+        <div class="req-item">Squad 2 queries the stored biomechanics JSON from DB to get the <code>bottom_timestamp_ms</code> for <code>worst_rep_number</code></div>
+        <div class="req-item">Calls Squad 3's frame extraction function: <code>extract_worst_rep_frame(raw_video_url, bottom_timestamp_ms, worst_rep_data)</code></div>
+        <div class="req-item"><code>worst_rep_data</code> contains the angle values (knee_angle_at_bottom, hip_angle_at_bottom, dorsiflexion_at_bottom) needed for the text overlay</div>
+      </div>
+    </div>
+    <div class="req-block" style="border-color:#5b21b6;background:#0d0720;">
+      <div class="req-label" style="color:#a78bfa;">Overlay spec — Option 3 scope (agreed)</div>
+      <div class="req-list" style="color:#c4b5fd;">
+        <div class="req-item">Skeleton lines (hip→knee, knee→ankle) drawn using <code>cv2.line</code> — already built in Part 1</div>
+        <div class="req-item">Joint markers at knee, hip, ankle — colour by status: green (in range), amber (borderline), red (outside range)</div>
+        <div class="req-item">Actual angle values as text labels — e.g. "Knee: 88°" — using <code>cv2.putText</code> with semi-transparent background</div>
+        <div class="req-item">Gold standard comparison text alongside actual — e.g. "Ideal: 80–95°" in green</div>
+        <div class="req-item">Gold standard values from <code>gold_standard_biomechanics</code> table (prepped in W6 data prep)</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="connector">↓</div>
+
+
+<!-- ─────────────────────────────────
+     STEP 9
+───────────────────────────────── -->
+<div class="step-card s2">
+  <div class="step-header">
+    <span class="step-num">Step 9</span>
+    <div>
+      <div class="step-title">MD files + Claude Sonnet — coaching output + progression</div>
+      <div class="step-squad">Squad 2 — Backend · Claude Sonnet API call (Anthropic)</div>
+    </div>
+    <span class="step-badge badge-s2">Squad 2</span>
+  </div>
+  <div class="step-body">
+    <div class="io-block">
+      <div class="io-row"><div class="io-label io-in">IN</div><div class="io-val">Nemotron output (issues, per-rep scores, chain-of-thought) · MD file content injected into system prompt · user workout history (weight_kg + past form scores from DB)</div></div>
+      <div class="io-row"><div class="io-label io-out">OUT</div><div class="io-val">Coaching paragraphs specific to identified form issues · weight-based progression recommendation: <code>ready_to_progress</code> / <code>hold</code> / <code>drop_weight</code> with reasoning</div></div>
+      <div class="io-row"><div class="io-label io-db">DB</div><div class="io-val">Updates <code>form_analysis_results</code>: coaching_output, progression_recommendation, status: "complete"</div></div>
+      <div class="io-row"><div class="io-label io-sse">SSE</div><div class="io-val"><code>rag_started</code> · <code>rag_complete</code> · <code>claude_started</code> · <code>claude_complete</code> · <code>analysis_complete</code> → { analysis_id, session_id, user_id, full_result_url }</div></div>
+    </div>
+    <div class="req-block">
+      <div class="req-label">Revised RAG approach — MD files in system prompt (no vector DB)</div>
+      <div class="req-list">
+        <div class="req-item">5–10 curated documents covering PT coaching language, Goblet Squat form cues, and progression principles</div>
+        <div class="req-item">Converted to clean MD files by Squad 3 during W6 (data prep week)</div>
+        <div class="req-item">Injected directly into Claude's system prompt — no retrieval endpoint, no embeddings</div>
+        <div class="req-item"><code>rag_started</code> / <code>rag_complete</code> SSE events now represent the MD file injection step, not a vector DB call — Squad 1 UI copy unchanged</div>
+      </div>
+    </div>
+    <div class="req-block">
+      <div class="req-label">What Squad 1 receives at analysis_complete to render the Results screen</div>
+      <div class="req-list">
+        <div class="req-item">Calls <code>GET /analysis/{analysis_id}/result</code> on <code>analysis_complete</code> SSE event</div>
+        <div class="req-item">Response includes: overall_score · 4 parameter scores · coaching paragraphs · progression recommendation · <code>annotated_frame_url</code> (worst-rep image from Step 8) · rep_scores array</div>
+        <div class="req-item">Schema defined in <code>FE_Response_Schemas.md</code> — confirm shape has not drifted before wiring</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ─────────────────────────────────
+     OPEN DECISIONS SUMMARY
+───────────────────────────────── -->
+<div style="margin-top:40px;background:#0d1117;border:1px solid #1e2433;border-radius:12px;padding:20px 22px;">
+  <div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:0.8px;color:#475569;margin-bottom:16px;">Status of all decisions — before creating ClickUp tasks</div>
+
+  <div style="display:flex;flex-direction:column;gap:10px;">
+
+    <div style="display:flex;gap:12px;align-items:baseline;font-size:12px;color:#94a3b8;padding:10px 12px;background:#030d06;border-radius:8px;border:1px solid #14532d;">
+      <span class="chip-decided" style="flex-shrink:0;">1 ✓</span>
+      <div><strong style="color:#4ade80;">Handoff A field names — confirmed from technical_data_schema.html</strong><br><code style="background:#0d1117;padding:1px 4px;border-radius:3px;font-size:10px;">video</code> (file) · <code style="background:#0d1117;padding:1px 4px;border-radius:3px;font-size:10px;">exercise_id</code> = "ex_gob_squat_001" · <code style="background:#0d1117;padding:1px 4px;border-radius:3px;font-size:10px;">weight_value</code> (float) · <code style="background:#0d1117;padding:1px 4px;border-radius:3px;font-size:10px;">weight_unit</code> = "kg"<br><span style="font-size:10px;color:#475569;">Remaining: confirm error response shape in integration meeting</span></div>
+    </div>
+
+    <div style="display:flex;gap:12px;align-items:baseline;font-size:12px;color:#94a3b8;padding:10px 12px;background:#080c12;border-radius:8px;border:1px solid #92400e;">
+      <span class="chip-open" style="flex-shrink:0;">2</span>
+      <div><strong style="color:#f1f5f9;">SSE events during Steps 3–6 — ask developer for recommendation</strong><br>Present Option C (simplest) → B (medium) → A (most robust) to Nicole + Anusha/Ezequiel. Ask which they recommend and can implement fastest. For demo, Option C is acceptable.<br><span style="font-size:10px;color:#475569;">Resolve in: integration meeting · Owner: Nicole (S2) + Anusha/Ezequiel (S3) to recommend</span></div>
+    </div>
+
+    <div style="display:flex;gap:12px;align-items:baseline;font-size:12px;color:#94a3b8;padding:10px 12px;background:#080c12;border-radius:8px;border:1px solid #92400e;">
+      <span class="chip-open" style="flex-shrink:0;">3</span>
+      <div><strong style="color:#f1f5f9;">User identity — discuss in meeting: dropdown to select 2–3 test users?</strong><br>Can Squad 1 add a simple dropdown to the Upload screen to select between user_001, user_002, user_003? Enables switching demo user to show different progression histories on dashboard without any auth.<br><span style="font-size:10px;color:#475569;">Discuss in: integration meeting · Owner: Allex/Karthik (S1) to confirm feasibility</span></div>
+    </div>
+
+    <div style="display:flex;gap:12px;align-items:baseline;font-size:12px;color:#94a3b8;padding:10px 12px;background:#080c12;border-radius:8px;border:1px solid #7f1d1d;">
+      <span class="chip-gap" style="flex-shrink:0;">4</span>
+      <div><strong style="color:#f1f5f9;">Biomechanics schema gap — developer not yet aware, review in meeting</strong><br>See Section 3 (data gap) and Section 4 (proposed schema fix) below in this document. Must add <code style="background:#0d1117;padding:1px 4px;border-radius:3px;font-size:10px;">bottom_frame</code> + <code style="background:#0d1117;padding:1px 4px;border-radius:3px;font-size:10px;">bottom_timestamp_ms</code> per rep to biomechanics JSON output before writing the script. Blocks Step 8.<br><span style="font-size:10px;color:#475569;">Review in: meeting · Owner: Anusha/Ezequiel (S3) to implement once aware</span></div>
+    </div>
+
+    <div style="display:flex;gap:12px;align-items:baseline;font-size:12px;color:#94a3b8;padding:10px 12px;background:#030d06;border-radius:8px;border:1px solid #14532d;">
+      <span class="chip-decided" style="flex-shrink:0;">5 ✓</span>
+      <div><strong style="color:#4ade80;">Nemotron input format — confirmed: overlay video + biomechanics JSON (Test C)</strong><br>Nemotron receives both the green skeleton overlay video and the structured biomechanics JSON. A/B/C tests this week validate performance — architecture is confirmed.<br><span style="font-size:10px;color:#475569;">Action: S2-W6-05 test results to be shared with PM after execution</span></div>
+    </div>
+
+  </div>
+</div>
+  </div>
+
+  <!-- 5. OpenCV Step 2 Logic -->
+  <div class="content-section" id="section-logic">
+    <!-- ══════════════════════════════════
+     SECTION 2 — OPENCV STEP 2 LOGIC
+══════════════════════════════════ -->
+<div class="section">
+  <div class="section-label">Section 2 — OpenCV Step 2 detailed logic</div>
+  <div class="section-title">How the worst-rep frame extraction works</div>
+  <div class="section-desc">This step runs after Nemotron completes. It takes the raw video, seeks to the exact frame where the worst rep hit its bottom position, extracts that image, and overlays the user's actual joint angles against gold standard targets. The output is a single image shown to the user on the Results screen.</div>
+
+  <div class="callout callout-info" style="margin-bottom: 20px;">
+    <div class="callout-icon">ℹ</div>
+    <div class="callout-text"><strong>Why raw video, not the overlay video?</strong> The overlay video has green skeleton lines already drawn on it — extracting a frame from it would give a cluttered image with both the skeleton overlay and the new angle annotations. Starting from the clean raw video frame gives a cleaner, more readable result for the user.</div>
+  </div>
+
+  <div class="detail-card">
+    <div class="detail-card-header">
+      <div class="detail-card-title">Step-by-step execution</div>
+    </div>
+    <div class="detail-card-body">
+
+      <div class="logic-steps">
+
+        <div class="logic-step">
+          <div class="logic-num">1</div>
+          <div class="logic-body">
+            <div class="logic-title">Receive worst_rep_number from Nemotron output</div>
+            <div class="logic-desc">Nemotron's response includes per-rep scores. The backend identifies the rep with the lowest score and passes its <code style="background:#0d1117;padding:1px 4px;border-radius:3px;font-size:10px;">rep_number</code> to this step.<br><br>
+            Example: Nemotron returns rep scores <code style="background:#0d1117;padding:1px 4px;border-radius:3px;font-size:10px;">[82, 79, 68, 74, 71]</code> → worst is rep 3 (score 68) → <code style="background:#0d1117;padding:1px 4px;border-radius:3px;font-size:10px;">worst_rep_number = 3</code></div>
+          </div>
+        </div>
+
+        <div class="logic-step">
+          <div class="logic-num">2</div>
+          <div class="logic-body">
+            <div class="logic-title">Look up bottom_timestamp_ms from DB</div>
+            <div class="logic-desc">Query the stored biomechanics JSON in <code style="background:#0d1117;padding:1px 4px;border-radius:3px;font-size:10px;">form_analysis_results</code> for <code style="background:#0d1117;padding:1px 4px;border-radius:3px;font-size:10px;">analysis_id</code>. Find the rep object where <code style="background:#0d1117;padding:1px 4px;border-radius:3px;font-size:10px;">rep_number == worst_rep_number</code>. Extract its <code style="background:#0d1117;padding:1px 4px;border-radius:3px;font-size:10px;">bottom_timestamp_ms</code>.</div>
+            <div class="logic-code">
+              <div class="code-block">
+<span class="jc"># Pseudocode</span><br>
+result = db.query(<span class="js">"SELECT biomechanics_json FROM form_analysis_results WHERE analysis_id = %s"</span>, analysis_id)<br>
+reps = result[<span class="js">"reps"</span>]<br>
+worst_rep = next(r for r in reps if r[<span class="js">"rep_number"</span>] == worst_rep_number)<br>
+bottom_timestamp_ms = worst_rep[<span class="js">"bottom_timestamp_ms"</span>]  <span class="jc"># e.g. 5700.0</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="logic-step">
+          <div class="logic-num">3</div>
+          <div class="logic-body">
+            <div class="logic-title">Read raw video from GCS and seek to bottom_timestamp_ms</div>
+            <div class="logic-desc">Open the raw video using <code style="background:#0d1117;padding:1px 4px;border-radius:3px;font-size:10px;">cv2.VideoCapture</code> (the same OpenCV wrapper Squad 3 already built). Seek to the exact timestamp using <code style="background:#0d1117;padding:1px 4px;border-radius:3px;font-size:10px;">CAP_PROP_POS_MSEC</code>. Read that single frame.</div>
+            <div class="logic-code">
+              <div class="code-block">
+cap = cv2.VideoCapture(raw_video_gcs_path)<br>
+cap.set(cv2.CAP_PROP_POS_MSEC, bottom_timestamp_ms)<br>
+ret, frame = cap.read()  <span class="jc"># this is the bottom-position frame</span><br>
+frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="logic-step">
+          <div class="logic-num">4</div>
+          <div class="logic-body">
+            <div class="logic-title">Overlay actual angles and gold standard on the frame</div>
+            <div class="logic-desc">Draw three sets of annotations on the extracted frame. See Section 2b below for the full overlay specification.</div>
+          </div>
+        </div>
+
+        <div class="logic-step">
+          <div class="logic-num">5</div>
+          <div class="logic-body">
+            <div class="logic-title">Save annotated image to GCS</div>
+            <div class="logic-desc">Encode the annotated frame as JPEG and write to GCS. Update the DB record with the image URL.</div>
+            <div class="logic-code">
+              <div class="code-block">
+gcs_path = <span class="js">f"analyses/{analysis_id}/worst_rep_frame.jpg"</span><br>
+upload_to_gcs(annotated_frame, gcs_path)<br>
+db.execute(<span class="js">"UPDATE form_analysis_results SET annotated_frame_url = %s WHERE analysis_id = %s"</span>, gcs_path, analysis_id)
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Overlay spec -->
+  <div class="detail-card">
+    <div class="detail-card-header">
+      <div class="detail-card-title">Section 2b — What to overlay on the extracted frame</div>
+    </div>
+    <div class="detail-card-body">
+      <div style="font-size:12px;color:#64748b;margin-bottom:12px;">Three layers are drawn on the raw frame in order. Each layer adds more context for the user.</div>
+      <table class="overlay-table">
+        <thead>
+          <tr>
+            <th>Layer</th>
+            <th>What is drawn</th>
+            <th>Data source</th>
+            <th>Visual style</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="color:#f1f5f9;font-weight:700;">1 · Joint markers</td>
+            <td>Dots at knee, hip, and ankle joint positions on the user's body</td>
+            <td>MediaPipe landmark coordinates for the <code style="background:#0d1117;padding:1px 4px;border-radius:3px;font-size:10px;">bottom_frame</code> — stored in biomechanics JSON</td>
+            <td>Small filled circles · colour matches angle status (red = issue, green = good)</td>
+          </tr>
+          <tr>
+            <td style="color:#f1f5f9;font-weight:700;">2 · Actual angle arcs</td>
+            <td>Arc drawn at each joint showing the user's measured angle at bottom position</td>
+            <td>
+              <code style="background:#0d1117;padding:1px 4px;border-radius:3px;font-size:10px;">knee_angle_at_bottom</code><br>
+              <code style="background:#0d1117;padding:1px 4px;border-radius:3px;font-size:10px;">hip_angle_at_bottom</code><br>
+              <code style="background:#0d1117;padding:1px 4px;border-radius:3px;font-size:10px;">dorsiflexion_at_bottom</code><br>
+              from worst rep in biomechanics JSON
+            </td>
+            <td><span class="tag-actual">ACTUAL</span> Blue arc · angle value in white text next to arc e.g. <code>142°</code></td>
+          </tr>
+          <tr>
+            <td style="color:#f1f5f9;font-weight:700;">3 · Gold standard reference</td>
+            <td>Target angle range shown alongside the actual arc so the user can see the gap</td>
+            <td>
+              Hardcoded gold standard values for Goblet Squat MVP:<br>
+              Knee: 80–95° at bottom<br>
+              Hip: 80–95° at bottom<br>
+              Ankle dorsiflexion: ≥25°<br>
+              <span style="font-size:10px;color:#475569;">(to be confirmed against biomechanics research corpus)</span>
+            </td>
+            <td><span class="tag-gold">IDEAL</span> Green reference arc or dashed line · target range in green text e.g. <code>Ideal: 80–95°</code></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="callout callout-warn" style="margin-top:14px;">
+        <div class="callout-icon">⚠</div>
+        <div class="callout-text"><strong>Gold standard values need confirmation.</strong> The reference angles above are indicative. Before implementation, Squad 3 should confirm the exact target ranges against the biomechanics research corpus ingested into the RAG vector DB. These values will also inform what Nemotron and Claude use as reference points.</div>
+      </div>
+    </div>
+  </div>
+</div>
+  </div>
+
+  <!-- 6. Data Gap & Schema Fix -->
+  <div class="content-section" id="section-gap">
+    <!-- ══════════════════════════════════
+     SECTION 3 — THE DATA GAP
+══════════════════════════════════ -->
+<div class="section">
+  <div class="section-label">Section 3 — The data gap</div>
+  <div class="section-title">Why OpenCV Step 2 cannot be built as the pipeline currently stands</div>
+  <div class="section-desc">OpenCV Step 2 needs to seek to the exact frame in the video where the worst rep hit its bottom position. To do that it needs <code style="background:#0d1117;padding:1px 4px;border-radius:3px;font-size:11px;">bottom_timestamp_ms</code> for that rep. Here is why that data is currently unavailable when it's needed.</div>
+
+  <div class="gap-block" style="margin-bottom: 16px;">
+    <div class="gap-label">The gap</div>
+    <div class="gap-text">
+      MediaPipe computes <code style="background:#150505;padding:1px 4px;border-radius:3px;">bottom_frame</code> and <code style="background:#150505;padding:1px 4px;border-radius:3px;">bottom_timestamp_ms</code> for every rep during rep segmentation. This data exists in memory at Step 3 and is used immediately by:<br><br>
+      &nbsp;&nbsp;→ OpenCV Step 1 (video overlay) — uses landmark positions to draw the skeleton<br>
+      &nbsp;&nbsp;→ Biomechanics script — uses the timing to compute tempo data<br><br>
+      But neither step <strong>saves</strong> the bottom_frame or bottom_timestamp_ms anywhere. Once Step 5 and Step 6 are done, the MediaPipe data is gone from memory.<br><br>
+      By Step 8 (OpenCV Step 2), which runs after Nemotron at Step 7, there is <strong>no way to recover which frame number corresponds to rep 3's bottom position.</strong>
+    </div>
+  </div>
+
+  <div class="detail-card">
+    <div class="detail-card-header">
+      <div class="detail-card-title">What the current biomechanics JSON schema has vs what's needed</div>
+    </div>
+    <div class="detail-card-body">
+      <div style="font-size:12px;color:#94a3b8;margin-bottom:14px;">The biomechanics JSON already stores rich per-rep data — angles, tempo, stability. The gap is two missing fields that MediaPipe computes but the schema doesn't capture.</div>
+      <div class="schema-diff">
+        <div>
+          <div class="code-block diff-before" style="border: 1px solid #7f1d1d;">
+            <div class="diff-label">Current schema — per rep object</div>
+<span class="jp">{</span><br>
+&nbsp;&nbsp;<span class="jk">"rep_number"</span><span class="jp">:</span> <span class="jn">3</span><span class="jp">,</span><br>
+&nbsp;&nbsp;<span class="jk">"median_frame_reliability"</span><span class="jp">:</span> <span class="jn">0.89</span><span class="jp">,</span><br>
+&nbsp;&nbsp;<span class="jk">"tempo_data"</span><span class="jp">:</span> <span class="jp">{</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="jk">"eccentric"</span><span class="jp">:</span> <span class="jn">0.10</span><span class="jp">,</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="jk">"pause"</span><span class="jp">:</span> <span class="jn">0.77</span><span class="jp">,</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="jk">"total"</span><span class="jp">:</span> <span class="jn">1.37</span><br>
+&nbsp;&nbsp;<span class="jp">},</span><br>
+&nbsp;&nbsp;<span class="jk">"depth_data"</span><span class="jp">:</span> <span class="jp">{</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="jk">"knee_angle_at_bottom"</span><span class="jp">:</span> <span class="jn">88.2</span><span class="jp">,</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="jk">"hip_angle_at_bottom"</span><span class="jp">:</span> <span class="jn">86.5</span><br>
+&nbsp;&nbsp;<span class="jp">},</span><br>
+&nbsp;&nbsp;<span class="jp">...</span><br>
+&nbsp;&nbsp;<span class="jc">// ✗ no bottom_frame</span><br>
+&nbsp;&nbsp;<span class="jc">// ✗ no bottom_timestamp_ms</span><br>
+<span class="jp">}</span>
+          </div>
+        </div>
+        <div>
+          <div class="code-block diff-after" style="border: 1px solid #14532d;">
+            <div class="diff-label">Proposed schema — per rep object</div>
+<span class="jp">{</span><br>
+&nbsp;&nbsp;<span class="jk">"rep_number"</span><span class="jp">:</span> <span class="jn">3</span><span class="jp">,</span><br>
+&nbsp;&nbsp;<span class="added"><span class="jk">"bottom_frame"</span><span class="jp">:</span> <span class="jn">342</span><span class="jp">,</span></span><br>
+&nbsp;&nbsp;<span class="added"><span class="jk">"bottom_timestamp_ms"</span><span class="jp">:</span> <span class="jn">5700.0</span><span class="jp">,</span></span><br>
+&nbsp;&nbsp;<span class="jk">"median_frame_reliability"</span><span class="jp">:</span> <span class="jn">0.89</span><span class="jp">,</span><br>
+&nbsp;&nbsp;<span class="jk">"tempo_data"</span><span class="jp">:</span> <span class="jp">{</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="jk">"eccentric"</span><span class="jp">:</span> <span class="jn">0.10</span><span class="jp">,</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="jk">"pause"</span><span class="jp">:</span> <span class="jn">0.77</span><span class="jp">,</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="jk">"total"</span><span class="jp">:</span> <span class="jn">1.37</span><br>
+&nbsp;&nbsp;<span class="jp">},</span><br>
+&nbsp;&nbsp;<span class="jk">"depth_data"</span><span class="jp">:</span> <span class="jp">{</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="jk">"knee_angle_at_bottom"</span><span class="jp">:</span> <span class="jn">88.2</span><span class="jp">,</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="jk">"hip_angle_at_bottom"</span><span class="jp">:</span> <span class="jn">86.5</span><br>
+&nbsp;&nbsp;<span class="jp">},</span><br>
+&nbsp;&nbsp;<span class="jp">...</span><br>
+<span class="jp">}</span>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:12px;font-size:11px;color:#64748b;">
+        <strong style="color:#fde68a;">bottom_frame</strong> — integer frame index (e.g. 342). Used to verify the correct position was identified.<br>
+        <strong style="color:#fde68a;">bottom_timestamp_ms</strong> — float timestamp in milliseconds (e.g. 5700.0). Used by <code>cap.set(cv2.CAP_PROP_POS_MSEC, bottom_timestamp_ms)</code> in OpenCV Step 2 to seek to the exact frame.
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════
+     SECTION 4 — PROPOSED CHANGE
+══════════════════════════════════ -->
+<div class="section">
+  <div class="section-label">Section 4 — Proposed change</div>
+  <div class="section-title">What needs to change and who does it</div>
+
+  <div class="fix-block" style="margin-bottom: 16px;">
+    <div class="fix-label">The fix — one schema change, no new storage</div>
+    <div class="fix-text">
+      No new tables, no new services. The biomechanics JSON is already saved to the DB. The fix is to include <code style="background:#0a1f12;padding:1px 4px;border-radius:3px;">bottom_frame</code> and <code style="background:#0a1f12;padding:1px 4px;border-radius:3px;">bottom_timestamp_ms</code> in each rep object when the biomechanics script writes its output.<br><br>
+      MediaPipe already computes both values during rep segmentation — they just need to be passed through to the output JSON instead of being discarded.
+    </div>
+  </div>
+
+  <div class="detail-card">
+    <div class="detail-card-header">
+      <div class="detail-card-title">Changes required — by squad</div>
+    </div>
+    <div class="detail-card-body">
+
+      <div style="margin-bottom:16px;">
+        <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:0.6px;color:#fb923c;margin-bottom:10px;">Squad 3 — Biomechanics script</div>
+        <div style="font-size:12px;color:#94a3b8;margin-bottom:8px;">When the biomechanics script processes each rep, it already has access to the rep's bottom_frame from MediaPipe's rep segmentation output. Add these two fields to the rep object before returning the JSON.</div>
+        <div class="code-block">
+<span class="jc"># In the rep segmentation loop — Squad 3 already computes this</span><br>
+for rep in segmented_reps:<br>
+&nbsp;&nbsp;bottom_frame = rep.bottom_frame_index      <span class="jc"># already computed by MediaPipe</span><br>
+&nbsp;&nbsp;bottom_timestamp_ms = (bottom_frame / fps) * 1000  <span class="jc"># same formula as OpenCV wrapper</span><br>
+&nbsp;&nbsp;<br>
+&nbsp;&nbsp;rep_output = {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="jk">"rep_number"</span><span class="jp">:</span> rep.number<span class="jp">,</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="added"><span class="jk">"bottom_frame"</span><span class="jp">:</span> bottom_frame<span class="jp">,</span>          <span class="jc"># ADD THIS</span></span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="added"><span class="jk">"bottom_timestamp_ms"</span><span class="jp">:</span> bottom_timestamp_ms<span class="jp">,</span>  <span class="jc"># ADD THIS</span></span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="jk">"tempo_data"</span><span class="jp">:</span> ...<span class="jp">,</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="jk">"depth_data"</span><span class="jp">:</span> ...<br>
+&nbsp;&nbsp;}
+        </div>
+      </div>
+
+      <div style="margin-bottom:16px;">
+        <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:0.6px;color:#4ade80;margin-bottom:10px;">Squad 2 — Pipeline orchestration</div>
+        <div style="font-size:12px;color:#94a3b8;margin-bottom:8px;">After Nemotron returns per-rep scores, Squad 2 identifies the worst rep and queries the stored biomechanics JSON from the DB to get that rep's <code style="background:#0d1117;padding:1px 4px;border-radius:3px;font-size:11px;">bottom_timestamp_ms</code>. This is then passed to Squad 3's frame extraction function.</div>
+        <div class="code-block">
+<span class="jc"># After nemotron_complete — Squad 2 pipeline code</span><br>
+rep_scores = nemotron_output[<span class="js">"rep_scores"</span>]<br>
+worst_rep_number = min(rep_scores, key=lambda r: r[<span class="js">"score"</span>])[<span class="js">"rep_number"</span>]<br>
+<br>
+<span class="jc"># Look up timestamp from DB — biomechanics JSON already stored</span><br>
+biomechanics = db.query(<span class="js">"SELECT biomechanics_json FROM form_analysis_results WHERE analysis_id = %s"</span>)<br>
+worst_rep_data = next(r for r in biomechanics[<span class="js">"reps"</span>] if r[<span class="js">"rep_number"</span>] == worst_rep_number)<br>
+bottom_timestamp_ms = worst_rep_data[<span class="js">"bottom_timestamp_ms"</span>]<br>
+<br>
+<span class="jc"># Call Squad 3's frame extraction function</span><br>
+frame_url = extract_worst_rep_frame(raw_video_url, bottom_timestamp_ms, worst_rep_data)
+        </div>
+      </div>
+
+      <div class="ac-block">
+        <div class="ac-label">Acceptance Criteria for this change</div>
+        <ul class="ac-list">
+          <li class="ac-item"><span class="ac-check">✓</span> <code style="background:#1e293b;padding:1px 4px;border-radius:3px;font-size:11px;">bottom_frame</code> and <code style="background:#1e293b;padding:1px 4px;border-radius:3px;font-size:11px;">bottom_timestamp_ms</code> present in every rep object in the biomechanics JSON output</li>
+          <li class="ac-item"><span class="ac-check">✓</span> <code style="background:#1e293b;padding:1px 4px;border-radius:3px;font-size:11px;">bottom_timestamp_ms</code> computed using <code style="background:#1e293b;padding:1px 4px;border-radius:3px;font-size:11px;">(bottom_frame / fps) × 1000</code> — same formula as OpenCV wrapper</li>
+          <li class="ac-item"><span class="ac-check">✓</span> <code style="background:#1e293b;padding:1px 4px;border-radius:3px;font-size:11px;">Kinetic_Biomechanics_Output_Schema.json</code> updated with these two fields before any code is written</li>
+          <li class="ac-item"><span class="ac-check">✓</span> OpenCV Step 2 can seek to <code style="background:#1e293b;padding:1px 4px;border-radius:3px;font-size:11px;">bottom_timestamp_ms</code> and extract the correct frame — verified against a known video where the worst-rep bottom position is visually identifiable</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Annotated frame saved to GCS and <code style="background:#1e293b;padding:1px 4px;border-radius:3px;font-size:11px;">annotated_frame_url</code> written to DB</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Gold standard angle values confirmed against biomechanics research corpus before overlaying</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</div>
+  </div>
+
+  <!-- 7. OpenCV Capabilities -->
+  <div class="content-section" id="section-research">
+    <!-- ══════════════════════════════════
+     SECTION 5 — OPENCV CAPABILITIES RESEARCH
+══════════════════════════════════ -->
+<div class="section">
+  <div class="section-label">Section 5 — OpenCV capabilities research</div>
+  <div class="section-title">What OpenCV can and cannot do for this overlay — and a second data gap</div>
+  <div class="section-desc">Research on the specific OpenCV functions needed, their limitations on real video frames, and an additional data requirement that only becomes visible when you try to implement the overlay.</div>
+
+  <!-- 5a: coordinate conversion -->
+  <div class="detail-card" style="margin-bottom:16px;">
+    <div class="detail-card-header">
+      <div class="detail-card-title">5a — MediaPipe coordinates → pixel positions</div>
+    </div>
+    <div class="detail-card-body">
+      <div style="font-size:12px;color:#94a3b8;line-height:1.7;margin-bottom:12px;">
+        MediaPipe outputs landmark positions as <strong style="color:#f1f5f9;">normalised floats (0.0–1.0)</strong> relative to the image dimensions — not pixel coordinates. Every OpenCV drawing function requires pixel integers. The conversion is one multiplication per axis, applied to every landmark before any drawing call.
+      </div>
+      <div class="code-block">
+<span class="jc"># MediaPipe landmark for, say, the left knee</span><br>
+lm = results.pose_landmarks.landmark[mp_pose.PoseLandmark.LEFT_KNEE]<br>
+<br>
+h, w, _ = frame.shape  <span class="jc"># frame height and width in pixels</span><br>
+<br>
+knee_px = (int(lm.x * w), int(lm.y * h))  <span class="jc"># → e.g. (382, 540)</span><br>
+<br>
+<span class="jc"># Repeat for hip and ankle — these three points define the knee angle</span><br>
+hip_px  = (int(hip_lm.x  * w), int(hip_lm.y  * h))<br>
+ankle_px = (int(ankle_lm.x * w), int(ankle_lm.y * h))
+      </div>
+      <div class="callout callout-warn" style="margin-top:12px;">
+        <div class="callout-icon">⚠</div>
+        <div class="callout-text"><strong>Second data gap — landmark pixel positions at bottom_frame are not stored.</strong> The biomechanics JSON stores computed angle values (e.g. <code style="background:#1a1000;padding:1px 4px;border-radius:3px;">knee_angle_at_bottom: 88.2</code>) but not the pixel coordinates of each joint at that specific frame. To draw the angle arc in the correct location on the image, the drawing code needs to know WHERE the knee is on the extracted frame — not just what the angle is. See Section 5e for options.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5b: drawing toolkit -->
+  <div class="detail-card" style="margin-bottom:16px;">
+    <div class="detail-card-header">
+      <div class="detail-card-title">5b — OpenCV drawing functions available</div>
+    </div>
+    <div class="detail-card-body">
+      <table class="overlay-table">
+        <thead>
+          <tr>
+            <th>Function</th>
+            <th>What it does</th>
+            <th>Used for</th>
+            <th>Gotchas</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="font-family:monospace;color:#93c5fd;font-weight:700;">cv2.circle</td>
+            <td>Filled or outline circle at a pixel position</td>
+            <td>Joint position markers at knee, hip, ankle</td>
+            <td>None — simplest call in the toolkit</td>
+          </tr>
+          <tr>
+            <td style="font-family:monospace;color:#93c5fd;font-weight:700;">cv2.line</td>
+            <td>Straight line between two pixel points</td>
+            <td>Limb lines (hip→knee, knee→ankle) to show body segments</td>
+            <td>Use <code>cv2.LINE_AA</code> for anti-aliasing on diagonal lines</td>
+          </tr>
+          <tr>
+            <td style="font-family:monospace;color:#93c5fd;font-weight:700;">cv2.ellipse</td>
+            <td>Draws an arc or filled sector of an ellipse</td>
+            <td>Angle arc at joint — shows the measured angle visually</td>
+            <td><strong style="color:#fbbf24;">Angles are clockwise from the 3 o'clock position</strong> — not the same as mathematical/screen angles. Requires conversion from arctan2 output. See 5c.</td>
+          </tr>
+          <tr>
+            <td style="font-family:monospace;color:#93c5fd;font-weight:700;">cv2.putText</td>
+            <td>Draws a text string at a pixel position</td>
+            <td>Angle values ("88°"), labels ("Knee", "Ideal: 80–95°")</td>
+            <td>Only Hershey fonts — no custom fonts. Text is illegible on busy backgrounds without a backing rectangle.</td>
+          </tr>
+          <tr>
+            <td style="font-family:monospace;color:#93c5fd;font-weight:700;">cv2.rectangle</td>
+            <td>Draws a filled or outline rectangle</td>
+            <td>Background box behind text for readability</td>
+            <td>Use with <code>cv2.addWeighted</code> for semi-transparency</td>
+          </tr>
+          <tr>
+            <td style="font-family:monospace;color:#93c5fd;font-weight:700;">cv2.addWeighted</td>
+            <td>Blends two images with a given opacity ratio</td>
+            <td>Semi-transparent background behind text/arcs</td>
+            <td>Must draw on a copy, then blend — cannot apply to just a region without cropping</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 5c: angle arc -->
+  <div class="detail-card" style="margin-bottom:16px;">
+    <div class="detail-card-header">
+      <div class="detail-card-title">5c — Drawing a joint angle arc with cv2.ellipse</div>
+    </div>
+    <div class="detail-card-body">
+      <div style="font-size:12px;color:#94a3b8;line-height:1.7;margin-bottom:12px;">
+        The angle arc at a joint (e.g. the knee) is drawn at the joint pixel position, spanning from the direction of the lower limb (knee→ankle) to the direction of the upper limb (knee→hip). The key step is converting the limb directions to the angle convention that <code>cv2.ellipse</code> expects.
+      </div>
+      <div class="code-block">
+<span class="jc"># Step 1 — calculate the angle at the joint (hip–knee–ankle)</span><br>
+import numpy as np<br>
+<br>
+def joint_angle(a, b, c):<br>
+&nbsp;&nbsp;<span class="jc">"""a = hip_px, b = knee_px (vertex), c = ankle_px"""</span><br>
+&nbsp;&nbsp;a, b, c = np.array(a), np.array(b), np.array(c)<br>
+&nbsp;&nbsp;radians = np.arctan2(c[1]-b[1], c[0]-b[0]) - np.arctan2(a[1]-b[1], a[0]-b[0])<br>
+&nbsp;&nbsp;angle = np.abs(radians * 180.0 / np.pi)<br>
+&nbsp;&nbsp;if angle > 180.0: angle = 360 - angle<br>
+&nbsp;&nbsp;return angle<br>
+<br>
+<span class="jc"># Step 2 — compute the directions of each limb from the joint, in degrees</span><br>
+angle_to_hip   = np.degrees(np.arctan2(hip_px[1]   - knee_px[1], hip_px[0]   - knee_px[0]))<br>
+angle_to_ankle = np.degrees(np.arctan2(ankle_px[1] - knee_px[1], ankle_px[0] - knee_px[0]))<br>
+<br>
+<span class="jc"># Step 3 — draw arc at the joint position</span><br>
+arc_radius = 30  <span class="jc"># pixels — scale with image resolution</span><br>
+cv2.ellipse(<br>
+&nbsp;&nbsp;frame,<br>
+&nbsp;&nbsp;knee_px,                          <span class="jc"># centre = joint pixel position</span><br>
+&nbsp;&nbsp;(arc_radius, arc_radius),          <span class="jc"># axes (circle arc)</span><br>
+&nbsp;&nbsp;0,                                 <span class="jc"># rotation of ellipse = 0</span><br>
+&nbsp;&nbsp;min(angle_to_hip, angle_to_ankle), <span class="jc"># startAngle</span><br>
+&nbsp;&nbsp;max(angle_to_hip, angle_to_ankle), <span class="jc"># endAngle</span><br>
+&nbsp;&nbsp;(38, 191, 255),                    <span class="jc"># colour — blue for actual</span><br>
+&nbsp;&nbsp;2                                  <span class="jc"># thickness</span><br>
+)<br>
+<br>
+<span class="jc"># Step 4 — draw angle value as text near the arc</span><br>
+angle_value = joint_angle(hip_px, knee_px, ankle_px)<br>
+label_pos = (knee_px[0] + arc_radius + 5, knee_px[1])<br>
+cv2.putText(frame, f<span class="js">"{angle_value:.0f}°"</span>, label_pos, cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255,255,255), 2, cv2.LINE_AA)
+      </div>
+      <div style="margin-top:10px;font-size:11px;color:#475569;line-height:1.6;">
+        <strong style="color:#fbbf24;">Important:</strong> cv2.ellipse angles are clockwise from the 3 o'clock position — the same convention as screen coordinates (y-axis points down). arctan2 already works in this space so no further conversion is needed as long as you compute angles using pixel coordinates (not normalised ones).
+      </div>
+    </div>
+  </div>
+
+  <!-- 5d: text readability -->
+  <div class="detail-card" style="margin-bottom:16px;">
+    <div class="detail-card-header">
+      <div class="detail-card-title">5d — Text readability on real video frames</div>
+    </div>
+    <div class="detail-card-body">
+      <div style="font-size:12px;color:#94a3b8;line-height:1.7;margin-bottom:12px;">
+        Real video frames have varied, unpredictable backgrounds — gym floors, walls, clothing. White text on a white wall is invisible. The standard pattern is a semi-transparent dark rectangle behind each text label, blended using <code>cv2.addWeighted</code>.
+      </div>
+      <div class="code-block">
+<span class="jc"># Pattern: draw text with semi-transparent background</span><br>
+def draw_label(img, text, position, alpha=0.6):<br>
+&nbsp;&nbsp;overlay = img.copy()<br>
+&nbsp;&nbsp;<br>
+&nbsp;&nbsp;<span class="jc"># measure text size to size the background rectangle</span><br>
+&nbsp;&nbsp;(tw, th), baseline = cv2.getTextSize(text, cv2.FONT_HERSHEY_SIMPLEX, 0.55, 1)<br>
+&nbsp;&nbsp;x, y = position<br>
+&nbsp;&nbsp;pad = 4<br>
+&nbsp;&nbsp;<br>
+&nbsp;&nbsp;<span class="jc"># draw dark background on overlay copy</span><br>
+&nbsp;&nbsp;cv2.rectangle(overlay, (x-pad, y-th-pad), (x+tw+pad, y+baseline+pad), (0, 0, 0), -1)<br>
+&nbsp;&nbsp;<br>
+&nbsp;&nbsp;<span class="jc"># blend overlay back into image at given alpha (0 = transparent, 1 = opaque)</span><br>
+&nbsp;&nbsp;cv2.addWeighted(overlay, alpha, img, 1-alpha, 0, img)<br>
+&nbsp;&nbsp;<br>
+&nbsp;&nbsp;<span class="jc"># draw text on top of blended image</span><br>
+&nbsp;&nbsp;cv2.putText(img, text, (x, y), cv2.FONT_HERSHEY_SIMPLEX, 0.55, (255,255,255), 1, cv2.LINE_AA)
+      </div>
+      <div style="margin-top:12px;">
+        <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:0.6px;color:#475569;margin-bottom:8px;">Additional readability rules for real video</div>
+        <div style="display:flex;flex-direction:column;gap:6px;font-size:11px;color:#94a3b8;">
+          <div>→ <strong style="color:#f1f5f9;">Font scale should be proportional to image height</strong> — not hardcoded. A scale of <code style="background:#0d1117;padding:1px 4px;border-radius:3px;">image_height / 720 * 0.6</code> keeps text the same visual size regardless of resolution.</div>
+          <div>→ <strong style="color:#f1f5f9;">Use cv2.LINE_AA</strong> on all text and line drawing calls for anti-aliased edges.</div>
+          <div>→ <strong style="color:#f1f5f9;">Always draw a white outline before drawing coloured text</strong> — draw the same text string in white at thickness+1 first, then draw the coloured text on top. This creates a visible border against any background.</div>
+          <div>→ <strong style="color:#f1f5f9;">Keep annotations away from the body</strong> — draw labels to the side of the joint, not on top of the limb. Offset the label position by arc_radius + 8px.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5e: second data gap -->
+  <div class="detail-card" style="margin-bottom:16px;">
+    <div class="detail-card-header">
+      <div class="detail-card-title">5e — Second data gap: landmark pixel positions needed for overlay placement</div>
+    </div>
+    <div class="detail-card-body">
+      <div class="gap-block" style="margin-bottom:14px;">
+        <div class="gap-label">The gap</div>
+        <div class="gap-text">
+          The biomechanics JSON stores <strong>computed angles</strong> (e.g. <code style="background:#150505;padding:1px 4px;border-radius:3px;">knee_angle_at_bottom: 88.2</code>). To draw the angle arc in the right location on the extracted frame, OpenCV Step 2 also needs the <strong>pixel coordinates</strong> of each joint at that specific frame — i.e. where on the image is the knee, hip, and ankle. These are not stored anywhere. The biomechanics script computes angles from the landmarks but discards the raw positions.
+        </div>
+      </div>
+
+      <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:0.6px;color:#475569;margin-bottom:12px;">Three options — bring to the developer meeting</div>
+
+      <div style="display:flex;flex-direction:column;gap:10px;">
+
+        <div style="background:#080c12;border:1px solid #1e2433;border-radius:8px;padding:12px 14px;">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+            <div style="font-size:10px;font-weight:800;color:#4ade80;background:#0a1f12;border:1px solid #14532d;border-radius:4px;padding:1px 8px;">Option A — Recommended</div>
+            <div style="font-size:11px;font-weight:700;color:#f1f5f9;">Re-run MediaPipe on the single extracted bottom frame</div>
+          </div>
+          <div style="font-size:11px;color:#94a3b8;line-height:1.6;">After seeking to <code style="background:#0d1117;padding:1px 4px;border-radius:3px;">bottom_timestamp_ms</code> and extracting the frame, run MediaPipe Pose on that one image. MediaPipe is fast on a single frame (~50–100ms). This gives fresh, accurate pixel coordinates for all landmarks — no schema changes needed.</div>
+          <div style="margin-top:8px;font-size:10px;color:#475569;">Pro: no additional stored data. Con: one extra MediaPipe call after Nemotron completes — small latency cost.</div>
+        </div>
+
+        <div style="background:#080c12;border:1px solid #1e2433;border-radius:8px;padding:12px 14px;">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+            <div style="font-size:10px;font-weight:800;color:#fbbf24;background:#141000;border:1px solid #92400e;border-radius:4px;padding:1px 8px;">Option B</div>
+            <div style="font-size:11px;font-weight:700;color:#f1f5f9;">Store key landmark positions for bottom_frame in biomechanics JSON</div>
+          </div>
+          <div style="font-size:11px;color:#94a3b8;line-height:1.6;">Add a <code style="background:#0d1117;padding:1px 4px;border-radius:3px;">landmarks_at_bottom</code> block to each rep in the biomechanics JSON — normalised x/y for left_knee, right_knee, left_hip, right_hip, left_ankle, right_ankle. These are already known at the time the biomechanics script runs.</div>
+          <div class="code-block" style="margin-top:8px;font-size:10px;">
+<span class="jk">"landmarks_at_bottom"</span><span class="jp">:</span> <span class="jp">{</span><br>
+&nbsp;&nbsp;<span class="jk">"left_knee"</span><span class="jp">:</span>  <span class="jp">{</span><span class="jk">"x"</span><span class="jp">:</span> <span class="jn">0.48</span><span class="jp">,</span> <span class="jk">"y"</span><span class="jp">:</span> <span class="jn">0.71</span><span class="jp">},</span><br>
+&nbsp;&nbsp;<span class="jk">"left_hip"</span><span class="jp">:</span>   <span class="jp">{</span><span class="jk">"x"</span><span class="jp">:</span> <span class="jn">0.46</span><span class="jp">,</span> <span class="jk">"y"</span><span class="jp">:</span> <span class="jn">0.52</span><span class="jp">},</span><br>
+&nbsp;&nbsp;<span class="jk">"left_ankle"</span><span class="jp">:</span> <span class="jp">{</span><span class="jk">"x"</span><span class="jp">:</span> <span class="jn">0.49</span><span class="jp">,</span> <span class="jk">"y"</span><span class="jp">:</span> <span class="jn">0.89</span><span class="jp">}</span><br>
+<span class="jp">}</span>
+          </div>
+          <div style="margin-top:6px;font-size:10px;color:#475569;">Pro: no extra processing at frame extraction time. Con: larger biomechanics JSON, more schema changes needed.</div>
+        </div>
+
+        <div style="background:#080c12;border:1px solid #1e2433;border-radius:8px;padding:12px 14px;">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+            <div style="font-size:10px;font-weight:800;color:#94a3b8;background:#0d1117;border:1px solid #334155;border-radius:4px;padding:1px 8px;">Option C</div>
+            <div style="font-size:11px;font-weight:700;color:#f1f5f9;">Skip position-accurate arcs — use a fixed annotation panel</div>
+          </div>
+          <div style="font-size:11px;color:#94a3b8;line-height:1.6;">Instead of drawing arcs at the joint positions, add a fixed semi-transparent panel at the side or bottom of the image showing the three angle values as text. No landmark positions needed — uses only the computed angles already in the biomechanics JSON.</div>
+          <div style="margin-top:6px;font-size:10px;color:#475569;">Pro: simplest implementation. Con: less informative — the user cannot see where on their body the issue is. Not recommended for the Results screen.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5f: full overlay render order -->
+  <div class="detail-card">
+    <div class="detail-card-header">
+      <div class="detail-card-title">5f — Recommended render order for the final annotated image</div>
+    </div>
+    <div class="detail-card-body">
+      <div style="font-size:12px;color:#64748b;margin-bottom:14px;">Draw in this order — each layer sits on top of the previous one. Later layers must not obscure earlier ones.</div>
+      <table class="overlay-table">
+        <thead>
+          <tr><th>#</th><th>What</th><th>OpenCV call</th><th>Colour</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="color:#94a3b8;font-weight:700;">1</td>
+            <td>Raw extracted frame (base)</td>
+            <td><code>frame = cap.read()</code></td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td style="color:#94a3b8;font-weight:700;">2</td>
+            <td>Limb lines — hip→knee, knee→ankle</td>
+            <td><code>cv2.line</code></td>
+            <td>White, thickness 2, LINE_AA</td>
+          </tr>
+          <tr>
+            <td style="color:#94a3b8;font-weight:700;">3</td>
+            <td>Joint markers at knee, hip, ankle</td>
+            <td><code>cv2.circle</code></td>
+            <td>Colour by status: red = issue, green = good, amber = borderline</td>
+          </tr>
+          <tr>
+            <td style="color:#94a3b8;font-weight:700;">4</td>
+            <td>Actual angle arc at each joint</td>
+            <td><code>cv2.ellipse</code></td>
+            <td><span class="tag-actual">ACTUAL</span> Blue (#26bfff)</td>
+          </tr>
+          <tr>
+            <td style="color:#94a3b8;font-weight:700;">5</td>
+            <td>Gold standard reference arc at each joint</td>
+            <td><code>cv2.ellipse</code> dashed (draw as dots)</td>
+            <td><span class="tag-gold">IDEAL</span> Green (#22c55e)</td>
+          </tr>
+          <tr>
+            <td style="color:#94a3b8;font-weight:700;">6</td>
+            <td>Actual angle label + gold standard range</td>
+            <td><code>draw_label()</code> using addWeighted</td>
+            <td>White text on semi-transparent dark background</td>
+          </tr>
+          <tr>
+            <td style="color:#94a3b8;font-weight:700;">7</td>
+            <td>Joint name label (Knee / Hip / Ankle)</td>
+            <td><code>cv2.putText</code></td>
+            <td>Light grey (#94a3b8), smaller font scale</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="callout callout-info" style="margin-top:14px;">
+        <div class="callout-icon">ℹ</div>
+        <div class="callout-text"><strong>Gold standard arcs as dashed lines:</strong> cv2.ellipse cannot natively draw dashed arcs. To simulate: draw points at short angular intervals around the arc rather than a continuous line. Alternatively, draw the gold standard as two short lines from the joint showing the ideal angle boundaries — simpler and just as readable.</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+  </div>
+
+</main>
+
+<script>
+const sections = ['overview','steps','decisions','scope','logic','gap','research'];
+function show(id) {
+  sections.forEach(s => {
+    document.getElementById('section-' + s).classList.remove('active');
+    const b = document.getElementById('btn-' + s);
+    if (b) b.classList.remove('active');
+  });
+  document.getElementById('section-' + id).classList.add('active');
+  const b = document.getElementById('btn-' + id);
+  if (b) b.classList.add('active');
+  window.scrollTo(0, 0);
+}
+</script>
 </body>
 </html>
