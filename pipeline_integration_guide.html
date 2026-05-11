@@ -523,28 +523,12 @@ h1 { font-size: 22px; font-weight: 800; color: #f8fafc; letter-spacing: -0.5px; 
   <button class="nav-btn" onclick="show('steps')" id="btn-steps">
     <div class="nav-dot" style="background:#22c55e;"></div>Steps 1–9 &amp; handoffs
   </button>
-  <button class="nav-btn" onclick="show('decisions')" id="btn-decisions">
-    <div class="nav-dot" style="background:#f59e0b;"></div>Open decisions
-  </button>
 
-  <div class="nav-group-label">OpenCV Brief</div>
-  <button class="nav-btn" onclick="show('scope')" id="btn-scope">
-    <div class="nav-dot" style="background:#22c55e;"></div>Scope &amp; status
-  </button>
-  <button class="nav-btn" onclick="show('logic')" id="btn-logic">
-    <div class="nav-dot" style="background:#a78bfa;"></div>Step 2 execution logic
-  </button>
-  <button class="nav-btn" onclick="show('gap')" id="btn-gap">
-    <div class="nav-dot" style="background:#ef4444;"></div>Data gap &amp; schema fix
-  </button>
-  <button class="nav-btn" onclick="show('research')" id="btn-research">
-    <div class="nav-dot" style="background:#22d3ee;"></div>OpenCV capabilities
-  </button>
 </nav>
 
 <main class="main-content">
   <h1 class="doc-title">Kinetic — Pipeline Integration Guide</h1>
-  <p class="doc-subtitle">Complete reference for all three squads · Use the sidebar to navigate between sections.</p>
+  <p class="doc-subtitle">Squad ownership · Cross-squad handoffs · Steps 1–9 · For team review</p>
 
   <!-- 1. Pipeline Overview -->
   <div class="content-section active" id="section-overview">
@@ -1385,134 +1369,7 @@ nemotron_input = {<br>
   </div>
 
   <!-- 3. Open Decisions -->
-  <div class="content-section" id="section-decisions">
-    <!-- ─────────────────────────────────
-     OPEN DECISIONS SUMMARY
-───────────────────────────────── -->
-<div style="margin-top:40px;background:#0d1117;border:1px solid #1e2433;border-radius:12px;padding:20px 22px;">
-  <div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:0.8px;color:#475569;margin-bottom:16px;">Status of all decisions — before creating ClickUp tasks</div>
 
-  <div style="display:flex;flex-direction:column;gap:10px;">
-
-    <div style="display:flex;gap:12px;align-items:baseline;font-size:12px;color:#94a3b8;padding:10px 12px;background:#030d06;border-radius:8px;border:1px solid #14532d;">
-      <span class="chip-decided" style="flex-shrink:0;">1 ✓</span>
-      <div><strong style="color:#4ade80;">Handoff A field names — confirmed from technical_data_schema.html</strong><br><code style="background:#0d1117;padding:1px 4px;border-radius:3px;font-size:10px;">video</code> (file) · <code style="background:#0d1117;padding:1px 4px;border-radius:3px;font-size:10px;">exercise_id</code> = "ex_gob_squat_001" · <code style="background:#0d1117;padding:1px 4px;border-radius:3px;font-size:10px;">weight_value</code> (float) · <code style="background:#0d1117;padding:1px 4px;border-radius:3px;font-size:10px;">weight_unit</code> = "kg"<br><span style="font-size:10px;color:#475569;">Remaining: confirm error response shape in integration meeting</span></div>
-    </div>
-
-    <div style="display:flex;gap:12px;align-items:baseline;font-size:12px;color:#94a3b8;padding:10px 12px;background:#080c12;border-radius:8px;border:1px solid #92400e;">
-      <span class="chip-open" style="flex-shrink:0;">2</span>
-      <div><strong style="color:#f1f5f9;">SSE events during Steps 3–6 — ask developer for recommendation</strong><br>Present Option C (simplest) → B (medium) → A (most robust) to Nicole + Anusha/Ezequiel. Ask which they recommend and can implement fastest. For demo, Option C is acceptable.<br><span style="font-size:10px;color:#475569;">Resolve in: integration meeting · Owner: Nicole (S2) + Anusha/Ezequiel (S3) to recommend</span></div>
-    </div>
-
-    <div style="display:flex;gap:12px;align-items:baseline;font-size:12px;color:#94a3b8;padding:10px 12px;background:#080c12;border-radius:8px;border:1px solid #92400e;">
-      <span class="chip-open" style="flex-shrink:0;">3</span>
-      <div><strong style="color:#f1f5f9;">User identity — discuss in meeting: dropdown to select 2–3 test users?</strong><br>Can Squad 1 add a simple dropdown to the Upload screen to select between user_001, user_002, user_003? Enables switching demo user to show different progression histories on dashboard without any auth.<br><span style="font-size:10px;color:#475569;">Discuss in: integration meeting · Owner: Allex/Karthik (S1) to confirm feasibility</span></div>
-    </div>
-
-    <div style="display:flex;gap:12px;align-items:baseline;font-size:12px;color:#94a3b8;padding:10px 12px;background:#080c12;border-radius:8px;border:1px solid #7f1d1d;">
-      <span class="chip-gap" style="flex-shrink:0;">4</span>
-      <div><strong style="color:#f1f5f9;">Biomechanics schema gap — developer not yet aware, review in meeting</strong><br>See Section 3 (data gap) and Section 4 (proposed schema fix) below in this document. Must add <code style="background:#0d1117;padding:1px 4px;border-radius:3px;font-size:10px;">bottom_frame</code> + <code style="background:#0d1117;padding:1px 4px;border-radius:3px;font-size:10px;">bottom_timestamp_ms</code> per rep to biomechanics JSON output before writing the script. Blocks Step 8.<br><span style="font-size:10px;color:#475569;">Review in: meeting · Owner: Anusha/Ezequiel (S3) to implement once aware</span></div>
-    </div>
-
-    <div style="display:flex;gap:12px;align-items:baseline;font-size:12px;color:#94a3b8;padding:10px 12px;background:#030d06;border-radius:8px;border:1px solid #14532d;">
-      <span class="chip-decided" style="flex-shrink:0;">5 ✓</span>
-      <div><strong style="color:#4ade80;">Nemotron input format — confirmed: overlay video + biomechanics JSON (Test C)</strong><br>Nemotron receives both the green skeleton overlay video and the structured biomechanics JSON. A/B/C tests this week validate performance — architecture is confirmed.<br><span style="font-size:10px;color:#475569;">Action: S2-W6-05 test results to be shared with PM after execution</span></div>
-    </div>
-
-  </div>
-</div>
-
-
-
-<!-- ══════════════════════════════════
-     SECTION 2 — OPENCV STEP 2 LOGIC
-══════════════════════════════════ -->
-<div class="section">
-  <div class="section-label">Section 2 — OpenCV Step 2 detailed logic</div>
-  <div class="section-title">How the worst-rep frame extraction works</div>
-  <div class="section-desc">This step runs after Nemotron completes. It takes the raw video, seeks to the exact frame where the worst rep hit its bottom position, extracts that image, and overlays the user's actual joint angles against gold standard targets. The output is a single image shown to the user on the Results screen.</div>
-
-  <div class="callout callout-info" style="margin-bottom: 20px;">
-    <div class="callout-icon">ℹ</div>
-    <div class="callout-text"><strong>Why raw video, not the overlay video?</strong> The overlay video has green skeleton lines already drawn on it — extracting a frame from it would give a cluttered image with both the skeleton overlay and the new angle annotations. Starting from the clean raw video frame gives a cleaner, more readable result for the user.</div>
-  </div>
-
-  <div class="detail-card">
-    <div class="detail-card-header">
-      <div class="detail-card-title">Step-by-step execution</div>
-    </div>
-    <div class="detail-card-body">
-
-      <div class="logic-steps">
-
-        <div class="logic-step">
-          <div class="logic-num">1</div>
-          <div class="logic-body">
-            <div class="logic-title">Receive worst_rep_number from Nemotron output</div>
-            <div class="logic-desc">Nemotron's response includes per-rep scores. The backend identifies the rep with the lowest score and passes its <code style="background:#0d1117;padding:1px 4px;border-radius:3px;font-size:10px;">rep_number</code> to this step.<br><br>
-            Example: Nemotron returns rep scores <code style="background:#0d1117;padding:1px 4px;border-radius:3px;font-size:10px;">[82, 79, 68, 74, 71]</code> → worst is rep 3 (score 68) → <code style="background:#0d1117;padding:1px 4px;border-radius:3px;font-size:10px;">worst_rep_number = 3</code></div>
-          </div>
-        </div>
-
-        <div class="logic-step">
-          <div class="logic-num">2</div>
-          <div class="logic-body">
-            <div class="logic-title">Look up bottom_timestamp_ms from DB</div>
-            <div class="logic-desc">Query the stored biomechanics JSON in <code style="background:#0d1117;padding:1px 4px;border-radius:3px;font-size:10px;">form_analysis_results</code> for <code style="background:#0d1117;padding:1px 4px;border-radius:3px;font-size:10px;">analysis_id</code>. Find the rep object where <code style="background:#0d1117;padding:1px 4px;border-radius:3px;font-size:10px;">rep_number == worst_rep_number</code>. Extract its <code style="background:#0d1117;padding:1px 4px;border-radius:3px;font-size:10px;">bottom_timestamp_ms</code>.</div>
-            <div class="logic-code">
-              <div class="code-block">
-<span class="jc"># Pseudocode</span><br>
-result = db.query(<span class="js">"SELECT biomechanics_json FROM form_analysis_results WHERE analysis_id = %s"</span>, analysis_id)<br>
-reps = result[<span class="js">"reps"</span>]<br>
-worst_rep = next(r for r in reps if r[<span class="js">"rep_number"</span>] == worst_rep_number)<br>
-bottom_timestamp_ms = worst_rep[<span class="js">"bottom_timestamp_ms"</span>]  <span class="jc"># e.g. 5700.0</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="logic-step">
-          <div class="logic-num">3</div>
-          <div class="logic-body">
-            <div class="logic-title">Read raw video from GCS and seek to bottom_timestamp_ms</div>
-            <div class="logic-desc">Open the raw video using <code style="background:#0d1117;padding:1px 4px;border-radius:3px;font-size:10px;">cv2.VideoCapture</code> (the same OpenCV wrapper Squad 3 already built). Seek to the exact timestamp using <code style="background:#0d1117;padding:1px 4px;border-radius:3px;font-size:10px;">CAP_PROP_POS_MSEC</code>. Read that single frame.</div>
-            <div class="logic-code">
-              <div class="code-block">
-cap = cv2.VideoCapture(raw_video_gcs_path)<br>
-cap.set(cv2.CAP_PROP_POS_MSEC, bottom_timestamp_ms)<br>
-ret, frame = cap.read()  <span class="jc"># this is the bottom-position frame</span><br>
-frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="logic-step">
-          <div class="logic-num">4</div>
-          <div class="logic-body">
-            <div class="logic-title">Overlay actual angles and gold standard on the frame</div>
-            <div class="logic-desc">Draw three sets of annotations on the extracted frame. See Section 2b below for the full overlay specification.</div>
-          </div>
-        </div>
-
-        <div class="logic-step">
-          <div class="logic-num">5</div>
-          <div class="logic-body">
-            <div class="logic-title">Save annotated image to GCS</div>
-            <div class="logic-desc">Encode the annotated frame as JPEG and write to GCS. Update the DB record with the image URL.</div>
-            <div class="logic-code">
-              <div class="code-block">
-gcs_path = <span class="js">f"analyses/{analysis_id}/worst_rep_frame.jpg"</span><br>
-upload_to_gcs(annotated_frame, gcs_path)<br>
-db.execute(<span class="js">"UPDATE form_analysis_results SET annotated_frame_url = %s WHERE analysis_id = %s"</span>, gcs_path, analysis_id)
-              </div>
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </div>
 
   <!-- Overlay spec -->
   <div class="detail-card">
@@ -2034,110 +1891,10 @@ def draw_label(img, text, position, alpha=0.6):<br>
   </div>
 
   <!-- 4. OpenCV Scope & Status -->
-  <div class="content-section" id="section-scope">
-    <div style="background:#0d1117;border:1px solid #14532d;border-radius:10px;padding:20px 22px;margin-bottom:24px;">
-      <div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:0.8px;color:#22c55e;margin-bottom:10px;">OpenCV Part 2 — Agreed Scope</div>
-      <div style="display:flex;gap:10px;flex-wrap:wrap;">
-        <span style="font-size:11px;font-weight:800;padding:3px 12px;border-radius:20px;background:#1a0d2e;color:#c4b5fd;border:1px solid #5b21b6;">Option 3 — Frame + skeleton + text labels</span>
-        <span style="font-size:11px;font-weight:700;padding:3px 12px;border-radius:20px;background:#0a1f12;color:#4ade80;border:1px solid #14532d;">Estimated: 3–4 days</span>
-      </div>
-      <div style="margin-top:12px;font-size:11px;color:#64748b;line-height:1.6;">
-        See <strong style="color:#94a3b8;">Step 2 Execution Logic</strong> in the sidebar for the full implementation detail, overlay spec, and acceptance criteria.
-      </div>
-    </div>
-  </div>
+
 
   <!-- 5. OpenCV Step 2 Logic -->
-  <div class="content-section" id="section-logic">
-    <!-- ══════════════════════════════════
-     SECTION 2 — OPENCV STEP 2 LOGIC
-══════════════════════════════════ -->
-<div class="section">
-  <div class="section-label">Section 2 — OpenCV Step 2 detailed logic</div>
-  <div class="section-title">How the worst-rep frame extraction works</div>
-  <div class="section-desc">This step runs after Nemotron completes. It takes the raw video, seeks to the exact frame where the worst rep hit its bottom position, extracts that image, and overlays the user's actual joint angles against gold standard targets. The output is a single image shown to the user on the Results screen.</div>
 
-  <div class="callout callout-info" style="margin-bottom: 20px;">
-    <div class="callout-icon">ℹ</div>
-    <div class="callout-text"><strong>Why raw video, not the overlay video?</strong> The overlay video has green skeleton lines already drawn on it — extracting a frame from it would give a cluttered image with both the skeleton overlay and the new angle annotations. Starting from the clean raw video frame gives a cleaner, more readable result for the user.</div>
-  </div>
-
-  <div class="detail-card">
-    <div class="detail-card-header">
-      <div class="detail-card-title">Step-by-step execution</div>
-    </div>
-    <div class="detail-card-body">
-
-      <div class="logic-steps">
-
-        <div class="logic-step">
-          <div class="logic-num">1</div>
-          <div class="logic-body">
-            <div class="logic-title">Receive worst_rep_number from Nemotron output</div>
-            <div class="logic-desc">Nemotron's response includes per-rep scores. The backend identifies the rep with the lowest score and passes its <code style="background:#0d1117;padding:1px 4px;border-radius:3px;font-size:10px;">rep_number</code> to this step.<br><br>
-            Example: Nemotron returns rep scores <code style="background:#0d1117;padding:1px 4px;border-radius:3px;font-size:10px;">[82, 79, 68, 74, 71]</code> → worst is rep 3 (score 68) → <code style="background:#0d1117;padding:1px 4px;border-radius:3px;font-size:10px;">worst_rep_number = 3</code></div>
-          </div>
-        </div>
-
-        <div class="logic-step">
-          <div class="logic-num">2</div>
-          <div class="logic-body">
-            <div class="logic-title">Look up bottom_timestamp_ms from DB</div>
-            <div class="logic-desc">Query the stored biomechanics JSON in <code style="background:#0d1117;padding:1px 4px;border-radius:3px;font-size:10px;">form_analysis_results</code> for <code style="background:#0d1117;padding:1px 4px;border-radius:3px;font-size:10px;">analysis_id</code>. Find the rep object where <code style="background:#0d1117;padding:1px 4px;border-radius:3px;font-size:10px;">rep_number == worst_rep_number</code>. Extract its <code style="background:#0d1117;padding:1px 4px;border-radius:3px;font-size:10px;">bottom_timestamp_ms</code>.</div>
-            <div class="logic-code">
-              <div class="code-block">
-<span class="jc"># Pseudocode</span><br>
-result = db.query(<span class="js">"SELECT biomechanics_json FROM form_analysis_results WHERE analysis_id = %s"</span>, analysis_id)<br>
-reps = result[<span class="js">"reps"</span>]<br>
-worst_rep = next(r for r in reps if r[<span class="js">"rep_number"</span>] == worst_rep_number)<br>
-bottom_timestamp_ms = worst_rep[<span class="js">"bottom_timestamp_ms"</span>]  <span class="jc"># e.g. 5700.0</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="logic-step">
-          <div class="logic-num">3</div>
-          <div class="logic-body">
-            <div class="logic-title">Read raw video from GCS and seek to bottom_timestamp_ms</div>
-            <div class="logic-desc">Open the raw video using <code style="background:#0d1117;padding:1px 4px;border-radius:3px;font-size:10px;">cv2.VideoCapture</code> (the same OpenCV wrapper Squad 3 already built). Seek to the exact timestamp using <code style="background:#0d1117;padding:1px 4px;border-radius:3px;font-size:10px;">CAP_PROP_POS_MSEC</code>. Read that single frame.</div>
-            <div class="logic-code">
-              <div class="code-block">
-cap = cv2.VideoCapture(raw_video_gcs_path)<br>
-cap.set(cv2.CAP_PROP_POS_MSEC, bottom_timestamp_ms)<br>
-ret, frame = cap.read()  <span class="jc"># this is the bottom-position frame</span><br>
-frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="logic-step">
-          <div class="logic-num">4</div>
-          <div class="logic-body">
-            <div class="logic-title">Overlay actual angles and gold standard on the frame</div>
-            <div class="logic-desc">Draw three sets of annotations on the extracted frame. See Section 2b below for the full overlay specification.</div>
-          </div>
-        </div>
-
-        <div class="logic-step">
-          <div class="logic-num">5</div>
-          <div class="logic-body">
-            <div class="logic-title">Save annotated image to GCS</div>
-            <div class="logic-desc">Encode the annotated frame as JPEG and write to GCS. Update the DB record with the image URL.</div>
-            <div class="logic-code">
-              <div class="code-block">
-gcs_path = <span class="js">f"analyses/{analysis_id}/worst_rep_frame.jpg"</span><br>
-upload_to_gcs(annotated_frame, gcs_path)<br>
-db.execute(<span class="js">"UPDATE form_analysis_results SET annotated_frame_url = %s WHERE analysis_id = %s"</span>, gcs_path, analysis_id)
-              </div>
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </div>
 
   <!-- Overlay spec -->
   <div class="detail-card">
@@ -2198,169 +1955,10 @@ db.execute(<span class="js">"UPDATE form_analysis_results SET annotated_frame_ur
   </div>
 
   <!-- 6. Data Gap & Schema Fix -->
-  <div class="content-section" id="section-gap">
-    <!-- ══════════════════════════════════
-     SECTION 3 — THE DATA GAP
-══════════════════════════════════ -->
-<div class="section">
-  <div class="section-label">Section 3 — The data gap</div>
-  <div class="section-title">Why OpenCV Step 2 cannot be built as the pipeline currently stands</div>
-  <div class="section-desc">OpenCV Step 2 needs to seek to the exact frame in the video where the worst rep hit its bottom position. To do that it needs <code style="background:#0d1117;padding:1px 4px;border-radius:3px;font-size:11px;">bottom_timestamp_ms</code> for that rep. Here is why that data is currently unavailable when it's needed.</div>
 
-  <div class="gap-block" style="margin-bottom: 16px;">
-    <div class="gap-label">The gap</div>
-    <div class="gap-text">
-      MediaPipe computes <code style="background:#150505;padding:1px 4px;border-radius:3px;">bottom_frame</code> and <code style="background:#150505;padding:1px 4px;border-radius:3px;">bottom_timestamp_ms</code> for every rep during rep segmentation. This data exists in memory at Step 3 and is used immediately by:<br><br>
-      &nbsp;&nbsp;→ OpenCV Step 1 (video overlay) — uses landmark positions to draw the skeleton<br>
-      &nbsp;&nbsp;→ Biomechanics script — uses the timing to compute tempo data<br><br>
-      But neither step <strong>saves</strong> the bottom_frame or bottom_timestamp_ms anywhere. Once Step 5 and Step 6 are done, the MediaPipe data is gone from memory.<br><br>
-      By Step 8 (OpenCV Step 2), which runs after Nemotron at Step 7, there is <strong>no way to recover which frame number corresponds to rep 3's bottom position.</strong>
-    </div>
-  </div>
-
-  <div class="detail-card">
-    <div class="detail-card-header">
-      <div class="detail-card-title">What the current biomechanics JSON schema has vs what's needed</div>
-    </div>
-    <div class="detail-card-body">
-      <div style="font-size:12px;color:#94a3b8;margin-bottom:14px;">The biomechanics JSON already stores rich per-rep data — angles, tempo, stability. The gap is two missing fields that MediaPipe computes but the schema doesn't capture.</div>
-      <div class="schema-diff">
-        <div>
-          <div class="code-block diff-before" style="border: 1px solid #7f1d1d;">
-            <div class="diff-label">Current schema — per rep object</div>
-<span class="jp">{</span><br>
-&nbsp;&nbsp;<span class="jk">"rep_number"</span><span class="jp">:</span> <span class="jn">3</span><span class="jp">,</span><br>
-&nbsp;&nbsp;<span class="jk">"median_frame_reliability"</span><span class="jp">:</span> <span class="jn">0.89</span><span class="jp">,</span><br>
-&nbsp;&nbsp;<span class="jk">"tempo_data"</span><span class="jp">:</span> <span class="jp">{</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="jk">"eccentric"</span><span class="jp">:</span> <span class="jn">0.10</span><span class="jp">,</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="jk">"pause"</span><span class="jp">:</span> <span class="jn">0.77</span><span class="jp">,</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="jk">"total"</span><span class="jp">:</span> <span class="jn">1.37</span><br>
-&nbsp;&nbsp;<span class="jp">},</span><br>
-&nbsp;&nbsp;<span class="jk">"depth_data"</span><span class="jp">:</span> <span class="jp">{</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="jk">"knee_angle_at_bottom"</span><span class="jp">:</span> <span class="jn">88.2</span><span class="jp">,</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="jk">"hip_angle_at_bottom"</span><span class="jp">:</span> <span class="jn">86.5</span><br>
-&nbsp;&nbsp;<span class="jp">},</span><br>
-&nbsp;&nbsp;<span class="jp">...</span><br>
-&nbsp;&nbsp;<span class="jc">// ✗ no bottom_frame</span><br>
-&nbsp;&nbsp;<span class="jc">// ✗ no bottom_timestamp_ms</span><br>
-<span class="jp">}</span>
-          </div>
-        </div>
-        <div>
-          <div class="code-block diff-after" style="border: 1px solid #14532d;">
-            <div class="diff-label">Proposed schema — per rep object</div>
-<span class="jp">{</span><br>
-&nbsp;&nbsp;<span class="jk">"rep_number"</span><span class="jp">:</span> <span class="jn">3</span><span class="jp">,</span><br>
-&nbsp;&nbsp;<span class="added"><span class="jk">"bottom_frame"</span><span class="jp">:</span> <span class="jn">342</span><span class="jp">,</span></span><br>
-&nbsp;&nbsp;<span class="added"><span class="jk">"bottom_timestamp_ms"</span><span class="jp">:</span> <span class="jn">5700.0</span><span class="jp">,</span></span><br>
-&nbsp;&nbsp;<span class="jk">"median_frame_reliability"</span><span class="jp">:</span> <span class="jn">0.89</span><span class="jp">,</span><br>
-&nbsp;&nbsp;<span class="jk">"tempo_data"</span><span class="jp">:</span> <span class="jp">{</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="jk">"eccentric"</span><span class="jp">:</span> <span class="jn">0.10</span><span class="jp">,</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="jk">"pause"</span><span class="jp">:</span> <span class="jn">0.77</span><span class="jp">,</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="jk">"total"</span><span class="jp">:</span> <span class="jn">1.37</span><br>
-&nbsp;&nbsp;<span class="jp">},</span><br>
-&nbsp;&nbsp;<span class="jk">"depth_data"</span><span class="jp">:</span> <span class="jp">{</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="jk">"knee_angle_at_bottom"</span><span class="jp">:</span> <span class="jn">88.2</span><span class="jp">,</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="jk">"hip_angle_at_bottom"</span><span class="jp">:</span> <span class="jn">86.5</span><br>
-&nbsp;&nbsp;<span class="jp">},</span><br>
-&nbsp;&nbsp;<span class="jp">...</span><br>
-<span class="jp">}</span>
-          </div>
-        </div>
-      </div>
-      <div style="margin-top:12px;font-size:11px;color:#64748b;">
-        <strong style="color:#fde68a;">bottom_frame</strong> — integer frame index (e.g. 342). Used to verify the correct position was identified.<br>
-        <strong style="color:#fde68a;">bottom_timestamp_ms</strong> — float timestamp in milliseconds (e.g. 5700.0). Used by <code>cap.set(cv2.CAP_PROP_POS_MSEC, bottom_timestamp_ms)</code> in OpenCV Step 2 to seek to the exact frame.
-      </div>
-    </div>
-  </div>
-</div>
-
-
-<!-- ══════════════════════════════════
-     SECTION 4 — PROPOSED CHANGE
-══════════════════════════════════ -->
-<div class="section">
-  <div class="section-label">Section 4 — Proposed change</div>
-  <div class="section-title">What needs to change and who does it</div>
-
-  <div class="fix-block" style="margin-bottom: 16px;">
-    <div class="fix-label">The fix — one schema change, no new storage</div>
-    <div class="fix-text">
-      No new tables, no new services. The biomechanics JSON is already saved to the DB. The fix is to include <code style="background:#0a1f12;padding:1px 4px;border-radius:3px;">bottom_frame</code> and <code style="background:#0a1f12;padding:1px 4px;border-radius:3px;">bottom_timestamp_ms</code> in each rep object when the biomechanics script writes its output.<br><br>
-      MediaPipe already computes both values during rep segmentation — they just need to be passed through to the output JSON instead of being discarded.
-    </div>
-  </div>
-
-  <div class="detail-card">
-    <div class="detail-card-header">
-      <div class="detail-card-title">Changes required — by squad</div>
-    </div>
-    <div class="detail-card-body">
-
-      <div style="margin-bottom:16px;">
-        <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:0.6px;color:#fb923c;margin-bottom:10px;">Squad 3 — Biomechanics script</div>
-        <div style="font-size:12px;color:#94a3b8;margin-bottom:8px;">When the biomechanics script processes each rep, it already has access to the rep's bottom_frame from MediaPipe's rep segmentation output. Add these two fields to the rep object before returning the JSON.</div>
-        <div class="code-block">
-<span class="jc"># In the rep segmentation loop — Squad 3 already computes this</span><br>
-for rep in segmented_reps:<br>
-&nbsp;&nbsp;bottom_frame = rep.bottom_frame_index      <span class="jc"># already computed by MediaPipe</span><br>
-&nbsp;&nbsp;bottom_timestamp_ms = (bottom_frame / fps) * 1000  <span class="jc"># same formula as OpenCV wrapper</span><br>
-&nbsp;&nbsp;<br>
-&nbsp;&nbsp;rep_output = {<br>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="jk">"rep_number"</span><span class="jp">:</span> rep.number<span class="jp">,</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="added"><span class="jk">"bottom_frame"</span><span class="jp">:</span> bottom_frame<span class="jp">,</span>          <span class="jc"># ADD THIS</span></span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="added"><span class="jk">"bottom_timestamp_ms"</span><span class="jp">:</span> bottom_timestamp_ms<span class="jp">,</span>  <span class="jc"># ADD THIS</span></span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="jk">"tempo_data"</span><span class="jp">:</span> ...<span class="jp">,</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="jk">"depth_data"</span><span class="jp">:</span> ...<br>
-&nbsp;&nbsp;}
-        </div>
-      </div>
-
-      <div style="margin-bottom:16px;">
-        <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:0.6px;color:#4ade80;margin-bottom:10px;">Squad 2 — Pipeline orchestration</div>
-        <div style="font-size:12px;color:#94a3b8;margin-bottom:8px;">After Nemotron returns per-rep scores, Squad 2 identifies the worst rep and queries the stored biomechanics JSON from the DB to get that rep's <code style="background:#0d1117;padding:1px 4px;border-radius:3px;font-size:11px;">bottom_timestamp_ms</code>. This is then passed to Squad 3's frame extraction function.</div>
-        <div class="code-block">
-<span class="jc"># After nemotron_complete — Squad 2 pipeline code</span><br>
-rep_scores = nemotron_output[<span class="js">"rep_scores"</span>]<br>
-worst_rep_number = min(rep_scores, key=lambda r: r[<span class="js">"score"</span>])[<span class="js">"rep_number"</span>]<br>
-<br>
-<span class="jc"># Look up timestamp from DB — biomechanics JSON already stored</span><br>
-biomechanics = db.query(<span class="js">"SELECT biomechanics_json FROM form_analysis_results WHERE analysis_id = %s"</span>)<br>
-worst_rep_data = next(r for r in biomechanics[<span class="js">"reps"</span>] if r[<span class="js">"rep_number"</span>] == worst_rep_number)<br>
-bottom_timestamp_ms = worst_rep_data[<span class="js">"bottom_timestamp_ms"</span>]<br>
-<br>
-<span class="jc"># Call Squad 3's frame extraction function</span><br>
-frame_url = extract_worst_rep_frame(raw_video_url, bottom_timestamp_ms, worst_rep_data)
-        </div>
-      </div>
-
-      <div class="ac-block">
-        <div class="ac-label">Acceptance Criteria for this change</div>
-        <ul class="ac-list">
-          <li class="ac-item"><span class="ac-check">✓</span> <code style="background:#1e293b;padding:1px 4px;border-radius:3px;font-size:11px;">bottom_frame</code> and <code style="background:#1e293b;padding:1px 4px;border-radius:3px;font-size:11px;">bottom_timestamp_ms</code> present in every rep object in the biomechanics JSON output</li>
-          <li class="ac-item"><span class="ac-check">✓</span> <code style="background:#1e293b;padding:1px 4px;border-radius:3px;font-size:11px;">bottom_timestamp_ms</code> computed using <code style="background:#1e293b;padding:1px 4px;border-radius:3px;font-size:11px;">(bottom_frame / fps) × 1000</code> — same formula as OpenCV wrapper</li>
-          <li class="ac-item"><span class="ac-check">✓</span> <code style="background:#1e293b;padding:1px 4px;border-radius:3px;font-size:11px;">Kinetic_Biomechanics_Output_Schema.json</code> updated with these two fields before any code is written</li>
-          <li class="ac-item"><span class="ac-check">✓</span> OpenCV Step 2 can seek to <code style="background:#1e293b;padding:1px 4px;border-radius:3px;font-size:11px;">bottom_timestamp_ms</code> and extract the correct frame — verified against a known video where the worst-rep bottom position is visually identifiable</li>
-          <li class="ac-item"><span class="ac-check">✓</span> Annotated frame saved to GCS and <code style="background:#1e293b;padding:1px 4px;border-radius:3px;font-size:11px;">annotated_frame_url</code> written to DB</li>
-          <li class="ac-item"><span class="ac-check">✓</span> Gold standard angle values confirmed against biomechanics research corpus before overlaying</li>
-        </ul>
-      </div>
-
-    </div>
-  </div>
-</div>
-  </div>
 
   <!-- 7. OpenCV Capabilities -->
-  <div class="content-section" id="section-research">
-    <!-- ══════════════════════════════════
-     SECTION 5 — OPENCV CAPABILITIES RESEARCH
-══════════════════════════════════ -->
-<div class="section">
-  <div class="section-label">Section 5 — OpenCV capabilities research</div>
-  <div class="section-title">What OpenCV can and cannot do for this overlay — and a second data gap</div>
-  <div class="section-desc">Research on the specific OpenCV functions needed, their limitations on real video frames, and an additional data requirement that only becomes visible when you try to implement the overlay.</div>
+
 
   <!-- 5a: coordinate conversion -->
   <div class="detail-card" style="margin-bottom:16px;">
@@ -2659,7 +2257,7 @@ def draw_label(img, text, position, alpha=0.6):<br>
 </main>
 
 <script>
-const sections = ['overview','steps','decisions','scope','logic','gap','research'];
+const sections = ['overview','steps'];
 function show(id) {
   sections.forEach(s => {
     document.getElementById('section-' + s).classList.remove('active');
