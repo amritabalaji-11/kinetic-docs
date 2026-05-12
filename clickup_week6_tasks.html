@@ -340,11 +340,11 @@ h1 { font-size: 22px; font-weight: 800; color: #f8fafc; letter-spacing: -0.5px; 
   <div class="task-card">
     <div class="task-card-header">
       <span class="task-id-badge sq1-id">S1-W6-06</span>
-      <div class="task-title">Complete JSON schema — History, Dashboard, Workout endpoints &nbsp;<span class="carry-badge">CARRY OVER S1-W5-03</span></div>
+      <div class="task-title">History, Dashboard, Workout Logger — dummy data shells for demo &nbsp;<span class="carry-badge">SCOPE UPDATED</span></div>
     </div>
     <div class="task-card-body">
       <div class="carry-banner">
-        <strong>Carry-over from S1-W5-03 (pending items).</strong> The form analysis, auth, and profile schemas are done. These three endpoints were blocked on the W6 design handoff — now unblocked. Complete before building Dashboard (S1-W6-05) or History in W7.
+        <strong>Scope updated.</strong> No backend endpoints built for demo. All three screens are frontend-only dummy data shells. Backend endpoints (GET /users/{id}/sessions, /dashboard, /workout-logs) deferred to post-demo. See FE_Response_Schemas.md Section 5 for field names to use in dummy data.
       </div>
       <div class="dep-block">
         <div class="dep-block-label">Dependencies</div>
@@ -353,16 +353,16 @@ h1 { font-size: 22px; font-weight: 800; color: #f8fafc; letter-spacing: -0.5px; 
       </div>
       <div>
         <div class="desc-label">Description</div>
-        <div class="desc-text">Define and document the remaining three API response schemas in FE_Response_Schemas.md. (1) Session History — GET /users/{id}/sessions: paginated list of past analyses, each with analysis_id, exercise (display name), weight_value, weight_unit, created_at, overall_score, progression_recommendation. (2) Dashboard — GET /users/{id}/dashboard: last 5 analyses (same shape as history) plus a score_trend array (analysis_id, date, overall_score) for the chart. (3) Workout Logger — GET + POST /users/{id}/workout-logs: log entry shape (log_id, exercise_id, sets, reps, weight_value, weight_unit, analysis_id if linked to a form analysis, created_at). Align with Squad 2 (Nicole) before Thursday.</div>
+        <div class="desc-text">Build dummy-data frontend shells for three screens needed in the demo: Session History, Dashboard, and Workout Logger. No backend API calls — all data is hardcoded fixtures. Use the field names from FE_Response_Schemas.md Section 5 in all dummy data (analysis_id, exercise, weight_value, weight_unit, overall_score, progression_recommendation, score_trend etc.) so that wiring up real endpoints post-demo requires only replacing the fixtures, not refactoring components. No Squad 2 alignment needed this week — endpoints are deferred.</div>
       </div>
       <div class="ac-block">
         <div class="ac-label">Acceptance Criteria</div>
         <ul class="ac-list">
-          <li class="ac-item"><span class="ac-check">✓</span> All three schemas committed to FE_Response_Schemas.md with typed fields, required vs optional, and example payloads</li>
-          <li class="ac-item"><span class="ac-check">✓</span> Dashboard schema includes score_trend array for chart rendering</li>
-          <li class="ac-item"><span class="ac-check">✓</span> Pagination strategy defined for history endpoint (cursor or page-based)</li>
-          <li class="ac-item"><span class="ac-check">✓</span> Workout log schema confirms how a log entry links to a form session (session_id nullable)</li>
-          <li class="ac-item"><span class="ac-check">✓</span> Reviewed and confirmed by Squad 2 (Nicole) before Thursday merge</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Session History screen renders with dummy data — correct field names per FE_Response_Schemas.md Section 5</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Dashboard screen renders with dummy data — includes score trend chart with hardcoded data points</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Workout Logger screen renders with dummy data — log entries use correct field names</li>
+          <li class="ac-item"><span class="ac-check">✓</span> No API calls made — all data is hardcoded fixtures. No backend dependency.</li>
+          <li class="ac-item"><span class="ac-check">✓</span> All three screens routable and visually complete for demo</li>
         </ul>
       </div>
     </div>

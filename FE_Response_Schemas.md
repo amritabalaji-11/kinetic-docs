@@ -292,7 +292,25 @@ Auth (JWT + Supabase Auth) is **dropped from MVP scope**. No login, signup, auth
 
 ---
 
-## 5. DB Fields Required
+## 5. Session History, Dashboard & Workout Logger — Deferred (post-demo)
+
+`GET /users/{id}/sessions`, `GET /users/{id}/dashboard`, `GET /users/{id}/workout-logs`, and `POST /users/{id}/workout-logs` endpoints are **not built for demo**.
+
+**For demo:** All three screens exist as routable frontend shells with hardcoded dummy data. No backend API calls made. Dummy data should use the correct field names so wiring up real endpoints in W7+ requires only replacing fixtures, not refactoring components.
+
+**Dummy data field names to use** (so components are wire-ready):
+
+| Screen | Key fields in dummy data |
+|---|---|
+| Session History | `analysis_id` · `exercise` (display name) · `weight_value` · `weight_unit` · `created_at` · `overall_score` · `progression_recommendation` |
+| Dashboard | Same as history (last 5) · `score_trend: [{ analysis_id, date, overall_score }]` |
+| Workout Logger | `log_id` · `exercise_id` · `sets` · `reps` · `weight_value` · `weight_unit` · `analysis_id` (if linked) · `created_at` |
+
+**Post-demo:** Full endpoints + response schemas to be added after launch.
+
+---
+
+## 6. DB Fields Required
 
 ### `form_analysis_results` — fields written during pipeline
 
