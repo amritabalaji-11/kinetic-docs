@@ -72,6 +72,7 @@ Who owns what, and what passes between squads at each handoff.
   "quality_gate_status": "GOOD",
 
   "overall_score": 72,
+  "progression_recommendation": "hold",
 
   "annotated_frame_url": "https://storage.googleapis.com/kinetic-videos/analyses/{analysis_id}/worst_rep_frame.jpg",
 
@@ -132,7 +133,8 @@ Who owns what, and what passes between squads at each handoff.
 | `rep_count` | integer | No | 1 – 99 | — | Display as "10 reps" |
 | `created_at` | timestamp | No | — | `D MMM YYYY` | Drop the time. e.g. "9 May 2026" |
 | `quality_gate_status` | enum | Yes | `GOOD` \| `ACCEPTABLE` | — | Show soft confidence warning banner **only** if `ACCEPTABLE`. Hide entirely if `GOOD` or null. |
-| `overall_score` | integer | No | 0 – 100 | — | Large display number. No decimal. No % symbol. |
+| `overall_score` | integer | No | 0 – 100 | — | Large display number. No decimal. No % symbol. DB column is `overall_form_score` — serialised as `overall_score` in this response. |
+| `progression_recommendation` | enum | **Yes** (null until W7) | `hold` \| `progress` \| `drop` | — | Null until Claude step completes (W7+). Display as progression card on Results screen. `hold` = stay at current weight · `progress` = ready to increase · `drop` = reduce weight. |
 | `annotated_frame_url` | url | **Yes (V2)** | — | — | Show image skeleton placeholder if null. Render image on load. |
 | `coaching.summary_paragraph` | string | No | max 400 chars | — | Full-width text block. No truncation. Allow wrap. |
 | `coaching.parameters.[x].score` | integer | No | 0 – 100 | — | One score per parameter card (posture / stability / movement_quality / tempo) |

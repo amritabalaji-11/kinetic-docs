@@ -135,19 +135,20 @@ These are averaged across all reps. Stored as flat columns for fast querying in 
 
 | Field | Type | Nullable | Range / Max | Format | Written by | Pipeline step |
 |---|---|---|---|---|---|---|
-| `overall_form_score` | integer | No | 0 – 100 | — | S2 — from Nemotron output | Step 5 — Phase 1 INSERT |
+| `overall_form_score` | integer | No | 0 – 100 | — | S2 — from Nemotron output. Serialised as `overall_score` in API responses. | Step 5 — Phase 1 INSERT |
 | `posture_score` | integer | No | 0 – 100 | — | S2 — from Nemotron output | Step 5 — Phase 1 INSERT |
 | `stability_score` | integer | No | 0 – 100 | — | S2 — from Nemotron output | Step 5 — Phase 1 INSERT |
 | `movement_quality_score` | integer | No | 0 – 100 | — | S2 — from Nemotron output | Step 5 — Phase 1 INSERT |
+| `tempo_score` | integer | No | 0 – 100 | — | S2 — from Nemotron output. Required as flat column so comparison query can retrieve previous session tempo without parsing JSONB. | Step 5 — Phase 1 INSERT |
 
-> **Tempo score** is not stored as a flat DB column. It is stored within `coaching_output` JSONB (Phase 2). Only the 4 columns above are queryable directly for progression logic.
+> All 5 score columns are stored flat for direct queryability in progression logic and the comparison endpoint. Tempo is also present inside `coaching_output` JSONB (Phase 2) as part of the full parameter block.
 
 ### Field Reference — Rep-level Scores (written Phase 1)
 
 | Field | Type | Nullable | Range / Max | Format | Written by | Pipeline step |
 |---|---|---|---|---|---|---|
 | `rep_count` | integer | No | 1 – 99 | — | S2 — from Nemotron output | Step 5 — Phase 1 INSERT |
-| `rep_scores` | jsonb array | No | each score: 0–100 | `[{ "rep": 1, "form_score": 74, "movement_quality_score": 70, "stability_score": 78, "posture_score": 72 }, ...]` | S2 — from Nemotron output | Step 5 — Phase 1 INSERT |
+| `rep_scores` | jsonb array | No | each score: 0–100 | `[{ "rep_number": 1, "form_score": 74, "movement_quality_score": 70, "stability_score": 78, "posture_score": 72 }, ...]` · API comparison response serialises as integer array of `form_score` values only: `[74, 68, ...]` | S2 — from Nemotron output | Step 5 — Phase 1 INSERT |
 
 ### Field Reference — Issues (written Phase 1)
 
