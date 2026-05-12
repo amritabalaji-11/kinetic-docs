@@ -50,7 +50,7 @@ Who owns what, and what passes between squads at each handoff.
 | `exercise_id` | uuid | No | fixed set | — | MVP: always `ex_gob_squat_001`. Read from exercises reference table. |
 | `weight_value` | float | No | 0.5 – 999.9 | 1 dp | Validate > 0 before submit. User enters this. |
 | `weight_unit` | enum | No | `kg` \| `lb` | — | User's unit preference. Stored as-is. |
-| `user_id` | uuid | No | 36 chars | — | From `localStorage`. Generated once on first visit via `crypto.randomUUID()`. Persists until storage cleared. **Auth de-scoped — was from JWT.** |
+| `user_id` | uuid | No | 36 chars | — | **Hardcoded in frontend** — one of 3 fixed values (`user_001`, `user_002`, `user_003`) pre-seeded in DB. Auth de-scoped — no login for demo. |
 | `session_id` | uuid | No | 36 chars | — | From `sessionStorage`. Generated at app mount via `crypto.randomUUID()`. Clears when tab closes. **Auth de-scoped — was from JWT.** |
 
 ---
@@ -276,7 +276,7 @@ After analysis_complete SSE fires (non-blocking):
 
 Auth (JWT + Supabase Auth) is **dropped from MVP scope**. No login, signup, auth endpoints, or JWT middleware built for demo.
 
-**For demo:** `user_id` is generated client-side via `crypto.randomUUID()` on first visit and stored in `localStorage` — it persists across sessions. `session_id` is generated at app mount and stored in `sessionStorage` — it clears when the tab closes. Both are sent in the POST body on every upload. No auth header or token required.
+**For demo:** 3 `user_id` values are hardcoded in the frontend code (`user_001`, `user_002`, `user_003`) and pre-seeded in the DB. The frontend sends the active hardcoded `user_id` in the POST body. This lets the demo switch between users to show different progression histories. `session_id` is generated at app mount via `crypto.randomUUID()`, stored in `sessionStorage`, and sent in the POST body. No auth header or token required.
 
 **Post-demo:** Full Supabase Auth + Google OAuth to be added after launch. `user_id` and `session_id` will revert to being extracted server-side from the JWT token.
 

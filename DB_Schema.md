@@ -64,7 +64,7 @@ Step 7 — Claude complete / pipeline done
 |---|---|---|---|---|---|---|
 | `analysis_id` | uuid (PK) | No | 36 chars | — | S2 — `uuid4()` at upload handler | Step 2 — INSERT |
 | `session_id` | uuid | No | 36 chars | — | S1 → sent in POST body from sessionStorage | Step 2 — INSERT |
-| `user_id` | uuid | No | 36 chars | — | S1 → sent in POST body from localStorage | Step 2 — INSERT |
+| `user_id` | uuid | No | 36 chars | — | S1 → hardcoded in frontend (one of `user_001`, `user_002`, `user_003`) · sent in POST body · pre-seeded in DB. Auth de-scoped. | Step 2 — INSERT |
 | `exercise_id` | uuid (FK → exercises) | No | — | — | S1 → sent in POST body | Step 2 — INSERT |
 | `weight_value` | float | No | 0.5 – 999.9 | 1 dp | S1 → sent in POST body | Step 2 — INSERT |
 | `weight_unit` | enum | No | `kg` \| `lb` | — | S1 → sent in POST body | Step 2 — INSERT |
