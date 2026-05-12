@@ -1,7 +1,7 @@
 # Kinetic — SSE Events, Error Codes & Frontend Messages
 **Task:** S1-W5-06a  
 **Last updated:** May 12, 2026  
-**Scope:** SSE event shapes · Error taxonomy · HTTP error codes · Frontend UI copy  
+**Scope:** SSE event shapes · Error taxonomy · HTTP error codes · Frontend UI copy · overlay_complete added  
 **Produced by:** S2 — Backend  
 **Consumed by:** S1 — Frontend
 
@@ -21,6 +21,9 @@ Frontend (S1)                     Backend (S2)                    AI/MediaPipe (
    |<-- mediapipe_started ---------- |                                 |
    |                                 |<-- keypoints returned --------- |
    |<-- mediapipe_complete --------- |                                 |
+   |                                 |--- run OpenCV overlay --------> |
+   |                                 |<-- overlay_video_url returned - |
+   |<-- overlay_complete ----------- |                                 |
    |                                 |<-- biomechanics JSON returned - |
    |<-- biomechanics_complete ------ |                                 |
    |                                 |--- dispatch Nemotron job -----> |
@@ -50,6 +53,7 @@ Frontend (S1)                     Backend (S2)                    AI/MediaPipe (
 | `upload_received` | S2 | S1 | S1 POST triggers S2 |
 | `mediapipe_started` | S2 | S1 | S2 dispatches job to S3 — **S3 must be ready to accept jobs** |
 | `mediapipe_complete` | S2 | S1 | **S3 must return keypoints to S2** before S2 can fire this |
+| `overlay_complete` | S2 | S1 | **S3 must complete OpenCV skeleton overlay and return overlay_video_url to S2** before S2 can fire this |
 | `biomechanics_complete` | S2 | S1 | **S3 must return biomechanics JSON to S2** before S2 can fire this |
 | `nemotron_started` | S2 | S1 | S2 dispatches to Nemotron via S3 — **S3 owns Nemotron integration** |
 | `nemotron_complete` | S2 | S1 | **S3 must return Nemotron scored output to S2** before S2 can fire this |
@@ -164,6 +168,28 @@ Fires when S3 returns MediaPipe keypoints to S2 and pose detection is confirmed 
 | `frames_processed` | integer | No | 1 – 99,999 | — | Internal. Not required to display. |
 
 **Suggested UI copy:** "Movement detected — {rep_count} reps found"
+
+---
+
+### `overlay_complete`
+**Fired by:** S2 — Backend  ·  **Consumed by:** S1 — Frontend  ·  **S3 dependency:** S3 must complete OpenCV skeleton overlay and return overlay_video_url to S2
+
+Fires when S3 finishes drawing the skeleton overlay on the full video. The overlay video is the visual input sent to Nemotron — it is not shown to the user.
+
+```json
+{
+  "analysis_id":       "uuid",
+  "session_id":        "uuid",
+  "user_id":           "uuid",
+  "overlay_video_url": "gs://kinetic-videos/analyses/{analysis_id}/overlay.mp4"
+}
+```
+
+| Field | Type | Nullable | Notes |
+|---|---|---|---|
+| `overlay_video_url` | string (GCS URI) | No | GCS path of the skeleton overlay video. Not shown to user — passed to Nemotron as AI input. |
+
+**Suggested UI copy:** "Processing your movement..."
 
 ---
 

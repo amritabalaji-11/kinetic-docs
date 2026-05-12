@@ -353,7 +353,7 @@ h1 { font-size: 22px; font-weight: 800; color: #f8fafc; letter-spacing: -0.5px; 
       </div>
       <div>
         <div class="desc-label">Description</div>
-        <div class="desc-text">Define and document the remaining three API response schemas in FE_Response_Schemas.md. (1) Session History — GET /users/{id}/sessions: paginated list of past form sessions, each with session_id, exercise_name, weight_kg, created_at, overall_score, verdict. (2) Dashboard — GET /users/{id}/dashboard: last 5 sessions (same shape as history) plus a score_trend array (session_id, date, overall_score) for the chart. (3) Workout Logger — GET + POST /users/{id}/workout-logs: log entry shape (log_id, exercise, sets, reps, weight_kg, session_id if linked to a form analysis, created_at). Align with Squad 2 (Nicole) before Thursday.</div>
+        <div class="desc-text">Define and document the remaining three API response schemas in FE_Response_Schemas.md. (1) Session History — GET /users/{id}/sessions: paginated list of past analyses, each with analysis_id, exercise (display name), weight_value, weight_unit, created_at, overall_score, progression_recommendation. (2) Dashboard — GET /users/{id}/dashboard: last 5 analyses (same shape as history) plus a score_trend array (analysis_id, date, overall_score) for the chart. (3) Workout Logger — GET + POST /users/{id}/workout-logs: log entry shape (log_id, exercise_id, sets, reps, weight_value, weight_unit, analysis_id if linked to a form analysis, created_at). Align with Squad 2 (Nicole) before Thursday.</div>
       </div>
       <div class="ac-block">
         <div class="ac-label">Acceptance Criteria</div>
