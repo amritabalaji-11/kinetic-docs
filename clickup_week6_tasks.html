@@ -435,7 +435,9 @@ h1 { font-size: 22px; font-weight: 800; color: #f8fafc; letter-spacing: -0.5px; 
           <code style="background:#0d1117;padding:4px 8px;border-radius:4px;display:block;margin:6px 0;font-size:10px;color:#86efac;">
             def process_video(gcs_path: str, analysis_id: str) -> dict<br>
             # Success: {"status": "success", "overlay_video_url": "gs://...", "biomechanics_json": {...}}<br>
-            # Failure: {"status": "failed", "error_code": "BAD_ANGLE", "affected_landmarks": [...]}
+            # Failure: {"status": "failed", "error_stage": "quality_gate",
+            #            "error_code": "occlusion_left_side",  # M1-M6 code — see FE_SSE_and_Errors.md quality gate taxonomy
+            #            "landmark_medians": {...}}  # required for occlusion_* and out_of_frame_* codes
           </code>
           <strong style="color:#f1f5f9;">2. Where the code lives</strong> — exact file path in the repo (e.g. <code style="background:#0d1117;padding:1px 4px;border-radius:3px;">backend/pipeline/process_video.py</code>)<br><br>
           <strong style="color:#f1f5f9;">3. Dependencies</strong> — any packages Squad 3's code needs that must be added to requirements.txt<br><br>
@@ -471,10 +473,10 @@ h1 { font-size: 22px; font-weight: 800; color: #f8fafc; letter-spacing: -0.5px; 
         <div class="desc-label">What Squad 2 builds — the full sequence</div>
         <div class="desc-text">
           Once the function contract is agreed, Squad 2 wires everything together in this order:<br><br>
-          <strong style="color:#f1f5f9;">Step 1 — POST /upload:</strong> Accept multipart (video + exercise_id + weight_value + weight_unit). Save video to GCS → generate analysis_id → write form_sessions to DB (status: processing) → return {analysis_id} immediately. Emit upload_received SSE.<br><br>
+          <strong style="color:#f1f5f9;">Step 1 — POST /upload:</strong> Accept multipart (video + exercise_id + weight_value + weight_unit + user_id + session_id). Save video to GCS → generate analysis_id → write form_analyses to DB (status: uploaded) → return {analysis_id} immediately. Emit upload_received SSE.<br><br>
           <strong style="color:#f1f5f9;">Step 2 — Async background task:</strong> Call Squad 3's <code style="background:#0d1117;padding:1px 4px;border-radius:3px;">process_video(gcs_path, analysis_id)</code>. Emit mediapipe_started SSE before the call.<br><br>
           <strong style="color:#f1f5f9;">Step 3 — Handle return:</strong><br>
-          &nbsp;&nbsp;• If <code style="background:#0d1117;padding:1px 4px;border-radius:3px;">status == "failed"</code>: update form_sessions status → "failed", emit error SSE with error_code<br>
+          &nbsp;&nbsp;• If <code style="background:#0d1117;padding:1px 4px;border-radius:3px;">status == "failed"</code>: update form_analyses status → "failed", emit full error SSE: { analysis_id, session_id, user_id, error_code, error_stage, retryable, message }<br>
           &nbsp;&nbsp;• If <code style="background:#0d1117;padding:1px 4px;border-radius:3px;">status == "success"</code>: write biomechanics_json to form_analysis_results DB, emit biomechanics_complete SSE<br><br>
           <strong style="color:#f1f5f9;">Step 4 — Serve results:</strong> GET /analysis/{id}/result returns the stored biomechanics JSON so Squad 1 can render it on the Results screen.
         </div>
@@ -485,7 +487,7 @@ h1 { font-size: 22px; font-weight: 800; color: #f8fafc; letter-spacing: -0.5px; 
           <li class="ac-item"><span class="ac-check">✓</span> POST /upload accepts video + exercise_id + weight_value + weight_unit, saves to GCS, writes DB record, returns {analysis_id} in under 500ms</li>
           <li class="ac-item"><span class="ac-check">✓</span> process_video() called asynchronously — upload response not blocked by pipeline processing</li>
           <li class="ac-item"><span class="ac-check">✓</span> On success: biomechanics_json written to form_analysis_results. GET /analysis/{id}/result returns it with all fields from Kinetic_Biomechanics_Output_Schema.json</li>
-          <li class="ac-item"><span class="ac-check">✓</span> On quality gate failure: form_sessions status set to "failed", error SSE emitted with correct error_code</li>
+          <li class="ac-item"><span class="ac-check">✓</span> On quality gate failure: form_analyses status set to "failed", full error SSE emitted: { analysis_id, session_id, user_id, error_code, error_stage: "quality_gate", retryable: "false", message }</li>
           <li class="ac-item"><span class="ac-check">✓</span> SSE events fire in correct sequence — upload_received → mediapipe_started → biomechanics_complete (or error)</li>
           <li class="ac-item"><span class="ac-check">✓</span> Squad 1 confirms real biomechanics data appears on Results screen before Thursday merge</li>
         </ul>
@@ -507,14 +509,14 @@ h1 { font-size: 22px; font-weight: 800; color: #f8fafc; letter-spacing: -0.5px; 
       </div>
       <div>
         <div class="desc-label">Description</div>
-        <div class="desc-text">Upgrade the W5 stub /upload endpoint into the real implementation. Accept multipart POST (video file + exercise + weight). Save the video to GCS using the agreed path structure (videos/{analysis_id}/{filename}). Write the form_sessions record to DB with status: processing. Return {analysis_id} immediately — no waiting for the pipeline. In a background async task, trigger the MediaPipe pipeline (call Squad 3's biomechanics processing function or service). Emit SSE events as each pipeline stage completes. Keep the upload response fast (&lt;500ms) — all heavy processing happens asynchronously after the response is sent.</div>
+        <div class="desc-text">Upgrade the W5 stub /upload endpoint into the real implementation. Accept multipart POST (video file + exercise_id + weight_value + weight_unit + user_id + session_id). Save the video to GCS using the agreed path structure (videos/{user_id}/{analysis_id}/{filename}). Write the form_analyses record to DB with status: uploaded. Return {analysis_id} immediately — no waiting for the pipeline. In a background async task, update status to "processing" then trigger the MediaPipe pipeline (call Squad 3's process_video() function). Emit SSE events as each pipeline stage completes. Keep the upload response fast (&lt;500ms) — all heavy processing happens asynchronously after the response is sent.</div>
       </div>
       <div class="ac-block">
         <div class="ac-label">Acceptance Criteria</div>
         <ul class="ac-list">
-          <li class="ac-item"><span class="ac-check">✓</span> POST /upload accepts multipart: video file + exercise (string) + weight (float)</li>
-          <li class="ac-item"><span class="ac-check">✓</span> Video stored in GCS at <code style="background:#1e293b;padding:1px 4px;border-radius:3px;font-size:11px;">videos/{analysis_id}/{filename}</code> — GCS path stored in DB</li>
-          <li class="ac-item"><span class="ac-check">✓</span> form_sessions record written: session_id, user_id (stub for now), exercise_name, weight_kg, status: processing, video_gcs_path, created_at</li>
+          <li class="ac-item"><span class="ac-check">✓</span> POST /upload accepts multipart: video file + exercise_id (string) + weight_value (float) + weight_unit (string) + user_id (uuid) + session_id (uuid)</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Video stored in GCS at <code style="background:#1e293b;padding:1px 4px;border-radius:3px;font-size:11px;">videos/{user_id}/{analysis_id}/{filename}</code> — video_url stored in DB</li>
+          <li class="ac-item"><span class="ac-check">✓</span> form_analyses record written: analysis_id, session_id, user_id, exercise_id, weight_value, weight_unit, weight_kg_normalised, video_url, status: uploaded, created_at</li>
           <li class="ac-item"><span class="ac-check">✓</span> {analysis_id} returned in &lt;500ms — pipeline runs asynchronously, not blocking the response</li>
           <li class="ac-item"><span class="ac-check">✓</span> File size checked server-side — reject files &gt;500MB with 413 error before attempting GCS write</li>
           <li class="ac-item"><span class="ac-check">✓</span> Deployed to Cloud Run dev env and URL shared with Squad 1 by Wednesday</li>
@@ -595,14 +597,14 @@ h1 { font-size: 22px; font-weight: 800; color: #f8fafc; letter-spacing: -0.5px; 
       </div>
       <div>
         <div class="desc-label">Description</div>
-        <div class="desc-text">When Squad 3's MediaPipe quality gate determines a video cannot be reliably analysed (bad camera angle, low joint confidence, partial body out of frame, low lighting), Squad 2 must relay this as a structured SSE error event so the frontend can show the correct retake message. Use the error event format from the W5 SSE contract: {event: "error", analysis_id, error_code, retryable: "false", message}. Error codes to handle: BAD_ANGLE, LOW_CONFIDENCE, PARTIAL_OCCLUSION, VIDEO_TOO_SHORT. Map each to the appropriate message from Quality_Gate_Error_Messages.html. Update the form_sessions DB record status to "failed" with the error_code stored.</div>
+        <div class="desc-text">When Squad 3's MediaPipe quality gate determines a video cannot be reliably analysed (bad camera angle, low joint confidence, partial body out of frame, low lighting), Squad 2 must relay this as a structured SSE error event so the frontend can show the correct retake message. Use the full error event shape: { analysis_id, session_id, user_id, error_code, error_stage: "quality_gate", retryable: "false", message }. Error codes to handle (8 total — M1–M6 from FE_SSE_and_Errors.md): occlusion_left_side, occlusion_right_side, occlusion_both_sides, out_of_frame_left, out_of_frame_right, poor_video_quality, no_reps_detected, insufficient_reps. Map each to the user-facing message defined in FE_SSE_and_Errors.md quality gate taxonomy. Update the form_analyses DB record status to "failed".</div>
       </div>
       <div class="ac-block">
         <div class="ac-label">Acceptance Criteria</div>
         <ul class="ac-list">
-          <li class="ac-item"><span class="ac-check">✓</span> Error SSE event fires with correct error_code when MediaPipe quality gate rejects a video</li>
-          <li class="ac-item"><span class="ac-check">✓</span> All 4 error codes handled: BAD_ANGLE, LOW_CONFIDENCE, PARTIAL_OCCLUSION, VIDEO_TOO_SHORT</li>
-          <li class="ac-item"><span class="ac-check">✓</span> form_sessions record updated to status: "failed" with error_code stored</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Error SSE event fires with full shape: { analysis_id, session_id, user_id, error_code, error_stage: "quality_gate", retryable: "false", message }</li>
+          <li class="ac-item"><span class="ac-check">✓</span> All 8 quality gate error codes handled per M1–M6 taxonomy in FE_SSE_and_Errors.md</li>
+          <li class="ac-item"><span class="ac-check">✓</span> form_analyses record updated to status: "failed"</li>
           <li class="ac-item"><span class="ac-check">✓</span> Tested with a deliberately bad video (filmed at wrong angle) — error event confirmed in browser DevTools</li>
           <li class="ac-item"><span class="ac-check">✓</span> Confirmed Squad 1 error UI renders the correct retake message for at least 2 error codes</li>
         </ul>
@@ -691,7 +693,9 @@ h1 { font-size: 22px; font-weight: 800; color: #f8fafc; letter-spacing: -0.5px; 
             &nbsp;&nbsp;  {"status": "success", "overlay_video_url": "gs://...", "biomechanics_json": {...}}<br>
             &nbsp;&nbsp;<br>
             &nbsp;&nbsp;Returns on quality gate failure:<br>
-            &nbsp;&nbsp;  {"status": "failed", "error_code": "BAD_ANGLE", "affected_landmarks": ["left_knee"]}<br>
+            &nbsp;&nbsp;  {"status": "failed", "error_stage": "quality_gate",<br>
+            &nbsp;&nbsp;   "error_code": "occlusion_left_side",  # M1-M6 code — see FE_SSE_and_Errors.md<br>
+            &nbsp;&nbsp;   "landmark_medians": {...}}  # required for occlusion_* and out_of_frame_* codes<br>
             &nbsp;&nbsp;"""
           </code>
           <strong style="color:#f1f5f9;">Share with Squad 2:</strong><br>
@@ -706,7 +710,7 @@ h1 { font-size: 22px; font-weight: 800; color: #f8fafc; letter-spacing: -0.5px; 
         <ul class="ac-list">
           <li class="ac-item"><span class="ac-check">✓</span> process_video(gcs_path, analysis_id) is a callable Python function — not a standalone script that only runs from the terminal</li>
           <li class="ac-item"><span class="ac-check">✓</span> Returns a dict with "status", "overlay_video_url", and "biomechanics_json" on success</li>
-          <li class="ac-item"><span class="ac-check">✓</span> Returns a dict with "status", "error_code", and "affected_landmarks" on quality gate failure</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Returns a dict with "status", "error_stage", "error_code", and "landmark_medians" on quality gate failure</li>
           <li class="ac-item"><span class="ac-check">✓</span> biomechanics_json includes bottom_frame and bottom_timestamp_ms per rep</li>
           <li class="ac-item"><span class="ac-check">✓</span> File committed to repo and path shared with Squad 2 (Nicole) by Monday morning</li>
           <li class="ac-item"><span class="ac-check">✓</span> Squad 2 confirms successful import and test call before end of day Monday</li>
@@ -900,7 +904,7 @@ h1 { font-size: 22px; font-weight: 800; color: #f8fafc; letter-spacing: -0.5px; 
       </div>
       <div>
         <div class="desc-label">Description</div>
-        <div class="desc-text">Complete the MediaPipe Pose processing pipeline for the Goblet Squat. Frame selection: not every frame is processed — implement stride-based or keyframe selection to balance accuracy and speed (document the chosen strategy). Landmark quality gate: for each frame, check visibility and presence scores for all 10 SQUAT_LANDMARKS against the defined thresholds (VISIBILITY_THRESHOLD = 0.70, PRESENCE_THRESHOLD = 0.70 from S3-W5-06). If a critical landmark drops below threshold for more than 30% of frames, classify the video as unanalysable and emit the appropriate quality gate error code (BAD_ANGLE, LOW_CONFIDENCE, PARTIAL_OCCLUSION) to Squad 2. Rep segmentation: detect each squat rep by tracking hip Y-coordinate descent and ascent — output a list of rep objects with start_frame, bottom_frame, end_frame, and timestamp_ms values. All outputs feed into S3-W6-02.</div>
+        <div class="desc-text">Complete the MediaPipe Pose processing pipeline for the Goblet Squat. Frame selection: not every frame is processed — implement stride-based or keyframe selection to balance accuracy and speed (document the chosen strategy). Landmark quality gate: for each frame, check visibility and presence scores for all 10 SQUAT_LANDMARKS against the defined thresholds (VISIBILITY_THRESHOLD = 0.70, PRESENCE_THRESHOLD = 0.70 from S3-W5-06). If a critical landmark drops below threshold, classify the video as unanalysable and return the appropriate quality gate error code to Squad 2. Error codes must match the M1–M6 taxonomy in FE_SSE_and_Errors.md: occlusion_left_side, occlusion_right_side, occlusion_both_sides, out_of_frame_left, out_of_frame_right, poor_video_quality, no_reps_detected, insufficient_reps. For occlusion and out_of_frame codes, also return landmark_medians (median_visibility + median_presence per critical joint). Rep segmentation: detect each squat rep by tracking hip Y-coordinate descent and ascent — output a list of rep objects with start_frame, bottom_frame, end_frame, and timestamp_ms values. All outputs feed into S3-W6-02.</div>
       </div>
       <div class="ac-block">
         <div class="ac-label">Acceptance Criteria</div>
@@ -908,7 +912,7 @@ h1 { font-size: 22px; font-weight: 800; color: #f8fafc; letter-spacing: -0.5px; 
           <li class="ac-item"><span class="ac-check">✓</span> Pipeline processes a 30-second Goblet Squat video in &lt;10s on the dev machine</li>
           <li class="ac-item"><span class="ac-check">✓</span> Rep segmentation detects correct rep count on 3 test videos (manually verified)</li>
           <li class="ac-item"><span class="ac-check">✓</span> Quality gate correctly rejects a video filmed at the wrong angle (landmark confidence below threshold)</li>
-          <li class="ac-item"><span class="ac-check">✓</span> Quality gate signals emitted as structured output (error_code + affected_landmarks) — Squad 2 can relay these as SSE errors</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Quality gate signals returned as structured output (error_code + landmark_medians for occlusion/out_of_frame codes) — error codes match M1–M6 taxonomy in FE_SSE_and_Errors.md</li>
           <li class="ac-item"><span class="ac-check">✓</span> Output for a passing video includes: per-frame landmark data, rep list (start/bottom/end frames + timestamps), overall landmark quality summary</li>
           <li class="ac-item"><span class="ac-check">✓</span> Committed to repo with a sample video test included</li>
         </ul>
@@ -1106,7 +1110,7 @@ h1 { font-size: 22px; font-weight: 800; color: #f8fafc; letter-spacing: -0.5px; 
       <div class="pf-block pf-pass">
         <div class="pf-label">Pass criteria</div>
         <ul class="pf-list">
-          <li class="pf-item"><span class="pf-check">✓</span> Bad video triggers SSE error event with error_code BAD_ANGLE or LOW_CONFIDENCE (not a silent failure)</li>
+          <li class="pf-item"><span class="pf-check">✓</span> Bad video triggers SSE error event with one of the M1–M6 error codes (e.g. occlusion_left_side, poor_video_quality) — error_stage is "quality_gate", retryable is "false", not a silent failure</li>
           <li class="pf-item"><span class="pf-check">✓</span> Good video completes MediaPipe processing and produces biomechanics JSON with no quality gate rejection</li>
           <li class="pf-item"><span class="pf-check">✓</span> Results logged to <code style="background:#1e293b;padding:1px 4px;border-radius:3px;font-size:11px;">/tests/weekly-results/W6-TST-W6-00.md</code></li>
         </ul>

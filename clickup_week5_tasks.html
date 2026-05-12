@@ -645,7 +645,7 @@ es.onerror = () => {
       </div>
       <div>
         <div class="desc-label">Description</div>
-        <div class="desc-text">Design the complete relational database schema for Kinetic. Tables required: users (auth credentials), user_profiles (fitness goals, injury history, training frequency), exercises (exercise catalogue — exercise_id, name, type), form_sessions (the video upload record: session_id, user_id, exercise_id, weight_kg, video_url, status, created_at), form_analysis_results (full AI output: overall scores, issues as JSONB, coaching output as JSONB, progression recommendation enum, annotated frame URLs), workout_plans, workout_plan_exercises, workout_sessions, workout_session_logs. Define all foreign keys, column data types, nullable constraints, indexes for common query patterns, and use JSONB for flexible AI output columns. This schema is shared with Squad 3 for alignment before it is finalised.</div>
+        <div class="desc-text">Design the complete relational database schema for Kinetic. Tables required: users (auth credentials), user_profiles (fitness goals, injury history, training frequency), exercises (exercise catalogue — exercise_id, slug, display_name, category, is_active), form_analyses (the video upload record: analysis_id (PK), session_id, user_id, exercise_id, weight_value, weight_unit, weight_kg_normalised, video_url, status, created_at — status lifecycle: uploaded → processing → complete → failed), form_analysis_results (full AI output: analysis_id (PK), session_id, user_id, exercise_id, weight_value, weight_unit, weight_kg_normalised, overall_form_score, posture_score, stability_score, movement_quality_score, tempo_score, rep_count, rep_scores JSONB, issue_tags text[], issues_json JSONB, coaching_output JSONB, progression_recommendation enum (hold/progress/drop), comparison_coaching_output JSONB), workout_plans, workout_plan_exercises, workout_sessions, workout_session_logs. Define all foreign keys, column data types, nullable constraints, indexes for common query patterns, and use JSONB for flexible AI output columns. Full schema reference: DB_Schema.md. This schema is shared with Squad 3 for alignment before it is finalised.</div>
       </div>
       <div class="ac-block">
         <div class="ac-label">Acceptance Criteria</div>
@@ -665,7 +665,7 @@ es.onerror = () => {
   <div class="task-card">
     <div class="task-card-header">
       <span class="task-id-badge sq2-id">S2-W5-07a</span>
-      <div class="task-title">Stub POST /upload — save video to GCS, write session to DB, return { analysis_id }</div>
+      <div class="task-title">Stub POST /upload — save video to GCS, write form_analyses record to DB, return { analysis_id }</div>
     </div>
     <div class="task-card-body">
       <div class="dep-block">
@@ -681,20 +681,31 @@ es.onerror = () => {
         <div class="desc-label">Implementation</div>
         <div style="background:#070a0f;border:1px solid #1e2433;border-radius:8px;padding:14px 16px;font-size:11px;color:#94a3b8;line-height:1.8;">
           <pre style="background:#0d1117;border-radius:6px;padding:10px 12px;margin:4px 0;overflow-x:auto;font-size:10.5px;color:#e2e8f0;line-height:1.6;">@app.post("/upload")
-async def upload(file: UploadFile, exercise: str, weight: float):
+async def upload(file: UploadFile, exercise_id: str, weight_value: float,
+                 weight_unit: str, user_id: str, session_id: str):
     analysis_id = str(uuid4())
 
     # Save video to GCS (stub: log path if GCS not yet wired)
-    gcs_path = f"videos/{analysis_id}/{file.filename}"
+    gcs_path = f"videos/{user_id}/{analysis_id}/{file.filename}"
+    video_url = f"gs://kinetic-videos/{gcs_path}"
     await save_to_gcs(file, gcs_path)
 
-    # Write session record to DB
+    # Normalise weight to kg for cross-session progression queries
+    weight_kg_normalised = weight_value if weight_unit == "kg" else round(weight_value * 0.453592, 4)
+
+    # Write form_analyses record to DB — status: "uploaded" at INSERT
     await db.execute("""
-        INSERT INTO form_sessions
-          (session_id, user_id, exercise_name, weight_used, status, video_gcs_path)
-        VALUES (:id, :uid, :exercise, :weight, 'processing', :path)
-    """, {"id": analysis_id, "uid": "stub_user", "exercise": exercise,
-          "weight": weight, "path": gcs_path})
+        INSERT INTO form_analyses
+          (analysis_id, session_id, user_id, exercise_id,
+           weight_value, weight_unit, weight_kg_normalised,
+           video_url, status, created_at)
+        VALUES (:analysis_id, :session_id, :user_id, :exercise_id,
+                :weight_value, :weight_unit, :weight_kg_normalised,
+                :video_url, 'uploaded', NOW())
+    """, {"analysis_id": analysis_id, "session_id": session_id, "user_id": user_id,
+          "exercise_id": exercise_id, "weight_value": weight_value,
+          "weight_unit": weight_unit, "weight_kg_normalised": weight_kg_normalised,
+          "video_url": video_url})
 
     return {"analysis_id": analysis_id}   # JSON only — no streaming</pre>
         </div>
@@ -702,9 +713,9 @@ async def upload(file: UploadFile, exercise: str, weight: float):
       <div class="ac-block">
         <div class="ac-label">Acceptance Criteria</div>
         <ul class="ac-list">
-          <li class="ac-item"><span class="ac-check">✓</span> Accepts multipart POST: video file + exercise (string) + weight (float)</li>
-          <li class="ac-item"><span class="ac-check">✓</span> Video saved to GCS — stub: log gcs_path to console if not yet wired</li>
-          <li class="ac-item"><span class="ac-check">✓</span> Session record written to DB: session_id, exercise_name, weight_used, status: processing, video_gcs_path</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Accepts multipart POST: video file + exercise_id (string) + weight_value (float) + weight_unit (string) + user_id (uuid) + session_id (uuid)</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Video saved to GCS at <code style="background:#1e293b;padding:1px 4px;border-radius:3px;">videos/{user_id}/{analysis_id}/{filename}</code> — stub: log video_url to console if GCS not yet wired</li>
+          <li class="ac-item"><span class="ac-check">✓</span> form_analyses record written to DB: analysis_id, session_id, user_id, exercise_id, weight_value, weight_unit, weight_kg_normalised, video_url, status: uploaded, created_at</li>
           <li class="ac-item"><span class="ac-check">✓</span> Returns <code style="background:#1e293b;padding:1px 5px;border-radius:3px;">{"analysis_id": "&lt;uuid&gt;"}</code> — no SSE, no streaming</li>
           <li class="ac-item"><span class="ac-check">✓</span> Deployed to Cloud Run dev env, URL shared with Squad 1 by Thursday</li>
         </ul>
@@ -791,7 +802,7 @@ async def stream(analysis_id: str):
       </div>
       <div>
         <div class="desc-label">Description</div>
-        <div class="desc-text">Provision the relational database for Kinetic using Supabase (recommended — hosted PostgreSQL, free tier covers MVP, built-in dashboard for table inspection during development, Row Level Security for user data isolation). Steps: (1) Create Supabase project, select region closest to Cloud Run deployment. (2) Run migration scripts from S2-W5-06 schema to create all tables: users, user_profiles, exercises, form_sessions, form_analysis_results, workout_plans, workout_plan_exercises, workout_sessions, workout_session_logs. (3) Create indexes defined in S2-W5-06 (GIN index on issue_tags, FK indexes). (4) Configure Row Level Security (RLS) policies — users can only read/write their own rows on form_sessions and form_analysis_results. (5) Add service role key (bypasses RLS for backend server calls) to Cloud Run environment variables as DATABASE_URL. (6) Verify connection from FastAPI scaffold (S2-W5-03) with a test query. (7) Seed the exercises table with the Goblet Squat entry: exercise_id = ex_gob_squat_001, slug = goblet_squat, is_active = true.</div>
+        <div class="desc-text">Provision the relational database for Kinetic using Supabase (recommended — hosted PostgreSQL, free tier covers MVP, built-in dashboard for table inspection during development, Row Level Security for user data isolation). Steps: (1) Create Supabase project, select region closest to Cloud Run deployment. (2) Run migration scripts from S2-W5-06 schema to create all tables: users, user_profiles, exercises, form_analyses, form_analysis_results, workout_plans, workout_plan_exercises, workout_sessions, workout_session_logs. (3) Create indexes defined in S2-W5-06 (GIN index on issue_tags, FK indexes). (4) Configure Row Level Security (RLS) policies — users can only read/write their own rows on form_analyses and form_analysis_results. (5) Add service role key (bypasses RLS for backend server calls) to Cloud Run environment variables as DATABASE_URL. (6) Verify connection from FastAPI scaffold (S2-W5-03) with a test query. (7) Seed the exercises table with the Goblet Squat entry: exercise_id = ex_gob_squat_001, slug = goblet_squat, is_active = true.</div>
       </div>
       <div class="ac-block">
         <div class="ac-label">Acceptance Criteria</div>
@@ -799,7 +810,7 @@ async def stream(analysis_id: str):
           <li class="ac-item"><span class="ac-check">✓</span> Supabase project created and accessible to all Squad 2 team members</li>
           <li class="ac-item"><span class="ac-check">✓</span> All 9 tables from S2-W5-06 schema created — verified in Supabase table editor</li>
           <li class="ac-item"><span class="ac-check">✓</span> GIN index on <code style="background:#1e293b;padding:1px 4px;border-radius:3px;">form_analysis_results.issue_tags</code> confirmed in Supabase</li>
-          <li class="ac-item"><span class="ac-check">✓</span> RLS enabled on form_sessions and form_analysis_results — test query with non-owner user_id returns 0 rows</li>
+          <li class="ac-item"><span class="ac-check">✓</span> RLS enabled on form_analyses and form_analysis_results — test query with non-owner user_id returns 0 rows</li>
           <li class="ac-item"><span class="ac-check">✓</span> DATABASE_URL (service role connection string) added to Cloud Run env vars — FastAPI app connects successfully on startup</li>
           <li class="ac-item"><span class="ac-check">✓</span> exercises table seeded: goblet_squat row present with exercise_id = ex_gob_squat_001 and is_active = true</li>
           <li class="ac-item"><span class="ac-check">✓</span> Migration script committed to repo — any team member can recreate the schema from scratch by running it</li>
