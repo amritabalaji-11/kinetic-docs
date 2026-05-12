@@ -596,16 +596,16 @@ h1 { font-size: 22px; font-weight: 800; color: #f8fafc; letter-spacing: -0.5px; 
             <div class="pipe-name">Save to GCS + write DB record</div>
             <div class="pipe-io">Generates analysis_id · saves video to GCS · returns {analysis_id} to frontend immediately</div>
             <div class="pipe-tags">
-              <span class="pipe-tag tag-db-write">form_sessions: analysis_id, user_id, exercise_id, weight_kg, video_url, status: processing</span>
+              <span class="pipe-tag tag-db-write">form_analyses: analysis_id, user_id, session_id, exercise_id, weight_value, weight_unit, weight_kg_normalised, video_url, status: uploaded</span>
             </div>
             <div class="pipe-sse">mediapipe_started (+ video_url)</div>
           </div>
           <div class="pipe-visual">
-            <div class="pv-header">DB write · form_sessions</div>
+            <div class="pv-header">DB write · form_analyses</div>
             <div class="pv-body">
               <div class="pv-row"><span class="pv-key">analysis_id</span><span class="pv-val blue">550e…4000</span></div>
-              <div class="pv-row"><span class="pv-key">exercise_id</span><span class="pv-val" style="color:#94a3b8;">gob_squat</span></div>
-              <div class="pv-row"><span class="pv-key">weight_kg</span><span class="pv-val green">12.0</span></div>
+              <div class="pv-row"><span class="pv-key">exercise_id</span><span class="pv-val" style="color:#94a3b8;">ex_gob_squat_001</span></div>
+              <div class="pv-row"><span class="pv-key">weight_value</span><span class="pv-val green">12.0</span></div>
               <div class="pv-row"><span class="pv-key">video_url</span><span class="pv-val" style="color:#475569;">gs://…mp4</span></div>
               <div class="pv-divider"></div>
               <div class="pv-row"><span class="pv-key">status</span><span class="pv-val amber">processing</span></div>
@@ -666,7 +666,7 @@ h1 { font-size: 22px; font-weight: 800; color: #f8fafc; letter-spacing: -0.5px; 
               </div>
               <div style="background:#150505;border:1px solid #7f1d1d;border-radius:5px;padding:5px 7px;">
                 <div style="font-size:8px;font-weight:800;color:#ef4444;margin-bottom:2px;">✗ FAIL</div>
-                <div style="font-size:9px;color:#fca5a5;">BAD_ANGLE detected · SSE error fired · user asked to re-film</div>
+                <div style="font-size:9px;color:#fca5a5;">Quality gate error (e.g. occlusion_left_side) · SSE error fired · user asked to re-film</div>
               </div>
             </div>
           </div>
@@ -896,9 +896,9 @@ h1 { font-size: 22px; font-weight: 800; color: #f8fafc; letter-spacing: -0.5px; 
         </div>
         <div style="margin-top:10px;padding:8px;background:#080c12;border-radius:6px;border:1px solid #1e2433;font-size:9.5px;color:#475569;line-height:1.6;">
           <strong style="color:#94a3b8;display:block;margin-bottom:4px;">DB tables used</strong>
-          form_sessions<br>
+          form_analyses<br>
           form_analysis_results<br>
-          workout_logs<br>
+          exercises<br>
           gold_standard_biomechanics
         </div>
       </div>
@@ -988,9 +988,9 @@ formData.append(<span class="js">"weight_unit"</span>, <span class="js">"kg"</sp
   </div>
   <div class="step-body">
     <div class="io-block">
-      <div class="io-row"><div class="io-label io-in">IN</div><div class="io-val">video file · exercise identifier · weight_kg — from Squad 1's POST</div></div>
+      <div class="io-row"><div class="io-label io-in">IN</div><div class="io-val">video file · exercise_id · weight_value · weight_unit · user_id · session_id — from Squad 1's POST body</div></div>
       <div class="io-row"><div class="io-label io-out">OUT</div><div class="io-val">Generates <code>analysis_id</code> (uuid4). Saves video to GCS at <code>videos/{user_id}/{analysis_id}/original.mp4</code>. Returns <code>{"analysis_id": "..."}</code> to frontend immediately.</div></div>
-      <div class="io-row"><div class="io-label io-db">DB</div><div class="io-val">Writes <code>form_sessions</code> record: analysis_id, user_id (hardcoded for demo), exercise_id, weight_kg, video_gcs_path, status: "processing", created_at</div></div>
+      <div class="io-row"><div class="io-label io-db">DB</div><div class="io-val">Writes <code>form_analyses</code> record: analysis_id · session_id · user_id (from POST body — auth de-scoped) · exercise_id · weight_value · weight_unit · weight_kg_normalised (computed) · video_url · status: "uploaded" · created_at</div></div>
       <div class="io-row"><div class="io-label io-sse">SSE</div><div class="io-val"><code>upload_received</code> → { analysis_id, session_id, user_id, filename, size_mb, created_at }</div></div>
     </div>
     <div class="req-block">
@@ -1002,9 +1002,9 @@ formData.append(<span class="js">"weight_unit"</span>, <span class="js">"kg"</sp
       </div>
     </div>
     <div class="q-block">
-      <div class="q-label">Discussion point — team meeting &nbsp;·&nbsp; user identity for demo</div>
+      <div class="q-label">Auth de-scoped — user identity approach confirmed</div>
       <div class="q-list">
-        <div class="q-item">2–3 user IDs hardcoded in DB (user_001, user_002, user_003). <strong style="color:#fbbf24;">Discussion question:</strong> Can Squad 1 show a dropdown on the Upload screen to select between 2–3 test users? This lets the demo switch between users to show different progression histories on the dashboard — without any real auth. If yes, Squad 1 passes the selected user_id as a request header or form field. If no, Squad 2 uses a single fixed test ID on every request.</div>
+        <div class="q-item"><code>user_id</code> is generated by Squad 1 (frontend) via <code>crypto.randomUUID()</code> on first visit, stored in <code>localStorage</code>, and sent in the POST body. <code>session_id</code> is generated at app mount, stored in <code>sessionStorage</code>, and also sent in the POST body. No hardcoded IDs — each device gets its own persistent ID. Squad 2 reads both from the request body (no JWT). See <code>FE_Response_Schemas.md</code> Section 0.</div>
       </div>
     </div>
   </div>
@@ -1039,8 +1039,9 @@ def process_video(<br>
 &nbsp;&nbsp;<span class="jc"># On quality gate failure returns:</span><br>
 &nbsp;&nbsp;return {<br>
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="jk">"status"</span>: <span class="js">"failed"</span>,<br>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="jk">"error_code"</span>: <span class="js">"BAD_ANGLE"</span>,          <span class="jc"># BAD_ANGLE / LOW_CONFIDENCE / PARTIAL_OCCLUSION / VIDEO_TOO_SHORT</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="jk">"affected_landmarks"</span>: [<span class="js">"left_knee"</span>]    <span class="jc"># which joints failed visibility check</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="jk">"error_stage"</span>: <span class="js">"quality_gate"</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="jk">"error_code"</span>: <span class="js">"occlusion_left_side"</span>,  <span class="jc"># see full code list in FE_SSE_and_Errors.md quality gate taxonomy</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="jk">"landmark_medians"</span>: { ... }  <span class="jc"># required for occlusion_* and out_of_frame_* codes — median_visibility + median_presence per joint</span><br>
 &nbsp;&nbsp;}
   </div>
 
@@ -1048,7 +1049,7 @@ def process_video(<br>
     <div class="sub-label" style="margin-bottom:8px;">What Squad 2 does with the return value</div>
     <div style="display:flex;flex-direction:column;gap:5px;font-size:11px;color:#94a3b8;">
       <div><strong style="color:#4ade80;">On success:</strong> stores biomechanics_json to DB · sends overlay_video_url to Nemotron · emits biomechanics_complete SSE</div>
-      <div><strong style="color:#f87171;">On failure:</strong> updates form_sessions status to "failed" · emits error SSE event with error_code and retryable: false</div>
+      <div><strong style="color:#f87171;">On failure:</strong> updates <code>form_analyses</code> status to "failed" · emits full error SSE event: { analysis_id, session_id, user_id, error_code, error_stage, retryable, message } — see <code>FE_SSE_and_Errors.md</code> for required shape and retryable values per error_code</div>
     </div>
   </div>
 
@@ -1131,15 +1132,19 @@ def process_video(<br>
     <div class="io-block">
       <div class="io-row"><div class="io-label io-in">IN</div><div class="io-val">Per-frame landmark visibility + presence scores from Step 3</div></div>
       <div class="io-row"><div class="io-label io-out">OUT — pass</div><div class="io-val" style="color:#4ade80;">Pipeline continues to Step 5. All critical landmarks visible across ≥70% of frames.</div></div>
-      <div class="io-row"><div class="io-label io-out">OUT — fail</div><div class="io-val" style="color:#f87171;">Returns error dict to Squad 2 with <code>error_code</code> and <code>affected_landmarks</code>. Pipeline stops. Squad 2 emits SSE error event and writes status: "failed" to DB.</div></div>
+      <div class="io-row"><div class="io-label io-out">OUT — fail</div><div class="io-val" style="color:#f87171;">Returns error dict to Squad 2 with <code>error_code</code>, <code>error_stage: "quality_gate"</code>, and <code>landmark_medians</code> (for occlusion/out_of_frame codes). Pipeline stops. Squad 2 emits full SSE error event and updates <code>form_analyses</code> status to "failed".</div></div>
     </div>
     <div class="req-block">
-      <div class="req-label">Error codes Squad 3 must produce — Squad 2 maps these to SSE error events</div>
+      <div class="req-label">Error codes Squad 3 must produce — passed through to SSE error event by Squad 2. Full taxonomy in <code>FE_SSE_and_Errors.md</code>.</div>
       <div class="req-list">
-        <div class="req-item"><code>BAD_ANGLE</code> — camera angle prevents reliable landmark detection across key joints</div>
-        <div class="req-item"><code>LOW_CONFIDENCE</code> — landmark visibility below threshold for &gt;30% of frames</div>
-        <div class="req-item"><code>PARTIAL_OCCLUSION</code> — one or more critical joints obscured (clothing, object in frame)</div>
-        <div class="req-item"><code>VIDEO_TOO_SHORT</code> — fewer than 3 complete reps detected</div>
+        <div class="req-item"><code>occlusion_left_side</code> — (M1) ≥1 critical joint on left side visibility ≤ 0.60</div>
+        <div class="req-item"><code>occlusion_right_side</code> — (M1) ≥1 critical joint on right side visibility ≤ 0.60</div>
+        <div class="req-item"><code>occlusion_both_sides</code> — (M2) ≥1 critical joint visibility ≤ 0.60 on both sides</div>
+        <div class="req-item"><code>out_of_frame_left</code> — (M3) visibility passes but left side median_presence ≤ 0.50</div>
+        <div class="req-item"><code>out_of_frame_right</code> — (M3) visibility passes but right side median_presence ≤ 0.50</div>
+        <div class="req-item"><code>poor_video_quality</code> — (M4) composite video_score &lt; 0.70 — bad angle, obstruction, low lighting</div>
+        <div class="req-item"><code>no_reps_detected</code> — (M5) complete_reps = 0</div>
+        <div class="req-item"><code>insufficient_reps</code> — (M6) 0 &lt; complete_reps &lt; 3</div>
       </div>
     </div>
   </div>
@@ -1237,8 +1242,8 @@ def process_video(<br>
 result = await process_video(gcs_path, analysis_id)<br>
 <br>
 if result[<span class="js">"status"</span>] == <span class="js">"failed"</span>:<br>
-&nbsp;&nbsp;db.update_session(analysis_id, status=<span class="js">"failed"</span>)<br>
-&nbsp;&nbsp;sse.emit(<span class="js">"error"</span>, { error_code: result[<span class="js">"error_code"</span>], retryable: <span class="js">"false"</span> })<br>
+&nbsp;&nbsp;db.update_form_analyses(analysis_id, status=<span class="js">"failed"</span>)<br>
+&nbsp;&nbsp;sse.emit(<span class="js">"error"</span>, { analysis_id, session_id, user_id, error_code: result[<span class="js">"error_code"</span>], error_stage: result[<span class="js">"error_stage"</span>], retryable: <span class="js">"false"</span>, message: result.get(<span class="js">"message"</span>, <span class="js">""</span>) })<br>
 &nbsp;&nbsp;return<br>
 <br>
 <span class="jc"># Store biomechanics JSON to DB</span><br>
@@ -1342,8 +1347,8 @@ nemotron_input = {<br>
   </div>
   <div class="step-body">
     <div class="io-block">
-      <div class="io-row"><div class="io-label io-in">IN</div><div class="io-val">Nemotron output (issues, per-rep scores, chain-of-thought) · MD file content injected into system prompt · user workout history (weight_kg + past form scores from DB)</div></div>
-      <div class="io-row"><div class="io-label io-out">OUT</div><div class="io-val">Coaching paragraphs specific to identified form issues · weight-based progression recommendation: <code>ready_to_progress</code> / <code>hold</code> / <code>drop_weight</code> with reasoning</div></div>
+      <div class="io-row"><div class="io-label io-in">IN</div><div class="io-val">Nemotron output (issues, per-rep scores, chain-of-thought) · MD file content injected into system prompt · user history (weight_value + past form scores from form_analysis_results)</div></div>
+      <div class="io-row"><div class="io-label io-out">OUT</div><div class="io-val">Coaching paragraphs specific to identified form issues · weight-based progression recommendation: <code>progress</code> / <code>hold</code> / <code>drop</code> with reasoning</div></div>
       <div class="io-row"><div class="io-label io-db">DB</div><div class="io-val">Updates <code>form_analysis_results</code>: coaching_output, progression_recommendation, status: "complete"</div></div>
       <div class="io-row"><div class="io-label io-sse">SSE</div><div class="io-val"><code>rag_started</code> · <code>rag_complete</code> · <code>claude_started</code> · <code>claude_complete</code> · <code>analysis_complete</code> → { analysis_id, session_id, user_id, full_result_url }</div></div>
     </div>
@@ -1392,7 +1397,7 @@ nemotron_input = {<br>
       </div>
       <div class="pipe-content">
         <div class="pipe-io">
-          <div class="io-row"><div class="io-dir io-out">OUT</div><div class="io-val">POST /upload · video file + exercise_id + weight_kg</div></div>
+          <div class="io-row"><div class="io-dir io-out">OUT</div><div class="io-val">POST /upload · video file + exercise_id + weight_value + weight_unit + user_id + session_id</div></div>
           <div class="io-row"><div class="io-dir io-sse">SSE</div><div class="io-val">upload_received → { analysis_id, session_id, user_id, filename, size_mb, created_at }</div></div>
         </div>
       </div>
@@ -1407,9 +1412,9 @@ nemotron_input = {<br>
       </div>
       <div class="pipe-content">
         <div class="pipe-io">
-          <div class="io-row"><div class="io-dir io-in">IN</div><div class="io-val">video file · exercise_id · weight_kg</div></div>
+          <div class="io-row"><div class="io-dir io-in">IN</div><div class="io-val">video file · exercise_id · weight_value · weight_unit · user_id · session_id</div></div>
           <div class="io-row"><div class="io-dir io-out">OUT</div><div class="io-val">video_url = gs://kinetic-videos/videos/{user_id}/{analysis_id}/original.mp4</div></div>
-          <div class="io-row"><div class="io-dir io-out">DB</div><div class="io-val">form_sessions: analysis_id, exercise_id, weight_kg, video_url, status: processing</div></div>
+          <div class="io-row"><div class="io-dir io-out">DB</div><div class="io-val">form_analyses: analysis_id, user_id, session_id, exercise_id, weight_value, weight_unit, weight_kg_normalised, video_url, status: uploaded</div></div>
           <div class="io-row"><div class="io-dir io-sse">SSE</div><div class="io-val">mediapipe_started → { analysis_id, session_id, user_id, video_url }</div></div>
         </div>
       </div>
@@ -1442,7 +1447,7 @@ nemotron_input = {<br>
       <div class="pipe-content">
         <div class="pipe-io">
           <div class="io-row"><div class="io-dir io-in">IN</div><div class="io-val">per-frame landmark visibility + presence scores</div></div>
-          <div class="io-row"><div class="io-dir io-out">FAIL</div><div class="io-val" style="color:#f87171;">error SSE fired · pipeline stops · form_sessions status → failed</div></div>
+          <div class="io-row"><div class="io-dir io-out">FAIL</div><div class="io-val" style="color:#f87171;">error SSE fired · pipeline stops · form_analyses status → failed</div></div>
           <div class="io-row"><div class="io-dir io-out">PASS</div><div class="io-val" style="color:#4ade80;">pipeline continues to Step 5</div></div>
         </div>
       </div>
@@ -1526,7 +1531,7 @@ nemotron_input = {<br>
       </div>
       <div class="pipe-content">
         <div class="pipe-io">
-          <div class="io-row"><div class="io-dir io-in">IN</div><div class="io-val">Nemotron output · RAG passages · user history · weight_kg</div></div>
+          <div class="io-row"><div class="io-dir io-in">IN</div><div class="io-val">Nemotron output · RAG passages · user history · weight_value</div></div>
           <div class="io-row"><div class="io-dir io-out">OUT</div><div class="io-val">coaching paragraphs · progression recommendation (ready / hold / drop)</div></div>
           <div class="io-row"><div class="io-dir io-sse">SSE</div><div class="io-val">rag_started · rag_complete · claude_started · claude_complete · analysis_complete</div></div>
         </div>
