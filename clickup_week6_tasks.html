@@ -474,10 +474,15 @@ h1 { font-size: 22px; font-weight: 800; color: #f8fafc; letter-spacing: -0.5px; 
         <div class="desc-text">
           Once the function contract is agreed, Squad 2 wires everything together in this order:<br><br>
           <strong style="color:#f1f5f9;">Step 1 — POST /upload:</strong> Accept multipart (video + exercise_id + weight_value + weight_unit + user_id + session_id). Save video to GCS → generate analysis_id → write form_analyses to DB (status: uploaded) → return {analysis_id} immediately. Emit upload_received SSE.<br><br>
-          <strong style="color:#f1f5f9;">Step 2 — Async background task:</strong> Call Squad 3's <code style="background:#0d1117;padding:1px 4px;border-radius:3px;">process_video(gcs_path, analysis_id)</code>. Emit mediapipe_started SSE before the call.<br><br>
+          <strong style="color:#f1f5f9;">Step 2 — Async background task:</strong> UPDATE form_analyses status → "processing". Emit mediapipe_started SSE. Call Squad 3's <code style="background:#0d1117;padding:1px 4px;border-radius:3px;">process_video(gcs_path, analysis_id)</code>.<br><br>
           <strong style="color:#f1f5f9;">Step 3 — Handle return:</strong><br>
-          &nbsp;&nbsp;• If <code style="background:#0d1117;padding:1px 4px;border-radius:3px;">status == "failed"</code>: update form_analyses status → "failed", emit full error SSE: { analysis_id, session_id, user_id, error_code, error_stage, retryable, message }<br>
-          &nbsp;&nbsp;• If <code style="background:#0d1117;padding:1px 4px;border-radius:3px;">status == "success"</code>: write biomechanics_json to form_analysis_results DB, emit biomechanics_complete SSE<br><br>
+          &nbsp;&nbsp;• If <code style="background:#0d1117;padding:1px 4px;border-radius:3px;">status == "failed"</code>: UPDATE form_analyses status → "failed". Emit full error SSE: { analysis_id, session_id, user_id, error_code, error_stage, retryable, message }.<br>
+          &nbsp;&nbsp;• If <code style="background:#0d1117;padding:1px 4px;border-radius:3px;">status == "success"</code>:<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;1. UPDATE form_analyses: quality_gate_status + video_score (from process_video return)<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;2. INSERT form_analysis_results Phase 1: overall_form_score, posture_score, stability_score, movement_quality_score, tempo_score, rep_count, rep_scores, biomechanics_json<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;3. Emit biomechanics_complete SSE<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;4. W6 scope: emit analysis_complete SSE immediately — acts as pipeline end signal so S1 navigates to Results screen. Moves later in W7+ when Nemotron + Claude are wired.<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;5. UPDATE form_analyses status → "complete"<br><br>
           <strong style="color:#f1f5f9;">Step 4 — Serve results:</strong> GET /analysis/{id}/result returns the <strong style="color:#f1f5f9;">FE_Response_Schemas.md shape</strong> (not raw biomechanics JSON). In W6: overall_score + parameter scores populated from biomechanics output; coaching fields (summary_paragraph, corrections) null until LLM is wired in W7. Same endpoint — same shape — coaching fields fill in as pipeline stages are completed. S1 renders what is non-null and shows placeholders for null fields.
         </div>
       </div>
@@ -486,10 +491,12 @@ h1 { font-size: 22px; font-weight: 800; color: #f8fafc; letter-spacing: -0.5px; 
         <ul class="ac-list">
           <li class="ac-item"><span class="ac-check">✓</span> POST /upload accepts video + exercise_id + weight_value + weight_unit, saves to GCS, writes DB record, returns {analysis_id} in under 500ms</li>
           <li class="ac-item"><span class="ac-check">✓</span> process_video() called asynchronously — upload response not blocked by pipeline processing</li>
-          <li class="ac-item"><span class="ac-check">✓</span> On success: biomechanics_json written to form_analysis_results. GET /analysis/{id}/result returns FE_Response_Schemas.md shape — overall_score + parameter scores populated from biomechanics; coaching, progression_recommendation, annotated_frame_url null in W6 (filled in as later pipeline stages complete)</li>
-          <li class="ac-item"><span class="ac-check">✓</span> On quality gate failure: form_analyses status set to "failed", full error SSE emitted: { analysis_id, session_id, user_id, error_code, error_stage: "quality_gate", retryable: "false", message }</li>
-          <li class="ac-item"><span class="ac-check">✓</span> SSE events fire in correct sequence — upload_received → mediapipe_started → biomechanics_complete (or error)</li>
-          <li class="ac-item"><span class="ac-check">✓</span> Squad 1 confirms real biomechanics data appears on Results screen before Thursday merge</li>
+          <li class="ac-item"><span class="ac-check">✓</span> On success: form_analyses updated with quality_gate_status + video_score. form_analysis_results Phase 1 written with all biomechanics scores. GET /analysis/{id}/result returns FE_Response_Schemas.md shape — overall_score + parameter scores populated; coaching, progression_recommendation, annotated_frame_url null in W6</li>
+          <li class="ac-item"><span class="ac-check">✓</span> analysis_complete SSE fires after biomechanics_complete in W6 — S1 navigates to Results screen on receipt</li>
+          <li class="ac-item"><span class="ac-check">✓</span> form_analyses status lifecycle correct: uploaded → processing (Step 2) → complete (Step 3 success) or failed (Step 3 failure)</li>
+          <li class="ac-item"><span class="ac-check">✓</span> On quality gate failure: form_analyses status set to "failed", full error SSE emitted: { analysis_id, session_id, user_id, error_code, error_stage, retryable, message }</li>
+          <li class="ac-item"><span class="ac-check">✓</span> SSE sequence: upload_received → mediapipe_started → biomechanics_complete → analysis_complete (or error)</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Squad 1 confirms Results screen loads with real biomechanics scores before Thursday merge</li>
         </ul>
       </div>
     </div>
