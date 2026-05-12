@@ -1,7 +1,7 @@
 # Kinetic — SSE Events, Error Codes & Frontend Messages
 **Task:** S1-W5-06a  
 **Last updated:** May 12, 2026  
-**Scope:** SSE event shapes · Error taxonomy · HTTP error codes · Frontend UI copy · overlay_complete added  
+**Scope:** SSE event shapes · Error taxonomy · HTTP error codes · Frontend UI copy  
 **Produced by:** S2 — Backend  
 **Consumed by:** S1 — Frontend
 
@@ -9,15 +9,23 @@
 
 ## How SSE Works in Kinetic
 
-The frontend POSTs to `/upload` and the backend **keeps the response open** as a streaming connection (`Content-Type: text/event-stream`). Events fire as the pipeline progresses. The connection closes when `analysis_complete` or `error` fires.
+**Two separate connections — Option B (confirmed):**
+
+1. `POST /upload` returns `{"analysis_id": "uuid"}` as normal JSON immediately — no streaming, closes right away.
+2. S1 opens a separate `EventSource` at `GET /analysis/{analysis_id}/stream` to receive live pipeline events.
+
+The stream opens and holds until `analysis_complete` or `error` fires, then closes.
 
 ```
 Frontend (S1)                     Backend (S2)                    AI/MediaPipe (S3)
    |                                 |                                 |
    |--- POST /upload --------------> |                                 |
-   |                                 |--- dispatch MediaPipe job ----> |
+   |<-- { "analysis_id": "uuid" } -- |  ← JSON, closes immediately    |
+   |                                 |                                 |
+   |--- GET /analysis/{id}/stream -> |                                 |
    |<-- SSE stream opens ----------- |                                 |
    |<-- upload_received ------------ |                                 |
+   |                                 |--- dispatch MediaPipe job ----> |
    |<-- mediapipe_started ---------- |                                 |
    |                                 |<-- keypoints returned --------- |
    |<-- mediapipe_complete --------- |                                 |
@@ -32,7 +40,7 @@ Frontend (S1)                     Backend (S2)                    AI/MediaPipe (
    |<-- nemotron_complete ---------- |                                 |
    |<-- frames_extracting ---------- | (S2 runs OpenCV internally)     |
    |<-- frames_ready --------------- |                                 |
-   |<-- rag_started ---------------- | (S2 queries vector DB)          |
+   |<-- rag_started ---------------- | (S2 injects MD files)           |
    |<-- rag_complete --------------- |                                 |
    |<-- claude_started ------------- | (S2 calls Claude API)           |
    |<-- claude_complete ------------ |                                 |
@@ -42,7 +50,7 @@ Frontend (S1)                     Backend (S2)                    AI/MediaPipe (
    |<-- form analysis response ------ |                                |
 ```
 
-> The `comparison_ready` event fires **after** `analysis_complete` on a separate async path — S2 calls Claude again for comparison coaching. Frontend listens to enable the comparison tab. See Section 3.
+> The `comparison_ready` event fires **after** `analysis_complete` on a separate async path — S2 runs a second Claude call. Frontend listens to enable the comparison tab. See Section 3.
 
 ---
 
@@ -73,8 +81,8 @@ Frontend (S1)                     Backend (S2)                    AI/MediaPipe (
 |---|---|---|---|
 | 1 | S1 defines SSE contract | S1-W5-06 | S1 delivers event names + payloads to S2 **before S2 builds emission** |
 | 2 | S2 builds server-side emission | S2-W6-06 | Blocked on S1-W5-06 |
-| 3 | S2 exposes stub SSE endpoint | S2-W6-06 | S1 needs this to test client wiring |
-| 4 | S1 wires client-side | S1-W6-03 | Blocked on S2 stub endpoint — can build against mock first |
+| 3 | S2 exposes stub SSE endpoint | S2-W6-06 | Endpoint: `GET /analysis/{id}/stream` — S1 needs this to test client wiring |
+| 4 | S1 wires client-side | S1-W6-03 | S1 opens `EventSource("/analysis/{id}/stream")` after receiving `analysis_id` from POST /upload response |
 
 **S2 ↔ S3 output format dependency:**  
 S2 fires `mediapipe_complete`, `biomechanics_complete`, and `nemotron_complete` using data returned by S3. S2 must not hardcode field assumptions — S3 output schemas defined in `Kinetic_Biomechanics_Output_Schema.json` and `Nemotron_Testing_Guide.docx` are the contract. Any S3 schema change must be communicated to S2 before S2 builds the emission logic.
