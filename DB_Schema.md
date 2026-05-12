@@ -26,7 +26,7 @@ Each table has multiple write moments across the pipeline. This is the full map:
 | **Step 2** — Upload | Video stored to GCS | `form_analyses` | INSERT (initial, most fields) |
 | **Step 3** — MediaPipe → Quality Gate | S3 returns keypoints + quality check | `form_analyses` | UPDATE (`quality_gate_status`, `video_score`) |
 | **Step 5** — Nemotron complete | S3 returns scored output | `form_analysis_results` | INSERT Phase 1 (scores + issues; coaching fields NULL) |
-| **Step 5b** — OpenCV frame extraction | S2 extracts annotated frame | `form_analyses` | UPDATE (`annotated_frame_url`) |
+| **Step 5b** — OpenCV frame extraction | S2 extracts annotated frame *(squad ownership WIP)* | `form_analyses` | UPDATE (`annotated_frame_url`) |
 | **Step 7** — Claude complete | S2 writes coaching output | `form_analysis_results` | UPDATE Phase 2 (`coaching_output`, `progression_recommendation`, `session_tags`) |
 | **Step 7** — Pipeline complete | S2 marks job done | `form_analyses` | UPDATE (`status = complete`) |
 | **Async after Step 7** — Comparison | S2 runs second Claude call | `form_analysis_results` | UPDATE (`comparison_coaching_output`) |
@@ -51,7 +51,7 @@ Step 3 — Quality gate result received from S3
   UPDATE: quality_gate_status, video_score
   (if quality gate fails → status = failed, no further writes)
 
-Step 5b — OpenCV frame extraction complete
+Step 5b — OpenCV frame extraction complete (squad ownership WIP)
   UPDATE: annotated_frame_url
 
 Step 7 — Claude complete / pipeline done

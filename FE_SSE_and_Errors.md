@@ -38,7 +38,7 @@ Frontend (S1)                     Backend (S2)                    AI/MediaPipe (
    |<-- nemotron_started ----------- |                                 |
    |                                 |<-- scored output returned ----- |
    |<-- nemotron_complete ---------- |                                 |
-   |<-- frames_extracting ---------- | (S2 runs OpenCV internally)     |
+   |<-- frames_extracting ---------- | (S2 runs OpenCV internally — squad ownership WIP) |
    |<-- frames_ready --------------- |                                 |
    |<-- rag_started ---------------- | (S2 injects MD files)           |
    |<-- rag_complete --------------- |                                 |
@@ -65,8 +65,8 @@ Frontend (S1)                     Backend (S2)                    AI/MediaPipe (
 | `biomechanics_complete` | S2 | S1 | **S3 must return biomechanics JSON to S2** before S2 can fire this |
 | `nemotron_started` | S2 | S1 | S2 dispatches to Nemotron via S3 — **S3 owns Nemotron integration** |
 | `nemotron_complete` | S2 | S1 | **S3 must return Nemotron scored output to S2** before S2 can fire this |
-| `frames_extracting` | S2 | S1 | S2-internal (OpenCV) — no S3 dependency |
-| `frames_ready` | S2 | S1 | S2-internal (OpenCV) — no S3 dependency |
+| `frames_extracting` | S2 | S1 | S2-internal (OpenCV) — no S3 dependency · **squad ownership WIP** |
+| `frames_ready` | S2 | S1 | S2-internal (OpenCV) — no S3 dependency · **squad ownership WIP** |
 | `rag_started` | S2 | S1 | S2-internal — no S3 dependency |
 | `rag_complete` | S2 | S1 | S2-internal — no S3 dependency |
 | `claude_started` | S2 | S1 | S2-internal — no S3 dependency |
@@ -272,9 +272,9 @@ Fires when S3 returns Nemotron output (scores, issues, chain of thought) to S2.
 ---
 
 ### `frames_extracting`
-**Fired by:** S2 — Backend  ·  **Consumed by:** S1 — Frontend  ·  **S3 dependency:** None — S2 runs OpenCV internally
+**Fired by:** S2 — Backend  ·  **Consumed by:** S1 — Frontend  ·  **S3 dependency:** None — S2 runs OpenCV internally  ·  **⚠ Squad ownership WIP — confirm S2 vs S3 before build**
 
-Fires when S2 begins extracting annotated frames from the video using OpenCV.
+Fires when frame extraction begins.
 
 ```json
 {
@@ -295,9 +295,9 @@ Fires when S2 begins extracting annotated frames from the video using OpenCV.
 ---
 
 ### `frames_ready`
-**Fired by:** S2 — Backend  ·  **Consumed by:** S1 — Frontend  ·  **S3 dependency:** None — S2 runs OpenCV internally
+**Fired by:** S2 — Backend  ·  **Consumed by:** S1 — Frontend  ·  **S3 dependency:** None — S2 runs OpenCV internally  ·  **⚠ Squad ownership WIP — confirm S2 vs S3 before build**
 
-Fires when S2 finishes frame extraction and stores annotated frames in GCS.
+Fires when frame extraction is complete and annotated frames are stored in GCS.
 
 ```json
 {
@@ -537,8 +537,7 @@ S3 owns the Nemotron API integration. If Nemotron fails, S3 returns the failure 
 
 ### Frame Extraction — `error_stage: "frame_extraction"`
 
-**Owner: S2 — Backend runs OpenCV · S2 fires the error event.**  
-This is fully within S2. No S3 dependency.
+**Owner: S2 — Backend runs OpenCV · S2 fires the error event. ⚠ Squad ownership WIP — confirm S2 vs S3 before build.**
 
 | error_code | Trigger | User-facing message | retryable |
 |---|---|---|---|
