@@ -478,7 +478,7 @@ h1 { font-size: 22px; font-weight: 800; color: #f8fafc; letter-spacing: -0.5px; 
           <strong style="color:#f1f5f9;">Step 3 — Handle return:</strong><br>
           &nbsp;&nbsp;• If <code style="background:#0d1117;padding:1px 4px;border-radius:3px;">status == "failed"</code>: update form_analyses status → "failed", emit full error SSE: { analysis_id, session_id, user_id, error_code, error_stage, retryable, message }<br>
           &nbsp;&nbsp;• If <code style="background:#0d1117;padding:1px 4px;border-radius:3px;">status == "success"</code>: write biomechanics_json to form_analysis_results DB, emit biomechanics_complete SSE<br><br>
-          <strong style="color:#f1f5f9;">Step 4 — Serve results:</strong> GET /analysis/{id}/result returns the stored biomechanics JSON so Squad 1 can render it on the Results screen.
+          <strong style="color:#f1f5f9;">Step 4 — Serve results:</strong> GET /analysis/{id}/result returns the <strong style="color:#f1f5f9;">FE_Response_Schemas.md shape</strong> (not raw biomechanics JSON). In W6: overall_score + parameter scores populated from biomechanics output; coaching fields (summary_paragraph, corrections) null until LLM is wired in W7. Same endpoint — same shape — coaching fields fill in as pipeline stages are completed. S1 renders what is non-null and shows placeholders for null fields.
         </div>
       </div>
       <div class="ac-block">
@@ -486,7 +486,7 @@ h1 { font-size: 22px; font-weight: 800; color: #f8fafc; letter-spacing: -0.5px; 
         <ul class="ac-list">
           <li class="ac-item"><span class="ac-check">✓</span> POST /upload accepts video + exercise_id + weight_value + weight_unit, saves to GCS, writes DB record, returns {analysis_id} in under 500ms</li>
           <li class="ac-item"><span class="ac-check">✓</span> process_video() called asynchronously — upload response not blocked by pipeline processing</li>
-          <li class="ac-item"><span class="ac-check">✓</span> On success: biomechanics_json written to form_analysis_results. GET /analysis/{id}/result returns it with all fields from Kinetic_Biomechanics_Output_Schema.json</li>
+          <li class="ac-item"><span class="ac-check">✓</span> On success: biomechanics_json written to form_analysis_results. GET /analysis/{id}/result returns FE_Response_Schemas.md shape — overall_score + parameter scores populated from biomechanics; coaching, progression_recommendation, annotated_frame_url null in W6 (filled in as later pipeline stages complete)</li>
           <li class="ac-item"><span class="ac-check">✓</span> On quality gate failure: form_analyses status set to "failed", full error SSE emitted: { analysis_id, session_id, user_id, error_code, error_stage: "quality_gate", retryable: "false", message }</li>
           <li class="ac-item"><span class="ac-check">✓</span> SSE events fire in correct sequence — upload_received → mediapipe_started → biomechanics_complete (or error)</li>
           <li class="ac-item"><span class="ac-check">✓</span> Squad 1 confirms real biomechanics data appears on Results screen before Thursday merge</li>

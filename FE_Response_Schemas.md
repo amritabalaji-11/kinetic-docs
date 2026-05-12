@@ -61,6 +61,17 @@ Who owns what, and what passes between squads at each handoff.
 **Consumed by:** S1 — Frontend  
 **When:** User navigates to Results screen after `analysis_complete` SSE fires
 
+**Field availability by week** — same endpoint, same shape throughout. Null fields fill in as pipeline stages complete. S1 renders non-null fields and shows placeholders for null.
+
+| Field | W6 (biomechanics only) | W7 (+ LLM) | W8 (+ progression logic) |
+|---|---|---|---|
+| `overall_score` | ✓ from biomechanics | ✓ | ✓ |
+| `rep_count`, `reps[]` | ✓ from biomechanics | ✓ | ✓ |
+| `quality_gate_status` | ✓ | ✓ | ✓ |
+| `coaching.*` | null | ✓ | ✓ |
+| `progression_recommendation` | null | null | ✓ |
+| `annotated_frame_url` | null | ✓ | ✓ |
+
 ```json
 {
   "analysis_id": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
