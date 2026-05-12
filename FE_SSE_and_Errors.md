@@ -12,30 +12,68 @@
 The frontend POSTs to `/upload` and the backend **keeps the response open** as a streaming connection (`Content-Type: text/event-stream`). Events fire as the pipeline progresses. The connection closes when `analysis_complete` or `error` fires.
 
 ```
-Frontend                          Backend
-   |                                 |
-   |--- POST /upload --------------> |
-   |                                 | upload_received fires
-   |<-- SSE stream opens ----------- |
-   |<-- upload_received ------------ |
-   |<-- mediapipe_started ---------- |
-   |<-- mediapipe_complete --------- |
-   |<-- biomechanics_complete ------ |
-   |<-- nemotron_started ----------- |
-   |<-- nemotron_complete ---------- |
-   |<-- frames_extracting ---------- |
-   |<-- frames_ready --------------- |
-   |<-- rag_started ---------------- |
-   |<-- rag_complete --------------- |
-   |<-- claude_started ------------- |
-   |<-- claude_complete ------------ |
-   |<-- analysis_complete ---------- |  ← stream closes
-   |                                 |
-   |--- GET /analysis/{id}/result -> |  ← frontend navigates to Results screen
-   |<-- form analysis response ------ |
+Frontend (S1)                     Backend (S2)                    AI/MediaPipe (S3)
+   |                                 |                                 |
+   |--- POST /upload --------------> |                                 |
+   |                                 |--- dispatch MediaPipe job ----> |
+   |<-- SSE stream opens ----------- |                                 |
+   |<-- upload_received ------------ |                                 |
+   |<-- mediapipe_started ---------- |                                 |
+   |                                 |<-- keypoints returned --------- |
+   |<-- mediapipe_complete --------- |                                 |
+   |                                 |<-- biomechanics JSON returned - |
+   |<-- biomechanics_complete ------ |                                 |
+   |                                 |--- dispatch Nemotron job -----> |
+   |<-- nemotron_started ----------- |                                 |
+   |                                 |<-- scored output returned ----- |
+   |<-- nemotron_complete ---------- |                                 |
+   |<-- frames_extracting ---------- | (S2 runs OpenCV internally)     |
+   |<-- frames_ready --------------- |                                 |
+   |<-- rag_started ---------------- | (S2 queries vector DB)          |
+   |<-- rag_complete --------------- |                                 |
+   |<-- claude_started ------------- | (S2 calls Claude API)           |
+   |<-- claude_complete ------------ |                                 |
+   |<-- analysis_complete ---------- |  ← stream closes               |
+   |                                 |                                 |
+   |--- GET /analysis/{id}/result -> |                                 |
+   |<-- form analysis response ------ |                                |
 ```
 
-> The `comparison_ready` event fires **after** `analysis_complete` on a separate async path — the frontend listens for it to enable the comparison tab. See Section 3.
+> The `comparison_ready` event fires **after** `analysis_complete` on a separate async path — S2 calls Claude again for comparison coaching. Frontend listens to enable the comparison tab. See Section 3.
+
+---
+
+## Squad Dependencies Overview
+
+| Event | Fired by | Consumed by | Inter-squad dependency |
+|---|---|---|---|
+| `upload_received` | S2 | S1 | S1 POST triggers S2 |
+| `mediapipe_started` | S2 | S1 | S2 dispatches job to S3 — **S3 must be ready to accept jobs** |
+| `mediapipe_complete` | S2 | S1 | **S3 must return keypoints to S2** before S2 can fire this |
+| `biomechanics_complete` | S2 | S1 | **S3 must return biomechanics JSON to S2** before S2 can fire this |
+| `nemotron_started` | S2 | S1 | S2 dispatches to Nemotron via S3 — **S3 owns Nemotron integration** |
+| `nemotron_complete` | S2 | S1 | **S3 must return Nemotron scored output to S2** before S2 can fire this |
+| `frames_extracting` | S2 | S1 | S2-internal (OpenCV) — no S3 dependency |
+| `frames_ready` | S2 | S1 | S2-internal (OpenCV) — no S3 dependency |
+| `rag_started` | S2 | S1 | S2-internal — no S3 dependency |
+| `rag_complete` | S2 | S1 | S2-internal — no S3 dependency |
+| `claude_started` | S2 | S1 | S2-internal — no S3 dependency |
+| `claude_complete` | S2 | S1 | S2-internal — no S3 dependency |
+| `analysis_complete` | S2 | S1 | All upstream stages must complete |
+| `comparison_ready` | S2 | S1 | Async — S2 runs a second Claude call after `analysis_complete` |
+| `error` | S2 (pipeline errors) or S1 (pre-upload) | S1 | Stage-dependent — see error taxonomy |
+
+**SSE contract handshake between squads:**
+
+| Step | Who | Task | Dependency |
+|---|---|---|---|
+| 1 | S1 defines SSE contract | S1-W5-06 | S1 delivers event names + payloads to S2 **before S2 builds emission** |
+| 2 | S2 builds server-side emission | S2-W6-06 | Blocked on S1-W5-06 |
+| 3 | S2 exposes stub SSE endpoint | S2-W6-06 | S1 needs this to test client wiring |
+| 4 | S1 wires client-side | S1-W6-03 | Blocked on S2 stub endpoint — can build against mock first |
+
+**S2 ↔ S3 output format dependency:**  
+S2 fires `mediapipe_complete`, `biomechanics_complete`, and `nemotron_complete` using data returned by S3. S2 must not hardcode field assumptions — S3 output schemas defined in `Kinetic_Biomechanics_Output_Schema.json` and `Nemotron_Testing_Guide.docx` are the contract. Any S3 schema change must be communicated to S2 before S2 builds the emission logic.
 
 ---
 
@@ -54,7 +92,9 @@ Every event (including `error`) always carries these three fields:
 ## 1. Pipeline SSE Events
 
 ### `upload_received`
-Fires immediately after the backend receives and stores the video to GCS and writes the initial `form_analyses` row.
+**Fired by:** S2 — Backend  ·  **Consumed by:** S1 — Frontend  ·  **S3 dependency:** None
+
+Fires immediately after S2 receives and stores the video to GCS and writes the initial `form_analyses` row.
 
 ```json
 {
@@ -78,7 +118,9 @@ Fires immediately after the backend receives and stores the video to GCS and wri
 ---
 
 ### `mediapipe_started`
-Fires when the MediaPipe pose detection job begins.
+**Fired by:** S2 — Backend  ·  **Consumed by:** S1 — Frontend  ·  **S3 dependency:** S2 dispatches MediaPipe job to S3 immediately before firing this
+
+Fires when S2 dispatches the pose detection job to S3.
 
 ```json
 {
@@ -91,14 +133,16 @@ Fires when the MediaPipe pose detection job begins.
 
 | Field | Type | Nullable | Notes |
 |---|---|---|---|
-| `video_url` | string (GCS URI) | No | Internal reference. Do not display or link. GCS URIs are not public URLs. |
+| `video_url` | string (GCS URI) | No | Internal reference passed to S3. Do not display or link — GCS URIs are not public URLs. |
 
 **Suggested UI copy:** "Detecting your movement..."
 
 ---
 
 ### `mediapipe_complete`
-Fires when pose detection finishes. Confirms how many reps and frames were processed.
+**Fired by:** S2 — Backend  ·  **Consumed by:** S1 — Frontend  ·  **S3 dependency:** S3 must return keypoints to S2 before S2 fires this
+
+Fires when S3 returns MediaPipe keypoints to S2 and pose detection is confirmed complete.
 
 ```json
 {
@@ -124,7 +168,9 @@ Fires when pose detection finishes. Confirms how many reps and frames were proce
 ---
 
 ### `biomechanics_complete`
-Fires when the joint angle and biomechanics script finishes running on the keypoints.
+**Fired by:** S2 — Backend  ·  **Consumed by:** S1 — Frontend  ·  **S3 dependency:** S3 must return biomechanics JSON to S2 before S2 fires this
+
+Fires when S3 returns the joint angle and biomechanics output to S2.
 
 ```json
 {
@@ -148,7 +194,9 @@ Fires when the joint angle and biomechanics script finishes running on the keypo
 ---
 
 ### `nemotron_started`
-Fires when the Nemotron form analysis job begins.
+**Fired by:** S2 — Backend  ·  **Consumed by:** S1 — Frontend  ·  **S3 dependency:** S2 dispatches to Nemotron via S3 immediately before firing this — S3 owns Nemotron integration
+
+Fires when S2 dispatches the Nemotron form analysis job.
 
 ```json
 {
@@ -159,14 +207,16 @@ Fires when the Nemotron form analysis job begins.
 }
 ```
 
-> `video_url` is only present if video is sent to Nemotron directly (pending S2-W6-05 test results). Frontend should not depend on it being present — treat as optional.
+> `video_url` is only present if video is sent to Nemotron directly (pending S2-W6-05 test results). Frontend should not depend on it — treat as optional.
 
 **Suggested UI copy:** "Analysing your form..."
 
 ---
 
 ### `nemotron_complete`
-Fires when Nemotron returns scored output with issue detection.
+**Fired by:** S2 — Backend  ·  **Consumed by:** S1 — Frontend  ·  **S3 dependency:** S3 must return Nemotron scored output to S2 before S2 fires this
+
+Fires when S3 returns Nemotron output (scores, issues, chain of thought) to S2.
 
 ```json
 {
@@ -188,7 +238,9 @@ Fires when Nemotron returns scored output with issue detection.
 ---
 
 ### `frames_extracting`
-Fires when OpenCV begins extracting annotated frames from the video.
+**Fired by:** S2 — Backend  ·  **Consumed by:** S1 — Frontend  ·  **S3 dependency:** None — S2 runs OpenCV internally
+
+Fires when S2 begins extracting annotated frames from the video using OpenCV.
 
 ```json
 {
@@ -209,7 +261,9 @@ Fires when OpenCV begins extracting annotated frames from the video.
 ---
 
 ### `frames_ready`
-Fires when frame extraction is complete and annotated frames are stored in GCS.
+**Fired by:** S2 — Backend  ·  **Consumed by:** S1 — Frontend  ·  **S3 dependency:** None — S2 runs OpenCV internally
+
+Fires when S2 finishes frame extraction and stores annotated frames in GCS.
 
 ```json
 {
@@ -220,14 +274,16 @@ Fires when frame extraction is complete and annotated frames are stored in GCS.
 }
 ```
 
-> `frame_url` is a GCS URI — not a public URL. The results screen uses `annotated_frame_url` from the API response (Section 1 of FE_Response_Schemas.md), not this GCS URI directly.
+> `frame_url` is a GCS URI — not a public URL. The results screen uses `annotated_frame_url` from the API response (FE_Response_Schemas.md Section 1), not this GCS URI directly.
 
 **Suggested UI copy:** "Frames captured"
 
 ---
 
 ### `rag_started`
-Fires when the biomechanics knowledge retrieval begins.
+**Fired by:** S2 — Backend  ·  **Consumed by:** S1 — Frontend  ·  **S3 dependency:** None — S2 queries vector DB internally
+
+Fires when S2 begins retrieving biomechanics knowledge from the vector DB.
 
 ```json
 {
@@ -242,13 +298,15 @@ Fires when the biomechanics knowledge retrieval begins.
 ---
 
 ### `rag_complete`
-Fires when the RAG retrieval finishes.
+**Fired by:** S2 — Backend  ·  **Consumed by:** S1 — Frontend  ·  **S3 dependency:** None — S2 queries vector DB internally
+
+Fires when S2 finishes RAG retrieval.
 
 ```json
 {
-  "analysis_id":       "uuid",
-  "session_id":        "uuid",
-  "user_id":           "uuid",
+  "analysis_id":        "uuid",
+  "session_id":         "uuid",
+  "user_id":            "uuid",
   "passages_retrieved": 8
 }
 ```
@@ -262,7 +320,9 @@ Fires when the RAG retrieval finishes.
 ---
 
 ### `claude_started`
-Fires when the Claude Sonnet coaching generation begins.
+**Fired by:** S2 — Backend  ·  **Consumed by:** S1 — Frontend  ·  **S3 dependency:** None — S2 calls Claude API internally
+
+Fires when S2 begins the Claude Sonnet coaching generation call.
 
 ```json
 {
@@ -277,33 +337,37 @@ Fires when the Claude Sonnet coaching generation begins.
 ---
 
 ### `claude_complete`
-Fires when Claude finishes and the coaching output is written to DB.
+**Fired by:** S2 — Backend  ·  **Consumed by:** S1 — Frontend  ·  **S3 dependency:** None — S2 calls Claude API internally
 
-```json
-{
-  "analysis_id":      "uuid",
-  "session_id":       "uuid",
-  "user_id":          "uuid",
-  "recommendation":   "hold"
-}
-```
-
-| Field | Type | Nullable | Range / Max | Format | FE Note |
-|---|---|---|---|---|---|
-| `recommendation` | enum | No | `hold` \| `progress` \| `drop` | — | Can preview recommendation before full results load. Not required. |
-
-**Suggested UI copy:** "Done! Loading your results..."
-
----
-
-### `analysis_complete`
-Final pipeline event. Signals the frontend to navigate to the Results screen.
+Fires when Claude returns and S2 writes coaching output to DB.
 
 ```json
 {
   "analysis_id":    "uuid",
   "session_id":     "uuid",
   "user_id":        "uuid",
+  "recommendation": "hold"
+}
+```
+
+| Field | Type | Nullable | Range / Max | Format | FE Note |
+|---|---|---|---|---|---|
+| `recommendation` | enum | No | `hold` \| `progress` \| `drop` | — | Can preview on processing screen before results load. Not required. |
+
+**Suggested UI copy:** "Done! Loading your results..."
+
+---
+
+### `analysis_complete`
+**Fired by:** S2 — Backend  ·  **Consumed by:** S1 — Frontend  ·  **S3 dependency:** All upstream S3 stages (MediaPipe, Biomechanics, Nemotron) must be complete
+
+Final pipeline event. S1 navigates to the Results screen on receipt.
+
+```json
+{
+  "analysis_id":     "uuid",
+  "session_id":      "uuid",
+  "user_id":         "uuid",
   "full_result_url": "/analysis/{analysis_id}/result"
 }
 ```
@@ -318,7 +382,9 @@ Final pipeline event. Signals the frontend to navigate to the Results screen.
 
 ## 2. Error SSE Event
 
-A single `error` event shape is used across all pipeline stages. The `error_stage` and `error_code` fields identify exactly what failed.
+**Fired by:** S2 — Backend (all pipeline stages) or S1 — Frontend (pre-upload validation only)  ·  **Consumed by:** S1 — Frontend
+
+A single `error` event shape is used across all pipeline stages. `error_stage` and `error_code` identify exactly what failed.
 
 ```json
 {
@@ -353,7 +419,9 @@ A single `error` event shape is used across all pipeline stages. The `error_stag
 
 ## 3. Comparison Ready Event
 
-Fires asynchronously **after** `analysis_complete`, once the comparison coaching is generated. Does not block the results screen from loading.
+**Fired by:** S2 — Backend  ·  **Consumed by:** S1 — Frontend  ·  **S3 dependency:** None — S2 runs a second Claude call internally after `analysis_complete`
+
+Fires asynchronously **after** `analysis_complete`. Does not block the results screen from loading.
 
 ```json
 {
@@ -365,15 +433,15 @@ Fires asynchronously **after** `analysis_complete`, once the comparison coaching
 
 **Frontend action on receipt:** Enable the Form Comparison tab on the Results screen.  
 **If tab is opened before event fires:** Show a brief loading state (expected < 5s after `analysis_complete`).  
-**If no previous session exists:** Backend stores `has_comparison: false` immediately — `comparison_ready` still fires so the tab can show the empty state.
+**If no previous session exists:** S2 stores `has_comparison: false` immediately — `comparison_ready` still fires so the tab can show the empty state.
 
 ---
 
 ## 4. Error Code Taxonomy
 
-### Pre-upload — client-side only, never reaches SSE
+### Pre-upload — S1 validates client-side only · never reaches SSE
 
-These are validated by the frontend before the POST request is sent.
+**Owner: S1 — Frontend.** These checks run in the browser before the POST request is sent. S2 never sees these errors.
 
 | error_code | Trigger | User-facing message | retryable |
 |---|---|---|---|
@@ -386,37 +454,44 @@ These are validated by the frontend before the POST request is sent.
 
 ### Quality Gate — `error_stage: "quality_gate"` · V2
 
-Fires **before any AI processing**. If the video fails the quality gate, the pipeline stops here and no AI costs are incurred. All quality gate errors: `retryable: "false"` — the video must be re-filmed.
+**Owner: S3 evaluates · S2 fires the error event.**  
+S3 runs the Landmark Quality Framework against the MediaPipe keypoints and returns a pass/fail result to S2. S2 fires the `error` SSE event using that result. Fires **before any AI processing** — if rejected here, no Nemotron or Claude calls are made.
 
-> **`landmark_medians` field:** For `occlusion_left_side`, `occlusion_right_side`, `occlusion_both_sides`, `out_of_frame_left`, `out_of_frame_right` — the error payload also includes a `landmark_medians` object with `median_visibility` and `median_presence` per critical landmark (knee/hip/heel, both sides). Frontend uses these to confirm the left/right message variant is correct. Not present for `poor_video_quality`, `no_reps_detected`, or `insufficient_reps`.
+All quality gate errors: `retryable: "false"` — the video must be re-filmed.
+
+> **`landmark_medians` field:** For `occlusion_*` and `out_of_frame_*` codes, the error payload also includes a `landmark_medians` object with `median_visibility` and `median_presence` per critical landmark (knee/hip/heel, both sides). Frontend uses this to confirm the left/right message variant. Not present for `poor_video_quality`, `no_reps_detected`, or `insufficient_reps`.
 
 | error_code | Gate | Trigger condition | User-facing message | retryable |
 |---|---|---|---|---|
-| `occlusion_left_side` | M1 | ≥1 of knee/hip/heel on left side has visibility ≤ 0.60. Right side passes. | "Part of your left side was hidden from view. Rather than switching sides, rotate your camera slightly toward the front of your body." | `"false"` |
-| `occlusion_right_side` | M1 | ≥1 of knee/hip/heel on right side has visibility ≤ 0.60. Left side passes. | "Part of your right side was hidden from view. Rather than switching sides, rotate your camera slightly toward the front of your body." | `"false"` |
-| `occlusion_both_sides` | M2 | ≥1 of knee/hip/heel has visibility ≤ 0.60 on both sides. | "We couldn't see your lower body clearly. Try angling your camera slightly toward the front so both legs are fully in view." | `"false"` |
-| `out_of_frame_left` | M3 | Visibility passes but ≥1 of knee/hip/heel on left side has median_presence ≤ 0.50. | "Your left side kept moving out of frame. Move the camera back slightly so your full body stays visible throughout the squat." | `"false"` |
-| `out_of_frame_right` | M3 | Visibility passes but ≥1 of knee/hip/heel on right side has median_presence ≤ 0.50. | "Your right side kept moving out of frame. Move the camera back slightly so your full body stays visible throughout the squat." | `"false"` |
-| `poor_video_quality` | M4 | `video_score` < 0.70. No landmark hit the 0.60 hard floor. Typical: filming from behind, obstruction, low lighting. | "We couldn't read your body position clearly. Film from your side with good lighting and a clear background." | `"false"` |
-| `no_reps_detected` | M5 | `complete_reps` = 0. A complete rep requires both "top" and "bottom" position detected in the same rep segment. | "We couldn't detect any squats in your video. Make sure you're doing goblet squats and your full body is in frame from the start." | `"false"` |
+| `occlusion_left_side` | M1 | ≥1 of knee/hip/heel on left side visibility ≤ 0.60. Right side passes. | "Part of your left side was hidden from view. Rather than switching sides, rotate your camera slightly toward the front of your body." | `"false"` |
+| `occlusion_right_side` | M1 | ≥1 of knee/hip/heel on right side visibility ≤ 0.60. Left side passes. | "Part of your right side was hidden from view. Rather than switching sides, rotate your camera slightly toward the front of your body." | `"false"` |
+| `occlusion_both_sides` | M2 | ≥1 of knee/hip/heel visibility ≤ 0.60 on both sides. | "We couldn't see your lower body clearly. Try angling your camera slightly toward the front so both legs are fully in view." | `"false"` |
+| `out_of_frame_left` | M3 | Visibility passes but ≥1 of knee/hip/heel on left side median_presence ≤ 0.50. | "Your left side kept moving out of frame. Move the camera back slightly so your full body stays visible throughout the squat." | `"false"` |
+| `out_of_frame_right` | M3 | Visibility passes but ≥1 of knee/hip/heel on right side median_presence ≤ 0.50. | "Your right side kept moving out of frame. Move the camera back slightly so your full body stays visible throughout the squat." | `"false"` |
+| `poor_video_quality` | M4 | `video_score` < 0.70. Typical: filming from behind, obstruction, low lighting. | "We couldn't read your body position clearly. Film from your side with good lighting and a clear background." | `"false"` |
+| `no_reps_detected` | M5 | `complete_reps` = 0. | "We couldn't detect any squats in your video. Make sure you're doing goblet squats and your full body is in frame from the start." | `"false"` |
 | `insufficient_reps` | M6 | 0 < `complete_reps` < 3. | "Film a full set to get your analysis. We need at least 3 complete reps — squat all the way down and all the way back up for each one." | `"false"` |
 
 ---
 
 ### Biomechanics — `error_stage: "biomechanics"`
 
-MediaPipe ran fine and produced keypoints, but the Python script could not compute valid metrics from them.
+**Owner: S3 runs the script · S2 fires the error event.**  
+MediaPipe ran and produced keypoints, but S3's Python biomechanics script could not compute valid metrics from them. S3 returns the failure to S2, which fires the error event.
 
 | error_code | Trigger | User-facing message | retryable |
 |---|---|---|---|
-| `VIDEO_TOO_SHORT` | Video < 5s — not enough frames for rep segmentation | "We didn't catch a complete rep. Record at least one full squat and try again." | `"false"` |
+| `VIDEO_TOO_SHORT` | Video < 5s | "We didn't catch a complete rep. Record at least one full squat and try again." | `"false"` |
 | `NO_MOVEMENT_DETECTED` | Hip keypoint vertical velocity near zero — person is static | "The video looks still. Make sure the camera is filming your full movement." | `"false"` |
 | `NO_REPS_DETECTED` | Hip velocity data exists but rep segmentation found 0 complete cycles | "We couldn't detect a full squat rep. Make sure your full body is visible and complete at least one rep." | `"false"` |
-| `BIOMECHANICS_COMPUTE_ERROR` | Unhandled exception in Python script (e.g. division by zero, missing keypoint index) | "Something went wrong reading your movement data. Try re-uploading." | `"true"` |
+| `BIOMECHANICS_COMPUTE_ERROR` | Unhandled exception in S3 Python script | "Something went wrong reading your movement data. Try re-uploading." | `"true"` |
 
 ---
 
 ### Nemotron — `error_stage: "nemotron"`
+
+**Owner: S3 runs Nemotron · S2 fires the error event.**  
+S3 owns the Nemotron API integration. If Nemotron fails, S3 returns the failure to S2, which fires the error event.
 
 | error_code | Trigger | User-facing message | retryable |
 |---|---|---|---|
@@ -428,15 +503,21 @@ MediaPipe ran fine and produced keypoints, but the Python script could not compu
 
 ### Frame Extraction — `error_stage: "frame_extraction"`
 
+**Owner: S2 — Backend runs OpenCV · S2 fires the error event.**  
+This is fully within S2. No S3 dependency.
+
 | error_code | Trigger | User-facing message | retryable |
 |---|---|---|---|
 | `FRAME_EXTRACTION_FAILED` | OpenCV can't seek to Nemotron timestamp | "We identified form issues but couldn't extract the frames to show you. Your text coaching is still available below." | `"partial"` |
 
-> `partial` — results screen still loads. Annotated frame is null. Show text coaching only, no image overlay.
+> `partial` — results screen still loads. `annotated_frame_url` is null. Show text coaching only, no image overlay.
 
 ---
 
 ### RAG — `error_stage: "rag"`
+
+**Owner: S2 — Backend queries vector DB · S2 fires the error event.**  
+Fully within S2. No S3 dependency.
 
 | error_code | Trigger | User-facing message | retryable |
 |---|---|---|---|
@@ -449,6 +530,9 @@ MediaPipe ran fine and produced keypoints, but the Python script could not compu
 
 ### Claude — `error_stage: "claude"`
 
+**Owner: S2 — Backend calls Claude API · S2 fires the error event.**  
+Fully within S2. No S3 dependency.
+
 | error_code | Trigger | User-facing message | retryable |
 |---|---|---|---|
 | `CLAUDE_TIMEOUT` | Claude API exceeds timeout | "Your coaching report is taking longer than expected. Refreshing should show your results shortly." | `"true"` |
@@ -457,6 +541,9 @@ MediaPipe ran fine and produced keypoints, but the Python script could not compu
 ---
 
 ### Infrastructure / Pipeline — `error_stage: "pipeline"`
+
+**Owner: S2 — Backend infrastructure · S2 fires the error event.**  
+Worker-level failures. No S3 dependency.
 
 | error_code | Trigger | User-facing message | retryable |
 |---|---|---|---|
@@ -467,48 +554,47 @@ MediaPipe ran fine and produced keypoints, but the Python script could not compu
 
 ## 5. HTTP Error Codes
 
-These are returned as standard HTTP responses, not SSE events. They fire before or instead of the SSE stream opening.
-
-### `POST /upload`
+### `POST /upload` — S1 sends · S2 receives · S2 returns HTTP status
 
 | HTTP Status | When | Response body | FE action |
 |---|---|---|---|
-| `400 Bad Request` | Required field missing in POST body (exercise_id, weight_value, etc.) | `{ "error": "MISSING_FIELD", "field": "exercise_id" }` | Show inline validation error on upload form |
-| `413 Payload Too Large` | File > 500 MB caught at server before client-side check | `{ "error": "FILE_TOO_LARGE" }` | Show file size error (same copy as pre-upload `FILE_TOO_LARGE`) |
+| `400 Bad Request` | Required field missing in POST body | `{ "error": "MISSING_FIELD", "field": "exercise_id" }` | Show inline validation error on upload form |
+| `413 Payload Too Large` | File > 500 MB caught at server | `{ "error": "FILE_TOO_LARGE" }` | Show file size error (same copy as pre-upload `FILE_TOO_LARGE`) |
 | `415 Unsupported Media Type` | Wrong MIME type reaches server | `{ "error": "FORMAT_UNSUPPORTED" }` | Show format error (same copy as pre-upload `FORMAT_UNSUPPORTED`) |
-| `500 Internal Server Error` | Server crashed before SSE stream opened | `{ "error": "SYSTEM_ERROR" }` | Show generic "Something went wrong" + "Try again" |
-| `503 Service Unavailable` | Pipeline infrastructure down | `{ "error": "SERVICE_UNAVAILABLE" }` | Show "Service is temporarily down — try again shortly" |
+| `500 Internal Server Error` | S2 crashed before SSE stream opened | `{ "error": "SYSTEM_ERROR" }` | Show generic "Something went wrong" + "Try again" |
+| `503 Service Unavailable` | S2 pipeline infrastructure down | `{ "error": "SERVICE_UNAVAILABLE" }` | Show "Service is temporarily down — try again shortly" |
 
-### `GET /analysis/{id}/result`
+### `GET /analysis/{id}/result` — S1 requests · S2 returns
 
 | HTTP Status | When | FE action |
 |---|---|---|
 | `200 OK` | Analysis complete and results available | Render results screen |
 | `202 Accepted` | Pipeline still in progress (user navigated directly) | Show processing/waiting screen. Resume SSE polling if needed. |
 | `404 Not Found` | `analysis_id` does not exist | Show "Analysis not found" — navigate back to upload |
-| `500 Internal Server Error` | DB read failed | Show "Couldn't load your results — try refreshing" |
+| `500 Internal Server Error` | S2 DB read failed | Show "Couldn't load your results — try refreshing" |
 
-### `GET /analysis/{id}/comparison`
+### `GET /analysis/{id}/comparison` — S1 requests · S2 returns
 
 | HTTP Status | When | FE action |
 |---|---|---|
 | `200 OK` | Comparison data available (`has_comparison: true` or `false`) | Render comparison tab |
-| `202 Accepted` | Async comparison still generating | Show brief loading state in tab |
+| `202 Accepted` | Async comparison still generating in S2 | Show brief loading state in tab |
 | `404 Not Found` | `analysis_id` does not exist | Hide comparison tab |
-| `500 Internal Server Error` | DB read failed | Show "Comparison unavailable — try refreshing" inline in tab |
+| `500 Internal Server Error` | S2 DB read failed | Show "Comparison unavailable — try refreshing" inline in tab |
 
 ---
 
 ## 6. Roadmap Task IDs
 
-| Role | Task | Notes |
-|---|---|---|
-| Defines shapes | S1-W5-03 | FE JSON schema including SSE event shapes (this file) |
-| Defines contract | S1-W5-06 | SSE skeleton — all event names + payloads delivered to S2 |
-| Emits server-side | S2-W6-06 | S2 emits correct SSE events at each pipeline stage |
-| Wires client-side | S1-W6-03 | S1 wires SSE to real processing states — tested against S2 stub endpoint |
+| Role | Squad | Task | Notes |
+|---|---|---|---|
+| Defines SSE shapes | S1 | S1-W5-03 | FE JSON schema including SSE event shapes (this file) |
+| Defines SSE contract | S1 | S1-W5-06 | SSE skeleton — all event names + payloads delivered to S2. **S2 blocked until this is done.** |
+| Emits server-side | S2 | S2-W6-06 | S2 emits correct SSE events at each pipeline stage. Depends on S1-W5-06. |
+| Wires client-side | S1 | S1-W6-03 | S1 wires SSE to processing states — tested against S2 stub endpoint. Depends on S2-W6-06 stub. |
 
 ---
 
 ## Changelog
 - May 12, 2026: Initial definition — all SSE events, error taxonomy (pre-upload + 7 pipeline stages), HTTP error codes, frontend UI copy, CTA logic
+- May 12, 2026: Added squad ownership and inter-squad dependencies to every event, error stage, HTTP endpoint, and roadmap task section
