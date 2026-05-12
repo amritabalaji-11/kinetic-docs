@@ -433,16 +433,21 @@
   </div>
 
   <div class="cell sq2">
-    <div style="font-size:8.5px;font-weight:700;color:#4ade80;text-transform:uppercase;letter-spacing:0.5px;padding:2px 0 4px 0;">▶ Main Track — Stitch Pipeline (receive from Squad 3)</div>
-    <div class="task task-sq2"><span class="task-id">S2-W6-01</span>Video upload endpoint: receive video, store to GCS, return SSE stream</div>
-    <div class="task task-sq2"><span class="task-id">S2-W6-02</span>On upload: write form_analyses record to DB (status: uploaded → processing)</div>
-    <div class="task task-sq2 task-updated"><span class="task-id">S2-W6-03</span><div class="updated-tag">UPDATED</div>Receive process_video() from Squad 3. Stitch pipeline: call S3 function → handle quality gate errors → receive overlay_video_url + biomechanics_json → store to DB → trigger Nemotron tests. Squad 3 owns MediaPipe/OpenCV/Biomechanics code.</div>
-    <div class="task task-sq2 task-dep"><span class="task-id">S2-W6-04</span><div class="dep-tag">OUTPUTS →</div> Return real biomechanics JSON from /analyze (replaces stub)</div>
-    <div class="task task-sq2 task-dep"><span class="task-id">S2-W6-06</span><div class="dep-tag">OUTPUTS →</div> Emit correct SSE events at each pipeline stage</div>
+    <div style="font-size:8.5px;font-weight:700;color:#4ade80;text-transform:uppercase;letter-spacing:0.5px;padding:2px 0 4px 0;">▶ Main Track — S2-W6-P1 then S2-W6-P2 (sub-tasks in order)</div>
+    <div class="task task-sq2 task-dep"><span class="task-id">S2-W6-P1</span><div class="dep-tag">FIRST</div> Integration meeting — agree process_video() contract with Squad 3 before any pipeline code</div>
+    <div class="task task-sq2 task-updated" style="border-left-color:#f59e0b;">
+      <span class="task-id">S2-W6-P2</span>
+      <div class="updated-tag">PARENT</div>
+      Full pipeline stitch — 4 sub-tasks in order:
+      <div style="margin-top:4px;padding-left:8px;font-size:8px;color:#94a3b8;line-height:1.8;">
+        <span style="color:#60a5fa;">S2-W6-01</span> Upgrade POST /upload (real fields, GCS path, form_analyses write)<br>
+        <span style="color:#60a5fa;">S2-W6-02</span> Replace stub SSE with real pipeline events<br>
+        <span style="color:#60a5fa;">S2-W6-03</span> Store biomechanics output → serve GET /analysis/{id}/result<br>
+        <span style="color:#f87171;">S2-W6-04</span> Quality gate error relay (full SSE error shape, M1–M6 codes)
+      </div>
+    </div>
     <div style="font-size:8.5px;font-weight:700;color:#22d3ee;text-transform:uppercase;letter-spacing:0.5px;padding:4px 0 4px 0;border-top:1px dashed #0e7490;margin-top:2px;">▶ Parallel Track — Nemotron Input Tests</div>
-    <div class="task task-sq2" style="border-left-color:#22d3ee;background:#041e1e;color:#a5f3fc;"><span class="task-id" style="color:#22d3ee;">S2-W6-T-A</span>Test A: Joint overlay video only → Nemotron. Log output quality + response time</div>
-    <div class="task task-sq2" style="border-left-color:#22d3ee;background:#041e1e;color:#a5f3fc;"><span class="task-id" style="color:#22d3ee;">S2-W6-T-B</span>Test B: Biomechanics JSON only → Nemotron. Log output quality + response time</div>
-    <div class="task task-sq2" style="border-left-color:#22d3ee;background:#041e1e;color:#a5f3fc;"><span class="task-id" style="color:#22d3ee;">S2-W6-T-C</span>Test C: Both together → Nemotron. Is output better than B alone? Feed findings to PM — informs W7 architecture</div>
+    <div class="task task-sq2" style="border-left-color:#7f1d1d;background:#1a0500;color:#fca5a5;"><span class="task-id" style="color:#f87171;">S2-W6-05</span><span style="font-size:8px;font-weight:800;padding:1px 6px;border-radius:3px;background:#2d0a0a;color:#f87171;border:1px solid #7f1d1d;margin-right:4px;">🚫 BLOCKED</span>Nemotron Tests A/B/C — blocked on S2-W5-09 (NVIDIA NIM API access not confirmed). Not in active sprint.</div>
   </div>
 
   <div class="cell sq2">
