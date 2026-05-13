@@ -137,6 +137,10 @@
   .decision-tag { display: inline-block; font-size: 8.5px; font-weight: 700; padding: 1px 5px; border-radius: 4px; background: #3b1f05; color: #fb923c; margin-bottom: 3px; letter-spacing: 0.3px; }
   .task-design   { border-left-color: #a855f7 !important; background: #1a0d2e !important; }
   .task-decision { border-left-color: #fb923c !important; }
+  .task-done     { opacity: 0.55; border-left-color: #16a34a !important; }
+  .done-tag      { display: inline-block; font-size: 8.5px; font-weight: 700; padding: 1px 5px; border-radius: 4px; background: #0a1f0a; color: #4ade80; margin-bottom: 3px; letter-spacing: 0.3px; border: 1px solid #16a34a; }
+  .task-carry    { border-left-color: #f97316 !important; background: #150a00 !important; }
+  .carry-tag     { display: inline-block; font-size: 8.5px; font-weight: 700; padding: 1px 5px; border-radius: 4px; background: #1c0e00; color: #fb923c; margin-bottom: 3px; letter-spacing: 0.3px; border: 1px solid #c2410c; }
 
   /* Iterative Testing row */
   .test-label { background: #041e1e; border: 1px solid #0e7490; border-radius: 8px; padding: 12px 10px; display: flex; align-items: flex-start; }
@@ -351,19 +355,21 @@
   </div>
 
   <div class="cell sq1">
-    <div class="task task-sq1 task-design"><span class="task-id">S1-W5-01</span><div class="design-tag">DESIGN HANDOFF</div> Upload video → Processing → Form Analysis screens</div>
-    <div class="task task-sq1"><span class="task-id">S1-W5-02</span>Scaffold React + Tailwind project</div>
-    <div class="task task-sq1 task-dep"><span class="task-id">S1-W5-03</span><div class="dep-tag">OUTPUTS →</div> Define JSON schema for all FE responses (form analysis, auth, SSE events)</div>
-    <div class="task task-sq1"><span class="task-id">S1-W5-04</span>Build dummy data fixtures matching schema</div>
-    <div class="task task-sq1"><span class="task-id">S1-W5-05</span>Scaffold screen shells using W5 designs: Upload, Results, Auth; stub shells: Dashboard, History, Workout Logger, Onboarding</div>
-    <div class="task task-sq1 task-dep"><span class="task-id">S1-W5-06</span><div class="dep-tag">OUTPUTS →</div> SSE skeleton: define processing states + event contracts for Squad 2</div>
-    <div class="task task-sq1"><span class="task-id">S1-W5-07</span>Deploy scaffold to Vercel — connect GitHub repo, configure auto-deploy on dev branch</div>
-    <div class="task task-sq1 task-dep"><span class="task-id">S1-W5-08</span><div class="new-tag">MOVED</div> Build Upload screen — exercise selector, weight input, file picker, submit button. Filming tips: inline Google image/video + camera angle tips copy (no custom filming)</div>
+    <div class="task task-sq1 task-design task-done"><span class="task-id">S1-W5-01</span><div class="done-tag">✓ DONE</div><div class="design-tag">DESIGN HANDOFF</div> Upload video → Processing → Form Analysis screens</div>
+    <div class="task task-sq1 task-done"><span class="task-id">S1-W5-02</span><div class="done-tag">✓ DONE</div> Scaffold React + Tailwind project</div>
+    <div class="task task-sq1 task-dep task-done"><span class="task-id">S1-W5-03</span><div class="done-tag">✓ DONE</div> Define JSON schema for all FE responses — see FE_Response_Schemas.md</div>
+    <div class="task task-sq1 task-carry"><span class="task-id">S1-W5-04</span><div class="carry-tag">↓ CARRY → W6</div> Build dummy data fixtures matching schema</div>
+    <div class="task task-sq1 task-carry"><span class="task-id">S1-W5-05</span><div class="carry-tag">↓ CARRY → W6</div> Scaffold screen shells: Upload, Results; stub shells: Dashboard, History, Workout Logger</div>
+    <div class="task task-sq1 task-dep task-done"><span class="task-id">S1-W5-06</span><div class="done-tag">✓ DONE</div> SSE skeleton: define processing states + event contracts for Squad 2 — see FE_SSE_and_Errors.md</div>
+    <div class="task task-sq1 task-done"><span class="task-id">S1-W5-07</span><div class="done-tag">✓ DONE</div> Deploy scaffold to Vercel — GitHub repo connected, auto-deploy on dev branch live</div>
+    <div class="task task-sq1 task-dep task-carry"><span class="task-id">S1-W5-08</span><div class="carry-tag">↓ CARRY → W6</div> Build Upload screen — exercise selector, weight input, file picker, filming tips</div>
   </div>
 
   <div class="cell sq1">
+    <div class="task task-sq1 task-carry"><span class="task-id">S1-W5-04</span><div class="carry-tag">↓ CARRY W5→W6</div> Build dummy data fixtures matching FE_Response_Schemas.md field names</div>
+    <div class="task task-sq1 task-carry"><span class="task-id">S1-W5-05</span><div class="carry-tag">↓ CARRY W5→W6</div> Scaffold screen shells: Upload, Results; stub shells: Dashboard, History, Workout Logger</div>
+    <div class="task task-sq1 task-carry"><span class="task-id">S1-W5-08</span><div class="carry-tag">↓ CARRY W5→W6</div> Build Upload screen — exercise selector, weight input, file picker, filming tips</div>
     <div class="task task-sq1 task-design"><span class="task-id">S1-W6-01</span><div class="design-tag">DESIGN HANDOFF</div> Homepage · Authentication · Profile · User Profile screens</div>
-    <div class="task task-sq1" style="opacity:0.4;text-decoration:line-through;"><span class="task-id">S1-W6-02</span>Moved to W5 — see S1-W5-08</div>
     <div class="task task-sq1"><span class="task-id">S1-W6-03</span>Wire SSE to real processing states — test against Squad 2 stub endpoint</div>
     <div class="task task-sq1"><span class="task-id">S1-W6-04</span>Build Results screen using dummy data: score, joint corrections, coaching tips</div>
     <div class="task task-sq1 task-updated"><span class="task-id">S1-W6-05</span><div class="updated-tag">UPDATED</div>Build Demo User Selection screen — proxy for auth. Shows 3 demo users (user_001/002/003), select one to load their session history + dashboard. user_id sent in POST body on all upload requests.</div>
@@ -421,15 +427,15 @@
   </div>
 
   <div class="cell sq2">
-    <div class="task task-sq2"><span class="task-id">S2-W5-01</span><div class="new-tag">NEW</div> Create GitHub repository: initialise monorepo structure (FE + BE), branch strategy, README, contributor guide</div>
-    <div class="task task-sq2"><span class="task-id">S2-W5-02</span>Provision GCP project, Cloud Storage, API Gateway — REST endpoints only (SSE routes via Cloud Run + HTTPS LB directly)</div>
-    <div class="task task-sq2"><span class="task-id">S2-W5-03</span>Scaffold Python FastAPI: routes, services, models</div>
-    <div class="task task-sq2 task-dep"><span class="task-id">S2-W5-06</span><div class="dep-tag">OUTPUTS →</div> Define full structured DB schema: users, user_profiles, exercises, form_analyses, form_analysis_results. Workout/plan tables are frontend-only — no DB. Full schema: DB_Schema.md</div>
-    <div class="task task-sq2 task-dep"><span class="task-id">S2-W5-07a</span><div class="dep-tag">OUTPUTS →</div> Stub /upload: accept multipart (video + exercise_id + weight_value + weight_unit + user_id + session_id), save to GCS, write form_analyses record (status: uploaded), return { analysis_id } — no streaming</div>
-    <div class="task task-sq2 task-dep"><span class="task-id">S2-W5-07b</span><div class="dep-tag">NEEDS 07a</div> Stub SSE stream: GET /analysis/{analysis_id}/stream — fake pipeline events with delays: upload_received → mediapipe → nemotron → rag → claude → analysis_complete</div>
-    <div class="task task-sq2 task-dep"><span class="task-id">S2-W5-08</span><div class="dep-tag">NEEDS S2-W5-06</div> Provision Supabase — create project, run migrations (5 core tables only), no RLS (auth de-scoped), seed exercises table, pre-seed user_001/002/003</div>
-    <div class="task task-sq2 task-dep" style="border-left-color:#f87171;background:#1a0a0a;"><span class="task-id" style="color:#f87171;">S2-W5-09</span><div class="new-tag">NEW ⚠️ URGENT</div><div class="dep-tag">OUTPUTS →</div> Provision NVIDIA NIM API access for Nemotron — hello world call confirmed from Python backend, multimodal input format documented. Must complete by Thu — blocks all W6 Nemotron work</div>
-    <div class="task task-sq2 task-dep"><span class="task-id">S2-W5-10</span><div class="new-tag">NEW</div><div class="dep-tag">NEEDS S2-W5-09</div> Define Nemotron test plan (Scenarios A/B/C) — write test scripts, confirm joint overlay video format, sample biomechanics JSON ready. Execute W6.</div>
+    <div class="task task-sq2 task-done"><span class="task-id">S2-W5-01</span><div class="done-tag">✓ DONE</div> GitHub repo: monorepo structure, branch strategy, README</div>
+    <div class="task task-sq2 task-done"><span class="task-id">S2-W5-02</span><div class="done-tag">✓ DONE</div> GCP project, Cloud Storage, API Gateway provisioned</div>
+    <div class="task task-sq2 task-done"><span class="task-id">S2-W5-03</span><div class="done-tag">✓ DONE</div> Python FastAPI scaffold: routes, services, models</div>
+    <div class="task task-sq2 task-dep task-done"><span class="task-id">S2-W5-06</span><div class="done-tag">✓ DONE</div> Full structured DB schema defined — see DB_Schema.md</div>
+    <div class="task task-sq2 task-dep task-done"><span class="task-id">S2-W5-07a</span><div class="done-tag">✓ DONE</div> Stub POST /upload: GCS save + form_analyses write + return {analysis_id}</div>
+    <div class="task task-sq2 task-dep task-done"><span class="task-id">S2-W5-07b</span><div class="done-tag">✓ DONE</div> Stub SSE stream: GET /analysis/{id}/stream with fake pipeline events</div>
+    <div class="task task-sq2 task-dep task-done"><span class="task-id">S2-W5-08</span><div class="done-tag">✓ DONE</div> Supabase provisioned: 5 core tables, no RLS, exercises seeded, user_001/002/003 pre-seeded</div>
+    <div class="task task-sq2 task-dep task-carry" style="border-left-color:#f97316;"><span class="task-id" style="color:#fb923c;">S2-W5-09</span><div class="carry-tag">↓ CARRY → W6</div><span style="font-size:8px;font-weight:800;padding:1px 6px;border-radius:3px;background:#2d0a0a;color:#f87171;border:1px solid #7f1d1d;">🚫 BLOCKED</span> NVIDIA NIM API access for Nemotron — not yet confirmed. Blocks all Nemotron work.</div>
+    <div class="task task-sq2 task-dep task-carry"><span class="task-id">S2-W5-10</span><div class="carry-tag">↓ CARRY → W6</div> Nemotron test plan (Scenarios A/B/C) — blocked on S2-W5-09</div>
   </div>
 
   <div class="cell sq2">
@@ -500,12 +506,12 @@
   <div class="cell sq3">
     <div class="task task-sq3 task-cut"><span class="task-id">S3-W5-01</span><div class="cut-tag">SCOPE REDUCED</div>Collect 20–30 RAG sources — replaced by 5–10 MD coaching files injected directly into Claude system prompt. No vector DB corpus needed.</div>
     <div class="task task-sq3 task-dep task-cut"><span class="task-id">S3-W5-02</span><div class="cut-tag">SCOPE REDUCED</div><div class="dep-tag">OUTPUTS →</div> Define vector DB schema: doc structure, metadata (exercise, source type, angle params), embedding strategy</div>
-    <div class="task task-sq3 task-dep"><span class="task-id">S3-W5-03</span><div class="dep-tag">COORDS →</div> Align structured DB schema with Squad 2 (single source of truth)</div>
+    <div class="task task-sq3 task-dep task-done"><span class="task-id">S3-W5-03</span><div class="done-tag">✓ DONE</div> DB schema aligned with Squad 2 — single source of truth in DB_Schema.md</div>
     <div class="task task-sq3 task-cut"><span class="task-id">S3-W5-04</span><div class="cut-tag">SCOPE REDUCED</div>Evaluate + select vector DB: Pinecone / Weaviate / pgvector — not needed. MD files in system prompt replaces vector DB.</div>
     <div class="task task-sq3 task-cut"><span class="task-id">S3-W5-05</span><div class="cut-tag">SCOPE REDUCED</div>Define ingestion pipeline: chunking strategy, embedding model, metadata tagging — not needed. No vector DB.</div>
-    <div class="task task-sq3"><span class="task-id">S3-W5-08</span>Set up OpenCV Python wrapper: video ingestion, frame extraction, timestamp calculation</div>
-    <div class="task task-sq3 task-dep"><span class="task-id">S3-W5-06</span><div class="dep-tag">NEEDS S3-W5-08</div> Define MediaPipe raw output for Goblet Squat: landmarks, coordinate system, confidence — spike on sample video</div>
-    <div class="task task-sq3 task-dep"><span class="task-id">S3-W5-07</span><div class="dep-tag">NEEDS S3-W5-06</div> Define Python biomechanics script logic: angle formulas, rep segmentation algorithm, metrics list</div>
+    <div class="task task-sq3 task-done"><span class="task-id">S3-W5-08</span><div class="done-tag">✓ DONE</div> OpenCV Python wrapper: video ingestion, frame extraction, timestamp calculation</div>
+    <div class="task task-sq3 task-dep task-done"><span class="task-id">S3-W5-06</span><div class="done-tag">✓ DONE</div> MediaPipe raw output defined for Goblet Squat: landmarks, coordinate system, confidence</div>
+    <div class="task task-sq3 task-dep task-done"><span class="task-id">S3-W5-07</span><div class="done-tag">✓ DONE</div> Biomechanics script logic defined: angle formulas, rep segmentation, metrics list — see Kinetic_Biomechanics_Output_Schema.json</div>
   </div>
 
   <div class="cell sq3">
