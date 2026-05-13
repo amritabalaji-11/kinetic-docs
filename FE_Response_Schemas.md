@@ -314,7 +314,7 @@ Auth (JWT + Supabase Auth) is **dropped from MVP scope**. No login, signup, auth
 | Screen | Key fields in dummy data |
 |---|---|
 | Session History | `analysis_id` · `exercise` (display name) · `weight_value` · `weight_unit` · `created_at` · `overall_score` · `progression_recommendation` |
-| Dashboard | Same as history (last 5) · `score_trend: [{ analysis_id, date, overall_score }]` |
+| Dashboard | Same as history (last 5) · `score_trend: [{ analysis_id, date, overall_score }]` · `total_workouts` · `reps_analyzed` · `streak_days` · `avg_form_score` |
 | Workout Logger | `log_id` · `exercise_id` · `sets` · `reps` · `weight_value` · `weight_unit` · `analysis_id` (if linked) · `created_at` |
 
 **Post-demo:** Full endpoints + response schemas to be added after launch.
@@ -348,7 +348,96 @@ Populated in W6 data prep. 3–5 good-form Goblet Squat reference videos run thr
 
 ---
 
+## 7. Analysis Feedback — Deferred (post-demo)
+
+`POST /analysis/{id}/feedback` endpoint is **not built for demo**.
+
+**For demo:** Feedback modal exists as a frontend shell. Thumbs up/down and comment field are rendered but no backend call is made.
+
+**Post-demo:** Full endpoint to be added after launch.
+
+**Endpoint:** `POST /analysis/{id}/feedback`
+
+```json
+{
+  "analysis_id": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
+  "user_id":     "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
+  "rating":      "up",
+  "comment":     "Really helpful coaching cues."
+}
+```
+
+**Field Reference**
+
+| Field | Type | Nullable | Range / Max | Notes |
+|---|---|---|---|---|
+| `analysis_id` | uuid | No | 36 chars | FK → `form_analysis_results` |
+| `user_id` | uuid | No | 36 chars | Hardcoded for demo. From JWT post-demo. |
+| `rating` | enum | No | `up` \| `down` | Thumbs up/down from results screen |
+| `comment` | string | Yes | max 500 chars | Optional free-text from feedback modal |
+
+**DB table — `form_analysis_feedback`**
+
+| Field | Type | Notes |
+|---|---|---|
+| `feedback_id` | uuid (PK) | Generated server-side |
+| `analysis_id` | uuid (FK) | FK → `form_analysis_results` |
+| `user_id` | uuid | |
+| `rating` | enum (`up` / `down`) | |
+| `comment` | string · nullable | |
+| `created_at` | timestamp | Set server-side |
+
+**Response**
+
+Success `201 Created`:
+```json
+{
+  "feedback_id": "3b7d9b1d-4bad-3b7d-9bdd-2b0d7b3dcb6d",
+  "analysis_id": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
+  "created_at":  "2026-05-13T10:32:00Z"
+}
+```
+
+| Field | Type | FE Note |
+|---|---|---|
+| `feedback_id` | uuid | Not displayed. Confirms save succeeded. |
+| `analysis_id` | uuid | Not displayed. |
+| `created_at` | timestamp | Not displayed. |
+
+## 8. Error Responses
+
+All endpoints return the same error shape on failure.
+
+```json
+{
+  "error_code":    "VALIDATION_ERROR",
+  "error_message": "weight_value must be greater than 0",
+  "status":        400
+}
+```
+
+| Field | Type | FE Note |
+|---|---|---|
+| `error_code` | string | Use this to select user-facing message. Never display raw value. |
+| `error_message` | string | Internal/debug only. Never display to user. |
+| `status` | integer | HTTP status code. |
+
+**Error codes by endpoint:**
+
+| Endpoint | Status | `error_code` | User-facing message |
+|---|---|---|---|
+| `POST /upload` | 400 | `VALIDATION_ERROR` | "Check your inputs and try again." |
+| `POST /upload` | 413 | `FILE_TOO_LARGE` | "That video is too large (max 100MB)." |
+| `POST /upload` | 415 | `FORMAT_UNSUPPORTED` | "We can't read that format. Export as MP4 and try again." |
+| `POST /upload` | 500 | `UPLOAD_FAILED` | "Something went wrong. Try again." |
+| `GET /analysis/{id}/result` | 404 | `ANALYSIS_NOT_FOUND` | "We couldn't find that analysis." |
+| `GET /analysis/{id}/result` | 500 | `SERVER_ERROR` | "Something went wrong. Try refreshing." |
+| `GET /analysis/{id}/comparison` | 404 | `ANALYSIS_NOT_FOUND` | "We couldn't find that analysis." |
+| `POST /analysis/{id}/feedback` | 400 | `VALIDATION_ERROR` | "Something went wrong saving your feedback." |
+| `POST /analysis/{id}/feedback` | 500 | `SERVER_ERROR` | "Something went wrong saving your feedback." |
+
 ## Changelog
 - May 9, 2026: Initial definition — form analysis, comparison, auth, user profile
 - May 11, 2026: Sync with technical_data_schema.html — weight_value/unit split, single annotated_frame_url, coaching structure, comparison_coaching, variance moved to frontend, performance_over_reps_pct added, auth + profile marked deferred, DB section updated
 - May 12, 2026: Added pipeline overview, Section 0 Upload POST body, field reference tables (type / nullable / range / format / FE display note) for all schemas, exercises reference table, auth section updated to reflect localStorage/sessionStorage approach (auth de-scoped)
+- May 13, 2026: Added total_workouts/reps_analyzed/streak_days/avg_form_score to Section 5 Dashboard dummy fields. Added Section 7 feedback endpoint + DB table. Added feedback POST response (Section 7). Added error response schema (Section 8).
