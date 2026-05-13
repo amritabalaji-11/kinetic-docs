@@ -479,17 +479,17 @@ h1 { font-size: 22px; font-weight: 800; color: #f8fafc; letter-spacing: -0.5px; 
           &nbsp;&nbsp;• If <code style="background:#0d1117;padding:1px 4px;border-radius:3px;">status == "failed"</code>: UPDATE form_analyses status → "failed". Emit full error SSE: { analysis_id, session_id, user_id, error_code, error_stage, retryable, message }.<br>
           &nbsp;&nbsp;• If <code style="background:#0d1117;padding:1px 4px;border-radius:3px;">status == "success"</code>:<br>
           &nbsp;&nbsp;&nbsp;&nbsp;1. UPDATE form_analyses: quality_gate_status + video_score (from process_video return)<br>
-          &nbsp;&nbsp;&nbsp;&nbsp;2. INSERT form_analysis_results Phase 1: overall_form_score, posture_score, stability_score, movement_quality_score, tempo_score, rep_count, rep_scores, biomechanics_json<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;2. INSERT form_analysis_results: biomechanics_json (raw measurements — angles, timing, rep segments) + rep_count. Score fields (overall_form_score, posture_score etc.) are NOT written here — biomechanics produces raw data, not scores. Nemotron writes scores in W7.<br>
           &nbsp;&nbsp;&nbsp;&nbsp;3. Emit biomechanics_complete SSE<br>
           &nbsp;&nbsp;&nbsp;&nbsp;4. W6 scope: emit analysis_complete SSE immediately — acts as pipeline end signal so S1 navigates to Results screen. Moves later in W7+ when Nemotron + Claude are wired.<br>
           &nbsp;&nbsp;&nbsp;&nbsp;5. UPDATE form_analyses status → "complete"<br><br>
-          <strong style="color:#f1f5f9;">Step 4 — Serve results:</strong> GET /analysis/{id}/result returns the <strong style="color:#f1f5f9;">FE_Response_Schemas.md shape</strong> (not raw biomechanics JSON). In W6: overall_score + parameter scores populated from biomechanics output; coaching fields (summary_paragraph, corrections) null until LLM is wired in W7. Same endpoint — same shape — coaching fields fill in as pipeline stages are completed. S1 renders what is non-null and shows placeholders for null fields.
+          <strong style="color:#f1f5f9;">Step 4 — Serve results:</strong> GET /analysis/{id}/result returns the <strong style="color:#f1f5f9;">FE_Response_Schemas.md shape</strong>. In W6: rep_count and quality_gate_status are populated; overall_score and all parameter scores are null (biomechanics produces raw measurements, not scores — Nemotron generates scores in W7); coaching, progression_recommendation, annotated_frame_url are null. S1 renders what is non-null and shows placeholder states for null fields. Same endpoint shape throughout — fields fill in as W7/W8 pipeline stages are wired.
         </div>
       </div>
       <div class="ac-block">
         <div class="ac-label">Overall done when</div>
         <ul class="ac-list">
-          <li class="ac-item"><span class="ac-check">✓</span> Real video uploaded → GCS stored → biomechanics pipeline runs → SSE events fire in correct sequence → Results screen shows real scores before Thursday merge</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Real video uploaded → GCS stored → biomechanics pipeline runs → SSE events fire in correct sequence → Results screen shows rep_count + quality_gate_status. Score fields (overall_score etc.) are null in W6 — scores come from Nemotron in W7, not biomechanics.</li>
         </ul>
       </div>
 
@@ -525,12 +525,21 @@ h1 { font-size: 22px; font-weight: 800; color: #f8fafc; letter-spacing: -0.5px; 
         <div style="background:#080d12;border:1px solid #1e3a5f;border-radius:8px;padding:12px 14px;margin-bottom:8px;">
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
             <span style="font-size:9px;font-weight:800;background:#0d1a2e;color:#60a5fa;border:1px solid #1e3a5f;border-radius:4px;padding:2px 7px;">S2-W6-03</span>
-            <span style="font-size:11px;font-weight:700;color:#f1f5f9;">Store biomechanics output → serve GET /analysis/{id}/result</span>
+            <span style="font-size:11px;font-weight:700;color:#f1f5f9;">Store biomechanics JSON to DB + serve GET /analysis/{id}/result</span>
           </div>
-          <div style="font-size:11px;color:#94a3b8;line-height:1.6;margin-bottom:8px;">
-            Depends on S3-W6-P1 (process_video() available). On success return: (1) UPDATE form_analyses: quality_gate_status + video_score. (2) INSERT form_analysis_results Phase 1: overall_form_score, posture_score, stability_score, movement_quality_score, tempo_score, rep_count, rep_scores JSONB, biomechanics_json. (3) UPDATE form_analyses status → complete. Endpoint GET /analysis/{id}/result must return <strong>FE_Response_Schemas.md shape</strong> — scores populated from biomechanics, coaching/progression_recommendation/annotated_frame_url null in W6. Returns 202 if still processing.
+          <div style="font-size:11px;color:#94a3b8;line-height:1.6;margin-bottom:10px;">
+            Depends on S3-W6-P1 (process_video() available). The biomechanics script produces <strong style="color:#f1f5f9;">raw measurements</strong> (joint angles, timing, foot position) — not scores. Scores (posture: 72, stability: 80) come from Nemotron in W7. This task stores the raw data and builds the results endpoint with what's available in W6.<br><br>
+
+            <strong style="color:#e2e8f0;">Step 1 — Record quality gate result</strong><br>
+            UPDATE <code style="background:#0d1117;padding:1px 4px;border-radius:3px;">form_analyses</code>: write <code style="background:#0d1117;padding:1px 4px;border-radius:3px;">quality_gate_status</code> (GOOD / ACCEPTABLE) and <code style="background:#0d1117;padding:1px 4px;border-radius:3px;">video_score</code> from process_video() return. This records whether the video was analysable and at what confidence. Claude will use this later to calibrate coaching certainty.<br><br>
+
+            <strong style="color:#e2e8f0;">Step 2 — Save raw biomechanics JSON to DB</strong><br>
+            INSERT into <code style="background:#0d1117;padding:1px 4px;border-radius:3px;">form_analysis_results</code>: <code style="background:#0d1117;padding:1px 4px;border-radius:3px;">biomechanics_json</code> (full raw output — joint angles, timing, foot position, rep segments) and <code style="background:#0d1117;padding:1px 4px;border-radius:3px;">rep_count</code>. <strong style="color:#fbbf24;">Do NOT insert score fields</strong> (overall_form_score, posture_score, etc.) — those come from Nemotron in W7, the biomechanics script does not produce them. Critically: confirm <code style="background:#0d1117;padding:1px 4px;border-radius:3px;">bottom_timestamp_ms</code> per rep is inside the stored JSON — OpenCV Part 2 (frame extraction) needs this to find the worst-rep frame later. Update <code style="background:#0d1117;padding:1px 4px;border-radius:3px;">form_analyses</code> status → "complete".<br><br>
+
+            <strong style="color:#e2e8f0;">Step 3 — Build GET /analysis/{id}/result endpoint</strong><br>
+            Returns <strong>FE_Response_Schemas.md shape</strong>. In W6, the populated fields are: <code style="background:#0d1117;padding:1px 4px;border-radius:3px;">rep_count</code> and <code style="background:#0d1117;padding:1px 4px;border-radius:3px;">quality_gate_status</code>. All score fields (overall_score, posture/stability/movement_quality/tempo scores) and coaching fields are null — this is expected, not a bug. Nemotron wires these in W7. Returns 202 Accepted if pipeline still processing.
           </div>
-          <div style="font-size:10px;color:#4ade80;"><strong>Done when:</strong> GET /analysis/{id}/result returns overall_score + rep scores with coaching = null. Squad 1 confirms Results screen renders real scores.</div>
+          <div style="font-size:10px;color:#4ade80;"><strong>Done when:</strong> GET /analysis/{id}/result returns rep_count and quality_gate_status populated. Score and coaching fields are null — Squad 1 confirms Results screen shows rep count and handles null score fields with placeholder states. biomechanics_json confirmed in DB with bottom_timestamp_ms per rep present.</div>
         </div>
 
         <!-- Sub-task 4: S2-W6-04 -->
