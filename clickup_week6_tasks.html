@@ -616,34 +616,79 @@ h1 { font-size: 22px; font-weight: 800; color: #f8fafc; letter-spacing: -0.5px; 
   <div class="task-card">
     <div class="task-card-header">
       <span class="task-id-badge sq2-id">S2-W6-05</span>
-      <div class="task-title">Execute Nemotron Tests A, B, C — compare input combinations, log findings, feed to PM &nbsp;<span style="font-size:9px;font-weight:800;padding:2px 7px;border-radius:4px;background:#1a0a00;color:#f97316;border:1px solid #431407;">🚫 BLOCKED</span></div>
+      <div class="task-title">Model A/B Test — compare JSON-only vs frames vs video for squat form analysis. Feed results to PM for W7 architecture decision. &nbsp;<span style="font-size:9px;font-weight:800;padding:2px 7px;border-radius:4px;background:#1a0a00;color:#f97316;border:1px solid #431407;">⚠ PARTIALLY BLOCKED</span></div>
     </div>
     <div class="task-card-body">
+
       <div style="background:#1a0500;border:1px solid #7f1d1d;border-radius:6px;padding:10px 12px;font-size:11px;color:#fca5a5;line-height:1.6;margin-bottom:10px;">
-        <strong style="color:#f87171;">BLOCKED — S2-W5-09 not complete.</strong> NVIDIA NIM API access not yet confirmed. This task cannot start until API access is working. Raise with PM urgently — unresolved by Wednesday means Nemotron tests slip to W7, which delays the W7 architecture decision. Not in active sprint until unblocked.
+        <strong style="color:#f87171;">Partially blocked.</strong> Control + Variant A require NVIDIA NIM API (S2-W5-09 — not confirmed). <strong style="color:#fbbf24;">Variant B (Gemini) is NOT blocked</strong> — only needs a Google AI API key from aistudio.google.com. Start Variant B immediately while NVIDIA access is resolved. Reference files: <code style="background:#0d1117;padding:1px 4px;border-radius:3px;">Testing/TESTING_GUIDE.md</code> · <code style="background:#0d1117;padding:1px 4px;border-radius:3px;">Testing/squat_ab_test.md</code> · <code style="background:#0d1117;padding:1px 4px;border-radius:3px;">Testing/run_test.py</code>
       </div>
+
       <div class="dep-block">
         <div class="dep-block-label">Dependencies</div>
-        <div class="dep-row-item"><span class="dep-dir">Needs →</span> S2-W5-09 (NVIDIA NIM API access — <strong style="color:#f87171;">BLOCKED, not done</strong>), S2-W5-10 (test plan + scripts — done in W5), S3-W6-02 (real biomechanics JSON from W6 MediaPipe work — needed for Test B and C)</div>
-        <div class="dep-row-item"><span class="dep-dir">Unblocks →</span> W7 pipeline architecture decision — PM uses findings to choose the final Nemotron input format before W7 full integration build</div>
+        <div class="dep-row-item"><span class="dep-dir">Needs →</span> S3-W6-02 (MediaPipe JSON for all 6 test videos — V1–V6 per squat_ab_test.md Section 5) · Google AI API key (Variant B — get from aistudio.google.com) · NVIDIA NIM API key (Control + Variant A — blocked on S2-W5-09) · 6 test videos filmed per squat_ab_test.md Section 5 spec · fault thresholds defined in squat_ab_test.md Section 6</div>
+        <div class="dep-row-item"><span class="dep-dir">Unblocks →</span> W7 architecture decision — which model + input combination to use in production pipeline</div>
       </div>
+
       <div>
-        <div class="desc-label">Description</div>
-        <div class="desc-text">Execute the three Nemotron input test scenarios defined in S2-W5-10 using the test scripts already written. Use a real Goblet Squat video + real biomechanics JSON from Squad 3's W6 pipeline output (not dummy data — real MediaPipe output makes the comparison meaningful).<br><br>
-        <strong style="color:#e2e8f0;">Test A — Joint overlay video only:</strong> Send the joint overlay video with no JSON. Record: response time, which form issues Nemotron identified, field completeness against the agreed Nemotron output schema, chain-of-thought quality.<br><br>
-        <strong style="color:#e2e8f0;">Test B — Biomechanics JSON only:</strong> Send the structured JSON with no video. Same measurements. This isolates what the model can determine from numbers alone.<br><br>
-        <strong style="color:#e2e8f0;">Test C — Both inputs together:</strong> Send video + JSON as dual inputs. Same measurements. This is the intended production architecture — confirm whether it meaningfully outperforms B alone.<br><br>
-        Commit a comparison summary doc: which combination gives the best output quality? Is the video adding value over JSON alone? What is the latency difference? This directly informs whether the production pipeline sends video to Nemotron or JSON only.</div>
+        <div class="desc-label">What we're testing</div>
+        <div class="desc-text">
+          Three model variants on 6 standardised Goblet Squat videos (3 fault types × fault/good pair):<br><br>
+          <strong style="color:#e2e8f0;">Control</strong> — MediaPipe JSON only → <code style="background:#0d1117;padding:1px 4px;border-radius:3px;">meta/llama-3.1-70b-instruct</code> (NVIDIA NIM) <span style="color:#f87171;">🚫 BLOCKED on NVIDIA API</span><br>
+          <strong style="color:#e2e8f0;">Variant A</strong> — JSON + 5–10 key frames → <code style="background:#0d1117;padding:1px 4px;border-radius:3px;">nvidia/llama-3.2-90b-vision-instruct</code> (NVIDIA NIM) <span style="color:#f87171;">🚫 BLOCKED on NVIDIA API</span><br>
+          <strong style="color:#e2e8f0;">Variant B</strong> — JSON + full video → <code style="background:#0d1117;padding:1px 4px;border-radius:3px;">gemini-2.0-flash</code> (Google AI API) <span style="color:#4ade80;">✓ Can run now</span><br>
+          <strong style="color:#e2e8f0;">Variant C</strong> — Nemotron (NVIDIA NIM) — run only if model access confirmed on build.nvidia.com. Do not block A/B on this. <span style="color:#f87171;">🚫 BLOCKED</span><br><br>
+
+          <strong style="color:#e2e8f0;">6 test videos required</strong> (film per squat_ab_test.md Section 5):<br>
+          V1 — Depth FAULT (side view, quarter squat) · V2 — Depth GOOD (side view, full depth)<br>
+          V3 — Knee tracking FAULT (front view, knee cave) · V4 — Knee tracking GOOD (front view)<br>
+          V5 — Torso FAULT (side view, excessive lean) · V6 — Torso GOOD (side view, upright)<br><br>
+
+          <strong style="color:#e2e8f0;">Before running:</strong> Fill in fault thresholds in squat_ab_test.md Section 6 (DEPTH_FAULT_THRESHOLD_DEGREES, LEAN_FAULT_THRESHOLD_DEGREES, VALGUS_FAULT_THRESHOLD_MM — starting points are in the file). Confirm ground truth labels in Section 5 with a coach.<br><br>
+
+          <strong style="color:#e2e8f0;">Running:</strong> Use <code style="background:#0d1117;padding:1px 4px;border-radius:3px;">python run_test.py</code> — runs all variants sequentially. Expected: Control ~2–4 min, Variant A ~5–10 min, Variant B ~8–15 min. Set API keys first:<br>
+          <code style="background:#0d1117;padding:4px 8px;border-radius:4px;display:block;margin:4px 0;">export NVIDIA_API_KEY=your_key<br>export GOOGLE_API_KEY=your_key</code><br>
+
+          <strong style="color:#e2e8f0;">Outputs generated automatically:</strong><br>
+          <code style="background:#0d1117;padding:1px 4px;border-radius:3px;">results/scores.csv</code> — form accuracy per video per variant (correct/incorrect, confidence, latency). Four coaching quality columns left blank for human rating.<br>
+          <code style="background:#0d1117;padding:1px 4px;border-radius:3px;">results/feedback_for_rating.md</code> — coaching text grouped by video, variant labels hidden in HTML comments. Rate these blind (1–5 per parameter) without looking at comments.<br>
+          <code style="background:#0d1117;padding:1px 4px;border-radius:3px;">results/raw_outputs.json</code> — full model responses. Check <code style="background:#0d1117;padding:1px 4px;border-radius:3px;">evidence</code> field when correct = ❌ to see model reasoning.<br><br>
+
+          <strong style="color:#e2e8f0;">Human rating (coaching quality):</strong> Rate each parameter (Posture / Stability / Movement Quality / Range of Motion) 1–5 per the rubric in squat_ab_test.md Section 8. Rate without looking at variant labels. Someone with coaching/biomechanics knowledge — ideally not the person who ran the test.<br><br>
+
+          <strong style="color:#e2e8f0;">Decision framework</strong> (squat_ab_test.md Section 10):<br>
+          1. Eliminate any variant scoring ≤ 3/6 on form accuracy<br>
+          2. Compare V3/V4 (knee tracking) specifically — if visual variants don't beat Control here, visual input is not justified<br>
+          3. If form accuracy tied, prefer lower latency<br>
+          4. Document cost per video for the winning variant — needed for pricing decisions<br>
+          5. Check confidence calibration — a model reporting ≥0.8 confidence on wrong answers is dangerous
+        </div>
       </div>
+
       <div class="ac-block">
-        <div class="ac-label">Acceptance Criteria</div>
+        <div class="ac-label">Acceptance Criteria — Setup</div>
         <ul class="ac-list">
-          <li class="ac-item"><span class="ac-check">✓</span> All three test scenarios executed against NVIDIA NIM API using real MediaPipe biomechanics JSON from this week</li>
-          <li class="ac-item"><span class="ac-check">✓</span> For each scenario: response time recorded, Nemotron output schema field completeness checked (present / missing / malformed)</li>
-          <li class="ac-item"><span class="ac-check">✓</span> Comparison summary committed to <code style="background:#1e293b;padding:1px 4px;border-radius:3px;font-size:11px;">/tests/weekly-results/W6-Nemotron-ABC-comparison.md</code></li>
-          <li class="ac-item"><span class="ac-check">✓</span> Summary answers: (1) which input combination produces best output quality? (2) does video add meaningful value over JSON alone? (3) what is the latency tradeoff?</li>
-          <li class="ac-item"><span class="ac-check">✓</span> Raw input + output for each test scenario saved alongside the summary doc</li>
-          <li class="ac-item"><span class="ac-check">✓</span> Findings shared with PM (Amrita / Liwei) by Thursday — architecture decision made before W7 starts</li>
+          <li class="ac-item"><span class="ac-check">✓</span> 6 test videos filmed and named V1–V6 per squat_ab_test.md Section 5 spec (side view for V1/2/5/6, front view for V3/4)</li>
+          <li class="ac-item"><span class="ac-check">✓</span> MediaPipe JSON extracted for all 6 videos via S3-W6-02 pipeline. JSON files placed in <code style="background:#1e293b;padding:1px 4px;border-radius:3px;font-size:11px;">backend/eval/json/</code></li>
+          <li class="ac-item"><span class="ac-check">✓</span> Ground truth labels confirmed in squat_ab_test.md Section 5 (V1/V3/V5 = fault, V2/V4/V6 = good)</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Fault thresholds filled in squat_ab_test.md Section 6 before running any variant</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Google AI API key confirmed working — Variant B (Gemini) runs without errors on V1</li>
+        </ul>
+        <div class="ac-label" style="margin-top:10px;">Acceptance Criteria — Execution</div>
+        <ul class="ac-list">
+          <li class="ac-item"><span class="ac-check">✓</span> Variant B (Gemini — JSON + video) run on all 6 videos. scores.csv populated for Variant B.</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Control (Llama 70B — JSON only) run on all 6 videos — when NVIDIA API unblocked</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Variant A (Llama 90B Vision — JSON + frames) run on all 6 videos — when NVIDIA API unblocked</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Variant C (Nemotron) run if model confirmed on build.nvidia.com — optional, do not block A/B on this</li>
+          <li class="ac-item"><span class="ac-check">✓</span> raw_outputs.json committed to <code style="background:#1e293b;padding:1px 4px;border-radius:3px;font-size:11px;">backend/eval/results/</code> for all completed variants</li>
+        </ul>
+        <div class="ac-label" style="margin-top:10px;">Acceptance Criteria — Evaluation</div>
+        <ul class="ac-list">
+          <li class="ac-item"><span class="ac-check">✓</span> Coaching quality rated 1–5 per parameter blind (without looking at variant labels). Ratings added to blank columns in scores.csv</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Aggregate results table (squat_ab_test.md Section 9) filled in — form accuracy /6, avg latency, coaching quality avg per variant</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Decision framework (Section 10) applied — winning variant documented with rationale</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Cost per video recorded for winning variant</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Summary committed to <code style="background:#1e293b;padding:1px 4px;border-radius:3px;font-size:11px;">backend/eval/results/W6-model-comparison-summary.md</code> and shared with PM before W7 starts</li>
         </ul>
       </div>
     </div>
