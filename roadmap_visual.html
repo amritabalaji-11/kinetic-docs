@@ -457,10 +457,10 @@
   </div>
 
   <div class="cell sq2">
-    <div class="task task-sq2"><span class="task-id">S2-W7-01</span>Complete Nemotron integration: full JSON output + word-level timestamps + chain-of-thought</div>
-    <div class="task task-sq2 task-dep task-updated"><span class="task-id">S2-W7-02</span><div class="updated-tag">UPDATED</div><div class="dep-tag">RECEIVES ←</div> On Nemotron output: inject MD coaching files into Claude system prompt (replaces RAG retrieval endpoint). No vector DB call.</div>
+    <div class="task task-sq2"><span class="task-id">S2-W7-01</span>Complete Nemotron integration: full JSON output + word-level timestamps + chain-of-thought. <strong>Error handling:</strong> NEMOTRON_TIMEOUT (retryable: true), NEMOTRON_NO_OUTPUT (retryable: true), NEMOTRON_CONTEXT_OVERFLOW (retryable: false) — emit full SSE error shape per FE_SSE_and_Errors.md</div>
+    <div class="task task-sq2 task-dep task-updated"><span class="task-id">S2-W7-02</span><div class="updated-tag">UPDATED</div><div class="dep-tag">RECEIVES ←</div> On Nemotron output: inject MD coaching files into Claude system prompt. <strong>Error handling:</strong> RAG_UNAVAILABLE + RAG_NO_RESULTS (both retryable: "partial" — pipeline continues to Claude without coaching context, results still load)</div>
     <div class="task task-sq2"><span class="task-id">S2-W7-03</span>Query structured DB: retrieve user weight history + past form sessions</div>
-    <div class="task task-sq2"><span class="task-id">S2-W7-04</span>Pass Nemotron output + MD coaching files (system prompt) + user history + weight → Claude Sonnet → coaching output</div>
+    <div class="task task-sq2"><span class="task-id">S2-W7-04</span>Pass Nemotron output + MD coaching files + user history → Claude Sonnet → coaching output. <strong>Error handling:</strong> CLAUDE_TIMEOUT (retryable: true), CLAUDE_ERROR (retryable: true) — emit full SSE error shape per FE_SSE_and_Errors.md</div>
     <div class="task task-sq2 task-dep task-cut"><span class="task-id">S2-W7-05</span><div class="cut-tag">AUTH DROPPED</div><div class="dep-tag">OUTPUTS →</div> Auth endpoints: POST /auth/signup, POST /auth/login — removed for demo. Using hardcoded user IDs.</div>
     <div class="task task-sq2 task-dep task-cut"><span class="task-id">S2-W7-06</span><div class="cut-tag">AUTH DROPPED</div><div class="dep-tag">OUTPUTS →</div> Onboarding endpoint: POST /users/profile — removed. No auth = no onboarding flow. Profile is frontend shell only.</div>
   </div>
@@ -471,7 +471,7 @@
     <div class="task task-sq2 task-dep task-cut"><span class="task-id">S2-W8-03</span><div class="cut-tag">FE ONLY</div><div class="dep-tag">OUTPUTS →</div> Track Workout endpoints — removed. Workout Tracker is frontend only for demo.</div>
     <div class="task task-sq2"><span class="task-id">S2-W8-04</span>User history query endpoint: all past form sessions per exercise with weights + scores</div>
     <div class="task task-sq2"><span class="task-id">S2-W8-05</span>Refine Claude Sonnet prompt engineering: specific, actionable coaching language</div>
-    <div class="task task-sq2"><span class="task-id">S2-W8-06</span>Error handling: MediaPipe keypoint failure, Nemotron timeout, Claude API failure</div>
+    <div class="task task-sq2"><span class="task-id">S2-W8-06</span>Comprehensive error handling audit — verify all pipeline stages emit correct SSE error shape with right error_stage + retryable value. Stages: quality_gate (M1-M6) · biomechanics (4 codes) · nemotron (3 codes) · frame_extraction (1 partial) · rag (2 partial) · claude (2 codes) · pipeline (2 codes). Reference: FE_SSE_and_Errors.md full taxonomy.</div>
   </div>
 
   <div class="cell sq2">

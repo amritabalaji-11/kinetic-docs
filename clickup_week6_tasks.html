@@ -260,16 +260,58 @@ h1 { font-size: 22px; font-weight: 800; color: #f8fafc; letter-spacing: -0.5px; 
       </div>
       <div>
         <div class="desc-label">Description</div>
-        <div class="desc-text">Validate that the W5 SSE client skeleton correctly handles all events from Squad 2's stub stream and update the upload processing UI to render realistic states for each event. This is a test-and-polish task — the connection logic exists from W5 but the UI states and copy need to be confirmed against the agreed event contract. Specifically: each SSE event must trigger a visible UI state change (message update + progress bar movement); the error event must render the correct CTA based on the retryable flag; and the EventSource connection must close cleanly on analysis_complete. Test with the W5 stub endpoint before wiring to the real endpoint in S1-W6-07.</div>
+        <div class="desc-text">Validate that the W5 SSE client skeleton correctly handles all events from Squad 2's stub stream and update the upload processing UI to render realistic states for each event. Each SSE event must trigger a visible UI state change (message update + progress bar movement). The error event must render the correct CTA and message based on the error_code and retryable field. EventSource must close cleanly on analysis_complete. Test with the W5 stub endpoint before wiring to the real endpoint in S1-W6-07. Full SSE event shapes and error taxonomy: FE_SSE_and_Errors.md.</div>
+      </div>
+      <div class="ac-block">
+        <div class="ac-label">Acceptance Criteria — SSE event states</div>
+        <ul class="ac-list">
+          <li class="ac-item"><span class="ac-check">✓</span> All pipeline SSE events trigger correct UI copy and progress bar advance — see FE_SSE_and_Errors.md Section 1 for suggested copy per event</li>
+          <li class="ac-item"><span class="ac-check">✓</span> EventSource closes cleanly on <code style="background:#1e293b;padding:1px 4px;border-radius:3px;font-size:11px;">analysis_complete</code> — no dangling connection</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Progress bar animates smoothly — no jumps or backwards movement</li>
+        </ul>
+        <div class="ac-label" style="margin-top:10px;">Acceptance Criteria — SSE error rendering (all pipeline stages)</div>
+        <ul class="ac-list">
+          <li class="ac-item"><span class="ac-check">✓</span> <strong>retryable: "true"</strong> → show "Try again" button. Re-submits same upload. Used for: BIOMECHANICS_COMPUTE_ERROR, NEMOTRON_TIMEOUT, CLAUDE_TIMEOUT, SYSTEM_ERROR</li>
+          <li class="ac-item"><span class="ac-check">✓</span> <strong>retryable: "false"</strong> → show "Re-film and upload" button. Returns to Upload screen with filming tips visible. Used for: all quality gate errors (M1–M6 codes), VIDEO_TOO_SHORT, NO_MOVEMENT_DETECTED, NEMOTRON_CONTEXT_OVERFLOW</li>
+          <li class="ac-item"><span class="ac-check">✓</span> <strong>retryable: "partial"</strong> → show inline warning only, no blocking CTA. Results still load. Used for: FRAME_EXTRACTION_FAILED, RAG_UNAVAILABLE, RAG_NO_RESULTS</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Error message shown to user is derived from error_code — NOT from the message field (message is internal logging only). User-facing copy for each code: FE_SSE_and_Errors.md quality gate taxonomy</li>
+          <li class="ac-item"><span class="ac-check">✓</span> retryable is a string — use <code style="background:#1e293b;padding:1px 4px;border-radius:3px;font-size:11px;">retryable === "true"</code> not <code style="background:#1e293b;padding:1px 4px;border-radius:3px;font-size:11px;">if (retryable)</code> — the string "false" is truthy in JS</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Tested against Squad 2 stub endpoint and confirmed working before Thursday</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- S1-W6-NEW: Pre-upload validation -->
+  <div class="task-card" style="border-left: 3px solid #f59e0b;">
+    <div class="task-card-header">
+      <span class="task-id-badge sq1-id">S1-W6-08</span>
+      <div class="task-title">Pre-upload client-side validation — file checks before POST /upload is sent &nbsp;<span class="new-tag">NEW</span></div>
+    </div>
+    <div class="task-card-body">
+      <div class="dep-block">
+        <div class="dep-block-label">Dependencies</div>
+        <div class="dep-row-item"><span class="dep-dir">Needs →</span> S1-W5-08 / S1-W6 carry-over (Upload screen built — validation lives on this screen)</div>
+        <div class="dep-row-item"><span class="dep-dir">Unblocks →</span> S2-W6-01 (server never receives invalid files — saves backend error overhead)</div>
+      </div>
+      <div>
+        <div class="desc-label">Description</div>
+        <div class="desc-text">Before the user's video is sent to the backend, S1 validates it client-side. These checks run in the browser — no SSE, no server call. If validation fails, show an inline error on the Upload screen with a specific message per failure type. Full error copy: FE_SSE_and_Errors.md Section 4 — Pre-upload. Four checks to implement:<br><br>
+        <strong>1. FILE_TOO_LARGE</strong> — file size &gt; 500 MB. Message: "That video is too large (max 500 MB). Try trimming it to your working set." CTA: dismiss, re-select file.<br>
+        <strong>2. FORMAT_UNSUPPORTED</strong> — MIME type not .mp4 / .mov / .avi. Message: "We can't read that format. Export as MP4 and try again." CTA: dismiss, re-select file.<br>
+        <strong>3. FILE_CORRUPT</strong> — zero bytes or unreadable header. Message: "That file looks corrupted. Re-export from your camera roll and try again." CTA: dismiss.<br>
+        <strong>4. UPLOAD_TIMEOUT</strong> — network drops mid-transfer. Message: "Upload timed out. Check your connection and try again." CTA: "Try again" (re-submits same file).<br><br>
+        All four checks must complete before the POST /upload request is sent. The Submit button must not be tappable while validation is running.</div>
       </div>
       <div class="ac-block">
         <div class="ac-label">Acceptance Criteria</div>
         <ul class="ac-list">
-          <li class="ac-item"><span class="ac-check">✓</span> All 10 SSE events from the W5 contract trigger correct UI state changes (message copy + progress %)</li>
-          <li class="ac-item"><span class="ac-check">✓</span> Error event with <code style="background:#1e293b;padding:1px 4px;border-radius:3px;font-size:11px;">retryable: true</code> shows "Try again" CTA; <code style="background:#1e293b;padding:1px 4px;border-radius:3px;font-size:11px;">false</code> shows "Re-film and upload"</li>
-          <li class="ac-item"><span class="ac-check">✓</span> EventSource closes cleanly on <code style="background:#1e293b;padding:1px 4px;border-radius:3px;font-size:11px;">analysis_complete</code> — no dangling connection</li>
-          <li class="ac-item"><span class="ac-check">✓</span> Progress bar animates smoothly between stages — no jumps or backwards movement</li>
-          <li class="ac-item"><span class="ac-check">✓</span> Tested against Squad 2 stub endpoint and confirmed working before Thursday</li>
+          <li class="ac-item"><span class="ac-check">✓</span> FILE_TOO_LARGE: selecting a file &gt;500MB shows correct inline error — POST /upload is never sent</li>
+          <li class="ac-item"><span class="ac-check">✓</span> FORMAT_UNSUPPORTED: selecting a .pdf or .png shows correct error — POST /upload never sent</li>
+          <li class="ac-item"><span class="ac-check">✓</span> FILE_CORRUPT: selecting a zero-byte file shows correct error</li>
+          <li class="ac-item"><span class="ac-check">✓</span> UPLOAD_TIMEOUT: network drop mid-transfer shows correct error with "Try again" CTA that re-submits</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Valid file passes all checks and proceeds to POST /upload — no false positives</li>
+          <li class="ac-item"><span class="ac-check">✓</span> Error messages match exactly the copy defined in FE_SSE_and_Errors.md Section 4</li>
         </ul>
       </div>
     </div>
@@ -506,7 +548,11 @@ h1 { font-size: 22px; font-weight: 800; color: #f8fafc; letter-spacing: -0.5px; 
           <div style="font-size:11px;color:#94a3b8;line-height:1.6;margin-bottom:8px;">
             Builds on W5 stub (S2-W5-07a already working). Changes: (1) Accept new fields: <code style="background:#0d1117;padding:1px 4px;border-radius:3px;">user_id</code> + <code style="background:#0d1117;padding:1px 4px;border-radius:3px;">session_id</code> from POST body. (2) GCS path: <code style="background:#0d1117;padding:1px 4px;border-radius:3px;">videos/{user_id}/{analysis_id}/{filename}</code>. (3) DB INSERT to <code style="background:#0d1117;padding:1px 4px;border-radius:3px;">form_analyses</code>: analysis_id, session_id, user_id, exercise_id, weight_value, weight_unit, weight_kg_normalised (compute if lb), video_url, status: <strong>uploaded</strong>, created_at. (4) Reject files &gt;500MB with 413 before GCS write.
           </div>
-          <div style="font-size:10px;color:#4ade80;"><strong>Done when:</strong> POST /upload returns {analysis_id} in &lt;500ms and form_analyses row exists in DB with status: uploaded.</div>
+          <div style="font-size:11px;color:#94a3b8;line-height:1.6;margin-bottom:6px;margin-top:6px;">
+            <strong style="color:#e2e8f0;">HTTP error codes this endpoint must return</strong> (before SSE stream opens — see FE_SSE_and_Errors.md Section 5):<br>
+            400 Bad Request — missing required field in POST body · 413 Payload Too Large — file >500MB · 415 Unsupported Media Type — wrong MIME type · 500 Internal Server Error — crash before SSE opened · 503 Service Unavailable — pipeline infrastructure down
+          </div>
+          <div style="font-size:10px;color:#4ade80;"><strong>Done when:</strong> POST /upload returns {analysis_id} in &lt;500ms and form_analyses row exists in DB with status: uploaded. HTTP error codes return correct status + { "error": "ERROR_CODE" } body for bad requests.</div>
         </div>
 
         <!-- Sub-task 2: S2-W6-02 -->
@@ -546,12 +592,15 @@ h1 { font-size: 22px; font-weight: 800; color: #f8fafc; letter-spacing: -0.5px; 
         <div style="background:#080d12;border:1px solid #7f1d1d;border-radius:8px;padding:12px 14px;margin-bottom:0;">
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
             <span style="font-size:9px;font-weight:800;background:#1a0a0a;color:#f87171;border:1px solid #7f1d1d;border-radius:4px;padding:2px 7px;">S2-W6-04</span>
-            <span style="font-size:11px;font-weight:700;color:#f1f5f9;">Relay quality gate errors over SSE</span>
+            <span style="font-size:11px;font-weight:700;color:#f1f5f9;">Relay pipeline errors over SSE — quality gate + biomechanics stages</span>
           </div>
           <div style="font-size:11px;color:#94a3b8;line-height:1.6;margin-bottom:8px;">
-            When process_video() returns status: "failed": UPDATE form_analyses status → "failed". Emit full error SSE: <code style="background:#0d1117;padding:1px 4px;border-radius:3px;">{ analysis_id, session_id, user_id, error_code, error_stage, retryable, message }</code>. Map all 8 M1–M6 quality gate codes. For occlusion/out_of_frame codes pass through landmark_medians. retryable must be the string "false" not boolean. See FE_SSE_and_Errors.md quality gate taxonomy for full code list and user-facing messages.
+            When process_video() returns status: "failed": UPDATE form_analyses status → "failed". Emit full error SSE shape: <code style="background:#0d1117;padding:1px 4px;border-radius:3px;">{ analysis_id, session_id, user_id, error_code, error_stage, retryable, message }</code>. Map the error based on error_stage from process_video() return:<br><br>
+            <strong style="color:#e2e8f0;">error_stage: "quality_gate"</strong> — 8 M1–M6 codes. All retryable: "false". For occlusion/out_of_frame codes, pass through landmark_medians in the SSE payload. Codes: occlusion_left_side, occlusion_right_side, occlusion_both_sides, out_of_frame_left, out_of_frame_right, poor_video_quality, no_reps_detected, insufficient_reps.<br><br>
+            <strong style="color:#e2e8f0;">error_stage: "biomechanics"</strong> — 4 codes. VIDEO_TOO_SHORT (retryable: "false"), NO_MOVEMENT_DETECTED (retryable: "false"), NO_REPS_DETECTED (retryable: "false"), BIOMECHANICS_COMPUTE_ERROR (retryable: "true" — script crashed, same video may work on retry).<br><br>
+            retryable must always be a string ("true"/"false") not a boolean. Full user-facing messages for each code: FE_SSE_and_Errors.md.
           </div>
-          <div style="font-size:10px;color:#4ade80;"><strong>Done when:</strong> Deliberately bad video triggers correct error SSE with full shape. At least 2 different error codes confirmed in browser DevTools.</div>
+          <div style="font-size:10px;color:#4ade80;"><strong>Done when:</strong> Bad video triggers correct quality gate error SSE. Script error triggers correct biomechanics error SSE with correct retryable value. At least 2 codes from each stage confirmed in browser DevTools with full error shape.</div>
         </div>
 
       </div>
@@ -896,6 +945,13 @@ h1 { font-size: 22px; font-weight: 800; color: #f8fafc; letter-spacing: -0.5px; 
           <li class="ac-item"><span class="ac-check">✓</span> JSON output validated against Kinetic_Biomechanics_Output_Schema.json — no missing required fields</li>
           <li class="ac-item"><span class="ac-check">✓</span> Tested on 3 sample videos: one good form, one with known knee valgus, one with shallow depth — outputs look plausible</li>
           <li class="ac-item"><span class="ac-check">✓</span> Unit tests for angle computation functions committed</li>
+          <li class="ac-item"><span class="ac-check">✓</span> <strong>Error handling:</strong> script returns structured error dict (not an exception crash) for all failure cases Squad 2 must relay. Four codes — error_stage must be "biomechanics" for all:<br>
+            &nbsp;&nbsp;→ <code style="background:#1e293b;padding:1px 4px;border-radius:3px;">VIDEO_TOO_SHORT</code> — video &lt;5s, not enough frames for rep segmentation (retryable: "false")<br>
+            &nbsp;&nbsp;→ <code style="background:#1e293b;padding:1px 4px;border-radius:3px;">NO_MOVEMENT_DETECTED</code> — hip velocity near zero, person is static (retryable: "false")<br>
+            &nbsp;&nbsp;→ <code style="background:#1e293b;padding:1px 4px;border-radius:3px;">NO_REPS_DETECTED</code> — velocity exists but rep segmentation found 0 complete cycles (retryable: "false")<br>
+            &nbsp;&nbsp;→ <code style="background:#1e293b;padding:1px 4px;border-radius:3px;">BIOMECHANICS_COMPUTE_ERROR</code> — unhandled exception (division by zero, missing keypoint index) — return this instead of crashing (retryable: "true")<br>
+            Return format: <code style="background:#1e293b;padding:1px 4px;border-radius:3px;">{"status": "failed", "error_stage": "biomechanics", "error_code": "...", "message": "internal detail"}</code>
+          </li>
         </ul>
       </div>
     </div>
