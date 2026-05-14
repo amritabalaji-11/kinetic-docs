@@ -46,7 +46,7 @@ Who owns what, and what passes between squads at each handoff.
 
 | Field | Type | Nullable | Range / Max | Format | FE Note |
 |---|---|---|---|---|---|
-| `video` | file | No | max 100 MB | `mp4` / `mov` | Validate size and file type before submit. Show error if invalid. |
+| `video` | file | No | max 500 MB | `mp4` / `mov` | Validate size and file type before submit. Show error if invalid. |
 | `exercise_id` | uuid | No | fixed set | — | MVP: always `ex_gob_squat_001`. Read from exercises reference table. |
 | `weight_value` | float | No | 0.5 – 999.9 | 1 dp | Validate > 0 before submit. User enters this. |
 | `weight_unit` | enum | No | `kg` \| `lb` | — | User's unit preference. Stored as-is. |

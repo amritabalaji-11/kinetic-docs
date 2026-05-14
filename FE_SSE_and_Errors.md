@@ -122,7 +122,7 @@ Fires immediately after S2 receives and stores the video to GCS and writes the i
 | Field | Type | Nullable | Range / Max | Format | FE Note |
 |---|---|---|---|---|---|
 | `filename` | string | No | max 255 chars | — | Original filename as uploaded. Display in processing screen if helpful. |
-| `size_mb` | float | No | 0 – 50 | 2 dp | Internal reference. Not required to display. |
+| `size_mb` | float | No | 0 – 500 | 2 dp | Internal reference. Not required to display. |
 | `created_at` | timestamp | No | — | ISO 8601 UTC | Not displayed at this stage — used later in results. |
 
 **Suggested UI copy:** "Video received — starting analysis"
@@ -479,7 +479,7 @@ Fires asynchronously **after** `analysis_complete`. Does not block the results s
 
 | error_code | Trigger | User-facing message | retryable |
 |---|---|---|---|
-| `FILE_TOO_LARGE` | > 50 MB | "That video is too large (max 50 MB). Try trimming it to your working set." | `"false"` |
+| `FILE_TOO_LARGE` | > 500 MB | "That video is too large (max 500 MB). Try trimming it to your working set." | `"false"` |
 | `FORMAT_UNSUPPORTED` | Not `.mp4` / `.mov` / `.avi` | "We can't read that format. Export as MP4 and try again." | `"false"` |
 | `FILE_CORRUPT` | Zero bytes or unreadable header | "That file looks corrupted. Re-export from your camera roll and try again." | `"false"` |
 | `UPLOAD_TIMEOUT` | Network drop mid-transfer | "Upload timed out. Check your connection and try again." | `"true"` |
@@ -592,7 +592,7 @@ Worker-level failures. No S3 dependency.
 | HTTP Status | When | Response body | FE action |
 |---|---|---|---|
 | `400 Bad Request` | Required field missing in POST body | `{ "error": "MISSING_FIELD", "field": "exercise_id" }` | Show inline validation error on upload form |
-| `413 Payload Too Large` | File > 50 MB caught at server | `{ "error": "FILE_TOO_LARGE" }` | Show file size error (same copy as pre-upload `FILE_TOO_LARGE`) |
+| `413 Payload Too Large` | File > 500 MB caught at server | `{ "error": "FILE_TOO_LARGE" }` | Show file size error (same copy as pre-upload `FILE_TOO_LARGE`) |
 | `415 Unsupported Media Type` | Wrong MIME type reaches server | `{ "error": "FORMAT_UNSUPPORTED" }` | Show format error (same copy as pre-upload `FORMAT_UNSUPPORTED`) |
 | `500 Internal Server Error` | S2 crashed before SSE stream opened | `{ "error": "SYSTEM_ERROR" }` | Show generic "Something went wrong" + "Try again" |
 | `503 Service Unavailable` | S2 pipeline infrastructure down | `{ "error": "SERVICE_UNAVAILABLE" }` | Show "Service is temporarily down — try again shortly" |
