@@ -48,7 +48,8 @@
         "knee_angle_at_bottom": 88.2,
         "knee_angle_min": 86.8,
         "depth_classification": "DEEP",
-        "depth_insufficient_flag": false
+        "depth_insufficient_flag": false,
+        "hip_insufficient_flag": false
       },
 
       "stability_data": {
@@ -72,7 +73,7 @@
       "error_values": {},
       "tempo_data": { "eccentric": 0.17, "pause": 0.77, "concentric": 0.50, "total": 1.43, "tempo_notation": "0-1-0", "squat_type": "DEEP" },
       "back_data": { "back_angle_start": 12.1, "back_angle_max": 33.59, "back_angle_at_bottom": 31.8, "time_warning": 1.20, "time_excessive": 0.0, "status": "ACCEPTABLE", "butt_wink_detected": false, "butt_wink_severity_deg": 0.0 },
-      "depth_data": { "hip_angle_start": 175.1, "hip_angle_at_bottom": 87.2, "hip_angle_min": 86.0, "knee_angle_start": 173.2, "knee_angle_at_bottom": 89.4, "knee_angle_min": 88.1, "depth_classification": "DEEP", "depth_insufficient_flag": false },
+      "depth_data": { "hip_angle_start": 175.1, "hip_angle_at_bottom": 87.2, "hip_angle_min": 86.0, "knee_angle_start": 173.2, "knee_angle_at_bottom": 89.4, "knee_angle_min": 88.1, "depth_classification": "DEEP", "depth_insufficient_flag": false, "hip_insufficient_flag": false },
       "stability_data": { "knee_valgus_distance": 0.09, "valgus_phase": "MID", "valgus_flag": false, "heel_lift_detected": false, "heel_lift_magnitude": 0.0 },
       "ankle_data": { "dorsiflexion_at_bottom": 27.9, "foot_turnout_left": 18.5, "foot_turnout_right": 19.3 }
     },
@@ -83,7 +84,7 @@
       "error_values": {},
       "tempo_data": { "eccentric": 0.10, "pause": 0.77, "concentric": 0.50, "total": 1.37, "tempo_notation": "0-1-0", "squat_type": "DEEP" },
       "back_data": { "back_angle_start": 12.8, "back_angle_max": 33.12, "back_angle_at_bottom": 31.4, "time_warning": 1.07, "time_excessive": 0.0, "status": "ACCEPTABLE", "butt_wink_detected": false, "butt_wink_severity_deg": 0.0 },
-      "depth_data": { "hip_angle_start": 174.8, "hip_angle_at_bottom": 86.9, "hip_angle_min": 85.7, "knee_angle_start": 172.9, "knee_angle_at_bottom": 88.8, "knee_angle_min": 87.4, "depth_classification": "DEEP", "depth_insufficient_flag": false },
+      "depth_data": { "hip_angle_start": 174.8, "hip_angle_at_bottom": 86.9, "hip_angle_min": 85.7, "knee_angle_start": 172.9, "knee_angle_at_bottom": 88.8, "knee_angle_min": 87.4, "depth_classification": "DEEP", "depth_insufficient_flag": false, "hip_insufficient_flag": false },
       "stability_data": { "knee_valgus_distance": 0.08, "valgus_phase": "MID", "valgus_flag": false, "heel_lift_detected": false, "heel_lift_magnitude": 0.0 },
       "ankle_data": { "dorsiflexion_at_bottom": 28.1, "foot_turnout_left": 18.3, "foot_turnout_right": 19.0 }
     },
@@ -94,7 +95,7 @@
       "error_values": {},
       "tempo_data": { "eccentric": 0.07, "pause": 0.80, "concentric": 0.60, "total": 1.47, "tempo_notation": "0-1-1", "squat_type": "DEEP" },
       "back_data": { "back_angle_start": 13.2, "back_angle_max": 34.19, "back_angle_at_bottom": 32.5, "time_warning": 1.10, "time_excessive": 0.0, "status": "ACCEPTABLE", "butt_wink_detected": false, "butt_wink_severity_deg": 0.0 },
-      "depth_data": { "hip_angle_start": 174.5, "hip_angle_at_bottom": 87.1, "hip_angle_min": 85.9, "knee_angle_start": 173.0, "knee_angle_at_bottom": 89.0, "knee_angle_min": 87.7, "depth_classification": "DEEP", "depth_insufficient_flag": false },
+      "depth_data": { "hip_angle_start": 174.5, "hip_angle_at_bottom": 87.1, "hip_angle_min": 85.9, "knee_angle_start": 173.0, "knee_angle_at_bottom": 89.0, "knee_angle_min": 87.7, "depth_classification": "DEEP", "depth_insufficient_flag": false, "hip_insufficient_flag": false },
       "stability_data": { "knee_valgus_distance": 0.08, "valgus_phase": "MID", "valgus_flag": false, "heel_lift_detected": false, "heel_lift_magnitude": 0.0 },
       "ankle_data": { "dorsiflexion_at_bottom": 27.6, "foot_turnout_left": 18.6, "foot_turnout_right": 19.4 }
     },
@@ -105,7 +106,7 @@
       "error_values": {},
       "tempo_data": { "eccentric": 0.13, "pause": 0.90, "concentric": 0.50, "total": 1.53, "tempo_notation": "0-1-0", "squat_type": "DEEP" },
       "back_data": { "back_angle_start": 13.8, "back_angle_max": 38.33, "back_angle_at_bottom": 36.4, "time_warning": 1.23, "time_excessive": 0.0, "status": "ACCEPTABLE", "butt_wink_detected": false, "butt_wink_severity_deg": 0.0 },
-      "depth_data": { "hip_angle_start": 174.1, "hip_angle_at_bottom": 87.8, "hip_angle_min": 86.3, "knee_angle_start": 172.4, "knee_angle_at_bottom": 89.6, "knee_angle_min": 88.2, "depth_classification": "DEEP", "depth_insufficient_flag": false },
+      "depth_data": { "hip_angle_start": 174.1, "hip_angle_at_bottom": 87.8, "hip_angle_min": 86.3, "knee_angle_start": 172.4, "knee_angle_at_bottom": 89.6, "knee_angle_min": 88.2, "depth_classification": "DEEP", "depth_insufficient_flag": false, "hip_insufficient_flag": false },
       "stability_data": { "knee_valgus_distance": 0.07, "valgus_phase": "EARLY", "valgus_flag": false, "heel_lift_detected": false, "heel_lift_magnitude": 0.0 },
       "ankle_data": { "dorsiflexion_at_bottom": 27.1, "foot_turnout_left": 18.8, "foot_turnout_right": 19.6 }
     },
@@ -116,7 +117,7 @@
       "error_values": {},
       "tempo_data": { "eccentric": 0.10, "pause": 1.00, "concentric": 0.50, "total": 1.60, "tempo_notation": "0-1-0", "squat_type": "DEEP" },
       "back_data": { "back_angle_start": 13.5, "back_angle_max": 33.65, "back_angle_at_bottom": 32.1, "time_warning": 1.27, "time_excessive": 0.0, "status": "ACCEPTABLE", "butt_wink_detected": false, "butt_wink_severity_deg": 0.0 },
-      "depth_data": { "hip_angle_start": 173.9, "hip_angle_at_bottom": 88.1, "hip_angle_min": 86.7, "knee_angle_start": 172.2, "knee_angle_at_bottom": 90.0, "knee_angle_min": 88.6, "depth_classification": "DEEP", "depth_insufficient_flag": false },
+      "depth_data": { "hip_angle_start": 173.9, "hip_angle_at_bottom": 88.1, "hip_angle_min": 86.7, "knee_angle_start": 172.2, "knee_angle_at_bottom": 90.0, "knee_angle_min": 88.6, "depth_classification": "DEEP", "depth_insufficient_flag": false, "hip_insufficient_flag": false },
       "stability_data": { "knee_valgus_distance": 0.07, "valgus_phase": "EARLY", "valgus_flag": false, "heel_lift_detected": false, "heel_lift_magnitude": 0.0 },
       "ankle_data": { "dorsiflexion_at_bottom": 26.8, "foot_turnout_left": 19.0, "foot_turnout_right": 19.8 }
     },
@@ -127,7 +128,7 @@
       "error_values": {},
       "tempo_data": { "eccentric": 0.13, "pause": 1.03, "concentric": 0.53, "total": 1.70, "tempo_notation": "0-1-1", "squat_type": "DEEP" },
       "back_data": { "back_angle_start": 14.1, "back_angle_max": 36.07, "back_angle_at_bottom": 34.2, "time_warning": 1.47, "time_excessive": 0.0, "status": "ACCEPTABLE", "butt_wink_detected": false, "butt_wink_severity_deg": 0.0 },
-      "depth_data": { "hip_angle_start": 173.7, "hip_angle_at_bottom": 88.5, "hip_angle_min": 87.1, "knee_angle_start": 172.0, "knee_angle_at_bottom": 90.4, "knee_angle_min": 89.0, "depth_classification": "DEEP", "depth_insufficient_flag": false },
+      "depth_data": { "hip_angle_start": 173.7, "hip_angle_at_bottom": 88.5, "hip_angle_min": 87.1, "knee_angle_start": 172.0, "knee_angle_at_bottom": 90.4, "knee_angle_min": 89.0, "depth_classification": "DEEP", "depth_insufficient_flag": false, "hip_insufficient_flag": false },
       "stability_data": { "knee_valgus_distance": 0.06, "valgus_phase": "EARLY", "valgus_flag": false, "heel_lift_detected": false, "heel_lift_magnitude": 0.0 },
       "ankle_data": { "dorsiflexion_at_bottom": 26.4, "foot_turnout_left": 19.2, "foot_turnout_right": 20.0 }
     },
@@ -138,7 +139,7 @@
       "error_values": {},
       "tempo_data": { "eccentric": 0.10, "pause": 1.00, "concentric": 0.53, "total": 1.63, "tempo_notation": "0-1-1", "squat_type": "DEEP" },
       "back_data": { "back_angle_start": 14.4, "back_angle_max": 36.89, "back_angle_at_bottom": 34.9, "time_warning": 1.37, "time_excessive": 0.0, "status": "ACCEPTABLE", "butt_wink_detected": false, "butt_wink_severity_deg": 0.0 },
-      "depth_data": { "hip_angle_start": 173.4, "hip_angle_at_bottom": 88.9, "hip_angle_min": 87.5, "knee_angle_start": 171.8, "knee_angle_at_bottom": 90.8, "knee_angle_min": 89.4, "depth_classification": "DEEP", "depth_insufficient_flag": false },
+      "depth_data": { "hip_angle_start": 173.4, "hip_angle_at_bottom": 88.9, "hip_angle_min": 87.5, "knee_angle_start": 171.8, "knee_angle_at_bottom": 90.8, "knee_angle_min": 89.4, "depth_classification": "DEEP", "depth_insufficient_flag": false, "hip_insufficient_flag": false },
       "stability_data": { "knee_valgus_distance": 0.06, "valgus_phase": "EARLY", "valgus_flag": false, "heel_lift_detected": false, "heel_lift_magnitude": 0.0 },
       "ankle_data": { "dorsiflexion_at_bottom": 26.0, "foot_turnout_left": 19.4, "foot_turnout_right": 20.2 }
     },
@@ -149,7 +150,7 @@
       "error_values": {},
       "tempo_data": { "eccentric": 0.17, "pause": 1.23, "concentric": 0.53, "total": 1.93, "tempo_notation": "0-1-1", "squat_type": "DEEP" },
       "back_data": { "back_angle_start": 14.8, "back_angle_max": 34.28, "back_angle_at_bottom": 33.0, "time_warning": 1.60, "time_excessive": 0.0, "status": "ACCEPTABLE", "butt_wink_detected": false, "butt_wink_severity_deg": 0.0 },
-      "depth_data": { "hip_angle_start": 173.1, "hip_angle_at_bottom": 89.3, "hip_angle_min": 87.9, "knee_angle_start": 171.5, "knee_angle_at_bottom": 91.2, "knee_angle_min": 89.8, "depth_classification": "DEEP", "depth_insufficient_flag": false },
+      "depth_data": { "hip_angle_start": 173.1, "hip_angle_at_bottom": 89.3, "hip_angle_min": 87.9, "knee_angle_start": 171.5, "knee_angle_at_bottom": 91.2, "knee_angle_min": 89.8, "depth_classification": "DEEP", "depth_insufficient_flag": false, "hip_insufficient_flag": false },
       "stability_data": { "knee_valgus_distance": 0.05, "valgus_phase": "EARLY", "valgus_flag": false, "heel_lift_detected": false, "heel_lift_magnitude": 0.0 },
       "ankle_data": { "dorsiflexion_at_bottom": 25.6, "foot_turnout_left": 19.7, "foot_turnout_right": 20.5 }
     },
@@ -160,7 +161,7 @@
       "error_values": {},
       "tempo_data": { "eccentric": 0.17, "pause": 1.10, "concentric": 0.57, "total": 1.83, "tempo_notation": "0-1-1", "squat_type": "DEEP" },
       "back_data": { "back_angle_start": 15.1, "back_angle_max": 34.33, "back_angle_at_bottom": 33.4, "time_warning": 1.57, "time_excessive": 0.0, "status": "ACCEPTABLE", "butt_wink_detected": false, "butt_wink_severity_deg": 0.0 },
-      "depth_data": { "hip_angle_start": 172.8, "hip_angle_at_bottom": 89.7, "hip_angle_min": 88.3, "knee_angle_start": 171.2, "knee_angle_at_bottom": 91.6, "knee_angle_min": 90.2, "depth_classification": "DEEP", "depth_insufficient_flag": false },
+      "depth_data": { "hip_angle_start": 172.8, "hip_angle_at_bottom": 89.7, "hip_angle_min": 88.3, "knee_angle_start": 171.2, "knee_angle_at_bottom": 91.6, "knee_angle_min": 90.2, "depth_classification": "PARALLEL", "depth_insufficient_flag": false, "hip_insufficient_flag": true },
       "stability_data": { "knee_valgus_distance": 0.05, "valgus_phase": "EARLY", "valgus_flag": false, "heel_lift_detected": false, "heel_lift_magnitude": 0.0 },
       "ankle_data": { "dorsiflexion_at_bottom": 25.2, "foot_turnout_left": 20.0, "foot_turnout_right": 20.8 }
     }
@@ -190,7 +191,12 @@
     },
 
     "movement_quality": {
-      "depth_distribution": { "DEEP": 10, "PARALLEL": 0, "SHALLOW": 0 },
+      "depth_distribution": { "DEEP": 9, "PARALLEL": 1, "SHALLOW": 0 },
+      "hip_angle_at_bottom_mean": 88.1,
+      "hip_angle_min_mean": 86.7,
+      "hip_angle_trend": 0.37,
+      "_comment_hip_trend": "positive = hips loading less across reps — forward drift under fatigue",
+      "hip_insufficient_reps": 1,
       "knee_angle_min_mean": 88.3,
       "knee_angle_at_bottom_mean": 89.9,
       "depth_trend": 0.36,
