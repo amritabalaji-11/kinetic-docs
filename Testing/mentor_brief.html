@@ -238,11 +238,113 @@ strong { color: #e0e8f0; font-weight: 600; }
     </div>
   </div>
 
+  <!-- Next A/B Test -->
+  <div class="grid-full">
+    <div class="card" style="border-color:#2e5580;background:#1a2e45;">
+      <div class="card-title" style="color:#5b9bd5;font-size:12px;">NEXT A/B TEST — FINDING THE BEST ARCHITECTURE FOR PRODUCTION</div>
+      <p style="margin-bottom:14px;color:#7a9ab5;">The pipeline test (Options 1–3) validated that all architectures score 6/6 on accuracy. The open question is: <strong style="color:#e0e8f0">which combination wins on cost + latency + coaching quality when PT-vetted?</strong> Two of the five options below are already tested — three still need to run.</p>
+
+      <table class="results-table">
+        <thead>
+          <tr>
+            <th>Architecture</th>
+            <th>Models</th>
+            <th>Analysis (avg)</th>
+            <th>Coaching (avg)</th>
+            <th>Total (avg)</th>
+            <th>Est. Cost/Call</th>
+            <th>Coaching Quality</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="opacity:0.6;">
+            <td><strong>1 LLM — Gemini only</strong></td>
+            <td>Gemini 2.5 Flash</td>
+            <td>—</td><td>—</td><td>~22s</td>
+            <td>$0.001</td>
+            <td>Not yet PT-rated</td>
+            <td><span class="badge warn">To test</span></td>
+          </tr>
+          <tr style="opacity:0.6;">
+            <td><strong>1 LLM — Haiku only</strong></td>
+            <td>Claude Haiku 4.5</td>
+            <td>—</td><td>—</td><td>~12s</td>
+            <td>$0.011</td>
+            <td>Not yet PT-rated</td>
+            <td><span class="badge warn">To test</span></td>
+          </tr>
+          <tr>
+            <td><strong>1 LLM — Sonnet only</strong></td>
+            <td>Claude Sonnet 4.6</td>
+            <td colspan="2" style="text-align:center;">33.8s (single call)</td><td>33.8s</td>
+            <td>$0.033</td>
+            <td>Pending PT rating</td>
+            <td><span class="badge pass">Tested ✓</span></td>
+          </tr>
+          <tr>
+            <td><strong>2 LLM — Haiku → Sonnet</strong></td>
+            <td>Haiku analyses · Sonnet coaches</td>
+            <td>7.2s</td><td>28.5s</td><td>35.7s</td>
+            <td>$0.017</td>
+            <td>Pending PT rating</td>
+            <td><span class="badge pass">Tested ✓</span></td>
+          </tr>
+          <tr>
+            <td><strong>2 LLM — Gemini → Sonnet</strong></td>
+            <td>Gemini analyses · Sonnet coaches</td>
+            <td>21.4s</td><td>25.7s</td><td>47.1s</td>
+            <td>$0.007</td>
+            <td>Pending PT rating</td>
+            <td><span class="badge pass">Tested ✓</span></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div style="margin-top:14px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;">
+
+        <div style="background:#1a2535;border-radius:8px;padding:12px 14px;border:1px solid #243040;">
+          <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:#ffa726;margin-bottom:8px;">Latency Snapshot</div>
+          <div style="font-size:11px;color:#b0bec5;line-height:1.9;">
+            Haiku only: <strong style="color:#fff;">~12s</strong><br>
+            Gemini only: <strong style="color:#fff;">~22s</strong><br>
+            Sonnet only: <strong style="color:#fff;">~34s</strong><br>
+            Haiku → Sonnet: <strong style="color:#fff;">~36s</strong><br>
+            Gemini → Sonnet: <strong style="color:#fff;">~47s</strong>
+          </div>
+          <div style="margin-top:8px;font-size:10px;color:#4a6070;">Sonnet coaching step = ~27s fixed cost regardless of analysis model</div>
+        </div>
+
+        <div style="background:#1a2535;border-radius:8px;padding:12px 14px;border:1px solid #243040;">
+          <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:#66bb6a;margin-bottom:8px;">Cost Snapshot</div>
+          <div style="font-size:11px;color:#b0bec5;line-height:1.9;">
+            Gemini only: <strong style="color:#66bb6a;">$0.001</strong> → $1/1k analyses<br>
+            Gemini → Sonnet: <strong style="color:#66bb6a;">$0.007</strong> → $7/1k<br>
+            Haiku only: <strong style="color:#fff;">$0.011</strong> → $11/1k<br>
+            Haiku → Sonnet: <strong style="color:#fff;">$0.017</strong> → $17/1k<br>
+            Sonnet only: <strong style="color:#ffa726;">$0.033</strong> → $33/1k
+          </div>
+          <div style="margin-top:8px;font-size:10px;color:#4a6070;">At $15/month · 8 analyses/month per user</div>
+        </div>
+
+        <div style="background:#1a2535;border-radius:8px;padding:12px 14px;border:1px solid #243040;">
+          <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:#ab47bc;margin-bottom:8px;">What PT Rating Will Decide</div>
+          <div style="font-size:11px;color:#b0bec5;line-height:1.7;">
+            Does <strong style="color:#fff;">Sonnet coaching</strong> (Options 4 & 5) produce noticeably better feedback than <strong style="color:#fff;">Haiku or Gemini coaching alone</strong> (Options 1 & 2)?<br><br>
+            If yes → pay the premium for Sonnet coaching<br>
+            If no → Haiku or Gemini alone wins on every dimension
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
   <!-- Footer -->
   <div class="footer">
     <span>Kinetic AI — Internal  |  Not for distribution</span>
     <span>Tested by: Amrita + Ezequiel  |  May 2026</span>
-    <span>Next: PT coaching quality ratings pending  |  Output format user test (Format A vs B) pending</span>
+    <span>Open items: PT coaching ratings · Output format user test (Format A vs B)</span>
   </div>
 
 </div>
