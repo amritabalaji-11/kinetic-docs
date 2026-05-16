@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kinetic AI — Model A/B Test Summary</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+       background: #0f1923; color: #fff; min-height: 100vh; padding: 32px 24px; }
+
+.slide { max-width: 1100px; margin: 0 auto; }
+
+/* Header */
+.header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 28px; }
+.title-block h1 { font-size: 28px; font-weight: 800; color: #fff; letter-spacing: -0.5px; }
+.title-block h2 { font-size: 14px; font-weight: 400; color: #7a8fa6; margin-top: 4px; }
+.meta { text-align: right; font-size: 11px; color: #4a6070; line-height: 1.8; }
+.tag { display: inline-block; background: #1e3a5f; color: #5b9bd5; font-size: 11px;
+       font-weight: 700; padding: 3px 10px; border-radius: 12px; margin-bottom: 8px; }
+
+/* Grid */
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+.grid-full { margin-bottom: 14px; }
+
+/* Cards */
+.card { background: #1a2535; border-radius: 10px; padding: 16px 18px; border: 1px solid #243040; }
+.card.accent { border-color: #2e5580; background: #1a2e45; }
+.card.winner { border-color: #2e7d32; background: #1a3020; }
+.card.warn { border-color: #7a4a00; background: #2a2010; }
+.card-title { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px;
+              color: #5b9bd5; margin-bottom: 10px; }
+.card-title.green { color: #66bb6a; }
+.card-title.orange { color: #ffa726; }
+.card-title.red { color: #ef5350; }
+.card-title.purple { color: #ab47bc; }
+
+/* Text */
+p, li { font-size: 12.5px; color: #b0bec5; line-height: 1.65; }
+ul { padding-left: 16px; }
+li { margin-bottom: 3px; }
+strong { color: #e0e8f0; font-weight: 600; }
+.highlight { color: #5b9bd5; font-weight: 700; }
+.good { color: #66bb6a; font-weight: 700; }
+.warn-text { color: #ffa726; font-weight: 700; }
+.bad { color: #ef5350; font-weight: 700; }
+
+/* Results table */
+.results-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.results-table th { background: #243040; color: #7a9ab5; font-size: 10px; font-weight: 700;
+                    text-transform: uppercase; padding: 7px 10px; text-align: left; letter-spacing: 0.5px; }
+.results-table td { padding: 7px 10px; border-bottom: 1px solid #1e2d3d; color: #b0bec5;
+                    vertical-align: top; }
+.results-table tr:last-child td { border-bottom: none; }
+.results-table tr.winner-row td { background: #1a3020; color: #c8e6c9; }
+.results-table tr.eliminated td { opacity: 0.5; }
+.badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 700; }
+.badge.pass { background: #1b5e20; color: #a5d6a7; }
+.badge.fail { background: #4a1010; color: #ef9a9a; }
+.badge.warn { background: #4a3000; color: #ffcc80; }
+
+/* Divider */
+.divider { height: 1px; background: #243040; margin: 6px 0; }
+
+/* Footer */
+.footer { margin-top: 20px; padding-top: 14px; border-top: 1px solid #243040;
+          display: flex; justify-content: space-between; font-size: 10px; color: #3a5060; }
+</style>
+</head>
+<body>
+<div class="slide">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="title-block">
+      <div class="tag">KINETIC AI — MENTOR BRIEF</div>
+      <h1>Model A/B Test — Goblet Squat Form Analysis</h1>
+      <h2>Evaluating LLM vision models for biomechanics fault detection + coaching generation</h2>
+    </div>
+    <div class="meta">
+      May 2026<br>
+      2 testers (Amrita + Ezequiel)<br>
+      6 videos · 9 variants · 54 API calls
+    </div>
+  </div>
+
+  <!-- Row 1: Objective / Success / Input -->
+  <div class="grid-3">
+
+    <div class="card accent">
+      <div class="card-title">Objective</div>
+      <p>Determine which AI model (or combination) can reliably detect goblet squat form faults from video + biomechanics data, and generate coaching feedback good enough for a fitness product.</p>
+      <div class="divider" style="margin:10px 0"></div>
+      <p><strong>Core question:</strong> Does adding visual input (frames or full video) improve fault detection over JSON-only analysis?</p>
+    </div>
+
+    <div class="card accent">
+      <div class="card-title green">How We Defined Success</div>
+      <ul>
+        <li><strong>Form accuracy:</strong> ≥ 4/6 videos correctly classified (fault or no fault) — minimum bar</li>
+        <li><strong>6/6 = viable</strong> for production consideration</li>
+        <li><strong>Latency:</strong> &lt; 30s for post-session review</li>
+        <li><strong>Cost:</strong> &lt; $0.05/call to maintain margin at $15/month</li>
+        <li><strong>Coaching quality:</strong> PT-rated 1–5 on specificity, accuracy, actionability</li>
+      </ul>
+    </div>
+
+    <div class="card accent">
+      <div class="card-title purple">Inputs Used</div>
+      <ul>
+        <li><strong>6 standardised videos</strong> — 3 fault types × fault + good form pair</li>
+        <li>Depth fault/good (side view)</li>
+        <li>Knee valgus fault/good (front view)</li>
+        <li>Torso lean fault/good (side view)</li>
+        <li><strong>MediaPipe JSON</strong> — joint angles, rep metrics, trends per rep</li>
+        <li><strong>Processed video</strong> — 10fps with skeleton overlay from MediaPipe pipeline</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <!-- Row 2: Variants tested -->
+  <div class="grid-full">
+    <div class="card">
+      <div class="card-title">9 Variants Tested — What Changed Each Time</div>
+      <table class="results-table">
+        <thead>
+          <tr>
+            <th>Variant</th><th>Model</th><th>Visual Input</th>
+            <th>Amrita Score</th><th>Ezequiel Score</th>
+            <th>Avg Latency</th><th>Cost/Call</th><th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="eliminated">
+            <td>Control</td><td>Llama 3.1 70B (NVIDIA)</td><td>JSON only — no video</td>
+            <td>3/6</td><td>5/6</td><td>~90–290s</td><td>—</td>
+            <td><span class="badge fail">Eliminated — too slow</span></td>
+          </tr>
+          <tr class="eliminated">
+            <td>Variant A</td><td>Llama 3.2 90B Vision (NVIDIA)</td><td>8 frames (original)</td>
+            <td>0/6</td><td>4/6</td><td>~40s</td><td>—</td>
+            <td><span class="badge fail">Eliminated — API limits</span></td>
+          </tr>
+          <tr>
+            <td><strong>Variant B</strong></td><td>Gemini 2.5 Flash</td><td>Full original video</td>
+            <td>5/6</td><td>5/6</td><td>~22s</td><td>$0.0016</td>
+            <td><span class="badge warn">Viable — V6 false positive</span></td>
+          </tr>
+          <tr class="winner-row">
+            <td><strong>Variant D ⭐</strong></td><td>Gemini 2.5 Flash</td><td>Full processed video (skeleton overlay)</td>
+            <td><strong>6/6</strong></td><td>5/6</td><td>~22s</td><td>$0.0010</td>
+            <td><span class="badge pass">Winner — cheapest</span></td>
+          </tr>
+          <tr class="eliminated">
+            <td>Variant E</td><td>Llama 3.2 90B Vision (NVIDIA)</td><td>Composite frames (processed)</td>
+            <td>2/6</td><td>5/6</td><td>~55s</td><td>—</td>
+            <td><span class="badge fail">Eliminated — unreliable</span></td>
+          </tr>
+          <tr>
+            <td>Variant F</td><td>GPT-4o mini</td><td>8 frames (original)</td>
+            <td>5/6</td><td>5/6</td><td>~13s</td><td>$0.0039</td>
+            <td><span class="badge warn">Viable — ignores visual</span></td>
+          </tr>
+          <tr>
+            <td>Variant G</td><td>GPT-4o mini</td><td>8 frames (processed)</td>
+            <td>5/6</td><td>5/6</td><td>~13s</td><td>$0.0039</td>
+            <td><span class="badge warn">Viable — same as F</span></td>
+          </tr>
+          <tr class="winner-row">
+            <td><strong>Variant H ⭐</strong></td><td>Claude Haiku 4.5</td><td>8 frames (original)</td>
+            <td><strong>6/6</strong></td><td>5/6</td><td>~12s</td><td>$0.0112</td>
+            <td><span class="badge pass">Winner — fastest</span></td>
+          </tr>
+          <tr class="winner-row">
+            <td><strong>Variant J ⭐</strong></td><td>Claude Sonnet 4.6</td><td>8 frames (original)</td>
+            <td><strong>6/6</strong></td><td>not run</td><td>~30s</td><td>$0.0332</td>
+            <td><span class="badge pass">Winner — best coaching</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Row 3: Key findings + what worked -->
+  <div class="grid-2">
+
+    <div class="card">
+      <div class="card-title green">Key Findings</div>
+      <ul>
+        <li><strong>Visual input helps</strong> — Gemini D (skeleton overlay) scored 6/6 vs 5/6 for Gemini B (raw video). The pre-drawn skeleton reduced visual ambiguity.</li>
+        <li><strong>GPT-4o mini ignores visual input</strong> — source was <em>json</em> on every call despite receiving frames. Accurate but not using the visual channel.</li>
+        <li><strong>NVIDIA models are not viable</strong> — too slow (40–290s), API reliability issues, 1-image-per-request limit on 90B Vision model.</li>
+        <li><strong>Claude Sonnet produced the best coaching</strong> — spotted bilateral foot asymmetry (17° gap), cited per-rep trends (+0.9°/rep), and chained ankle → lean → depth as one problem vs three separate issues.</li>
+        <li><strong>All 3 winners (D, H, J) are affordable</strong> — even Sonnet at $0.033/call = $0.26/user/month at 8 analyses/month on a $15 subscription.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="card-title orange">Interesting Tensions Found</div>
+      <ul>
+        <li><strong>V4 false positive</strong> — every model falsely flagged good-form knee tracking as valgus. Root cause: the pipeline's <em>valgus_flag</em> fires on 2/5 reps at borderline distance. Fixed by switching to a 50% majority rule on raw knee distance &lt; 0.22.</li>
+        <li><strong>Latency vs quality tradeoff</strong> — Haiku is 2.5× faster than Sonnet (12s vs 30s) with same accuracy. Coaching depth is meaningfully different — Sonnet more clinical and root-cause driven.</li>
+        <li><strong>Skeleton overlay helps Gemini, not GPT-4o mini</strong> — Gemini D &gt; B (6/6 vs 5/6). GPT F = G (5/6 both). Suggests GPT isn't processing the visual at all.</li>
+        <li><strong>Dorsiflexion always flagged as restricted</strong> — pipeline stores string label not numeric degrees. Fixed: now outputs both <em>dorsiflexion_at_bottom_deg</em> and classification.</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <!-- Row 4: What we changed + next -->
+  <div class="grid-2">
+
+    <div class="card winner">
+      <div class="card-title green">Prompt Improvements Made During Test</div>
+      <ul>
+        <li>Added <strong>rep counting</strong> to all observations ("4 of 5 reps", not just "you have lean")</li>
+        <li>Added <strong>trend detection</strong> using JSON trend fields (+0.9°/rep worsening)</li>
+        <li>Added <strong>bilateral asymmetry check</strong> — flag foot turnout gap &gt; 10°</li>
+        <li>Added <strong>causal chain requirement</strong> — ankle → lean → depth as one problem, not three</li>
+        <li>Added <strong>walk-in/walk-out rule</strong> — reps with 3× median duration excluded from feedback</li>
+        <li>Added <strong>source tagging</strong> — did each fault observation come from JSON, visual, or both?</li>
+        <li>Added <strong>verdict field</strong> — 2-3 sentence action-oriented summary shown to user first</li>
+      </ul>
+    </div>
+
+    <div class="card accent">
+      <div class="card-title">Next Test — Already Running</div>
+      <p style="margin-bottom:10px">Question: <strong>Can we get Sonnet-quality coaching at lower cost by splitting the pipeline?</strong></p>
+      <ul>
+        <li><strong>Option 1:</strong> Sonnet end-to-end (baseline) — $0.033/call, ~33s</li>
+        <li><strong>Option 2:</strong> Gemini analyses → Sonnet coaches — $0.007/call, ~47s</li>
+        <li><strong>Option 3:</strong> Haiku analyses → Sonnet coaches — $0.017/call, ~36s</li>
+      </ul>
+      <div class="divider" style="margin:10px 0"></div>
+      <p><strong>Early result:</strong> All 3 scored 6/6. <span class="good">Option 2 wins</span> — 5× cheaper than Option 1, same coaching quality. Sonnet coaching is the bottleneck for both cost and latency regardless of which model analyses first.</p>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <span>Kinetic AI — Internal  |  Not for distribution</span>
+    <span>Tested by: Amrita + Ezequiel  |  May 2026</span>
+    <span>Next: PT coaching quality ratings pending  |  Output format user test (Format A vs B) pending</span>
+  </div>
+
+</div>
+</body>
+</html>
