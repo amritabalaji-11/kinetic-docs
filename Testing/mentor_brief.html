@@ -209,32 +209,19 @@ strong { color: #e0e8f0; font-weight: 600; }
 
   </div>
 
-  <!-- Row 4: What we changed + next -->
-  <div class="grid-2">
-
+  <!-- Row 4: What we changed -->
+  <div class="grid-full">
     <div class="card winner">
       <div class="card-title green">Prompt Improvements Made During Test</div>
-      <ul>
+      <ul style="columns:2;column-gap:24px;">
         <li>Added <strong>rep counting</strong> to all observations ("4 of 5 reps", not just "you have lean")</li>
         <li>Added <strong>trend detection</strong> using JSON trend fields (+0.9°/rep worsening)</li>
         <li>Added <strong>bilateral asymmetry check</strong> — flag foot turnout gap &gt; 10°</li>
         <li>Added <strong>causal chain requirement</strong> — ankle → lean → depth as one problem, not three</li>
         <li>Added <strong>walk-in/walk-out rule</strong> — reps with 3× median duration excluded from feedback</li>
-        <li>Added <strong>source tagging</strong> — did each fault observation come from JSON, visual, or both?</li>
+        <li>Added <strong>source tagging</strong> — did each observation come from JSON, visual, or both?</li>
         <li>Added <strong>verdict field</strong> — 2-3 sentence action-oriented summary shown to user first</li>
       </ul>
-    </div>
-
-    <div class="card accent">
-      <div class="card-title">Next Test — Already Running</div>
-      <p style="margin-bottom:10px">Question: <strong>Can we get Sonnet-quality coaching at lower cost by splitting the pipeline?</strong></p>
-      <ul>
-        <li><strong>Option 1:</strong> Sonnet end-to-end (baseline) — $0.033/call, ~33s</li>
-        <li><strong>Option 2:</strong> Gemini analyses → Sonnet coaches — $0.007/call, ~47s</li>
-        <li><strong>Option 3:</strong> Haiku analyses → Sonnet coaches — $0.017/call, ~36s</li>
-      </ul>
-      <div class="divider" style="margin:10px 0"></div>
-      <p><strong>Early result:</strong> All 3 scored 6/6. <span class="good">Option 2 wins</span> — 5× cheaper than Option 1, same coaching quality. Sonnet coaching is the bottleneck for both cost and latency regardless of which model analyses first.</p>
     </div>
   </div>
 
