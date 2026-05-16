@@ -62,7 +62,8 @@ h1   { font-size:22px; font-weight:800; margin-bottom:4px; }
                font-weight:600; text-decoration:none; margin-bottom:12px; }
 .folder-link:hover { background:#2e3d5a; }
 .vr-grid  { display:grid; grid-template-columns:repeat(6,1fr); gap:8px; }
-.vr-item  { border-radius:7px; padding:8px 10px; text-align:center; border:1px solid #e0e0e0; }
+.vr-item  { border-radius:7px; padding:8px 10px; text-align:center; border:1px solid #e0e0e0; text-decoration:none; display:block; transition:opacity 0.15s; }
+.vr-item:hover { opacity:0.75; }
 .vr-item.fault { background:#fff5f5; border-color:#ffcdd2; }
 .vr-item.good  { background:#f1f8e9; border-color:#c5e1a5; }
 .vr-id    { display:block; font-size:16px; font-weight:800; margin-bottom:3px; }
