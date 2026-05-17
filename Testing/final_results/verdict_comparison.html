@@ -1,0 +1,192 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Kinetic AI — Verdict Comparison</title>
+<style>
+* { box-sizing:border-box; margin:0; padding:0; }
+body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+       background:#f4f6f9; color:#1a1a2e; padding:28px 16px; font-size:13px; }
+h1   { font-size:22px; font-weight:800; margin-bottom:4px; }
+.sub { font-size:12px; color:#666; margin-bottom:24px; }
+
+.video-section { margin-bottom:44px; }
+.video-title { font-size:15px; font-weight:700; border-left:4px solid #1F3864;
+               padding-left:12px; margin-bottom:14px; display:flex; align-items:center; gap:12px; }
+.vid-link { font-size:11px; font-weight:400; color:#4472C4; text-decoration:none; }
+.vid-link:hover { text-decoration:underline; }
+
+/* 2×2 grid */
+.grid-2x2 { display:grid; grid-template-columns:120px 1fr 1fr; gap:0; border:1px solid #ddd;
+             border-radius:10px; overflow:hidden; background:#fff; box-shadow:0 2px 8px rgba(0,0,0,0.06); }
+
+/* Column headers */
+.col-header { padding:12px 16px; text-align:center; font-weight:700; font-size:12px;
+              border-bottom:2px solid #ddd; }
+.col-sonnet { background:#EDE7F6; color:#7030A0; border-right:1px solid #ddd; }
+.col-haiku  { background:#E3F2FD; color:#1565C0; }
+.corner     { background:#f8f9fb; border-right:1px solid #ddd; border-bottom:2px solid #ddd; }
+.col-sub    { font-size:10px; font-weight:400; opacity:0.75; display:block; margin-top:2px; }
+
+/* Row headers */
+.row-header { padding:12px 14px; font-weight:700; font-size:11px; text-align:center;
+              border-right:1px solid #ddd; display:flex; align-items:center; justify-content:center;
+              writing-mode:horizontal-tb; }
+.row-amrita   { background:#faf5ff; color:#7030A0; border-bottom:1px solid #eee; }
+.row-ezequiel { background:#f0f7ff; color:#1565C0; }
+
+/* Cells */
+.cell { padding:14px 16px; border-right:1px solid #eee; font-size:12px; line-height:1.6; }
+.cell:last-child { border-right:none; }
+.cell.amrita   { border-bottom:1px solid #eee; }
+.cell.ezequiel { }
+
+.label { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px;
+         color:#888; margin-bottom:4px; margin-top:10px; }
+.label:first-child { margin-top:0; }
+.verdict-text { color:#333; font-style:italic; line-height:1.6; }
+.rec-text     { color:#1b5e20; background:#e8f5e9; padding:8px 10px; border-radius:6px; line-height:1.55; }
+.empty { color:#bbb; font-style:italic; }
+
+.video-ref { background:#fff; border:1px solid #e0e0e0; border-radius:10px;
+             padding:12px 16px; margin-bottom:24px; }
+.vr-title  { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:#555; margin-bottom:8px; }
+.vr-grid   { display:grid; grid-template-columns:repeat(6,1fr); gap:8px; }
+.vr-item   { border-radius:7px; padding:8px 10px; text-align:center; border:1px solid #e0e0e0;
+             text-decoration:none; display:block; transition:opacity 0.15s; }
+.vr-item:hover { opacity:0.75; }
+.vr-item.fault { background:#fff5f5; border-color:#ffcdd2; }
+.vr-item.good  { background:#f1f8e9; border-color:#c5e1a5; }
+.vr-id    { display:block; font-size:16px; font-weight:800; margin-bottom:3px; }
+.vr-item.fault .vr-id { color:#c62828; }
+.vr-item.good  .vr-id { color:#2e7d32; }
+.vr-desc  { font-size:10px; color:#555; line-height:1.4; }
+@media(max-width:700px){ .grid-2x2{grid-template-columns:80px 1fr 1fr;} }
+</style></head>
+<body>
+<h1>Kinetic AI — Verdict & Recommendation Comparison</h1>
+<div class="sub">Sonnet 4.6 vs Haiku 4.5  ·  Amrita vs Ezequiel  ·  6 videos  ·  Verdict + Recommendation only</div>
+<div class="video-ref">
+  <div class="vr-title">📹 Reference Videos — click to open</div>
+  <div class="vr-grid"><a href="https://drive.google.com/file/d/1o_n2p_ipjHu25n-psWNnmQXlcyzysLIS/view" target="_blank" class="vr-item fault"><span class="vr-id">V1</span><div class="vr-desc">Depth Fault</div></a><a href="https://drive.google.com/file/d/1c92EzbK10z7Hbuw00MnQY1QGOLrNcR_v/view" target="_blank" class="vr-item good"><span class="vr-id">V2</span><div class="vr-desc">Depth Good</div></a><a href="https://drive.google.com/file/d/1TqZl_aMcoleqkK3WfgEIIMpB0Xx5_AOl/view" target="_blank" class="vr-item fault"><span class="vr-id">V3</span><div class="vr-desc">Knee Fault</div></a><a href="https://drive.google.com/file/d/1iYCezh7Wc61widlIy6Je6muvX2H_sggG/view" target="_blank" class="vr-item good"><span class="vr-id">V4</span><div class="vr-desc">Knee Good</div></a><a href="https://drive.google.com/file/d/1aTow7kZwuHJAhlD3Y3KeZyOz6o2Plxfi/view" target="_blank" class="vr-item fault"><span class="vr-id">V5</span><div class="vr-desc">Torso Fault</div></a><a href="https://drive.google.com/file/d/1YuGxT_E_pTpKOZUNC-O6kTrUwCxGoB03/view" target="_blank" class="vr-item good"><span class="vr-id">V6</span><div class="vr-desc">Torso Good</div></a></div>
+</div>
+
+    <div class="video-section">
+      <div class="video-title">
+        V1 — Depth Fault
+        <a href="https://drive.google.com/file/d/1o_n2p_ipjHu25n-psWNnmQXlcyzysLIS/view" target="_blank" class="vid-link">▶ Watch video</a>
+      </div>
+      <div class="grid-2x2">
+        <!-- Header row -->
+        <div class="corner"></div>
+        <div class="col-header col-sonnet">Sonnet 4.6<span class="col-sub">analysis + coaching</span></div>
+        <div class="col-header col-haiku">Haiku 4.5<span class="col-sub">analysis + coaching</span></div>
+        <!-- Amrita row -->
+        <div class="row-header row-amrita">Amrita</div>
+        <div class="cell amrita"><div class="label">Verdict</div><div class="verdict-text">Your squat depth is the headline problem this session — all 5 of 5 reps were classified as insufficient, driven primarily by restricted ankle dorsiflexion that is also pulling your torso forward into a progressive lean. The ankle mobility deficit is the root cause of a two-fault causal chain: restricted dorsiflexion → torso forward lean (WARNING in 4 of 5 reps) → hip crease never reaching knee depth. Until ankle mobility improves, neither depth nor posture will correct sustainably.</div><div class="label">Recommendation</div><div class="rec-text">Fix ankle mobility first — it is directly causing both the depth deficit and the forward lean. In your next session, perform: (1) Wall ankle dorsiflexion stretches — 3 sets × 45 s each side, knee driving over little toe, foot 8–10 cm from wall; and (2) Elevated-heel goblet squats — place 5 kg plates under heels, 3 sets × 8 reps at the same 20 kg load, focusing on keeping the torso vertical and reaching parallel depth. This heel elevation will temporarily bypass the ankle restriction so you can build the correct movement pattern while you address mobility in parallel.</div></div>
+        <div class="cell amrita"><div class="label">Verdict</div><div class="verdict-text">Your squat depth is consistently insufficient across all 5 reps, with knee angles bottoming at 110–122° instead of the 90–100° needed for a full goblet squat. Forward lean is worsening (trend +0.93°) and you're spending excessive time in the bottom position with restricted ankle dorsiflexion—this immobility is the root cause driving both the shallow depth and the compensatory lean.</div><div class="label">Recommendation</div><div class="rec-text">Your ankle mobility is the limiting factor—fix it first, because it is directly causing both your shallow depth and your forward lean as your body compensates. In your next session, add 2×10 reps of weighted ankle dorsiflexion drills (resistance band or light DB) and 3×60 s of banded ankle mobility (calf stretch with knee bent) before squatting. Then re-attempt goblet squats with lighter weight (10 kg) and focus on reaching hip crease below knee level; you will naturally lean less once your ankles can extend properly.</div></div>
+        <!-- Ezequiel row -->
+        <div class="row-header row-ezequiel">Ezequiel</div>
+        <div class="cell ezequiel"><div class="label">Verdict</div><div class="verdict-text">Your forward lean is the biggest issue this session — your torso tips forward as you descend instead of staying tall, and it gets worse as the set goes on. Restricted ankle mobility is the likely root cause: when your ankles can't flex enough, your upper body compensates by leaning forward. Depth also dropped off in the second half of the set, with 3 of 7 valid reps coming up short of parallel.</div><div class="label">Recommendation</div><div class="rec-text">Fix ankle mobility first — it is causing both the forward lean and the loss of depth. Before your next squat session, do 2 sets of 10 slow ankle circles per foot and 2 sets of 10 kneeling ankle rocks (knee over toe against a wall). During your goblet squat sets, try elevating your heels slightly on a small plate or wedge — this reduces the ankle demand and will immediately help you stay more upright and hit depth. Keep the weight at 20kg until lean is consistently under control.</div></div>
+        <div class="cell ezequiel"><div class="label">Verdict</div><div class="verdict-text">Your depth is inconsistent and declining—reps 5-7 don't reach parallel. Your torso is leaning forward excessively, especially in rep 8, which suggests your ankles are restricting your ability to stay upright. Fix ankle mobility first; it's the root cause of both issues.</div><div class="label">Recommendation</div><div class="rec-text">Your ankles need mobility work before squatting. Do 2×10 wall ankle mobilizations per leg (stand 6 inches from wall, drive knee toward wall without heel lifting) 3-4 times per week. Then in your next squat session, spend 2 minutes warming up with goblet squats and focus on keeping your chest tall—let the depth come naturally once ankle mobility improves.</div></div>
+      </div>
+    </div>
+    <div class="video-section">
+      <div class="video-title">
+        V2 — Depth Good
+        <a href="https://drive.google.com/file/d/1c92EzbK10z7Hbuw00MnQY1QGOLrNcR_v/view" target="_blank" class="vid-link">▶ Watch video</a>
+      </div>
+      <div class="grid-2x2">
+        <!-- Header row -->
+        <div class="corner"></div>
+        <div class="col-header col-sonnet">Sonnet 4.6<span class="col-sub">analysis + coaching</span></div>
+        <div class="col-header col-haiku">Haiku 4.5<span class="col-sub">analysis + coaching</span></div>
+        <!-- Amrita row -->
+        <div class="row-header row-amrita">Amrita</div>
+        <div class="cell amrita"><div class="label">Verdict</div><div class="verdict-text">You're hitting deep squats consistently across all 6 reps, which is the most important win today. The root issue is restricted ankle dorsiflexion — it is driving measurable forward lean (peaking at 40° on rep 3) and will limit how much further you can improve depth and torso position. Address ankle mobility first and the lean will correct itself.</div><div class="label">Recommendation</div><div class="rec-text">Fix ankle mobility first — it is directly causing the forward lean. Before your next lower-body session: (1) Banded ankle dorsiflexion mobilisation — 3 sets × 15 slow reps each side, focusing on driving the knee forward over the pinky toe while keeping the heel flat. (2) Heel-elevated goblet squat (5 cm plate under heels) — 3 sets × 8 reps at the same 20 kg, aiming to keep back angle below 30° at the bottom. Use this as a diagnostic: if lean drops significantly with heel elevation, ankle mobility is confirmed as the limiting factor.</div></div>
+        <div class="cell amrita"><div class="label">Verdict</div><div class="verdict-text">Strong depth and consistent posture across all reps—you're moving with control and reaching appropriate range of motion. Your ankle dorsiflexion limitation is the primary constraint; addressing this mobility issue will improve comfort and reduce compensatory forward lean. Overall solid technical foundation; focus on ankle mobility to unlock further efficiency.</div><div class="label">Recommendation</div><div class="rec-text">Your ankle dorsiflexion limitation is the root cause driving the forward lean compensation. In your next session, prioritize ankle mobility work before squats: perform 2×10 90-90 hip stretch holds (each side) and 2×8 tall-box dorsiflexion mobilization drills. These will improve shin angle and reduce reliance on torso lean, making rep 3 fatigue less likely. Then re-test goblet squats at the same weight.</div></div>
+        <!-- Ezequiel row -->
+        <div class="row-header row-ezequiel">Ezequiel</div>
+        <div class="cell ezequiel"><div class="label">Verdict</div><div class="verdict-text">You hit good depth on all 6 reps and your torso stayed reasonably upright throughout. The main limiting factor is restricted ankle mobility — your heels are being pulled up at the bottom, which forces a forward lean and limits how upright you can stay. Fix the ankles and the rest of your squat will follow.</div><div class="label">Recommendation</div><div class="rec-text">Your ankles are the root cause — restricted dorsiflexion is pulling your heels up and tipping your torso forward. Fix this first. Next session: before squatting, do 2 sets of 10 slow ankle circles per side plus 2 sets of 10 wall ankle stretches (knee-to-wall drill, toes 10cm from wall). Then try squatting with a small weight plate under each heel — this compensates for ankle tightness and will let you feel what an upright torso should feel like. Also slow your descent to 2–3 seconds on the way down.</div></div>
+        <div class="cell ezequiel"><div class="label">Verdict</div><div class="verdict-text">You're hitting solid depth consistently across all 6 reps with good control. Your back angle stays acceptable, staying upright for a goblet squat. One minor warning on rep 3 where the pause extended slightly long, but overall your technique is stable and repeatable.</div><div class="label">Recommendation</div><div class="rec-text">Improve ankle mobility first—it's limiting how easily you descend. Before your next session, spend 2 minutes doing 15 slow ankle circles each direction and 10 reps of seated ankle dorsiflexion stretches. Then in your goblet squat workout, add 2 extra warm-up reps focusing on letting your shins move forward over your toes. Keep pauses under 1.5 seconds to reduce spinal load.</div></div>
+      </div>
+    </div>
+    <div class="video-section">
+      <div class="video-title">
+        V3 — Knee Valgus Fault
+        <a href="https://drive.google.com/file/d/1TqZl_aMcoleqkK3WfgEIIMpB0Xx5_AOl/view" target="_blank" class="vid-link">▶ Watch video</a>
+      </div>
+      <div class="grid-2x2">
+        <!-- Header row -->
+        <div class="corner"></div>
+        <div class="col-header col-sonnet">Sonnet 4.6<span class="col-sub">analysis + coaching</span></div>
+        <div class="col-header col-haiku">Haiku 4.5<span class="col-sub">analysis + coaching</span></div>
+        <!-- Amrita row -->
+        <div class="row-header row-amrita">Amrita</div>
+        <div class="cell amrita"><div class="label">Verdict</div><div class="verdict-text">Your depth and torso posture improved steadily across the session, which is a real positive — but knee valgus at the ascent is the dominant fault, appearing in all 7 reps, and it is likely driven by a combination of hip abductor weakness and the asymmetric foot turnout (left foot significantly more turned out than right). Fix the abductor and hip stability issue first; everything else should follow.</div><div class="label">Recommendation</div><div class="rec-text">The primary fix is late-ascent knee valgus caused by hip abductor and glute medius weakness. Before your next goblet squat session, perform: (1) Banded clamshells — 3 sets of 15 each side, focusing on peak contraction; (2) Banded goblet squat with a light resistance band just above the knees — 3 sets of 6 reps at 15 kg, actively driving knees out against the band on every ascent. Cue yourself: 'screw feet into the floor and push knees out' on every drive up.</div></div>
+        <div class="cell amrita"><div class="label">Verdict</div><div class="verdict-text">Your squat depth is excellent and consistent across all 7 reps, but you're displaying persistent knee valgus (inward collapse) in every rep and excessive forward lean that worsened early in the set. The valgus appears to be a stability issue driven by your forward lean—fix the torso position first, and the knee control will improve. Focus on keeping your chest upright and engaging your glutes to stabilize the knees.</div><div class="label">Recommendation</div><div class="rec-text">Fix the forward lean first—it is the root cause driving both your valgus collapse and depth compensation. Your ankle/hip mobility or bracing strategy is forcing your torso forward, which destabilizes the knees. Next session: (1) Perform 3 × 5 goblet squats with intentional chest-up cue, elbows tucked tight, and 2-second pause at bottom—film from side to verify back angle <35° throughout. (2) Pre-warm with 10 cat-cow stretches and 10 deep bodyweight squats focusing on 'knees out' cue. The depth is already perfect; torso control and glute engagement are your priorities.</div></div>
+        <!-- Ezequiel row -->
+        <div class="row-header row-ezequiel">Ezequiel</div>
+        <div class="cell ezequiel"><div class="label">Verdict</div><div class="verdict-text">Solid depth every single rep — that's a real strength. The main issue is your knees caving inward at the top of every rep as you stand up, and this showed up in all 7 reps. Your torso angle improved noticeably across the set. Fix the knee cave and this becomes a very good squat.</div><div class="label">Recommendation</div><div class="rec-text">Your knees are the priority. Next session, before your working sets, do 2 sets of 10 banded squats — place a light resistance band just above your knees and actively push out against it the entire rep, especially as you stand up. During your goblet squat sets, cue yourself: 'knees out' as you begin to drive up from the bottom. Keep the weight the same or go lighter if needed to hold the knee position.</div></div>
+        <div class="cell ezequiel"><div class="label">Verdict</div><div class="verdict-text">Your depth is solid across all 7 reps, which is excellent. However, your knees are collapsing inward consistently, and your torso is leaning forward more than it should in a goblet squat. These two issues are connected—the lean is forcing your knees to cave. Fix the lean first, and the knee position will improve.</div><div class="label">Recommendation</div><div class="rec-text">Your forward lean is the root cause—it's forcing your knees inward to stabilize. Focus on these two things next session: (1) Goblet Hold Reset: before each rep, pull the weight to your chest and pack your shoulders back. Keep your torso upright throughout the descent. (2) Knee-Out Drill: pause 2 seconds at the bottom of 3 warm-up reps, actively push your knees outward, then stand. This cues your body. Apply this to your working sets.</div></div>
+      </div>
+    </div>
+    <div class="video-section">
+      <div class="video-title">
+        V4 — Knee Valgus Good
+        <a href="https://drive.google.com/file/d/1iYCezh7Wc61widlIy6Je6muvX2H_sggG/view" target="_blank" class="vid-link">▶ Watch video</a>
+      </div>
+      <div class="grid-2x2">
+        <!-- Header row -->
+        <div class="corner"></div>
+        <div class="col-header col-sonnet">Sonnet 4.6<span class="col-sub">analysis + coaching</span></div>
+        <div class="col-header col-haiku">Haiku 4.5<span class="col-sub">analysis + coaching</span></div>
+        <!-- Amrita row -->
+        <div class="row-header row-amrita">Amrita</div>
+        <div class="cell amrita"><div class="label">Verdict</div><div class="verdict-text">Your goblet squat shows solid depth and acceptable torso lean across all 5 reps — both are genuine strengths. However, a significant bilateral foot turnout asymmetry (left ~29° vs right ~12°, a gap of ~17°) is the root cause flagging this session: the left foot is excessively turned out, which is likely compensating for restricted left ankle or hip mobility and contributing to the late-phase knee valgus observed in reps 2 and 5. Fix the foot symmetry first and the valgus will likely self-correct.</div><div class="label">Recommendation</div><div class="rec-text">Causal chain to fix: left ankle/hip mobility restriction → left foot excessive external rotation → asymmetric loading → late-phase knee valgus on drive up. For your next session: (1) Before squatting, do ankle dorsiflexion wall stretches — 3 sets of 10 reps each side with focus on the left, then perform 2 sets of 10 goblet squats with your feet set deliberately symmetrical at 15° each side to retrain stance. (2) Slow your eccentric to a 3-second count on every rep — use a metronome or count aloud — to build positional control and reduce valgus risk at the bottom.</div></div>
+        <div class="cell amrita"><div class="label">Verdict</div><div class="verdict-text">Your squat depth and posture are strong—all five reps reached deep positions with controlled torso angles. Watch for a developing asymmetry in foot positioning (left foot turning out 17° more than right on average) and minimal but present knee valgus late in the range on reps 2 and 5; these are minor stability nuances that will compound if left unaddressed.</div><div class="label">Recommendation</div><div class="rec-text">Root cause: excessive left foot external rotation (29.3° vs 12.4° right) is forcing your hips into asymmetrical loading, causing your right knee to collapse inward under fatigue (reps 2 & 5). Fix this first. Next session: (1) Reduce left foot turnout to match right (~15° target for both feet). Use mirror feedback or place foot position tape to lock stance width and angle before loading. Perform 3 × 5 reps at 20 kg with deliberate foot positioning cues before each rep. (2) If left foot turnout feels restricted, perform 2 min of couch stretch (left leg back) immediately before squats to mobilize left hip external rotators, which may be driving the over-compensation.</div></div>
+        <!-- Ezequiel row -->
+        <div class="row-header row-ezequiel">Ezequiel</div>
+        <div class="cell ezequiel"><div class="label">Verdict</div><div class="verdict-text">Solid goblet squat session with good depth hit on every rep. Your biggest issue is a significant foot turnout gap between your left and right foot — your left foot is consistently pointing out nearly 17 degrees more than your right. This asymmetry is likely the root cause of the knee cave appearing on 2 of 5 reps during the drive up, and it needs to be addressed before adding more weight.</div><div class="label">Recommendation</div><div class="rec-text">Fix the foot position first — it is causing the uneven load and the late knee cave. Next session: before you start, set both feet at roughly the same angle, around 20-25 degrees out on each side. Do a quick check by looking down at your feet before each rep. Then slow your descent to a 3-second count on the way down — try 3 sets of 5 reps at this same weight using a 3-1-1 tempo (3 seconds down, 1 second pause, 1 second up).</div></div>
+        <div class="cell ezequiel"><div class="label">Verdict</div><div class="verdict-text">Your depth and overall positioning are solid across all five reps. You're hitting full range consistently with good control. Minor asymmetry in knee tracking appeared twice late in the set, but it's not a major concern—watch for early knee outward pressure to prevent it.</div><div class="label">Recommendation</div><div class="rec-text">Fix your foot stance first—it's driving the knee drift. Next session, set your feet wider and turn both feet out to 25–30° equally before your first rep. Mark your foot position on the mat if needed. Practice 2–3 pause squats with conscious foot pressure on the outside edge of each foot. This single change will eliminate the knee inward shift.</div></div>
+      </div>
+    </div>
+    <div class="video-section">
+      <div class="video-title">
+        V5 — Torso Lean Fault
+        <a href="https://drive.google.com/file/d/1aTow7kZwuHJAhlD3Y3KeZyOz6o2Plxfi/view" target="_blank" class="vid-link">▶ Watch video</a>
+      </div>
+      <div class="grid-2x2">
+        <!-- Header row -->
+        <div class="corner"></div>
+        <div class="col-header col-sonnet">Sonnet 4.6<span class="col-sub">analysis + coaching</span></div>
+        <div class="col-header col-haiku">Haiku 4.5<span class="col-sub">analysis + coaching</span></div>
+        <!-- Amrita row -->
+        <div class="row-header row-amrita">Amrita</div>
+        <div class="cell amrita"><div class="label">Verdict</div><div class="verdict-text">Your depth is solid across all 6 reps, but a persistent forward lean is the defining fault this session — every single rep triggered a back-angle warning, with lean averaging ~46° at the bottom and worsening slightly as the set progressed. The root cause is restricted ankle dorsiflexion, which forces your torso to compensate by pitching forward to keep balance. Fix the ankle first and the lean will follow.</div><div class="label">Recommendation</div><div class="rec-text">Causal chain: restricted ankle dorsiflexion → compensatory forward lean → unstable bottom position → slowing concentric drive. Fix the ankle first. In your next session, before squatting, perform: (1) Kneeling ankle dorsiflexion stretch — drive knee over little toe against a wall, 3 × 12 reps each side, hold 2 s at end-range; (2) Heel-elevated goblet squat — use a 25 mm plate or wedge under both heels to offload dorsiflexion demand, 3 × 6 reps at the same 20 kg, focusing on keeping your torso vertical throughout the descent. Retest without the wedge every 2 sessions to track ankle improvement.</div></div>
+        <div class="cell amrita"><div class="label">Verdict</div><div class="verdict-text">Your forward lean is the dominant issue this session—present in all 6 reps and worsening toward the end (rep 4: 52.5°, rep 6: 49.7°). This lean is likely driven by restricted ankle dorsiflexion, which is forcing compensation at the torso. Depth is adequate (5 of 6 reps deep; rep 6 parallel), and tempo is controlled, but you must address ankle mobility before the lean pattern becomes ingrained.</div><div class="label">Recommendation</div><div class="rec-text">Ankle mobility is your root cause. The restricted dorsiflexion is forcing your torso to lean forward to maintain balance and depth—fix the ankle, and the lean will resolve naturally. Before your next session, perform 2–3 minutes of 90/90 ankle mobilization (half-kneeling or tall-kneeling position) and 10 slow-tempo bodyweight squats with an emphasis on dorsiflexion (shin angle forward). In your next goblet squat session, reduce load to 12–15 kg, focus on pressing your shins forward at the bottom, and record yourself side-on to monitor back angle staying below 35°.</div></div>
+        <!-- Ezequiel row -->
+        <div class="row-header row-ezequiel">Ezequiel</div>
+        <div class="cell ezequiel"><div class="label">Verdict</div><div class="verdict-text">You're hitting good depth consistently, but your torso is leaning too far forward on every single rep — all 6 triggered a warning. The root cause is restricted ankle mobility, which forces your chest to drop as you descend. Fix the ankles and your upper body position will follow.</div><div class="label">Recommendation</div><div class="rec-text">Fix ankle mobility first — it is directly causing the forward lean and the depth drop in late reps. Next session: before squatting, do 2 sets of 10 slow ankle circles per foot, then 2 sets of 10 kneeling ankle rocks (knee-over-toe stretches against a wall). During your goblet squat sets, place a 5kg plate under each heel — this compensates for restricted ankles instantly and will let you keep your chest tall. Focus on driving your elbows between your knees at the bottom to cue upright torso.</div></div>
+        <div class="cell ezequiel"><div class="label">Verdict</div><div class="verdict-text">You're hitting good depth consistently, but your torso is leaning too far forward throughout all 6 reps. This forward lean is the main issue limiting your control and efficiency. Your ankle mobility is restricted at the bottom, which is likely forcing the excessive lean to compensate.</div><div class="label">Recommendation</div><div class="rec-text">Your restricted ankle mobility is forcing you to lean forward to hit depth. Before your next squat session, spend 2–3 minutes on ankle mobilization: perform 10 slow bodyweight squats holding onto a rack, focusing on pushing your knees forward over your toes without your heel rising. Then try 3 sets of 5 goblet squats with lighter weight (10–12 kg), cueing yourself to keep your chest more upright. Better ankle mobility will let your torso stay taller naturally.</div></div>
+      </div>
+    </div>
+    <div class="video-section">
+      <div class="video-title">
+        V6 — Torso Lean Good
+        <a href="https://drive.google.com/file/d/1YuGxT_E_pTpKOZUNC-O6kTrUwCxGoB03/view" target="_blank" class="vid-link">▶ Watch video</a>
+      </div>
+      <div class="grid-2x2">
+        <!-- Header row -->
+        <div class="corner"></div>
+        <div class="col-header col-sonnet">Sonnet 4.6<span class="col-sub">analysis + coaching</span></div>
+        <div class="col-header col-haiku">Haiku 4.5<span class="col-sub">analysis + coaching</span></div>
+        <!-- Amrita row -->
+        <div class="row-header row-amrita">Amrita</div>
+        <div class="cell amrita"><div class="label">Verdict</div><div class="verdict-text">You achieved deep squat depth across all 5 reps with a well-controlled torso, which is the foundation of good goblet squat technique. However, restricted ankle dorsiflexion was flagged in 4 of 5 reps and is acting as a root cause — it is the likely driver of your forward lean (mean back angle 31.5° at bottom) and a knee valgus incident late in rep 4. Addressing ankle mobility is the single highest-leverage fix available to you right now.</div><div class="label">Recommendation</div><div class="rec-text">Fix ankle mobility first — restricted dorsiflexion is causing the forward lean and contributed to the late knee cave in rep 4. Next session: (1) Ankle wall stretch — 3 sets × 45 s each side before squatting; also perform banded ankle mobilisation, 15 reps each side. (2) Elevate heels 1–2 cm with plates or a heel-raise wedge during your goblet squat work sets to temporarily offload the ankle restriction while you build mobility — this will allow a more upright torso and reduce valgus stress at the top of the lift.</div></div>
+        <div class="cell amrita"><div class="label">Verdict</div><div class="verdict-text">Your goblet squat depth and posture are solid—you're hitting deep range consistently with acceptable forward lean for the movement. The main limiting factor is ankle dorsiflexion restriction, which is showing up across 4 of 5 reps and is likely constraining how upright you could become. Address this mobility issue and your form will improve noticeably.</div><div class="label">Recommendation</div><div class="rec-text">Your ankle mobility is the limiting factor—it is forcing you to distribute load less optimally and is causing the slight depth loss and late-phase valgus on rep 4. In your next session, spend 2–3 minutes on couch stretch or banded ankle mobilization (3 sets of 10 slow, controlled dorsiflexion reps per leg) immediately before your goblet squats. This will free up your ankle range, allow you to sit more upright, and reduce compensatory stress on the knees. Then perform 3 sets of goblet squats with a 2-second pause at the bottom—tempo will be your feedback tool for ankle mobility improvement.</div></div>
+        <!-- Ezequiel row -->
+        <div class="row-header row-ezequiel">Ezequiel</div>
+        <div class="cell ezequiel"><div class="label">Verdict</div><div class="verdict-text">Solid goblet squat session — you hit deep depth on all 5 reps and kept your back angle controlled throughout. The main limiter here is ankle stiffness: your heels are struggling to stay grounded at the bottom, which is forcing a slight forward lean and will cap your depth over time. Address ankle mobility and this squat will look significantly cleaner.</div><div class="label">Recommendation</div><div class="rec-text">Your ankle stiffness is the root issue — fix that first and your lean and knee control will both improve automatically. Next session: (1) Before squatting, do 2 sets of 10 ankle circles per foot plus 10 slow kneeling ankle rocks each side — push your knee as far forward over your toes as possible. (2) During your squat sets, place a small weight plate (1–2 kg) under each heel to reduce the ankle demand and focus on keeping your chest tall. Work toward removing the plates over the next 4–6 weeks.</div></div>
+        <div class="cell ezequiel"><div class="label">Verdict</div><div class="verdict-text">Your squats are hitting good depth consistently across all five reps, and your torso position is stable and controlled. The main limitation is restricted ankle mobility at the bottom—your heels are shifting or your feet are adjusting as you descend, which is a minor technical issue but not dangerous. Overall solid session.</div><div class="label">Recommendation</div><div class="rec-text">Address ankle mobility before your next squat session. Do 2 sets of 10 banded ankle mobilizations or calf stretches holding the bottom position for 20 seconds per side. This will improve your dorsiflexion and prevent the heel shift that's subtly affecting your knee stability. Once ankle mobility improves, the valgus in rep 4 will likely resolve on its own.</div></div>
+      </div>
+    </div>
+</body></html>
