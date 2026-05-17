@@ -7,85 +7,86 @@ body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
        background:#f4f6f9; color:#1a1a2e; padding:28px 16px; font-size:13px; }
 h1   { font-size:20px; font-weight:800; margin-bottom:4px; }
 .sub { font-size:12px; color:#666; margin-bottom:10px; }
-.toolbar { display:flex; gap:10px; align-items:center; margin-bottom:16px; flex-wrap:wrap; }
-.question { background:#1a1a2e; color:#fff; padding:12px 18px; border-radius:8px;
-            font-size:14px; font-weight:600; flex:1; }
-.btn { padding:10px 20px; border-radius:8px; border:none; cursor:pointer;
-       font-size:13px; font-weight:700; white-space:nowrap; }
-.btn-dl  { background:#2e7d32; color:#fff; }
-.btn-dl:hover { background:#1b5e20; }
-.btn-clr { background:#fff; color:#c62828; border:2px solid #c62828; }
-.progress { background:#fff; border:1px solid #e0e0e0; border-radius:8px;
-            padding:10px 16px; margin-bottom:16px; font-size:12px; color:#555; }
-.prog-bg  { background:#e0e0e0; border-radius:4px; height:5px; margin-top:6px; }
-.prog-bar { background:#4472C4; height:5px; border-radius:4px; width:0%; transition:width 0.3s; }
-.rubric { background:#fff; border:1px solid #e0e0e0; border-radius:8px;
-          padding:12px 16px; margin-bottom:20px; font-size:12px; }
-.rubric h3 { font-size:13px; font-weight:700; margin-bottom:8px; }
-.rubric-row { display:flex; gap:8px; margin-bottom:4px; }
-.rs { background:#1a1a2e; color:#fff; border-radius:4px; padding:1px 7px; font-weight:700; flex-shrink:0; }
-.video-ref { background:#fff; border:1px solid #e0e0e0; border-radius:10px;
-             padding:12px 16px; margin-bottom:24px; }
-.vr-title  { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:#555; margin-bottom:8px; }
-.vr-grid   { display:grid; grid-template-columns:repeat(6,1fr); gap:8px; }
-.vr-item   { border-radius:7px; padding:8px 10px; text-align:center; border:1px solid #e0e0e0;
-             text-decoration:none; display:block; transition:opacity 0.15s; }
-.vr-item:hover { opacity:0.75; }
-.vr-item.fault { background:#fff5f5; border-color:#ffcdd2; }
-.vr-item.good  { background:#f1f8e9; border-color:#c5e1a5; }
-.vr-id    { display:block; font-size:16px; font-weight:800; margin-bottom:3px; }
-.vr-item.fault .vr-id { color:#c62828; }
-.vr-item.good  .vr-id { color:#2e7d32; }
-.vr-desc  { font-size:10px; color:#555; line-height:1.4; }
-.video-section { margin-bottom:44px; }
-.video-title { font-size:15px; font-weight:700; border-left:4px solid #4472C4;
-               padding-left:12px; margin-bottom:14px; }
-.col-grid  { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
-.col-card  { background:#fff; border-radius:10px; padding:16px; border:2px solid #e0e0e0;
-             box-shadow:0 2px 6px rgba(0,0,0,0.06); transition:border-color 0.2s; }
-.col-card.rated { border-color:#4472C4; }
-.model-badge { background:#1a1a2e; color:#fff; font-size:11px; font-weight:700;
-               padding:3px 12px; border-radius:10px; display:inline-block; margin-bottom:8px; }
-.score-tag   { float:right; font-size:20px; font-weight:800; color:#1a1a2e; }
-.sec  { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; margin:10px 0 4px; }
-.neg  { color:#c62828; }
-.verdict { font-size:12px; line-height:1.6; color:#333; padding:10px 12px;
-           background:#f8f9fb; border-radius:6px; font-style:italic; margin:8px 0; }
-.item { margin-bottom:5px; line-height:1.5; font-size:12px; }
-.cat  { display:inline-block; font-size:9px; font-weight:700; background:#eee;
-        padding:1px 6px; border-radius:8px; margin-right:4px; color:#444; }
-.rc   { background:#fce4d6; } .sym { background:#fff3e0; }
-.rec  { padding:10px 12px; background:#e8f5e9; border-radius:6px; color:#1b5e20;
-        line-height:1.55; margin:8px 0; font-size:12px; }
-.trend-o { color:#555; line-height:1.55; font-size:12px; margin-bottom:3px; }
-.trend-r { color:#1565C0; font-weight:600; font-size:12px; }
-.rating-box { margin-top:14px; padding:12px; background:#fffbf0;
-              border:1px solid #ffe082; border-radius:8px; }
-.rating-label { font-size:11px; font-weight:700; color:#555; margin-bottom:8px; }
-.stars { display:flex; gap:7px; margin-bottom:8px; }
-.star  { width:36px; height:36px; border:1.5px solid #ccc; border-radius:7px; background:#fff;
-         cursor:pointer; font-size:15px; font-weight:700; color:#555;
-         display:flex; align-items:center; justify-content:center; transition:all 0.15s; }
-.star:hover { background:#1a1a2e; color:#fff; border-color:#1a1a2e; }
-.star.sel   { background:#4472C4; color:#fff; border-color:#4472C4; }
-.notes-box  { width:100%; border:1px solid #ddd; border-radius:5px; padding:6px 8px;
-              font-size:11px; resize:vertical; font-family:inherit; min-height:44px; }
-@media(max-width:650px){ .col-grid{grid-template-columns:1fr;} }
 
-.instructions { background:#1a1a2e; color:#e8f0f8; border-radius:12px;
-                padding:20px 24px; margin-bottom:24px; }
-.instructions h2 { font-size:15px; font-weight:800; color:#fff; margin-bottom:14px;
-                   letter-spacing:0.3px; }
+/* Instructions */
+.instructions { background:#1a1a2e; color:#e8f0f8; border-radius:12px; padding:20px 24px; margin-bottom:24px; }
+.instructions h2 { font-size:15px; font-weight:800; color:#fff; margin-bottom:14px; }
 .steps { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:16px; }
 .step  { background:rgba(255,255,255,0.07); border-radius:8px; padding:12px 14px; }
 .step-num { font-size:22px; font-weight:800; color:#5b9bd5; margin-bottom:6px; }
 .step-title { font-size:12px; font-weight:700; color:#fff; margin-bottom:4px; }
 .step-desc  { font-size:11px; color:#9ab4cc; line-height:1.55; }
-.instructions-note { background:rgba(255,255,255,0.05); border-radius:8px;
-                     padding:10px 14px; font-size:11px; color:#9ab4cc; line-height:1.7; }
+.instructions-note { background:rgba(255,255,255,0.05); border-radius:8px; padding:10px 14px; font-size:11px; color:#9ab4cc; line-height:1.7; }
 .instructions-note strong { color:#fff; }
 @media(max-width:700px){ .steps{grid-template-columns:1fr 1fr;} }
 
+.toolbar { display:flex; gap:10px; align-items:center; margin-bottom:16px; flex-wrap:wrap; }
+.question { background:#1a1a2e; color:#fff; padding:12px 18px; border-radius:8px; font-size:14px; font-weight:600; flex:1; }
+.btn { padding:10px 20px; border-radius:8px; border:none; cursor:pointer; font-size:13px; font-weight:700; white-space:nowrap; }
+.btn-dl  { background:#2e7d32; color:#fff; } .btn-dl:hover { background:#1b5e20; }
+.btn-clr { background:#fff; color:#c62828; border:2px solid #c62828; }
+.progress { background:#fff; border:1px solid #e0e0e0; border-radius:8px; padding:10px 16px; margin-bottom:16px; font-size:12px; color:#555; }
+.prog-bg  { background:#e0e0e0; border-radius:4px; height:5px; margin-top:6px; }
+.prog-bar { background:#4472C4; height:5px; border-radius:4px; width:0%; transition:width 0.3s; }
+.rubric { background:#fff; border:1px solid #e0e0e0; border-radius:8px; padding:12px 16px; margin-bottom:20px; font-size:12px; }
+.rubric h3 { font-size:13px; font-weight:700; margin-bottom:8px; }
+.rubric-row { display:flex; gap:8px; margin-bottom:4px; }
+.rs { background:#1a1a2e; color:#fff; border-radius:4px; padding:1px 7px; font-weight:700; flex-shrink:0; }
+.video-ref { background:#fff; border:1px solid #e0e0e0; border-radius:10px; padding:12px 16px; margin-bottom:24px; }
+.vr-title  { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:#555; margin-bottom:8px; }
+.vr-grid   { display:grid; grid-template-columns:repeat(6,1fr); gap:8px; }
+.vr-item   { border-radius:7px; padding:8px 10px; text-align:center; border:1px solid #e0e0e0; text-decoration:none; display:block; transition:opacity 0.15s; }
+.vr-item:hover { opacity:0.75; }
+.vr-item.fault { background:#fff5f5; border-color:#ffcdd2; }
+.vr-item.good  { background:#f1f8e9; border-color:#c5e1a5; }
+.vr-id    { display:block; font-size:16px; font-weight:800; margin-bottom:3px; }
+.vr-item.fault .vr-id { color:#c62828; } .vr-item.good .vr-id { color:#2e7d32; }
+.vr-desc  { font-size:10px; color:#555; line-height:1.4; }
+
+.video-section { margin-bottom:44px; }
+.video-title { font-size:15px; font-weight:700; border-left:4px solid #1F3864; padding-left:12px; margin-bottom:14px; }
+.col-grid  { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+.col-card  { background:#fff; border-radius:10px; padding:16px; border:2px solid #e0e0e0; box-shadow:0 2px 6px rgba(0,0,0,0.06); transition:border-color 0.2s; }
+.col-card.rated { border-color:#4472C4; }
+.model-badge { background:#1a1a2e; color:#fff; font-size:11px; font-weight:700; padding:3px 12px; border-radius:10px; display:inline-block; margin-bottom:8px; }
+.score-tag   { float:right; font-size:20px; font-weight:800; color:#1a1a2e; }
+
+/* Always-visible sections */
+.verdict { font-size:12px; line-height:1.6; color:#333; padding:10px 12px; background:#f8f9fb; border-radius:6px; font-style:italic; margin:8px 0; }
+.rec  { padding:10px 12px; background:#e8f5e9; border-radius:6px; color:#1b5e20; line-height:1.55; margin:8px 0; font-size:12px; }
+
+/* Collapsible sections */
+.collapsible { margin:8px 0; border:1px solid #eee; border-radius:7px; overflow:hidden; }
+.toggle-btn  { width:100%; background:#f8f9fb; border:none; padding:8px 12px; cursor:pointer;
+               display:flex; justify-content:space-between; align-items:center;
+               font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px;
+               color:#555; text-align:left; transition:background 0.15s; }
+.toggle-btn:hover { background:#f0f0f0; }
+.toggle-btn.pos-btn { color:#2e7d32; }
+.toggle-btn.neg-btn { color:#c62828; }
+.toggle-btn.trend-btn { color:#1565C0; }
+.toggle-arrow { font-size:10px; transition:transform 0.2s; }
+.toggle-btn.open .toggle-arrow { transform:rotate(180deg); }
+.collapsible-body { padding:10px 12px; display:none; font-size:12px; line-height:1.6; }
+.collapsible-body.open { display:block; }
+
+.item { margin-bottom:4px; line-height:1.5; }
+.cat  { display:inline-block; font-size:9px; font-weight:700; background:#eee; padding:1px 6px; border-radius:8px; margin-right:4px; color:#444; }
+.rc { background:#fce4d6; } .sym { background:#fff3e0; }
+.trend-o { color:#555; line-height:1.55; margin-bottom:3px; }
+.trend-r { color:#1565C0; font-weight:600; }
+
+.sec-label { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:#888; margin:10px 0 4px; }
+.sec-label:first-child { margin-top:0; }
+
+.rating-box { margin-top:14px; padding:12px; background:#fffbf0; border:1px solid #ffe082; border-radius:8px; }
+.rating-label { font-size:11px; font-weight:700; color:#555; margin-bottom:8px; }
+.stars { display:flex; gap:7px; margin-bottom:8px; }
+.star  { width:36px; height:36px; border:1.5px solid #ccc; border-radius:7px; background:#fff; cursor:pointer; font-size:15px; font-weight:700; color:#555; display:flex; align-items:center; justify-content:center; transition:all 0.15s; }
+.star:hover { background:#1a1a2e; color:#fff; border-color:#1a1a2e; }
+.star.sel   { background:#4472C4; color:#fff; border-color:#4472C4; }
+.notes-box  { width:100%; border:1px solid #ddd; border-radius:5px; padding:6px 8px; font-size:11px; resize:vertical; font-family:inherit; min-height:44px; }
+@media(max-width:650px){ .col-grid{grid-template-columns:1fr;} }
 </style></head>
 <body>
 <h1>Kinetic AI — PT Coaching Review (Ezequiel)</h1>
@@ -94,33 +95,18 @@ h1   { font-size:20px; font-weight:800; margin-bottom:4px; }
 <div class="instructions">
   <h2>📋 How to complete this review — 4 steps</h2>
   <div class="steps">
-    <div class="step">
-      <div class="step-num">1</div>
-      <div class="step-title">Watch the video</div>
-      <div class="step-desc">Click the video thumbnail at the top to open it in Google Drive. Watch the squat before reading the coaching below it.</div>
-    </div>
-    <div class="step">
-      <div class="step-num">2</div>
-      <div class="step-title">Read both columns</div>
-      <div class="step-desc">Each video has two coaching responses side by side — Model 1 and Model 2. Read both before rating. Do not try to guess which model wrote it.</div>
-    </div>
-    <div class="step">
-      <div class="step-num">3</div>
-      <div class="step-title">Click a rating (1–5)</div>
-      <div class="step-desc">Use the numbered buttons at the bottom of each column. The button turns blue when selected. Add optional notes in the text box below.</div>
-    </div>
-    <div class="step">
-      <div class="step-num">4</div>
-      <div class="step-title">Download &amp; send</div>
-      <div class="step-desc">When done, click <strong style="color:#fff">⬇ Download Ratings CSV</strong> at the top. Email or Slack the downloaded file back to Amrita.</div>
-    </div>
+    <div class="step"><div class="step-num">1</div><div class="step-title">Watch the video</div><div class="step-desc">Click the video thumbnail at the top to open it in Google Drive. Watch the squat before reading the coaching below it.</div></div>
+    <div class="step"><div class="step-num">2</div><div class="step-title">Read both columns</div><div class="step-desc">Each video has two coaching responses side by side — Model 1 and Model 2. Read both before rating. Tap the grey bars to expand extra sections.</div></div>
+    <div class="step"><div class="step-num">3</div><div class="step-title">Click a rating (1–5)</div><div class="step-desc">Use the numbered buttons at the bottom of each column. The button turns blue when selected. Add optional notes in the text box below.</div></div>
+    <div class="step"><div class="step-num">4</div><div class="step-title">Download &amp; send</div><div class="step-desc">When done, click <strong style="color:#fff">⬇ Download Ratings CSV</strong> at the top. Email or Slack the file back to Amrita.</div></div>
   </div>
   <div class="instructions-note">
-    <strong>💾 Your ratings auto-save in this browser tab</strong> — if you need a break, close the tab and reopen the same file and your ratings will still be there.<br>
-    <strong>⚠️ Important:</strong> Always open this file in the same browser on the same device. Do not move or rename the file between sessions.<br>
-    <strong>🔒 Model labels are hidden</strong> — the identity of each model is revealed only when you download the CSV, so your ratings are unbiased.
+    <strong>💾 Ratings auto-save in this browser tab</strong> — close and reopen the same file and your work is still there.<br>
+    <strong>⚠️ Keep the file in the same browser on the same device</strong> between sessions.<br>
+    <strong>🔒 Model labels are hidden</strong> — revealed only when you download the CSV so your ratings stay unbiased.
   </div>
 </div>
+
 <div class="toolbar">
   <div class="question">❓ Which model's coaching more clearly tells the athlete what to fix?</div>
   <button class="btn btn-dl" onclick="downloadCSV()">⬇ Download Ratings CSV</button>
@@ -137,243 +123,403 @@ h1   { font-size:20px; font-weight:800; margin-bottom:4px; }
   <div class="rubric-row"><span class="rs">3</span>Partially correct. Real issue but rep context or trend missing.</div>
   <div class="rubric-row"><span class="rs">2</span>Inaccurate — wrong fault or contradicts movement data.</div>
   <div class="rubric-row"><span class="rs">1</span>Missing or empty when fault clearly present.</div>
-  <div style="margin-top:6px;font-size:11px;color:#888">Good-form videos (V2, V4): no fault present — rate on whether the maintenance cues are genuinely useful.</div>
+  <div style="margin-top:6px;font-size:11px;color:#888">Good-form videos (V2, V4): no fault — rate on whether the maintenance cues are genuinely useful.</div>
 </div>
 <div class="video-ref">
   <div class="vr-title">📹 Reference Videos — click to open</div>
-  <div class="vr-grid"><a href="https://drive.google.com/file/d/1o_n2p_ipjHu25n-psWNnmQXlcyzysLIS/view" target="_blank" class="vr-item fault"><span class="vr-id">V1</span><div class="vr-desc">Depth — FAULT<br><small>v1_depth_fault.mp4</small></div></a><a href="https://drive.google.com/file/d/1c92EzbK10z7Hbuw00MnQY1QGOLrNcR_v/view" target="_blank" class="vr-item good"><span class="vr-id">V2</span><div class="vr-desc">Depth — GOOD<br><small>v2_depth_good.mp4</small></div></a><a href="https://drive.google.com/file/d/1TqZl_aMcoleqkK3WfgEIIMpB0Xx5_AOl/view" target="_blank" class="vr-item fault"><span class="vr-id">V3</span><div class="vr-desc">Knee Valgus — FAULT<br><small>v3_knee_fault.mp4</small></div></a><a href="https://drive.google.com/file/d/1iYCezh7Wc61widlIy6Je6muvX2H_sggG/view" target="_blank" class="vr-item good"><span class="vr-id">V4</span><div class="vr-desc">Knee Valgus — GOOD<br><small>v4_knee_good.mp4</small></div></a><a href="https://drive.google.com/file/d/1aTow7kZwuHJAhlD3Y3KeZyOz6o2Plxfi/view" target="_blank" class="vr-item fault"><span class="vr-id">V5</span><div class="vr-desc">Torso Lean — FAULT<br><small>v5_torso_fault.mp4</small></div></a><a href="https://drive.google.com/file/d/1YuGxT_E_pTpKOZUNC-O6kTrUwCxGoB03/view" target="_blank" class="vr-item good"><span class="vr-id">V6</span><div class="vr-desc">Torso Lean — GOOD<br><small>v6_torso_good.mp4</small></div></a></div>
+  <div class="vr-grid"><a href="https://drive.google.com/file/d/1o_n2p_ipjHu25n-psWNnmQXlcyzysLIS/view" target="_blank" class="vr-item fault"><span class="vr-id">V1</span><div class="vr-desc">Depth Fault<br><small>v1_depth_fault.mp4</small></div></a><a href="https://drive.google.com/file/d/1c92EzbK10z7Hbuw00MnQY1QGOLrNcR_v/view" target="_blank" class="vr-item good"><span class="vr-id">V2</span><div class="vr-desc">Depth Good<br><small>v2_depth_good.mp4</small></div></a><a href="https://drive.google.com/file/d/1TqZl_aMcoleqkK3WfgEIIMpB0Xx5_AOl/view" target="_blank" class="vr-item fault"><span class="vr-id">V3</span><div class="vr-desc">Knee Fault<br><small>v3_knee_fault.mp4</small></div></a><a href="https://drive.google.com/file/d/1iYCezh7Wc61widlIy6Je6muvX2H_sggG/view" target="_blank" class="vr-item good"><span class="vr-id">V4</span><div class="vr-desc">Knee Good<br><small>v4_knee_good.mp4</small></div></a><a href="https://drive.google.com/file/d/1aTow7kZwuHJAhlD3Y3KeZyOz6o2Plxfi/view" target="_blank" class="vr-item fault"><span class="vr-id">V5</span><div class="vr-desc">Torso Fault<br><small>v5_torso_fault.mp4</small></div></a><a href="https://drive.google.com/file/d/1YuGxT_E_pTpKOZUNC-O6kTrUwCxGoB03/view" target="_blank" class="vr-item good"><span class="vr-id">V6</span><div class="vr-desc">Torso Good<br><small>v6_torso_good.mp4</small></div></a></div>
 </div>
 <div class="video-section">
       <div class="video-title">V1 — Depth Fault</div>
       <div class="col-grid"><div class="col-card" data-card="V1_0">
-          <!-- S1 — Sonnet 4.6 (analysis + coaching) -->
-          <div class="model-badge">Model 1</div>
-          <span class="score-tag">58/100</span>
-          <div style="clear:both;margin-bottom:6px;"></div>
-          <div class="verdict">Your forward lean is the biggest issue this session — your torso tips forward as you descend instead of staying tall, and it gets worse as the set goes on. Restricted ankle mobility is the likely root cause: when your ankles can't flex enough, your upper body compensates by leaning forward. Depth also dropped off in the second half of the set, with 3 of 7 valid reps coming up short of parallel.</div>
-          <div class="sec neg">Needs attention</div><div class="item neg">⚠️ <span class="cat rc">root cause</span><span class="cat">Range of Motion</span>Ankle dorsiflexion flagged as restricted on every valid rep (reps 1–7). This limits how far your shins can travel forward, forcing your torso to compensate by leaning. This is the root cause driving both lean and depth loss.</div><div class="item neg">⚠️ <span class="cat sym">symptom</span><span class="cat">Posture</span>Forward lean worsened across the set. Back angle at the bottom rose from 37.9° (rep 1) to 42.8° (rep 5) and peaked at 84° at the start of rep 8. 7 of 7 valid reps were flagged WARNING for excessive lean duration. <span style="font-size:10px;color:#888">← restricted_ankle_dorsiflexion</span></div><div class="item neg">⚠️ <span class="cat sym">symptom</span><span class="cat">Movement Quality</span>Depth became insufficient in reps 5, 6, and 7 — knee angle at bottom rose from ~104° (rep 2) to 114° (rep 7), a 10° trend of shallower squats as fatigue set in. <span style="font-size:10px;color:#888">← restricted_ankle_dorsiflexion</span></div>
-          <div class="sec" style="color:#1b5e20">Recommendation</div>
-          <div class="rec">Fix ankle mobility first — it is causing both the forward lean and the loss of depth. Before your next squat session, do 2 sets of 10 slow ankle circles per foot and 2 sets of 10 kneeling ankle rocks (knee over toe against a wall). During your goblet squat sets, try elevating your heels slightly on a small plate or wedge — this reduces the ankle demand and will immediately help you stay more upright and hit depth. Keep the weight at 20kg until lean is consistently under control.</div>
-          <div class="sec" style="color:#1565C0">Rep trend</div>
-          <div class="trend-o">Form started reasonably well — reps 1–4 hit parallel and lean was moderate. From rep 5 onward, depth dropped off and lean increased noticeably, with back angle at the bottom climbing from ~41° to over 42°. Rep 8 shows a major camera angle shift and should not be compared directly, but the overall trend across reps 1–7 is clear deterioration under fatigue.</div>
-          <div class="trend-r">→ Next session, reduce to 6 reps per set and focus on keeping your chest tall throughout every rep — quality over quantity.</div>
-          <div class="rating-box">
-            <div class="rating-label">How clearly does this tell the athlete what to fix? (1–5)</div>
-            <div class="stars"><div class="star" data-k="V1_0" data-n="1" onclick="pick('V1_0',1)">1</div><div class="star" data-k="V1_0" data-n="2" onclick="pick('V1_0',2)">2</div><div class="star" data-k="V1_0" data-n="3" onclick="pick('V1_0',3)">3</div><div class="star" data-k="V1_0" data-n="4" onclick="pick('V1_0',4)">4</div><div class="star" data-k="V1_0" data-n="5" onclick="pick('V1_0',5)">5</div></div>
-            <textarea class="notes-box" data-k="V1_0" placeholder="Notes..." oninput="save()"></textarea>
-          </div>
-        </div><div class="col-card" data-card="V1_1">
-          <!-- S2 — Haiku 4.5 (analysis + coaching) -->
-          <div class="model-badge">Model 2</div>
-          <span class="score-tag">58/100</span>
-          <div style="clear:both;margin-bottom:6px;"></div>
-          <div class="verdict">Your depth is inconsistent and declining—reps 5-7 don't reach parallel. Your torso is leaning forward excessively, especially in rep 8, which suggests your ankles are restricting your ability to stay upright. Fix ankle mobility first; it's the root cause of both issues.</div>
-          <div class="sec neg">Needs attention</div><div class="item neg">⚠️ <span class="cat rc">root cause</span><span class="cat">Range of Motion</span>Restricted ankle dorsiflexion throughout all 8 reps—ankles cannot bend forward enough to keep your torso upright.</div><div class="item neg">⚠️ <span class="cat sym">symptom</span><span class="cat">Posture</span>Back angle increases from 38° (rep 1) to 43° average (reps 2-7), peaking at 84° in rep 8. Excessive forward lean in 7 of 8 reps indicates compensation for ankle limitation. <span style="font-size:10px;color:#888">← Restricted ankle dorsiflexion</span></div><div class="item neg">⚠️ <span class="cat sym">symptom</span><span class="cat">Movement Quality</span>Depth deteriorates across the set: reps 1-4 reach parallel (104-108° knee angle), but reps 5-7 stop early (111-114° knee angle). Worsening trend of 4° over the set indicates fatigue layered on positional limitation. <span style="font-size:10px;color:#888">← Restricted ankle dorsiflexion</span></div>
-          <div class="sec" style="color:#1b5e20">Recommendation</div>
-          <div class="rec">Your ankles need mobility work before squatting. Do 2×10 wall ankle mobilizations per leg (stand 6 inches from wall, drive knee toward wall without heel lifting) 3-4 times per week. Then in your next squat session, spend 2 minutes warming up with goblet squats and focus on keeping your chest tall—let the depth come naturally once ankle mobility improves.</div>
-          <div class="sec" style="color:#1565C0">Rep trend</div>
-          <div class="trend-o">Form held steady through rep 4, then collapsed from rep 5 onward. Depth shallowed (knee angle rose from 108° to 114°), forward lean increased (back angle climbed to 43-44°), and rep 8 broke form entirely with extreme lean (84° back angle). Fatigue compounded by ankle restriction.</div>
-          <div class="trend-r">→ Next session, stop the set when depth starts to suffer—around rep 4 or 5—rather than grinding through shallow reps.</div>
-          <div class="rating-box">
-            <div class="rating-label">How clearly does this tell the athlete what to fix? (1–5)</div>
-            <div class="stars"><div class="star" data-k="V1_1" data-n="1" onclick="pick('V1_1',1)">1</div><div class="star" data-k="V1_1" data-n="2" onclick="pick('V1_1',2)">2</div><div class="star" data-k="V1_1" data-n="3" onclick="pick('V1_1',3)">3</div><div class="star" data-k="V1_1" data-n="4" onclick="pick('V1_1',4)">4</div><div class="star" data-k="V1_1" data-n="5" onclick="pick('V1_1',5)">5</div></div>
-            <textarea class="notes-box" data-k="V1_1" placeholder="Notes..." oninput="save()"></textarea>
-          </div>
-        </div></div>
+      <!-- S1 — Sonnet 4.6 (analysis + coaching) -->
+      <div class="model-badge">Model 1</div>
+      <span class="score-tag">58/100</span>
+      <div style="clear:both;margin-bottom:6px;"></div>
+      <div class="sec-label">Verdict</div>
+      <div class="verdict">Your forward lean is the biggest issue this session — your torso tips forward as you descend instead of staying tall, and it gets worse as the set goes on. Restricted ankle mobility is the likely root cause: when your ankles can't flex enough, your upper body compensates by leaning forward. Depth also dropped off in the second half of the set, with 3 of 7 valid reps coming up short of parallel.</div>
+      <div class="collapsible">
+      <button class="toggle-btn pos-btn" onclick="toggleSection(this)">✅ What's working <span class="toggle-arrow">▼</span></button>
+      <div class="collapsible-body"><div class="item" style="color:#2e7d32">✅ <span class="cat">Movement Quality</span>Tempo was controlled and consistent across reps 2–7, averaging 2.1 seconds per rep with a clear eccentric and pause phase — no rushing or bouncing out of the bottom.</div><div class="item" style="color:#2e7d32">✅ <span class="cat">Range of Motion</span>Reps 1–4 all reached parallel depth, with knee angles between 104–109° (MediaPipe) — solid depth in the early part of the set.</div></div>
+    </div>
+      <div class="collapsible">
+      <button class="toggle-btn neg-btn" onclick="toggleSection(this)">⚠️ Needs attention <span class="toggle-arrow">▼</span></button>
+      <div class="collapsible-body"><div class="item" style="color:#c62828">⚠️ <span class="cat rc">root cause</span><span class="cat">Range of Motion</span>Ankle dorsiflexion flagged as restricted on every valid rep (reps 1–7). This limits how far your shins can travel forward, forcing your torso to compensate by leaning. This is the root cause driving both lean and depth loss.</div><div class="item" style="color:#c62828">⚠️ <span class="cat sym">symptom</span><span class="cat">Posture</span>Forward lean worsened across the set. Back angle at the bottom rose from 37.9° (rep 1) to 42.8° (rep 5) and peaked at 84° at the start of rep 8. 7 of 7 valid reps were flagged WARNING for excessive lean duration. <span style="font-size:10px;color:#888">← restricted_ankle_dorsiflexion</span></div><div class="item" style="color:#c62828">⚠️ <span class="cat sym">symptom</span><span class="cat">Movement Quality</span>Depth became insufficient in reps 5, 6, and 7 — knee angle at bottom rose from ~104° (rep 2) to 114° (rep 7), a 10° trend of shallower squats as fatigue set in. <span style="font-size:10px;color:#888">← restricted_ankle_dorsiflexion</span></div></div>
+    </div>
+      <div class="sec-label" style="margin-top:10px;">Recommendation</div>
+      <div class="rec">Fix ankle mobility first — it is causing both the forward lean and the loss of depth. Before your next squat session, do 2 sets of 10 slow ankle circles per foot and 2 sets of 10 kneeling ankle rocks (knee over toe against a wall). During your goblet squat sets, try elevating your heels slightly on a small plate or wedge — this reduces the ankle demand and will immediately help you stay more upright and hit depth. Keep the weight at 20kg until lean is consistently under control.</div>
+      <div class="collapsible">
+      <button class="toggle-btn trend-btn" onclick="toggleSection(this)">📈 Rep trend <span class="toggle-arrow">▼</span></button>
+      <div class="collapsible-body"><div class="trend-o">Form started reasonably well — reps 1–4 hit parallel and lean was moderate. From rep 5 onward, depth dropped off and lean increased noticeably, with back angle at the bottom climbing from ~41° to over 42°. Rep 8 shows a major camera angle shift and should not be compared directly, but the overall trend across reps 1–7 is clear deterioration under fatigue.</div><div class="trend-r">→ Next session, reduce to 6 reps per set and focus on keeping your chest tall throughout every rep — quality over quantity.</div></div>
+    </div>
+      <div class="rating-box">
+        <div class="rating-label">How clearly does this tell the athlete what to fix? (1–5)</div>
+        <div class="stars"><div class="star" data-k="V1_0" data-n="1" onclick="pick('V1_0',1)">1</div><div class="star" data-k="V1_0" data-n="2" onclick="pick('V1_0',2)">2</div><div class="star" data-k="V1_0" data-n="3" onclick="pick('V1_0',3)">3</div><div class="star" data-k="V1_0" data-n="4" onclick="pick('V1_0',4)">4</div><div class="star" data-k="V1_0" data-n="5" onclick="pick('V1_0',5)">5</div></div>
+        <textarea class="notes-box" data-k="V1_0" placeholder="Notes..." oninput="save()"></textarea>
+      </div>
+    </div><div class="col-card" data-card="V1_1">
+      <!-- S2 — Haiku 4.5 (analysis + coaching) -->
+      <div class="model-badge">Model 2</div>
+      <span class="score-tag">58/100</span>
+      <div style="clear:both;margin-bottom:6px;"></div>
+      <div class="sec-label">Verdict</div>
+      <div class="verdict">Your depth is inconsistent and declining—reps 5-7 don't reach parallel. Your torso is leaning forward excessively, especially in rep 8, which suggests your ankles are restricting your ability to stay upright. Fix ankle mobility first; it's the root cause of both issues.</div>
+      <div class="collapsible">
+      <button class="toggle-btn pos-btn" onclick="toggleSection(this)">✅ What's working <span class="toggle-arrow">▼</span></button>
+      <div class="collapsible-body"><div class="item" style="color:#2e7d32">✅ <span class="cat">Movement Quality</span>Reps 1-4 achieved parallel depth (knee angles 104-108°), showing you can squat deep when form is fresh.</div><div class="item" style="color:#2e7d32">✅ <span class="cat">Movement Quality</span>Tempo is consistent across the set (average 2.1 sec total), demonstrating controlled descent and recovery.</div></div>
+    </div>
+      <div class="collapsible">
+      <button class="toggle-btn neg-btn" onclick="toggleSection(this)">⚠️ Needs attention <span class="toggle-arrow">▼</span></button>
+      <div class="collapsible-body"><div class="item" style="color:#c62828">⚠️ <span class="cat rc">root cause</span><span class="cat">Range of Motion</span>Restricted ankle dorsiflexion throughout all 8 reps—ankles cannot bend forward enough to keep your torso upright.</div><div class="item" style="color:#c62828">⚠️ <span class="cat sym">symptom</span><span class="cat">Posture</span>Back angle increases from 38° (rep 1) to 43° average (reps 2-7), peaking at 84° in rep 8. Excessive forward lean in 7 of 8 reps indicates compensation for ankle limitation. <span style="font-size:10px;color:#888">← Restricted ankle dorsiflexion</span></div><div class="item" style="color:#c62828">⚠️ <span class="cat sym">symptom</span><span class="cat">Movement Quality</span>Depth deteriorates across the set: reps 1-4 reach parallel (104-108° knee angle), but reps 5-7 stop early (111-114° knee angle). Worsening trend of 4° over the set indicates fatigue layered on positional limitation. <span style="font-size:10px;color:#888">← Restricted ankle dorsiflexion</span></div></div>
+    </div>
+      <div class="sec-label" style="margin-top:10px;">Recommendation</div>
+      <div class="rec">Your ankles need mobility work before squatting. Do 2×10 wall ankle mobilizations per leg (stand 6 inches from wall, drive knee toward wall without heel lifting) 3-4 times per week. Then in your next squat session, spend 2 minutes warming up with goblet squats and focus on keeping your chest tall—let the depth come naturally once ankle mobility improves.</div>
+      <div class="collapsible">
+      <button class="toggle-btn trend-btn" onclick="toggleSection(this)">📈 Rep trend <span class="toggle-arrow">▼</span></button>
+      <div class="collapsible-body"><div class="trend-o">Form held steady through rep 4, then collapsed from rep 5 onward. Depth shallowed (knee angle rose from 108° to 114°), forward lean increased (back angle climbed to 43-44°), and rep 8 broke form entirely with extreme lean (84° back angle). Fatigue compounded by ankle restriction.</div><div class="trend-r">→ Next session, stop the set when depth starts to suffer—around rep 4 or 5—rather than grinding through shallow reps.</div></div>
+    </div>
+      <div class="rating-box">
+        <div class="rating-label">How clearly does this tell the athlete what to fix? (1–5)</div>
+        <div class="stars"><div class="star" data-k="V1_1" data-n="1" onclick="pick('V1_1',1)">1</div><div class="star" data-k="V1_1" data-n="2" onclick="pick('V1_1',2)">2</div><div class="star" data-k="V1_1" data-n="3" onclick="pick('V1_1',3)">3</div><div class="star" data-k="V1_1" data-n="4" onclick="pick('V1_1',4)">4</div><div class="star" data-k="V1_1" data-n="5" onclick="pick('V1_1',5)">5</div></div>
+        <textarea class="notes-box" data-k="V1_1" placeholder="Notes..." oninput="save()"></textarea>
+      </div>
+    </div></div>
     </div><div class="video-section">
       <div class="video-title">V2 — Depth Good</div>
       <div class="col-grid"><div class="col-card" data-card="V2_0">
-          <!-- S1 — Sonnet 4.6 (analysis + coaching) -->
-          <div class="model-badge">Model 1</div>
-          <span class="score-tag">74/100</span>
-          <div style="clear:both;margin-bottom:6px;"></div>
-          <div class="verdict">You hit good depth on all 6 reps and your torso stayed reasonably upright throughout. The main limiting factor is restricted ankle mobility — your heels are being pulled up at the bottom, which forces a forward lean and limits how upright you can stay. Fix the ankles and the rest of your squat will follow.</div>
-          <div class="sec neg">Needs attention</div><div class="item neg">⚠️ <span class="cat rc">root cause</span><span class="cat">Range of Motion</span>Ankle dorsiflexion was flagged as restricted in all 6 of 6 reps. Visually, the heel rises slightly at the bottom of the squat — this is the primary limiter on torso uprightness and overall squat quality.</div><div class="item neg">⚠️ <span class="cat sym">symptom</span><span class="cat">Posture</span>Forward lean peaked at 38.3–40.3° across reps 1–3, with rep 3 triggering a WARNING status (back angle 39.5°, time in warning zone 2.1s). Lean is a direct result of restricted ankle mobility forcing the torso to compensate. <span style="font-size:10px;color:#888">← restricted_ankle_dorsiflexion</span></div><div class="item neg">⚠️ <span class="cat sym">symptom</span><span class="cat">Movement Quality</span>Eccentric phase averaged just 0.77 seconds — the descent is too fast. At 20kg this is manageable, but controlling the lowering phase more deliberately will improve positional accuracy and reduce forward lean at the bottom.</div>
-          <div class="sec" style="color:#1b5e20">Recommendation</div>
-          <div class="rec">Your ankles are the root cause — restricted dorsiflexion is pulling your heels up and tipping your torso forward. Fix this first. Next session: before squatting, do 2 sets of 10 slow ankle circles per side plus 2 sets of 10 wall ankle stretches (knee-to-wall drill, toes 10cm from wall). Then try squatting with a small weight plate under each heel — this compensates for ankle tightness and will let you feel what an upright torso should feel like. Also slow your descent to 2–3 seconds on the way down.</div>
-          <div class="sec" style="color:#1565C0">Rep trend</div>
-          <div class="trend-o">Depth improved slightly as the set progressed — knee angle at the bottom dropped from 94.4° in rep 1 to 87.8° by rep 4, meaning you squatted a little deeper each rep. Back angle peaked in rep 3 (40.3°, only WARNING of the set) then improved and stabilised in reps 4–6 around 35–37°. Tempo was inconsistent early but settled by the second half.</div>
-          <div class="trend-r">→ Next session focus on slowing the descent to a full 2-count — controlled lowering will naturally reduce the forward lean you showed in reps 1–3.</div>
-          <div class="rating-box">
-            <div class="rating-label">How clearly does this tell the athlete what to fix? (1–5)</div>
-            <div class="stars"><div class="star" data-k="V2_0" data-n="1" onclick="pick('V2_0',1)">1</div><div class="star" data-k="V2_0" data-n="2" onclick="pick('V2_0',2)">2</div><div class="star" data-k="V2_0" data-n="3" onclick="pick('V2_0',3)">3</div><div class="star" data-k="V2_0" data-n="4" onclick="pick('V2_0',4)">4</div><div class="star" data-k="V2_0" data-n="5" onclick="pick('V2_0',5)">5</div></div>
-            <textarea class="notes-box" data-k="V2_0" placeholder="Notes..." oninput="save()"></textarea>
-          </div>
-        </div><div class="col-card" data-card="V2_1">
-          <!-- S2 — Haiku 4.5 (analysis + coaching) -->
-          <div class="model-badge">Model 2</div>
-          <span class="score-tag">82/100</span>
-          <div style="clear:both;margin-bottom:6px;"></div>
-          <div class="verdict">You're hitting solid depth consistently across all 6 reps with good control. Your back angle stays acceptable, staying upright for a goblet squat. One minor warning on rep 3 where the pause extended slightly long, but overall your technique is stable and repeatable.</div>
-          <div class="sec neg">Needs attention</div><div class="item neg">⚠️ <span class="cat rc">root cause</span><span class="cat">Range of Motion</span>Restricted ankle dorsiflexion flagged across all 6 reps. Your ankles aren't flexing enough at the bottom position, likely limiting how freely you achieve depth.</div><div class="item neg">⚠️ <span class="cat sym">symptom</span><span class="cat">Posture</span>Rep 3 shows back angle warning: 40.3° max with 2.1 second pause. You held the bottom longer on this rep, increasing demand on your spine. <span style="font-size:10px;color:#888">← restricted_ankle_dorsiflexion</span></div>
-          <div class="sec" style="color:#1b5e20">Recommendation</div>
-          <div class="rec">Improve ankle mobility first—it's limiting how easily you descend. Before your next session, spend 2 minutes doing 15 slow ankle circles each direction and 10 reps of seated ankle dorsiflexion stretches. Then in your goblet squat workout, add 2 extra warm-up reps focusing on letting your shins move forward over your toes. Keep pauses under 1.5 seconds to reduce spinal load.</div>
-          <div class="sec" style="color:#1565C0">Rep trend</div>
-          <div class="trend-o">Your depth actually improved slightly from rep 1 to rep 6 (knee angle trend −0.6°), and back angle stabilized nicely. Tempo lengthened slightly across the set (rep 1: 2.8s → rep 6: 3.1s), which is normal fatigue response. Rep 3 was your slowest—a momentary hesitation—but you recovered and finished strong.</div>
-          <div class="trend-r">→ Focus on consistent pause length next session: aim for a 1–1.2 second pause at the bottom rather than holding longer as reps accumulate.</div>
-          <div class="rating-box">
-            <div class="rating-label">How clearly does this tell the athlete what to fix? (1–5)</div>
-            <div class="stars"><div class="star" data-k="V2_1" data-n="1" onclick="pick('V2_1',1)">1</div><div class="star" data-k="V2_1" data-n="2" onclick="pick('V2_1',2)">2</div><div class="star" data-k="V2_1" data-n="3" onclick="pick('V2_1',3)">3</div><div class="star" data-k="V2_1" data-n="4" onclick="pick('V2_1',4)">4</div><div class="star" data-k="V2_1" data-n="5" onclick="pick('V2_1',5)">5</div></div>
-            <textarea class="notes-box" data-k="V2_1" placeholder="Notes..." oninput="save()"></textarea>
-          </div>
-        </div></div>
+      <!-- S1 — Sonnet 4.6 (analysis + coaching) -->
+      <div class="model-badge">Model 1</div>
+      <span class="score-tag">74/100</span>
+      <div style="clear:both;margin-bottom:6px;"></div>
+      <div class="sec-label">Verdict</div>
+      <div class="verdict">You hit good depth on all 6 reps and your torso stayed reasonably upright throughout. The main limiting factor is restricted ankle mobility — your heels are being pulled up at the bottom, which forces a forward lean and limits how upright you can stay. Fix the ankles and the rest of your squat will follow.</div>
+      <div class="collapsible">
+      <button class="toggle-btn pos-btn" onclick="toggleSection(this)">✅ What's working <span class="toggle-arrow">▼</span></button>
+      <div class="collapsible-body"><div class="item" style="color:#2e7d32">✅ <span class="cat">Range of Motion</span>All 6 reps reached deep classification — knee angles at bottom ranged from 87.8° to 94.4° (approx. 86–92° of knee flexion), with hip crease consistently below parallel.</div><div class="item" style="color:#2e7d32">✅ <span class="cat">Posture</span>Back angle at the bottom improved across the session, trending down by 0.38° per rep from rep 1 (38.3°) to rep 6 (35.1°) — torso got slightly more upright as the set progressed.</div><div class="item" style="color:#2e7d32">✅ <span class="cat">Movement Quality</span>Pause at the bottom was consistent across all reps (1.5–1.7 seconds), showing good control and intentional bracing at the hardest point of the movement.</div></div>
+    </div>
+      <div class="collapsible">
+      <button class="toggle-btn neg-btn" onclick="toggleSection(this)">⚠️ Needs attention <span class="toggle-arrow">▼</span></button>
+      <div class="collapsible-body"><div class="item" style="color:#c62828">⚠️ <span class="cat rc">root cause</span><span class="cat">Range of Motion</span>Ankle dorsiflexion was flagged as restricted in all 6 of 6 reps. Visually, the heel rises slightly at the bottom of the squat — this is the primary limiter on torso uprightness and overall squat quality.</div><div class="item" style="color:#c62828">⚠️ <span class="cat sym">symptom</span><span class="cat">Posture</span>Forward lean peaked at 38.3–40.3° across reps 1–3, with rep 3 triggering a WARNING status (back angle 39.5°, time in warning zone 2.1s). Lean is a direct result of restricted ankle mobility forcing the torso to compensate. <span style="font-size:10px;color:#888">← restricted_ankle_dorsiflexion</span></div><div class="item" style="color:#c62828">⚠️ <span class="cat sym">symptom</span><span class="cat">Movement Quality</span>Eccentric phase averaged just 0.77 seconds — the descent is too fast. At 20kg this is manageable, but controlling the lowering phase more deliberately will improve positional accuracy and reduce forward lean at the bottom.</div></div>
+    </div>
+      <div class="sec-label" style="margin-top:10px;">Recommendation</div>
+      <div class="rec">Your ankles are the root cause — restricted dorsiflexion is pulling your heels up and tipping your torso forward. Fix this first. Next session: before squatting, do 2 sets of 10 slow ankle circles per side plus 2 sets of 10 wall ankle stretches (knee-to-wall drill, toes 10cm from wall). Then try squatting with a small weight plate under each heel — this compensates for ankle tightness and will let you feel what an upright torso should feel like. Also slow your descent to 2–3 seconds on the way down.</div>
+      <div class="collapsible">
+      <button class="toggle-btn trend-btn" onclick="toggleSection(this)">📈 Rep trend <span class="toggle-arrow">▼</span></button>
+      <div class="collapsible-body"><div class="trend-o">Depth improved slightly as the set progressed — knee angle at the bottom dropped from 94.4° in rep 1 to 87.8° by rep 4, meaning you squatted a little deeper each rep. Back angle peaked in rep 3 (40.3°, only WARNING of the set) then improved and stabilised in reps 4–6 around 35–37°. Tempo was inconsistent early but settled by the second half.</div><div class="trend-r">→ Next session focus on slowing the descent to a full 2-count — controlled lowering will naturally reduce the forward lean you showed in reps 1–3.</div></div>
+    </div>
+      <div class="rating-box">
+        <div class="rating-label">How clearly does this tell the athlete what to fix? (1–5)</div>
+        <div class="stars"><div class="star" data-k="V2_0" data-n="1" onclick="pick('V2_0',1)">1</div><div class="star" data-k="V2_0" data-n="2" onclick="pick('V2_0',2)">2</div><div class="star" data-k="V2_0" data-n="3" onclick="pick('V2_0',3)">3</div><div class="star" data-k="V2_0" data-n="4" onclick="pick('V2_0',4)">4</div><div class="star" data-k="V2_0" data-n="5" onclick="pick('V2_0',5)">5</div></div>
+        <textarea class="notes-box" data-k="V2_0" placeholder="Notes..." oninput="save()"></textarea>
+      </div>
+    </div><div class="col-card" data-card="V2_1">
+      <!-- S2 — Haiku 4.5 (analysis + coaching) -->
+      <div class="model-badge">Model 2</div>
+      <span class="score-tag">82/100</span>
+      <div style="clear:both;margin-bottom:6px;"></div>
+      <div class="sec-label">Verdict</div>
+      <div class="verdict">You're hitting solid depth consistently across all 6 reps with good control. Your back angle stays acceptable, staying upright for a goblet squat. One minor warning on rep 3 where the pause extended slightly long, but overall your technique is stable and repeatable.</div>
+      <div class="collapsible">
+      <button class="toggle-btn pos-btn" onclick="toggleSection(this)">✅ What's working <span class="toggle-arrow">▼</span></button>
+      <div class="collapsible-body"><div class="item" style="color:#2e7d32">✅ <span class="cat">Range of Motion</span>All 6 reps reach deep depth: knee angles 87–94° (well below parallel), hip angles 50–60°. This shows excellent mobility and commitment to full range of motion.</div><div class="item" style="color:#2e7d32">✅ <span class="cat">Posture</span>Back angle remains controlled across all reps: mean 37.3° at bottom, ranging 35–40°. You're staying upright without excessive forward lean.</div><div class="item" style="color:#2e7d32">✅ <span class="cat">Movement Quality</span>Tempo is consistent and deliberate: mean total rep time 3.1 seconds. You're not rushing or compensating as fatigue sets in.</div></div>
+    </div>
+      <div class="collapsible">
+      <button class="toggle-btn neg-btn" onclick="toggleSection(this)">⚠️ Needs attention <span class="toggle-arrow">▼</span></button>
+      <div class="collapsible-body"><div class="item" style="color:#c62828">⚠️ <span class="cat rc">root cause</span><span class="cat">Range of Motion</span>Restricted ankle dorsiflexion flagged across all 6 reps. Your ankles aren't flexing enough at the bottom position, likely limiting how freely you achieve depth.</div><div class="item" style="color:#c62828">⚠️ <span class="cat sym">symptom</span><span class="cat">Posture</span>Rep 3 shows back angle warning: 40.3° max with 2.1 second pause. You held the bottom longer on this rep, increasing demand on your spine. <span style="font-size:10px;color:#888">← restricted_ankle_dorsiflexion</span></div></div>
+    </div>
+      <div class="sec-label" style="margin-top:10px;">Recommendation</div>
+      <div class="rec">Improve ankle mobility first—it's limiting how easily you descend. Before your next session, spend 2 minutes doing 15 slow ankle circles each direction and 10 reps of seated ankle dorsiflexion stretches. Then in your goblet squat workout, add 2 extra warm-up reps focusing on letting your shins move forward over your toes. Keep pauses under 1.5 seconds to reduce spinal load.</div>
+      <div class="collapsible">
+      <button class="toggle-btn trend-btn" onclick="toggleSection(this)">📈 Rep trend <span class="toggle-arrow">▼</span></button>
+      <div class="collapsible-body"><div class="trend-o">Your depth actually improved slightly from rep 1 to rep 6 (knee angle trend −0.6°), and back angle stabilized nicely. Tempo lengthened slightly across the set (rep 1: 2.8s → rep 6: 3.1s), which is normal fatigue response. Rep 3 was your slowest—a momentary hesitation—but you recovered and finished strong.</div><div class="trend-r">→ Focus on consistent pause length next session: aim for a 1–1.2 second pause at the bottom rather than holding longer as reps accumulate.</div></div>
+    </div>
+      <div class="rating-box">
+        <div class="rating-label">How clearly does this tell the athlete what to fix? (1–5)</div>
+        <div class="stars"><div class="star" data-k="V2_1" data-n="1" onclick="pick('V2_1',1)">1</div><div class="star" data-k="V2_1" data-n="2" onclick="pick('V2_1',2)">2</div><div class="star" data-k="V2_1" data-n="3" onclick="pick('V2_1',3)">3</div><div class="star" data-k="V2_1" data-n="4" onclick="pick('V2_1',4)">4</div><div class="star" data-k="V2_1" data-n="5" onclick="pick('V2_1',5)">5</div></div>
+        <textarea class="notes-box" data-k="V2_1" placeholder="Notes..." oninput="save()"></textarea>
+      </div>
+    </div></div>
     </div><div class="video-section">
       <div class="video-title">V3 — Knee Valgus Fault</div>
       <div class="col-grid"><div class="col-card" data-card="V3_0">
-          <!-- S1 — Sonnet 4.6 (analysis + coaching) -->
-          <div class="model-badge">Model 1</div>
-          <span class="score-tag">72/100</span>
-          <div style="clear:both;margin-bottom:6px;"></div>
-          <div class="verdict">Solid depth every single rep — that's a real strength. The main issue is your knees caving inward at the top of every rep as you stand up, and this showed up in all 7 reps. Your torso angle improved noticeably across the set. Fix the knee cave and this becomes a very good squat.</div>
-          <div class="sec neg">Needs attention</div><div class="item neg">⚠️ <span class="cat rc">root cause</span><span class="cat">Stability</span>Knees caved inward during the drive-up phase on all 7 reps (valgus phase: LATE in every rep). Valgus distance ranged from 0.165 to 0.281 — 7 of 7 reps exceeded the 0.22 threshold. Slight improvement trend (-0.012 per rep) but still present throughout.</div><div class="item neg">⚠️ <span class="cat sym">symptom</span><span class="cat">Posture</span>Rep 1 showed the largest forward lean (back angle 74° at bottom) and fastest total rep time (1.8s) with no pause. This outlier rep also had the worst valgus distance (0.281), suggesting reduced control when tempo is rushed. <span style="font-size:10px;color:#888">← knee_valgus</span></div>
-          <div class="sec" style="color:#1b5e20">Recommendation</div>
-          <div class="rec">Your knees are the priority. Next session, before your working sets, do 2 sets of 10 banded squats — place a light resistance band just above your knees and actively push out against it the entire rep, especially as you stand up. During your goblet squat sets, cue yourself: 'knees out' as you begin to drive up from the bottom. Keep the weight the same or go lighter if needed to hold the knee position.</div>
-          <div class="sec" style="color:#1565C0">Rep trend</div>
-          <div class="trend-o">Rep 1 was the weakest — fastest tempo, biggest forward lean, and worst knee cave. From rep 2 onward, torso position improved significantly and hold time at the bottom became consistent. Knee valgus trended slightly downward (0.281 to 0.165) but remained present every rep.</div>
-          <div class="trend-r">→ Focus on actively pushing your knees out as you stand up — make that the one thing you think about next session.</div>
-          <div class="rating-box">
-            <div class="rating-label">How clearly does this tell the athlete what to fix? (1–5)</div>
-            <div class="stars"><div class="star" data-k="V3_0" data-n="1" onclick="pick('V3_0',1)">1</div><div class="star" data-k="V3_0" data-n="2" onclick="pick('V3_0',2)">2</div><div class="star" data-k="V3_0" data-n="3" onclick="pick('V3_0',3)">3</div><div class="star" data-k="V3_0" data-n="4" onclick="pick('V3_0',4)">4</div><div class="star" data-k="V3_0" data-n="5" onclick="pick('V3_0',5)">5</div></div>
-            <textarea class="notes-box" data-k="V3_0" placeholder="Notes..." oninput="save()"></textarea>
-          </div>
-        </div><div class="col-card" data-card="V3_1">
-          <!-- S2 — Haiku 4.5 (analysis + coaching) -->
-          <div class="model-badge">Model 2</div>
-          <span class="score-tag">72/100</span>
-          <div style="clear:both;margin-bottom:6px;"></div>
-          <div class="verdict">Your depth is solid across all 7 reps, which is excellent. However, your knees are collapsing inward consistently, and your torso is leaning forward more than it should in a goblet squat. These two issues are connected—the lean is forcing your knees to cave. Fix the lean first, and the knee position will improve.</div>
-          <div class="sec neg">Needs attention</div><div class="item neg">⚠️ <span class="cat rc">root cause</span><span class="cat">Posture</span>Excessive forward lean present in reps 1–2 (back angles 74° and 38–40°). Improves by rep 3 onwards (back angles 30–36°), but remains elevated for a goblet squat. Trend: -5.4° across set, indicating mid-set correction.</div><div class="item neg">⚠️ <span class="cat sym">symptom</span><span class="cat">Stability</span>Knee valgus (inward collapse) flagged in all 7 reps. Valgus distance mean 0.20 cm, range 0.16–0.28 cm. All instances occur in late descent phase. Trend: slight improvement (-0.01 cm across set), but persistent. <span style="font-size:10px;color:#888">← Excessive forward lean forces knees to drift inward to maintain balance.</span></div><div class="item neg">⚠️ <span class="cat sym">symptom</span><span class="cat">Movement Quality</span>Foot turnout asymmetry present: left foot 21.97° mean vs right foot 18.41° mean. Gap of 3.6° is within acceptable range but worth monitoring. <span style="font-size:10px;color:#888">← Excessive forward lean</span></div>
-          <div class="sec" style="color:#1b5e20">Recommendation</div>
-          <div class="rec">Your forward lean is the root cause—it's forcing your knees inward to stabilize. Focus on these two things next session: (1) Goblet Hold Reset: before each rep, pull the weight to your chest and pack your shoulders back. Keep your torso upright throughout the descent. (2) Knee-Out Drill: pause 2 seconds at the bottom of 3 warm-up reps, actively push your knees outward, then stand. This cues your body. Apply this to your working sets.</div>
-          <div class="sec" style="color:#1565C0">Rep trend</div>
-          <div class="trend-o">Form improves mid-set. Reps 1–2 show excessive forward lean (back angles 74° and 40°) and rapid descent. By rep 3, you adjust: back angle drops to 35° and stays there through rep 7. Knees collapse inward in all reps, but slightly less as the set progresses (valgus distance trend −0.01 cm). You're self-correcting—leverage this.</div>
-          <div class="trend-r">→ Start with your best form from rep 3 onwards. Use that torso angle and positioning from rep 1, and you'll eliminate the lean and the knee collapse immediately.</div>
-          <div class="rating-box">
-            <div class="rating-label">How clearly does this tell the athlete what to fix? (1–5)</div>
-            <div class="stars"><div class="star" data-k="V3_1" data-n="1" onclick="pick('V3_1',1)">1</div><div class="star" data-k="V3_1" data-n="2" onclick="pick('V3_1',2)">2</div><div class="star" data-k="V3_1" data-n="3" onclick="pick('V3_1',3)">3</div><div class="star" data-k="V3_1" data-n="4" onclick="pick('V3_1',4)">4</div><div class="star" data-k="V3_1" data-n="5" onclick="pick('V3_1',5)">5</div></div>
-            <textarea class="notes-box" data-k="V3_1" placeholder="Notes..." oninput="save()"></textarea>
-          </div>
-        </div></div>
+      <!-- S1 — Sonnet 4.6 (analysis + coaching) -->
+      <div class="model-badge">Model 1</div>
+      <span class="score-tag">72/100</span>
+      <div style="clear:both;margin-bottom:6px;"></div>
+      <div class="sec-label">Verdict</div>
+      <div class="verdict">Solid depth every single rep — that's a real strength. The main issue is your knees caving inward at the top of every rep as you stand up, and this showed up in all 7 reps. Your torso angle improved noticeably across the set. Fix the knee cave and this becomes a very good squat.</div>
+      <div class="collapsible">
+      <button class="toggle-btn pos-btn" onclick="toggleSection(this)">✅ What's working <span class="toggle-arrow">▼</span></button>
+      <div class="collapsible-body"><div class="item" style="color:#2e7d32">✅ <span class="cat">Range of Motion</span>Full depth achieved on all 7 reps — knee angle reached between 94° and 138° (MediaPipe) at the bottom, consistently classified as deep with zero insufficient-depth flags.</div><div class="item" style="color:#2e7d32">✅ <span class="cat">Posture</span>Forward lean improved steadily across the set — back angle at the bottom dropped from 74° (rep 1) to 28° (rep 7), a 46° improvement, with 5 of 7 reps rated ACCEPTABLE.</div><div class="item" style="color:#2e7d32">✅ <span class="cat">Movement Quality</span>Pause at the bottom averaged 1.46 seconds from rep 2 onward, showing good control and deliberate tempo through the set.</div></div>
+    </div>
+      <div class="collapsible">
+      <button class="toggle-btn neg-btn" onclick="toggleSection(this)">⚠️ Needs attention <span class="toggle-arrow">▼</span></button>
+      <div class="collapsible-body"><div class="item" style="color:#c62828">⚠️ <span class="cat rc">root cause</span><span class="cat">Stability</span>Knees caved inward during the drive-up phase on all 7 reps (valgus phase: LATE in every rep). Valgus distance ranged from 0.165 to 0.281 — 7 of 7 reps exceeded the 0.22 threshold. Slight improvement trend (-0.012 per rep) but still present throughout.</div><div class="item" style="color:#c62828">⚠️ <span class="cat sym">symptom</span><span class="cat">Posture</span>Rep 1 showed the largest forward lean (back angle 74° at bottom) and fastest total rep time (1.8s) with no pause. This outlier rep also had the worst valgus distance (0.281), suggesting reduced control when tempo is rushed. <span style="font-size:10px;color:#888">← knee_valgus</span></div></div>
+    </div>
+      <div class="sec-label" style="margin-top:10px;">Recommendation</div>
+      <div class="rec">Your knees are the priority. Next session, before your working sets, do 2 sets of 10 banded squats — place a light resistance band just above your knees and actively push out against it the entire rep, especially as you stand up. During your goblet squat sets, cue yourself: 'knees out' as you begin to drive up from the bottom. Keep the weight the same or go lighter if needed to hold the knee position.</div>
+      <div class="collapsible">
+      <button class="toggle-btn trend-btn" onclick="toggleSection(this)">📈 Rep trend <span class="toggle-arrow">▼</span></button>
+      <div class="collapsible-body"><div class="trend-o">Rep 1 was the weakest — fastest tempo, biggest forward lean, and worst knee cave. From rep 2 onward, torso position improved significantly and hold time at the bottom became consistent. Knee valgus trended slightly downward (0.281 to 0.165) but remained present every rep.</div><div class="trend-r">→ Focus on actively pushing your knees out as you stand up — make that the one thing you think about next session.</div></div>
+    </div>
+      <div class="rating-box">
+        <div class="rating-label">How clearly does this tell the athlete what to fix? (1–5)</div>
+        <div class="stars"><div class="star" data-k="V3_0" data-n="1" onclick="pick('V3_0',1)">1</div><div class="star" data-k="V3_0" data-n="2" onclick="pick('V3_0',2)">2</div><div class="star" data-k="V3_0" data-n="3" onclick="pick('V3_0',3)">3</div><div class="star" data-k="V3_0" data-n="4" onclick="pick('V3_0',4)">4</div><div class="star" data-k="V3_0" data-n="5" onclick="pick('V3_0',5)">5</div></div>
+        <textarea class="notes-box" data-k="V3_0" placeholder="Notes..." oninput="save()"></textarea>
+      </div>
+    </div><div class="col-card" data-card="V3_1">
+      <!-- S2 — Haiku 4.5 (analysis + coaching) -->
+      <div class="model-badge">Model 2</div>
+      <span class="score-tag">72/100</span>
+      <div style="clear:both;margin-bottom:6px;"></div>
+      <div class="sec-label">Verdict</div>
+      <div class="verdict">Your depth is solid across all 7 reps, which is excellent. However, your knees are collapsing inward consistently, and your torso is leaning forward more than it should in a goblet squat. These two issues are connected—the lean is forcing your knees to cave. Fix the lean first, and the knee position will improve.</div>
+      <div class="collapsible">
+      <button class="toggle-btn pos-btn" onclick="toggleSection(this)">✅ What's working <span class="toggle-arrow">▼</span></button>
+      <div class="collapsible-body"><div class="item" style="color:#2e7d32">✅ <span class="cat">Range of Motion</span>All 7 reps reach deep depth (knee angles 94–103°, hip angles 55–73°). Hip crease consistently below knee.</div><div class="item" style="color:#2e7d32">✅ <span class="cat">Movement Quality</span>Tempo control improves and stabilizes by rep 3. Reps 3–7 maintain controlled eccentric (0.4–0.6s) and consistent pause (1.5–1.6s).</div></div>
+    </div>
+      <div class="collapsible">
+      <button class="toggle-btn neg-btn" onclick="toggleSection(this)">⚠️ Needs attention <span class="toggle-arrow">▼</span></button>
+      <div class="collapsible-body"><div class="item" style="color:#c62828">⚠️ <span class="cat rc">root cause</span><span class="cat">Posture</span>Excessive forward lean present in reps 1–2 (back angles 74° and 38–40°). Improves by rep 3 onwards (back angles 30–36°), but remains elevated for a goblet squat. Trend: -5.4° across set, indicating mid-set correction.</div><div class="item" style="color:#c62828">⚠️ <span class="cat sym">symptom</span><span class="cat">Stability</span>Knee valgus (inward collapse) flagged in all 7 reps. Valgus distance mean 0.20 cm, range 0.16–0.28 cm. All instances occur in late descent phase. Trend: slight improvement (-0.01 cm across set), but persistent. <span style="font-size:10px;color:#888">← Excessive forward lean forces knees to drift inward to maintain balance.</span></div><div class="item" style="color:#c62828">⚠️ <span class="cat sym">symptom</span><span class="cat">Movement Quality</span>Foot turnout asymmetry present: left foot 21.97° mean vs right foot 18.41° mean. Gap of 3.6° is within acceptable range but worth monitoring. <span style="font-size:10px;color:#888">← Excessive forward lean</span></div></div>
+    </div>
+      <div class="sec-label" style="margin-top:10px;">Recommendation</div>
+      <div class="rec">Your forward lean is the root cause—it's forcing your knees inward to stabilize. Focus on these two things next session: (1) Goblet Hold Reset: before each rep, pull the weight to your chest and pack your shoulders back. Keep your torso upright throughout the descent. (2) Knee-Out Drill: pause 2 seconds at the bottom of 3 warm-up reps, actively push your knees outward, then stand. This cues your body. Apply this to your working sets.</div>
+      <div class="collapsible">
+      <button class="toggle-btn trend-btn" onclick="toggleSection(this)">📈 Rep trend <span class="toggle-arrow">▼</span></button>
+      <div class="collapsible-body"><div class="trend-o">Form improves mid-set. Reps 1–2 show excessive forward lean (back angles 74° and 40°) and rapid descent. By rep 3, you adjust: back angle drops to 35° and stays there through rep 7. Knees collapse inward in all reps, but slightly less as the set progresses (valgus distance trend −0.01 cm). You're self-correcting—leverage this.</div><div class="trend-r">→ Start with your best form from rep 3 onwards. Use that torso angle and positioning from rep 1, and you'll eliminate the lean and the knee collapse immediately.</div></div>
+    </div>
+      <div class="rating-box">
+        <div class="rating-label">How clearly does this tell the athlete what to fix? (1–5)</div>
+        <div class="stars"><div class="star" data-k="V3_1" data-n="1" onclick="pick('V3_1',1)">1</div><div class="star" data-k="V3_1" data-n="2" onclick="pick('V3_1',2)">2</div><div class="star" data-k="V3_1" data-n="3" onclick="pick('V3_1',3)">3</div><div class="star" data-k="V3_1" data-n="4" onclick="pick('V3_1',4)">4</div><div class="star" data-k="V3_1" data-n="5" onclick="pick('V3_1',5)">5</div></div>
+        <textarea class="notes-box" data-k="V3_1" placeholder="Notes..." oninput="save()"></textarea>
+      </div>
+    </div></div>
     </div><div class="video-section">
       <div class="video-title">V4 — Knee Valgus Good</div>
       <div class="col-grid"><div class="col-card" data-card="V4_0">
-          <!-- S2 — Haiku 4.5 (analysis + coaching) -->
-          <div class="model-badge">Model 1</div>
-          <span class="score-tag">82/100</span>
-          <div style="clear:both;margin-bottom:6px;"></div>
-          <div class="verdict">Your depth and overall positioning are solid across all five reps. You're hitting full range consistently with good control. Minor asymmetry in knee tracking appeared twice late in the set, but it's not a major concern—watch for early knee outward pressure to prevent it.</div>
-          <div class="sec neg">Needs attention</div><div class="item neg">⚠️ <span class="cat rc">root cause</span><span class="cat">Stability</span>Reps 2 and 5 show late-phase knee inward collapse (valgus distance 0.24 and 0.23). Right foot turnout is significantly lower than left (7–17° vs 27–33°), suggesting asymmetric foot position is the root cause.</div><div class="item neg">⚠️ <span class="cat sym">symptom</span><span class="cat">Stability</span>Right foot turnout inconsistent across set (7–17°) compared to left (27–34°). This bilateral gap of 10–26° explains why knees drift inward on reps 2 and 5. <span style="font-size:10px;color:#888">← asymmetric foot positioning</span></div>
-          <div class="sec" style="color:#1b5e20">Recommendation</div>
-          <div class="rec">Fix your foot stance first—it's driving the knee drift. Next session, set your feet wider and turn both feet out to 25–30° equally before your first rep. Mark your foot position on the mat if needed. Practice 2–3 pause squats with conscious foot pressure on the outside edge of each foot. This single change will eliminate the knee inward shift.</div>
-          <div class="sec" style="color:#1565C0">Rep trend</div>
-          <div class="trend-o">Rep 1 had solid position throughout. Reps 2 and 5 showed late-phase knee drift inward, likely due to inconsistent right foot turnout on those reps. Back angle improved slightly (from 25° down to 17° by rep 5), showing you're getting more comfortable. Depth stayed consistent at 88–93° throughout.</div>
-          <div class="trend-r">→ Lock in your foot angle at setup—don't let your right foot rotate inward as you squat.</div>
-          <div class="rating-box">
-            <div class="rating-label">How clearly does this tell the athlete what to fix? (1–5)</div>
-            <div class="stars"><div class="star" data-k="V4_0" data-n="1" onclick="pick('V4_0',1)">1</div><div class="star" data-k="V4_0" data-n="2" onclick="pick('V4_0',2)">2</div><div class="star" data-k="V4_0" data-n="3" onclick="pick('V4_0',3)">3</div><div class="star" data-k="V4_0" data-n="4" onclick="pick('V4_0',4)">4</div><div class="star" data-k="V4_0" data-n="5" onclick="pick('V4_0',5)">5</div></div>
-            <textarea class="notes-box" data-k="V4_0" placeholder="Notes..." oninput="save()"></textarea>
-          </div>
-        </div><div class="col-card" data-card="V4_1">
-          <!-- S1 — Sonnet 4.6 (analysis + coaching) -->
-          <div class="model-badge">Model 2</div>
-          <span class="score-tag">78/100</span>
-          <div style="clear:both;margin-bottom:6px;"></div>
-          <div class="verdict">Solid goblet squat session with good depth hit on every rep. Your biggest issue is a significant foot turnout gap between your left and right foot — your left foot is consistently pointing out nearly 17 degrees more than your right. This asymmetry is likely the root cause of the knee cave appearing on 2 of 5 reps during the drive up, and it needs to be addressed before adding more weight.</div>
-          <div class="sec neg">Needs attention</div><div class="item neg">⚠️ <span class="cat rc">root cause</span><span class="cat">Movement Quality</span>Left foot turned out 27-33 degrees across all 5 reps while right foot averaged only 7-17 degrees — a gap of 15-20 degrees every single rep. This bilateral asymmetry loads each leg differently and creates rotational stress at the knee and hip.</div><div class="item neg">⚠️ <span class="cat sym">symptom</span><span class="cat">Stability</span>Knee cave detected in the late drive-up phase on reps 2 and 5. Both flagged reps coincide with the sessions where the right foot turnout was lowest (7.5 and 10.7 degrees), increasing rotational mismatch between feet and making the knees harder to track outward. <span style="font-size:10px;color:#888">← Bilateral foot turnout asymmetry</span></div><div class="item neg">⚠️ <span class="cat rc">root cause</span><span class="cat">Movement Quality</span>Descent speed was very fast across all reps — eccentric phase averaged just 0.48 seconds. Dropping quickly into the squat reduces time under tension and makes it harder to control position at the bottom.</div>
-          <div class="sec" style="color:#1b5e20">Recommendation</div>
-          <div class="rec">Fix the foot position first — it is causing the uneven load and the late knee cave. Next session: before you start, set both feet at roughly the same angle, around 20-25 degrees out on each side. Do a quick check by looking down at your feet before each rep. Then slow your descent to a 3-second count on the way down — try 3 sets of 5 reps at this same weight using a 3-1-1 tempo (3 seconds down, 1 second pause, 1 second up).</div>
-          <div class="sec" style="color:#1565C0">Rep trend</div>
-          <div class="trend-o">Forward lean improved noticeably from rep 1 (peak 25 degrees) to rep 5 (peak 21 degrees), showing good fatigue resistance in the upper body. However, the right foot turnout became less consistent in later reps (dropping to 10.7 degrees on rep 5), and knee cave flags appeared on reps 2 and 5, suggesting foot placement discipline fades as the set progresses.</div>
-          <div class="trend-r">→ Next session, reset your foot position between every rep — take a half-second to look down and check both feet are symmetrical before you descend.</div>
-          <div class="rating-box">
-            <div class="rating-label">How clearly does this tell the athlete what to fix? (1–5)</div>
-            <div class="stars"><div class="star" data-k="V4_1" data-n="1" onclick="pick('V4_1',1)">1</div><div class="star" data-k="V4_1" data-n="2" onclick="pick('V4_1',2)">2</div><div class="star" data-k="V4_1" data-n="3" onclick="pick('V4_1',3)">3</div><div class="star" data-k="V4_1" data-n="4" onclick="pick('V4_1',4)">4</div><div class="star" data-k="V4_1" data-n="5" onclick="pick('V4_1',5)">5</div></div>
-            <textarea class="notes-box" data-k="V4_1" placeholder="Notes..." oninput="save()"></textarea>
-          </div>
-        </div></div>
+      <!-- S1 — Sonnet 4.6 (analysis + coaching) -->
+      <div class="model-badge">Model 1</div>
+      <span class="score-tag">82/100</span>
+      <div style="clear:both;margin-bottom:6px;"></div>
+      <div class="sec-label">Verdict</div>
+      <div class="verdict">Your depth and overall positioning are solid across all five reps. You're hitting full range consistently with good control. Minor asymmetry in knee tracking appeared twice late in the set, but it's not a major concern—watch for early knee outward pressure to prevent it.</div>
+      <div class="collapsible">
+      <button class="toggle-btn pos-btn" onclick="toggleSection(this)">✅ What's working <span class="toggle-arrow">▼</span></button>
+      <div class="collapsible-body"><div class="item" style="color:#2e7d32">✅ <span class="cat">Range of Motion</span>All 5 reps reached deep squat depth (knee angle 88–93°, hip crease below knee). Consistent and controlled throughout the set.</div><div class="item" style="color:#2e7d32">✅ <span class="cat">Posture</span>Torso remained upright with minimal forward lean (back angle 7–26° across all reps). Posture stayed stable and symmetrical.</div><div class="item" style="color:#2e7d32">✅ <span class="cat">Movement Quality</span>Tempo was controlled and repeatable (2.5–2.7 sec per rep). Eccentric and concentric phases balanced, no rushing.</div></div>
+    </div>
+      <div class="collapsible">
+      <button class="toggle-btn neg-btn" onclick="toggleSection(this)">⚠️ Needs attention <span class="toggle-arrow">▼</span></button>
+      <div class="collapsible-body"><div class="item" style="color:#c62828">⚠️ <span class="cat rc">root cause</span><span class="cat">Stability</span>Reps 2 and 5 show late-phase knee inward collapse (valgus distance 0.24 and 0.23). Right foot turnout is significantly lower than left (7–17° vs 27–33°), suggesting asymmetric foot position is the root cause.</div><div class="item" style="color:#c62828">⚠️ <span class="cat sym">symptom</span><span class="cat">Stability</span>Right foot turnout inconsistent across set (7–17°) compared to left (27–34°). This bilateral gap of 10–26° explains why knees drift inward on reps 2 and 5. <span style="font-size:10px;color:#888">← asymmetric foot positioning</span></div></div>
+    </div>
+      <div class="sec-label" style="margin-top:10px;">Recommendation</div>
+      <div class="rec">Fix your foot stance first—it's driving the knee drift. Next session, set your feet wider and turn both feet out to 25–30° equally before your first rep. Mark your foot position on the mat if needed. Practice 2–3 pause squats with conscious foot pressure on the outside edge of each foot. This single change will eliminate the knee inward shift.</div>
+      <div class="collapsible">
+      <button class="toggle-btn trend-btn" onclick="toggleSection(this)">📈 Rep trend <span class="toggle-arrow">▼</span></button>
+      <div class="collapsible-body"><div class="trend-o">Rep 1 had solid position throughout. Reps 2 and 5 showed late-phase knee drift inward, likely due to inconsistent right foot turnout on those reps. Back angle improved slightly (from 25° down to 17° by rep 5), showing you're getting more comfortable. Depth stayed consistent at 88–93° throughout.</div><div class="trend-r">→ Lock in your foot angle at setup—don't let your right foot rotate inward as you squat.</div></div>
+    </div>
+      <div class="rating-box">
+        <div class="rating-label">How clearly does this tell the athlete what to fix? (1–5)</div>
+        <div class="stars"><div class="star" data-k="V4_0" data-n="1" onclick="pick('V4_0',1)">1</div><div class="star" data-k="V4_0" data-n="2" onclick="pick('V4_0',2)">2</div><div class="star" data-k="V4_0" data-n="3" onclick="pick('V4_0',3)">3</div><div class="star" data-k="V4_0" data-n="4" onclick="pick('V4_0',4)">4</div><div class="star" data-k="V4_0" data-n="5" onclick="pick('V4_0',5)">5</div></div>
+        <textarea class="notes-box" data-k="V4_0" placeholder="Notes..." oninput="save()"></textarea>
+      </div>
+    </div><div class="col-card" data-card="V4_1">
+      <!-- S2 — Haiku 4.5 (analysis + coaching) -->
+      <div class="model-badge">Model 2</div>
+      <span class="score-tag">78/100</span>
+      <div style="clear:both;margin-bottom:6px;"></div>
+      <div class="sec-label">Verdict</div>
+      <div class="verdict">Solid goblet squat session with good depth hit on every rep. Your biggest issue is a significant foot turnout gap between your left and right foot — your left foot is consistently pointing out nearly 17 degrees more than your right. This asymmetry is likely the root cause of the knee cave appearing on 2 of 5 reps during the drive up, and it needs to be addressed before adding more weight.</div>
+      <div class="collapsible">
+      <button class="toggle-btn pos-btn" onclick="toggleSection(this)">✅ What's working <span class="toggle-arrow">▼</span></button>
+      <div class="collapsible-body"><div class="item" style="color:#2e7d32">✅ <span class="cat">Range of Motion</span>Full depth achieved on all 5 reps — knee angles at bottom averaged 90.7 degrees, confirming hip crease at or below parallel every rep with no depth failures.</div><div class="item" style="color:#2e7d32">✅ <span class="cat">Posture</span>Torso lean stayed acceptable across all 5 reps — peak forward lean averaged 23 degrees and was trending downward by rep 5 (20.9 degrees), meaning your chest stayed tall and improved across the set.</div><div class="item" style="color:#2e7d32">✅ <span class="cat">Stability</span>Knee valgus distance stayed above the 0.22 threshold on all 5 reps, meaning no systemic knee cave was detected — the flags on reps 2 and 5 were borderline and late-phase only.</div></div>
+    </div>
+      <div class="collapsible">
+      <button class="toggle-btn neg-btn" onclick="toggleSection(this)">⚠️ Needs attention <span class="toggle-arrow">▼</span></button>
+      <div class="collapsible-body"><div class="item" style="color:#c62828">⚠️ <span class="cat rc">root cause</span><span class="cat">Movement Quality</span>Left foot turned out 27-33 degrees across all 5 reps while right foot averaged only 7-17 degrees — a gap of 15-20 degrees every single rep. This bilateral asymmetry loads each leg differently and creates rotational stress at the knee and hip.</div><div class="item" style="color:#c62828">⚠️ <span class="cat sym">symptom</span><span class="cat">Stability</span>Knee cave detected in the late drive-up phase on reps 2 and 5. Both flagged reps coincide with the sessions where the right foot turnout was lowest (7.5 and 10.7 degrees), increasing rotational mismatch between feet and making the knees harder to track outward. <span style="font-size:10px;color:#888">← Bilateral foot turnout asymmetry</span></div><div class="item" style="color:#c62828">⚠️ <span class="cat rc">root cause</span><span class="cat">Movement Quality</span>Descent speed was very fast across all reps — eccentric phase averaged just 0.48 seconds. Dropping quickly into the squat reduces time under tension and makes it harder to control position at the bottom.</div></div>
+    </div>
+      <div class="sec-label" style="margin-top:10px;">Recommendation</div>
+      <div class="rec">Fix the foot position first — it is causing the uneven load and the late knee cave. Next session: before you start, set both feet at roughly the same angle, around 20-25 degrees out on each side. Do a quick check by looking down at your feet before each rep. Then slow your descent to a 3-second count on the way down — try 3 sets of 5 reps at this same weight using a 3-1-1 tempo (3 seconds down, 1 second pause, 1 second up).</div>
+      <div class="collapsible">
+      <button class="toggle-btn trend-btn" onclick="toggleSection(this)">📈 Rep trend <span class="toggle-arrow">▼</span></button>
+      <div class="collapsible-body"><div class="trend-o">Forward lean improved noticeably from rep 1 (peak 25 degrees) to rep 5 (peak 21 degrees), showing good fatigue resistance in the upper body. However, the right foot turnout became less consistent in later reps (dropping to 10.7 degrees on rep 5), and knee cave flags appeared on reps 2 and 5, suggesting foot placement discipline fades as the set progresses.</div><div class="trend-r">→ Next session, reset your foot position between every rep — take a half-second to look down and check both feet are symmetrical before you descend.</div></div>
+    </div>
+      <div class="rating-box">
+        <div class="rating-label">How clearly does this tell the athlete what to fix? (1–5)</div>
+        <div class="stars"><div class="star" data-k="V4_1" data-n="1" onclick="pick('V4_1',1)">1</div><div class="star" data-k="V4_1" data-n="2" onclick="pick('V4_1',2)">2</div><div class="star" data-k="V4_1" data-n="3" onclick="pick('V4_1',3)">3</div><div class="star" data-k="V4_1" data-n="4" onclick="pick('V4_1',4)">4</div><div class="star" data-k="V4_1" data-n="5" onclick="pick('V4_1',5)">5</div></div>
+        <textarea class="notes-box" data-k="V4_1" placeholder="Notes..." oninput="save()"></textarea>
+      </div>
+    </div></div>
     </div><div class="video-section">
       <div class="video-title">V5 — Torso Lean Fault</div>
       <div class="col-grid"><div class="col-card" data-card="V5_0">
-          <!-- S2 — Haiku 4.5 (analysis + coaching) -->
-          <div class="model-badge">Model 1</div>
-          <span class="score-tag">72/100</span>
-          <div style="clear:both;margin-bottom:6px;"></div>
-          <div class="verdict">You're hitting good depth consistently, but your torso is leaning too far forward throughout all 6 reps. This forward lean is the main issue limiting your control and efficiency. Your ankle mobility is restricted at the bottom, which is likely forcing the excessive lean to compensate.</div>
-          <div class="sec neg">Needs attention</div><div class="item neg">⚠️ <span class="cat sym">symptom</span><span class="cat">Posture</span>Forward lean is present in all 6 reps. Back angle averages 46.4° at the bottom (normal for goblet squats is 25–35°). Lean worsens slightly by rep 4 (52.53°) and remains elevated through rep 6. This is the primary postural fault. <span style="font-size:10px;color:#888">← restricted_ankle_dorsiflexion</span></div><div class="item neg">⚠️ <span class="cat rc">root cause</span><span class="cat">Range of Motion</span>Ankle dorsiflexion is restricted at the bottom in all 6 reps. Limited ankle mobility forces your torso forward to maintain balance and reach depth.</div><div class="item neg">⚠️ <span class="cat sym">symptom</span><span class="cat">Movement Quality</span>Depth degrades slightly in rep 6 (103.54° knee angle vs 90–98° in reps 2, 3, 5). Fatigue or reduced ankle mobility control may be contributing. <span style="font-size:10px;color:#888">← restricted_ankle_dorsiflexion</span></div>
-          <div class="sec" style="color:#1b5e20">Recommendation</div>
-          <div class="rec">Your restricted ankle mobility is forcing you to lean forward to hit depth. Before your next squat session, spend 2–3 minutes on ankle mobilization: perform 10 slow bodyweight squats holding onto a rack, focusing on pushing your knees forward over your toes without your heel rising. Then try 3 sets of 5 goblet squats with lighter weight (10–12 kg), cueing yourself to keep your chest more upright. Better ankle mobility will let your torso stay taller naturally.</div>
-          <div class="sec" style="color:#1565C0">Rep trend</div>
-          <div class="trend-o">Forward lean remains consistently high across all 6 reps (ranging 37.7–52.5° back angle). Lean actually increases slightly from rep 1 to rep 4, then stabilizes. Depth holds strong through rep 5 (90.71°) but softens in rep 6 (103.54°), suggesting fatigue or form breakdown near the end.</div>
-          <div class="trend-r">→ Improve ankle mobility first—this is blocking your ability to stay upright and will prevent form breakdown in later reps.</div>
-          <div class="rating-box">
-            <div class="rating-label">How clearly does this tell the athlete what to fix? (1–5)</div>
-            <div class="stars"><div class="star" data-k="V5_0" data-n="1" onclick="pick('V5_0',1)">1</div><div class="star" data-k="V5_0" data-n="2" onclick="pick('V5_0',2)">2</div><div class="star" data-k="V5_0" data-n="3" onclick="pick('V5_0',3)">3</div><div class="star" data-k="V5_0" data-n="4" onclick="pick('V5_0',4)">4</div><div class="star" data-k="V5_0" data-n="5" onclick="pick('V5_0',5)">5</div></div>
-            <textarea class="notes-box" data-k="V5_0" placeholder="Notes..." oninput="save()"></textarea>
-          </div>
-        </div><div class="col-card" data-card="V5_1">
-          <!-- S1 — Sonnet 4.6 (analysis + coaching) -->
-          <div class="model-badge">Model 2</div>
-          <span class="score-tag">62/100</span>
-          <div style="clear:both;margin-bottom:6px;"></div>
-          <div class="verdict">You're hitting good depth consistently, but your torso is leaning too far forward on every single rep — all 6 triggered a warning. The root cause is restricted ankle mobility, which forces your chest to drop as you descend. Fix the ankles and your upper body position will follow.</div>
-          <div class="sec neg">Needs attention</div><div class="item neg">⚠️ <span class="cat rc">root cause</span><span class="cat">Range of Motion</span>Ankle dorsiflexion was restricted in all 6 of 6 reps. This is the root cause — when the ankle can't bend enough, the heel wants to rise and the torso tips forward to compensate.</div><div class="item neg">⚠️ <span class="cat sym">symptom</span><span class="cat">Posture</span>Torso forward lean exceeded warning threshold in all 6 reps. Back angle at the bottom averaged 46.4° and trended upward by +1.2° across the set — worst in Reps 4 and 6 (52.4° and 49.7°). For a goblet squat, aim to keep chest angle under 30°. <span style="font-size:10px;color:#888">← restricted ankle dorsiflexion</span></div><div class="item neg">⚠️ <span class="cat sym">symptom</span><span class="cat">Movement Quality</span>Rep 6 was the shallowest of the set (knee angle 103.5°, classified parallel rather than deep), suggesting fatigue-related depth loss in the final rep as lean also increased. <span style="font-size:10px;color:#888">← restricted ankle dorsiflexion</span></div>
-          <div class="sec" style="color:#1b5e20">Recommendation</div>
-          <div class="rec">Fix ankle mobility first — it is directly causing the forward lean and the depth drop in late reps. Next session: before squatting, do 2 sets of 10 slow ankle circles per foot, then 2 sets of 10 kneeling ankle rocks (knee-over-toe stretches against a wall). During your goblet squat sets, place a 5kg plate under each heel — this compensates for restricted ankles instantly and will let you keep your chest tall. Focus on driving your elbows between your knees at the bottom to cue upright torso.</div>
-          <div class="sec" style="color:#1565C0">Rep trend</div>
-          <div class="trend-o">Forward lean worsened progressively — back angle at the bottom climbed from 46.9° (Rep 1) to a peak of 52.4° (Rep 4) before partially recovering in Rep 5, then depth dropped in Rep 6 (parallel instead of deep). Fatigue appears to amplify the ankle restriction as the set progresses.</div>
-          <div class="trend-r">→ Next session, prioritise ankle mobility warm-up and use heel elevation during work sets to maintain chest position through all 6 reps.</div>
-          <div class="rating-box">
-            <div class="rating-label">How clearly does this tell the athlete what to fix? (1–5)</div>
-            <div class="stars"><div class="star" data-k="V5_1" data-n="1" onclick="pick('V5_1',1)">1</div><div class="star" data-k="V5_1" data-n="2" onclick="pick('V5_1',2)">2</div><div class="star" data-k="V5_1" data-n="3" onclick="pick('V5_1',3)">3</div><div class="star" data-k="V5_1" data-n="4" onclick="pick('V5_1',4)">4</div><div class="star" data-k="V5_1" data-n="5" onclick="pick('V5_1',5)">5</div></div>
-            <textarea class="notes-box" data-k="V5_1" placeholder="Notes..." oninput="save()"></textarea>
-          </div>
-        </div></div>
+      <!-- S1 — Sonnet 4.6 (analysis + coaching) -->
+      <div class="model-badge">Model 1</div>
+      <span class="score-tag">72/100</span>
+      <div style="clear:both;margin-bottom:6px;"></div>
+      <div class="sec-label">Verdict</div>
+      <div class="verdict">You're hitting good depth consistently, but your torso is leaning too far forward throughout all 6 reps. This forward lean is the main issue limiting your control and efficiency. Your ankle mobility is restricted at the bottom, which is likely forcing the excessive lean to compensate.</div>
+      <div class="collapsible">
+      <button class="toggle-btn pos-btn" onclick="toggleSection(this)">✅ What's working <span class="toggle-arrow">▼</span></button>
+      <div class="collapsible-body"><div class="item" style="color:#2e7d32">✅ <span class="cat">Range of Motion</span>Depth is excellent across 5 of 6 reps—knee angles averaging 95.76°, all reaching at least parallel or below. Rep 5 shows your deepest squat at 90.71° knee angle.</div><div class="item" style="color:#2e7d32">✅ <span class="cat">Movement Quality</span>Tempo control is consistent throughout the set: eccentric 0.78s, pause 1.25s, concentric 0.93s. You're maintaining a controlled rhythm without rushing.</div></div>
+    </div>
+      <div class="collapsible">
+      <button class="toggle-btn neg-btn" onclick="toggleSection(this)">⚠️ Needs attention <span class="toggle-arrow">▼</span></button>
+      <div class="collapsible-body"><div class="item" style="color:#c62828">⚠️ <span class="cat sym">symptom</span><span class="cat">Posture</span>Forward lean is present in all 6 reps. Back angle averages 46.4° at the bottom (normal for goblet squats is 25–35°). Lean worsens slightly by rep 4 (52.53°) and remains elevated through rep 6. This is the primary postural fault. <span style="font-size:10px;color:#888">← restricted_ankle_dorsiflexion</span></div><div class="item" style="color:#c62828">⚠️ <span class="cat rc">root cause</span><span class="cat">Range of Motion</span>Ankle dorsiflexion is restricted at the bottom in all 6 reps. Limited ankle mobility forces your torso forward to maintain balance and reach depth.</div><div class="item" style="color:#c62828">⚠️ <span class="cat sym">symptom</span><span class="cat">Movement Quality</span>Depth degrades slightly in rep 6 (103.54° knee angle vs 90–98° in reps 2, 3, 5). Fatigue or reduced ankle mobility control may be contributing. <span style="font-size:10px;color:#888">← restricted_ankle_dorsiflexion</span></div></div>
+    </div>
+      <div class="sec-label" style="margin-top:10px;">Recommendation</div>
+      <div class="rec">Your restricted ankle mobility is forcing you to lean forward to hit depth. Before your next squat session, spend 2–3 minutes on ankle mobilization: perform 10 slow bodyweight squats holding onto a rack, focusing on pushing your knees forward over your toes without your heel rising. Then try 3 sets of 5 goblet squats with lighter weight (10–12 kg), cueing yourself to keep your chest more upright. Better ankle mobility will let your torso stay taller naturally.</div>
+      <div class="collapsible">
+      <button class="toggle-btn trend-btn" onclick="toggleSection(this)">📈 Rep trend <span class="toggle-arrow">▼</span></button>
+      <div class="collapsible-body"><div class="trend-o">Forward lean remains consistently high across all 6 reps (ranging 37.7–52.5° back angle). Lean actually increases slightly from rep 1 to rep 4, then stabilizes. Depth holds strong through rep 5 (90.71°) but softens in rep 6 (103.54°), suggesting fatigue or form breakdown near the end.</div><div class="trend-r">→ Improve ankle mobility first—this is blocking your ability to stay upright and will prevent form breakdown in later reps.</div></div>
+    </div>
+      <div class="rating-box">
+        <div class="rating-label">How clearly does this tell the athlete what to fix? (1–5)</div>
+        <div class="stars"><div class="star" data-k="V5_0" data-n="1" onclick="pick('V5_0',1)">1</div><div class="star" data-k="V5_0" data-n="2" onclick="pick('V5_0',2)">2</div><div class="star" data-k="V5_0" data-n="3" onclick="pick('V5_0',3)">3</div><div class="star" data-k="V5_0" data-n="4" onclick="pick('V5_0',4)">4</div><div class="star" data-k="V5_0" data-n="5" onclick="pick('V5_0',5)">5</div></div>
+        <textarea class="notes-box" data-k="V5_0" placeholder="Notes..." oninput="save()"></textarea>
+      </div>
+    </div><div class="col-card" data-card="V5_1">
+      <!-- S2 — Haiku 4.5 (analysis + coaching) -->
+      <div class="model-badge">Model 2</div>
+      <span class="score-tag">62/100</span>
+      <div style="clear:both;margin-bottom:6px;"></div>
+      <div class="sec-label">Verdict</div>
+      <div class="verdict">You're hitting good depth consistently, but your torso is leaning too far forward on every single rep — all 6 triggered a warning. The root cause is restricted ankle mobility, which forces your chest to drop as you descend. Fix the ankles and your upper body position will follow.</div>
+      <div class="collapsible">
+      <button class="toggle-btn pos-btn" onclick="toggleSection(this)">✅ What's working <span class="toggle-arrow">▼</span></button>
+      <div class="collapsible-body"><div class="item" style="color:#2e7d32">✅ <span class="cat">Range of Motion</span>5 of 6 reps classified as deep, with knee angles reaching as low as 86° (Rep 2) and hip angles between 47–55°. Hip crease is consistently below parallel.</div><div class="item" style="color:#2e7d32">✅ <span class="cat">Movement Quality</span>Pause at the bottom averaged 1.25 seconds across all 6 reps, showing good control and no bouncing out of the hole.</div><div class="item" style="color:#2e7d32">✅ <span class="cat">Stability</span>Rep count was consistent and stable — 6 reps completed with no major tempo breakdown until Rep 4 where concentric slowed to 1.4s, indicating solid work capacity.</div></div>
+    </div>
+      <div class="collapsible">
+      <button class="toggle-btn neg-btn" onclick="toggleSection(this)">⚠️ Needs attention <span class="toggle-arrow">▼</span></button>
+      <div class="collapsible-body"><div class="item" style="color:#c62828">⚠️ <span class="cat rc">root cause</span><span class="cat">Range of Motion</span>Ankle dorsiflexion was restricted in all 6 of 6 reps. This is the root cause — when the ankle can't bend enough, the heel wants to rise and the torso tips forward to compensate.</div><div class="item" style="color:#c62828">⚠️ <span class="cat sym">symptom</span><span class="cat">Posture</span>Torso forward lean exceeded warning threshold in all 6 reps. Back angle at the bottom averaged 46.4° and trended upward by +1.2° across the set — worst in Reps 4 and 6 (52.4° and 49.7°). For a goblet squat, aim to keep chest angle under 30°. <span style="font-size:10px;color:#888">← restricted ankle dorsiflexion</span></div><div class="item" style="color:#c62828">⚠️ <span class="cat sym">symptom</span><span class="cat">Movement Quality</span>Rep 6 was the shallowest of the set (knee angle 103.5°, classified parallel rather than deep), suggesting fatigue-related depth loss in the final rep as lean also increased. <span style="font-size:10px;color:#888">← restricted ankle dorsiflexion</span></div></div>
+    </div>
+      <div class="sec-label" style="margin-top:10px;">Recommendation</div>
+      <div class="rec">Fix ankle mobility first — it is directly causing the forward lean and the depth drop in late reps. Next session: before squatting, do 2 sets of 10 slow ankle circles per foot, then 2 sets of 10 kneeling ankle rocks (knee-over-toe stretches against a wall). During your goblet squat sets, place a 5kg plate under each heel — this compensates for restricted ankles instantly and will let you keep your chest tall. Focus on driving your elbows between your knees at the bottom to cue upright torso.</div>
+      <div class="collapsible">
+      <button class="toggle-btn trend-btn" onclick="toggleSection(this)">📈 Rep trend <span class="toggle-arrow">▼</span></button>
+      <div class="collapsible-body"><div class="trend-o">Forward lean worsened progressively — back angle at the bottom climbed from 46.9° (Rep 1) to a peak of 52.4° (Rep 4) before partially recovering in Rep 5, then depth dropped in Rep 6 (parallel instead of deep). Fatigue appears to amplify the ankle restriction as the set progresses.</div><div class="trend-r">→ Next session, prioritise ankle mobility warm-up and use heel elevation during work sets to maintain chest position through all 6 reps.</div></div>
+    </div>
+      <div class="rating-box">
+        <div class="rating-label">How clearly does this tell the athlete what to fix? (1–5)</div>
+        <div class="stars"><div class="star" data-k="V5_1" data-n="1" onclick="pick('V5_1',1)">1</div><div class="star" data-k="V5_1" data-n="2" onclick="pick('V5_1',2)">2</div><div class="star" data-k="V5_1" data-n="3" onclick="pick('V5_1',3)">3</div><div class="star" data-k="V5_1" data-n="4" onclick="pick('V5_1',4)">4</div><div class="star" data-k="V5_1" data-n="5" onclick="pick('V5_1',5)">5</div></div>
+        <textarea class="notes-box" data-k="V5_1" placeholder="Notes..." oninput="save()"></textarea>
+      </div>
+    </div></div>
     </div><div class="video-section">
       <div class="video-title">V6 — Torso Lean Good</div>
       <div class="col-grid"><div class="col-card" data-card="V6_0">
-          <!-- S2 — Haiku 4.5 (analysis + coaching) -->
-          <div class="model-badge">Model 1</div>
-          <span class="score-tag">82/100</span>
-          <div style="clear:both;margin-bottom:6px;"></div>
-          <div class="verdict">Your squats are hitting good depth consistently across all five reps, and your torso position is stable and controlled. The main limitation is restricted ankle mobility at the bottom—your heels are shifting or your feet are adjusting as you descend, which is a minor technical issue but not dangerous. Overall solid session.</div>
-          <div class="sec neg">Needs attention</div><div class="item neg">⚠️ <span class="cat rc">root cause</span><span class="cat">Range of Motion</span>Restricted ankle dorsiflexion detected in reps 1, 2, 3, and 5 (4 of 5 reps). Your ankles are not flexing enough at the bottom position, likely causing heel lift or foot repositioning.</div><div class="item neg">⚠️ <span class="cat sym">symptom</span><span class="cat">Stability</span>Rep 4 shows minor knee valgus (knees drifting inward): valgus distance 0.086, flagged as late-phase collapse. Single occurrence; not a pattern yet. <span style="font-size:10px;color:#888">← restricted_ankle_mobility</span></div>
-          <div class="sec" style="color:#1b5e20">Recommendation</div>
-          <div class="rec">Address ankle mobility before your next squat session. Do 2 sets of 10 banded ankle mobilizations or calf stretches holding the bottom position for 20 seconds per side. This will improve your dorsiflexion and prevent the heel shift that's subtly affecting your knee stability. Once ankle mobility improves, the valgus in rep 4 will likely resolve on its own.</div>
-          <div class="sec" style="color:#1565C0">Rep trend</div>
-          <div class="trend-o">Depth actually became slightly shallower from rep 1 to rep 5 (knee angle worsened from 72.8° to 81.0°), suggesting fatigue or accumulating ankle restriction. Back angle remained stable and controlled throughout. Pause duration increased slightly (rep 5 had 2.0s warning vs 1.6s in earlier reps), indicating you were working harder to control the descent.</div>
-          <div class="trend-r">→ Focus on maintaining consistent depth on the final reps—don't let fatigue shorten your range of motion. Warm up your ankles more thoroughly next session to delay this depth loss.</div>
-          <div class="rating-box">
-            <div class="rating-label">How clearly does this tell the athlete what to fix? (1–5)</div>
-            <div class="stars"><div class="star" data-k="V6_0" data-n="1" onclick="pick('V6_0',1)">1</div><div class="star" data-k="V6_0" data-n="2" onclick="pick('V6_0',2)">2</div><div class="star" data-k="V6_0" data-n="3" onclick="pick('V6_0',3)">3</div><div class="star" data-k="V6_0" data-n="4" onclick="pick('V6_0',4)">4</div><div class="star" data-k="V6_0" data-n="5" onclick="pick('V6_0',5)">5</div></div>
-            <textarea class="notes-box" data-k="V6_0" placeholder="Notes..." oninput="save()"></textarea>
-          </div>
-        </div><div class="col-card" data-card="V6_1">
-          <!-- S1 — Sonnet 4.6 (analysis + coaching) -->
-          <div class="model-badge">Model 2</div>
-          <span class="score-tag">78/100</span>
-          <div style="clear:both;margin-bottom:6px;"></div>
-          <div class="verdict">Solid goblet squat session — you hit deep depth on all 5 reps and kept your back angle controlled throughout. The main limiter here is ankle stiffness: your heels are struggling to stay grounded at the bottom, which is forcing a slight forward lean and will cap your depth over time. Address ankle mobility and this squat will look significantly cleaner.</div>
-          <div class="sec neg">Needs attention</div><div class="item neg">⚠️ <span class="cat rc">root cause</span><span class="cat">Range of Motion</span>Ankle dorsiflexion was flagged as restricted in all 4 side-view reps (reps 1, 2, 3, 5). This is the primary limiter — stiff ankles prevent the shin from travelling forward freely, forcing your torso to compensate with extra lean.</div><div class="item neg">⚠️ <span class="cat sym">symptom</span><span class="cat">Posture</span>Forward lean at the bottom averaged 31.5° and trended slightly upward (+0.28° across the set). While still acceptable, this lean is being driven by the ankle restriction above — fix the ankles and the torso will stay taller naturally. <span style="font-size:10px;color:#888">← Restricted ankle dorsiflexion</span></div><div class="item neg">⚠️ <span class="cat sym">symptom</span><span class="cat">Stability</span>Rep 4 showed a knee cave flag (valgus_distance: 0.086) in the late phase of the lift — likely as fatigue set in during the drive up. Only 1 of 5 reps flagged, so this is minor and does not meet the threshold for a consistent fault, but worth monitoring. <span style="font-size:10px;color:#888">← Restricted ankle dorsiflexion</span></div>
-          <div class="sec" style="color:#1b5e20">Recommendation</div>
-          <div class="rec">Your ankle stiffness is the root issue — fix that first and your lean and knee control will both improve automatically. Next session: (1) Before squatting, do 2 sets of 10 ankle circles per foot plus 10 slow kneeling ankle rocks each side — push your knee as far forward over your toes as possible. (2) During your squat sets, place a small weight plate (1–2 kg) under each heel to reduce the ankle demand and focus on keeping your chest tall. Work toward removing the plates over the next 4–6 weeks.</div>
-          <div class="sec" style="color:#1565C0">Rep trend</div>
-          <div class="trend-o">Depth was slightly shallower in reps 4 and 5 (knee angle at bottom: 79.4° and 81.0°) compared to reps 1 and 3 (72.8° and 75.2°), suggesting mild fatigue affecting how low you could comfortably go. Forward lean was stable with no significant worsening. Tempo remained consistent throughout.</div>
-          <div class="trend-r">→ Focus on your ankle warm-up before the session — better ankle mobility will let you maintain that early-rep depth all the way to rep 5.</div>
-          <div class="rating-box">
-            <div class="rating-label">How clearly does this tell the athlete what to fix? (1–5)</div>
-            <div class="stars"><div class="star" data-k="V6_1" data-n="1" onclick="pick('V6_1',1)">1</div><div class="star" data-k="V6_1" data-n="2" onclick="pick('V6_1',2)">2</div><div class="star" data-k="V6_1" data-n="3" onclick="pick('V6_1',3)">3</div><div class="star" data-k="V6_1" data-n="4" onclick="pick('V6_1',4)">4</div><div class="star" data-k="V6_1" data-n="5" onclick="pick('V6_1',5)">5</div></div>
-            <textarea class="notes-box" data-k="V6_1" placeholder="Notes..." oninput="save()"></textarea>
-          </div>
-        </div></div>
+      <!-- S1 — Sonnet 4.6 (analysis + coaching) -->
+      <div class="model-badge">Model 1</div>
+      <span class="score-tag">82/100</span>
+      <div style="clear:both;margin-bottom:6px;"></div>
+      <div class="sec-label">Verdict</div>
+      <div class="verdict">Your squats are hitting good depth consistently across all five reps, and your torso position is stable and controlled. The main limitation is restricted ankle mobility at the bottom—your heels are shifting or your feet are adjusting as you descend, which is a minor technical issue but not dangerous. Overall solid session.</div>
+      <div class="collapsible">
+      <button class="toggle-btn pos-btn" onclick="toggleSection(this)">✅ What's working <span class="toggle-arrow">▼</span></button>
+      <div class="collapsible-body"><div class="item" style="color:#2e7d32">✅ <span class="cat">Range of Motion</span>All 5 reps reach deep depth: knee angle averaging 77.6° at bottom (excellent range), hip crease well below parallel. Depth is consistent and never shallow.</div><div class="item" style="color:#2e7d32">✅ <span class="cat">Posture</span>Back angle remains upright and controlled throughout all reps: 31.5° average lean, well within goblet squat expectations. No excessive forward collapse.</div><div class="item" style="color:#2e7d32">✅ <span class="cat">Movement Quality</span>Tempo is steady and deliberate: eccentric 0.7s, pause 1.5s average, concentric 0.66s. You're moving with control, not rushing.</div></div>
+    </div>
+      <div class="collapsible">
+      <button class="toggle-btn neg-btn" onclick="toggleSection(this)">⚠️ Needs attention <span class="toggle-arrow">▼</span></button>
+      <div class="collapsible-body"><div class="item" style="color:#c62828">⚠️ <span class="cat rc">root cause</span><span class="cat">Range of Motion</span>Restricted ankle dorsiflexion detected in reps 1, 2, 3, and 5 (4 of 5 reps). Your ankles are not flexing enough at the bottom position, likely causing heel lift or foot repositioning.</div><div class="item" style="color:#c62828">⚠️ <span class="cat sym">symptom</span><span class="cat">Stability</span>Rep 4 shows minor knee valgus (knees drifting inward): valgus distance 0.086, flagged as late-phase collapse. Single occurrence; not a pattern yet. <span style="font-size:10px;color:#888">← restricted_ankle_mobility</span></div></div>
+    </div>
+      <div class="sec-label" style="margin-top:10px;">Recommendation</div>
+      <div class="rec">Address ankle mobility before your next squat session. Do 2 sets of 10 banded ankle mobilizations or calf stretches holding the bottom position for 20 seconds per side. This will improve your dorsiflexion and prevent the heel shift that's subtly affecting your knee stability. Once ankle mobility improves, the valgus in rep 4 will likely resolve on its own.</div>
+      <div class="collapsible">
+      <button class="toggle-btn trend-btn" onclick="toggleSection(this)">📈 Rep trend <span class="toggle-arrow">▼</span></button>
+      <div class="collapsible-body"><div class="trend-o">Depth actually became slightly shallower from rep 1 to rep 5 (knee angle worsened from 72.8° to 81.0°), suggesting fatigue or accumulating ankle restriction. Back angle remained stable and controlled throughout. Pause duration increased slightly (rep 5 had 2.0s warning vs 1.6s in earlier reps), indicating you were working harder to control the descent.</div><div class="trend-r">→ Focus on maintaining consistent depth on the final reps—don't let fatigue shorten your range of motion. Warm up your ankles more thoroughly next session to delay this depth loss.</div></div>
+    </div>
+      <div class="rating-box">
+        <div class="rating-label">How clearly does this tell the athlete what to fix? (1–5)</div>
+        <div class="stars"><div class="star" data-k="V6_0" data-n="1" onclick="pick('V6_0',1)">1</div><div class="star" data-k="V6_0" data-n="2" onclick="pick('V6_0',2)">2</div><div class="star" data-k="V6_0" data-n="3" onclick="pick('V6_0',3)">3</div><div class="star" data-k="V6_0" data-n="4" onclick="pick('V6_0',4)">4</div><div class="star" data-k="V6_0" data-n="5" onclick="pick('V6_0',5)">5</div></div>
+        <textarea class="notes-box" data-k="V6_0" placeholder="Notes..." oninput="save()"></textarea>
+      </div>
+    </div><div class="col-card" data-card="V6_1">
+      <!-- S2 — Haiku 4.5 (analysis + coaching) -->
+      <div class="model-badge">Model 2</div>
+      <span class="score-tag">78/100</span>
+      <div style="clear:both;margin-bottom:6px;"></div>
+      <div class="sec-label">Verdict</div>
+      <div class="verdict">Solid goblet squat session — you hit deep depth on all 5 reps and kept your back angle controlled throughout. The main limiter here is ankle stiffness: your heels are struggling to stay grounded at the bottom, which is forcing a slight forward lean and will cap your depth over time. Address ankle mobility and this squat will look significantly cleaner.</div>
+      <div class="collapsible">
+      <button class="toggle-btn pos-btn" onclick="toggleSection(this)">✅ What's working <span class="toggle-arrow">▼</span></button>
+      <div class="collapsible-body"><div class="item" style="color:#2e7d32">✅ <span class="cat">Range of Motion</span>Deep depth achieved on all 5 reps. Knee angle at bottom ranged from 72.8° to 81.0° (flexion of ~99–107°), with hip crease consistently below parallel. Zero insufficient depth flags across the session.</div><div class="item" style="color:#2e7d32">✅ <span class="cat">Posture</span>Back angle stayed within acceptable range every rep — peak lean averaged 32.7° across all 5 reps, never crossing into excessive territory. Torso stayed relatively upright for a goblet squat at 20 kg.</div><div class="item" style="color:#2e7d32">✅ <span class="cat">Movement Quality</span>Tempo was controlled and consistent across the set. Average pause at the bottom was 1.52 seconds, showing good intent to own the bottom position rather than bouncing out.</div></div>
+    </div>
+      <div class="collapsible">
+      <button class="toggle-btn neg-btn" onclick="toggleSection(this)">⚠️ Needs attention <span class="toggle-arrow">▼</span></button>
+      <div class="collapsible-body"><div class="item" style="color:#c62828">⚠️ <span class="cat rc">root cause</span><span class="cat">Range of Motion</span>Ankle dorsiflexion was flagged as restricted in all 4 side-view reps (reps 1, 2, 3, 5). This is the primary limiter — stiff ankles prevent the shin from travelling forward freely, forcing your torso to compensate with extra lean.</div><div class="item" style="color:#c62828">⚠️ <span class="cat sym">symptom</span><span class="cat">Posture</span>Forward lean at the bottom averaged 31.5° and trended slightly upward (+0.28° across the set). While still acceptable, this lean is being driven by the ankle restriction above — fix the ankles and the torso will stay taller naturally. <span style="font-size:10px;color:#888">← Restricted ankle dorsiflexion</span></div><div class="item" style="color:#c62828">⚠️ <span class="cat sym">symptom</span><span class="cat">Stability</span>Rep 4 showed a knee cave flag (valgus_distance: 0.086) in the late phase of the lift — likely as fatigue set in during the drive up. Only 1 of 5 reps flagged, so this is minor and does not meet the threshold for a consistent fault, but worth monitoring. <span style="font-size:10px;color:#888">← Restricted ankle dorsiflexion</span></div></div>
+    </div>
+      <div class="sec-label" style="margin-top:10px;">Recommendation</div>
+      <div class="rec">Your ankle stiffness is the root issue — fix that first and your lean and knee control will both improve automatically. Next session: (1) Before squatting, do 2 sets of 10 ankle circles per foot plus 10 slow kneeling ankle rocks each side — push your knee as far forward over your toes as possible. (2) During your squat sets, place a small weight plate (1–2 kg) under each heel to reduce the ankle demand and focus on keeping your chest tall. Work toward removing the plates over the next 4–6 weeks.</div>
+      <div class="collapsible">
+      <button class="toggle-btn trend-btn" onclick="toggleSection(this)">📈 Rep trend <span class="toggle-arrow">▼</span></button>
+      <div class="collapsible-body"><div class="trend-o">Depth was slightly shallower in reps 4 and 5 (knee angle at bottom: 79.4° and 81.0°) compared to reps 1 and 3 (72.8° and 75.2°), suggesting mild fatigue affecting how low you could comfortably go. Forward lean was stable with no significant worsening. Tempo remained consistent throughout.</div><div class="trend-r">→ Focus on your ankle warm-up before the session — better ankle mobility will let you maintain that early-rep depth all the way to rep 5.</div></div>
+    </div>
+      <div class="rating-box">
+        <div class="rating-label">How clearly does this tell the athlete what to fix? (1–5)</div>
+        <div class="stars"><div class="star" data-k="V6_1" data-n="1" onclick="pick('V6_1',1)">1</div><div class="star" data-k="V6_1" data-n="2" onclick="pick('V6_1',2)">2</div><div class="star" data-k="V6_1" data-n="3" onclick="pick('V6_1',3)">3</div><div class="star" data-k="V6_1" data-n="4" onclick="pick('V6_1',4)">4</div><div class="star" data-k="V6_1" data-n="5" onclick="pick('V6_1',5)">5</div></div>
+        <textarea class="notes-box" data-k="V6_1" placeholder="Notes..." oninput="save()"></textarea>
+      </div>
+    </div></div>
     </div>
 <script>
 const MODEL_MAP={"V1": {"0": "S1", "1": "S2"}, "V2": {"0": "S1", "1": "S2"}, "V3": {"0": "S1", "1": "S2"}, "V4": {"0": "S2", "1": "S1"}, "V5": {"0": "S2", "1": "S1"}, "V6": {"0": "S2", "1": "S1"}};
 const SK='ezq_pt_v2';
-function pick(k,n){document.querySelectorAll('[data-k="'+k+'"].star').forEach(b=>b.classList.toggle('sel',+b.dataset.n===n));const c=document.querySelector('[data-card="'+k+'"]');if(c)c.classList.add('rated');save();}
-function save(){const d={};document.querySelectorAll('.star.sel').forEach(s=>{if(!d[s.dataset.k])d[s.dataset.k]={};d[s.dataset.k].r=+s.dataset.n;});document.querySelectorAll('.notes-box').forEach(t=>{if(!d[t.dataset.k])d[t.dataset.k]={};d[t.dataset.k].n=t.value;});localStorage.setItem(SK,JSON.stringify(d));updateProg();}
-function updateProg(){const total=12;const rated=new Set(Array.from(document.querySelectorAll('.star.sel')).map(s=>s.dataset.k));document.getElementById('pc').textContent=rated.size+'/'+total;document.getElementById('pp').textContent=Math.round(rated.size/total*100)+'%';document.getElementById('pb').style.width=Math.round(rated.size/total*100)+'%';}
-function loadSaved(){const s=JSON.parse(localStorage.getItem(SK)||'{}');Object.entries(s).forEach(([k,v])=>{if(v.r){document.querySelectorAll('[data-k="'+k+'"].star').forEach(b=>b.classList.toggle('sel',+b.dataset.n===v.r));const c=document.querySelector('[data-card="'+k+'"]');if(c)c.classList.add('rated');}if(v.n){const t=document.querySelector('[data-k="'+k+'"].notes-box');if(t)t.value=v.n;}});updateProg();}
-function clearAll(){if(!confirm('Clear all ratings?'))return;localStorage.removeItem(SK);document.querySelectorAll('.star').forEach(s=>s.classList.remove('sel'));document.querySelectorAll('.notes-box').forEach(t=>t.value='');document.querySelectorAll('.col-card').forEach(c=>c.classList.remove('rated'));updateProg();}
-function downloadCSV(){const s=JSON.parse(localStorage.getItem(SK)||'{}');const rows=[['Video','Column','Model_Identity','Rating','Notes']];Object.entries(s).forEach(([k,v])=>{if(!v.r)return;const[vid,pos]=k.split('_');const identity=(MODEL_MAP[vid]||{})[pos]||'?';rows.push([vid,'Model '+(+pos+1),identity,v.r,(v.n||'').replace(/,/g,'；')]);}); const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(rows.map(r=>r.join(',')).join('\n'));a.download='ezq_pt_ratings.csv';a.click();}
-window.onload=loadSaved;</script>
+
+function toggleSection(btn) {
+    btn.classList.toggle('open');
+    const body = btn.nextElementSibling;
+    body.classList.toggle('open');
+}
+
+function pick(k,n){
+    document.querySelectorAll('[data-k="'+k+'"].star').forEach(b=>b.classList.toggle('sel',+b.dataset.n===n));
+    const c=document.querySelector('[data-card="'+k+'"]');
+    if(c)c.classList.add('rated');
+    save();
+}
+function save(){
+    const d={};
+    document.querySelectorAll('.star.sel').forEach(s=>{if(!d[s.dataset.k])d[s.dataset.k]={};d[s.dataset.k].r=+s.dataset.n;});
+    document.querySelectorAll('.notes-box').forEach(t=>{if(!d[t.dataset.k])d[t.dataset.k]={};d[t.dataset.k].n=t.value;});
+    localStorage.setItem(SK,JSON.stringify(d));
+    updateProg();
+}
+function updateProg(){
+    const total=12;
+    const rated=new Set(Array.from(document.querySelectorAll('.star.sel')).map(s=>s.dataset.k));
+    document.getElementById('pc').textContent=rated.size+'/'+total;
+    document.getElementById('pp').textContent=Math.round(rated.size/total*100)+'%';
+    document.getElementById('pb').style.width=Math.round(rated.size/total*100)+'%';
+}
+function loadSaved(){
+    const s=JSON.parse(localStorage.getItem(SK)||'{}');
+    Object.entries(s).forEach(([k,v])=>{
+        if(v.r){document.querySelectorAll('[data-k="'+k+'"].star').forEach(b=>b.classList.toggle('sel',+b.dataset.n===v.r));
+            const c=document.querySelector('[data-card="'+k+'"]');if(c)c.classList.add('rated');}
+        if(v.n){const t=document.querySelector('[data-k="'+k+'"].notes-box');if(t)t.value=v.n;}
+    });
+    updateProg();
+}
+function clearAll(){
+    if(!confirm('Clear all ratings?'))return;
+    localStorage.removeItem(SK);
+    document.querySelectorAll('.star').forEach(s=>s.classList.remove('sel'));
+    document.querySelectorAll('.notes-box').forEach(t=>t.value='');
+    document.querySelectorAll('.col-card').forEach(c=>c.classList.remove('rated'));
+    updateProg();
+}
+function downloadCSV(){
+    const s=JSON.parse(localStorage.getItem(SK)||'{}');
+    const rows=[['Video','Column','Model_Identity','Rating','Notes']];
+    Object.entries(s).forEach(([k,v])=>{
+        if(!v.r)return;
+        const[vid,pos]=k.split('_');
+        const identity=(MODEL_MAP[vid]||{})[pos]||'?';
+        rows.push([vid,'Model '+(+pos+1),identity,v.r,(v.n||'').replace(/,/g,'；')]);
+    });
+    const a=document.createElement('a');
+    a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(rows.map(r=>r.join(',')).join('\n'));
+    a.download='ezq_pt_ratings.csv';a.click();
+}
+window.onload=loadSaved;
+</script>
 </body></html>
