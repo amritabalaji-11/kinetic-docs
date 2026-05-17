@@ -1,0 +1,19 @@
+Video,Option,Analysis Model,Coaching Model,Fault Tested,Ground Truth,Model Output,Correct,Confidence,Evidence Source,Priority Fix,Analysis Latency (ms),Coaching Latency (ms),Total Latency (ms),Posture /5,Stability /5,Movement Quality /5,Range of Motion /5,Notes
+V1,Option 1,claude-sonnet-4-6,claude-sonnet-4-6,insufficient_depth,True,True,✅,0.95,both,range_of_motion,30930.4,0,30930.4,,,,,
+V2,Option 1,claude-sonnet-4-6,claude-sonnet-4-6,insufficient_depth,False,False,✅,0.95,json,range_of_motion,35796.6,0,35796.6,,,,,
+V3,Option 1,claude-sonnet-4-6,claude-sonnet-4-6,knee_valgus,True,True,✅,0.82,json,stability,36048.7,0,36048.7,,,,,
+V4,Option 1,claude-sonnet-4-6,claude-sonnet-4-6,knee_valgus,False,False,✅,0.90,json,movement_quality,33812.9,0,33812.9,,,,,
+V5,Option 1,claude-sonnet-4-6,claude-sonnet-4-6,excessive_forward_lean,True,True,✅,0.92,both,range_of_motion,32308.8,0,32308.8,,,,,
+V6,Option 1,claude-sonnet-4-6,claude-sonnet-4-6,excessive_forward_lean,False,False,✅,0.88,both,range_of_motion,381775.2,0,381775.2,,,,,
+V1,Option 2,gemini-2.5-flash,claude-sonnet-4-6,insufficient_depth,True,True,✅,1.00,json,range_of_motion,16367.0,25961.3,42328.3,,,,,
+V2,Option 2,gemini-2.5-flash,claude-sonnet-4-6,insufficient_depth,False,False,✅,1.00,json,range_of_motion,20765.2,27248.0,48013.2,,,,,
+V3,Option 2,gemini-2.5-flash,claude-sonnet-4-6,knee_valgus,True,True,✅,1.00,json,stability,31635.0,27723.6,59358.6,,,,,
+V4,Option 2,gemini-2.5-flash,claude-sonnet-4-6,knee_valgus,False,False,✅,0.00,json,stability,21178.2,24430.3,45608.6,,,,,
+V5,Option 2,gemini-2.5-flash,claude-sonnet-4-6,excessive_forward_lean,True,True,✅,1.00,json,range_of_motion,15391.1,22487.1,37878.1,,,,,
+V6,Option 2,gemini-2.5-flash,claude-sonnet-4-6,excessive_forward_lean,False,False,✅,1.00,json,range_of_motion,23251.4,26117.0,49368.4,,,,,
+V1,Option 3,claude-haiku-4-5-20251001,claude-sonnet-4-6,insufficient_depth,True,True,✅,0.98,json,range_of_motion,7806.6,28653.8,36460.3,,,,,
+V2,Option 3,claude-haiku-4-5-20251001,claude-sonnet-4-6,insufficient_depth,False,False,✅,0.98,json,range_of_motion,6477.9,28712.6,35190.5,,,,,
+V3,Option 3,claude-haiku-4-5-20251001,claude-sonnet-4-6,,False,False,❌,N/A,N/A,,0,0,0,,,,,Expecting value: line 1 column 1 (char 0)
+V4,Option 3,claude-haiku-4-5-20251001,claude-sonnet-4-6,knee_valgus,False,True,❌,0.72,json,stability,8192.7,31021.6,39214.3,,,,,
+V5,Option 3,claude-haiku-4-5-20251001,claude-sonnet-4-6,excessive_forward_lean,True,True,✅,0.92,both,range_of_motion,7860.2,29359.4,37219.7,,,,,
+V6,Option 3,claude-haiku-4-5-20251001,claude-sonnet-4-6,,False,False,❌,N/A,N/A,,0,0,0,,,,,Expecting value: line 1 column 1 (char 0)

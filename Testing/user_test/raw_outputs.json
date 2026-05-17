@@ -1,0 +1,276 @@
+[
+  {
+    "video_id": "V1",
+    "fault": "Insufficient depth",
+    "option_a": {
+      "verdict": "Your primary limiter is restricted ankle dorsiflexion, which is preventing you from reaching adequate squat depth across all 5 reps and forcing compensatory forward lean in 4 of 5 reps \u2014 fixing ankle mobility will directly reduce both issues. Prioritize ankle dorsiflexion work before your next session and use heel elevation as an immediate corrective tool.",
+      "issues": [
+        {
+          "rank": 1,
+          "label": "Restricted ankle dorsiflexion causing insufficient squat depth",
+          "type": "root_cause",
+          "reps_affected": "5 of 5 valid reps",
+          "which_reps": "reps 1, 2, 3, 4, 5",
+          "severity": "knee_angle_min mean 117.6\u00b0 (MediaPipe interior) = ~62.4\u00b0 flexion; parallel requires ~90\u00b0 knee flexion (MediaPipe ~90\u00b0); all reps classified insufficient. Ankle dorsiflexion restricted on every rep.",
+          "trend": "worsening +1.73\u00b0 per rep (knee_angle_min rising, meaning shallower depth over the set)",
+          "caused_by": null,
+          "causes": [
+            "compensatory forward trunk lean"
+          ],
+          "recommendation": "Elevate heels 1\u20132 cm on plates immediately to offload ankle restriction and allow deeper descent. Daily: perform 3\u00d730 s wall ankle stretch per side and 2\u00d715 banded ankle mobilizations before squatting."
+        },
+        {
+          "rank": 2,
+          "label": "Compensatory forward trunk lean exceeding goblet squat standard",
+          "type": "downstream",
+          "reps_affected": "4 of 5 valid reps",
+          "which_reps": "reps 2, 3, 4, 5",
+          "severity": "back_angle_max 46.1\u00b0 (rep 2), 42.2\u00b0 (rep 3), 42.3\u00b0 (rep 4), 43.7\u00b0 (rep 5); mean max 42.3\u00b0; back_angle_at_bottom mean 38.98\u00b0; time at excessive lean averages 0.7 s per rep across affected reps",
+          "trend": "worsening +0.93\u00b0 per rep (back_angle_trend = 0.927)",
+          "caused_by": "restricted ankle dorsiflexion",
+          "causes": [],
+          "recommendation": "As you descend, actively drive your elbows down between your knees and cue 'chest up, elbows inside knees' \u2014 this counteracts the forward tip driven by ankle restriction. Heel elevation (see rank 1 fix) will reduce how much lean is needed structurally."
+        }
+      ],
+      "doing_well": [
+        "Consistent tempo across reps 2\u20135: total rep duration held tightly at 2.5\u20132.6 s with a deliberate pause at the bottom (pause_mean 0.82 s), showing good body awareness and control during the movement.",
+        "Starting back angle is well-managed in rep 1 (back_angle_at_bottom 37.1\u00b0) and rep 5 initiates from only 23.1\u00b0 \u2014 you are not collapsing at the top of the movement, indicating solid upper-back bracing with the goblet hold."
+      ]
+    },
+    "option_b": {
+      "verdict": "Your most urgent fix is ankle dorsiflexion mobility \u2014 restricted ankles are forcing an early heel rise or forward shin, which prevents you from reaching squat depth and pulls your torso forward into a lean. Address ankle mobility first with heel-elevated squats or targeted stretching, and you will likely see both depth and back angle improve simultaneously.",
+      "analysis": {
+        "primary_issue": "Insufficient squat depth driven by ankle dorsiflexion restriction",
+        "causal_chain": "ankle dorsiflexion restriction \u2192 limited forward shin travel \u2192 early depth cutoff AND compensatory forward torso lean (back angle increase)",
+        "chain_explained": "When the ankle cannot dorsiflex adequately, the shin cannot track forward over the toes, so the lifter either cuts depth short or compensates by hinging the torso forward to shift the centre of mass \u2014 producing both the universal 'insufficient' depth classification and the progressive back angle warnings seen across this set.",
+        "worsening_trends": [
+          "back_angle_max worsening +0.927\u00b0/rep across the set (Rep 1: 37.22\u00b0, Rep 2: 46.08\u00b0, Rep 3: 42.18\u00b0, Rep 4: 42.31\u00b0, Rep 5: 43.74\u00b0 \u2014 peak reached Rep 2, sustained thereafter)",
+          "depth_trend worsening +1.734 units/rep (knee_angle_min_mean 117.57\u00b0 MediaPipe; converted flexion ~62\u00b0, well short of the ~90\u00b0 needed for parallel)"
+        ],
+        "asymmetry_flags": [],
+        "rep_summary": {
+          "total_reps": "5",
+          "valid_reps": "5",
+          "walk_in_out_excluded": [],
+          "fault_reps": {
+            "insufficient_depth": "5 of 5 valid reps \u2014 Reps 1, 2, 3, 4, 5",
+            "back_angle_warning_or_excessive": "4 of 5 valid reps \u2014 Reps 2, 3, 4, 5 (Rep 1 ACCEPTABLE at 37.22\u00b0 max)",
+            "ankle_dorsiflexion_restricted": "5 of 5 valid reps \u2014 Reps 1, 2, 3, 4, 5"
+          }
+        }
+      },
+      "feedback": {
+        "posture": {
+          "doing_well": "Rep 1 kept your back angle stable at 37.22\u00b0 with no excessive-lean time, showing you can maintain a relatively upright torso when the movement is brief.",
+          "critical_observations": "Back angle warnings appeared in 4 of 5 reps (Reps 2\u20135), with peak lean reaching 46.08\u00b0 in Rep 2 and sustained above 42\u00b0 through Reps 3\u20135; the trend is worsening at approximately +0.93\u00b0/rep, suggesting fatigue or progressive compensation as the set continues.",
+          "recommendation": "Keep your elbows high and actively 'spread the floor' with your feet \u2014 this cue engages the hips and pulls the torso upright; if lean persists, place a 1\u20132 cm heel raise under both feet temporarily to reduce the ankle demand."
+        },
+        "stability": {
+          "doing_well": "No bilateral asymmetry flags were detected \u2014 foot turnout appears symmetric across the set, and there is no knee valgus distance data indicating collapse, which reflects adequate hip abductor engagement.",
+          "critical_observations": "Ankle dorsiflexion is classified as 'restricted' in all 5 of 5 reps, which destabilises the base of support and forces compensatory weight redistribution; this is the single largest stability risk in this session.",
+          "recommendation": "Before each set, perform 10 slow ankle circles per side and 5 deep lunge stretches with the back knee down; for long-term improvement, add 2 minutes of wall ankle mobilisation (knee-to-wall drill) daily."
+        },
+        "movement_quality": {
+          "doing_well": "Reps 2\u20134 maintain a consistent total rep time of 2.5 s with a controlled pause, indicating you are not rushing through the bottom \u2014 this gives your body time to find position even when depth is short.",
+          "critical_observations": "Rep 1 is an outlier at only 1.7 s total (eccentric 0.4 s, well below the set median of ~2.5 s) with a knee_angle_min MediaPipe of 117.33\u00b0 (the shallowest of all reps); while it does not meet the \u22653\u00d7 median threshold for walk-in exclusion, the very short eccentric suggests it was a settling rep rather than a full effort.",
+          "recommendation": "Aim for at least a 2-second eccentric on every rep \u2014 count 'one, two' on the way down to build consistent motor control and give your ankles time to load progressively."
+        },
+        "range_of_motion": {
+          "doing_well": "You show improving eccentric control from Rep 1 to Rep 4 (eccentric rising from 0.4 s to 1.1 s), which means you are spending more time in the range you do have \u2014 a positive sign of growing body awareness.",
+          "critical_observations": "All 5 of 5 reps are classified 'insufficient' depth; converted knee flexion (180\u00b0 \u2212 MediaPipe angle) ranges from ~58\u00b0 (Rep 1) to ~70\u00b0 (Rep 2) against a target of ~90\u00b0 for parallel \u2014 you are consistently 20\u201330\u00b0 short of adequate depth, and the depth trend is worsening at +1.73 units/rep.",
+          "recommendation": "Use a heel-elevated goblet squat (2\u20134 cm riser under both heels) as your primary variation until ankle dorsiflexion improves; this will immediately allow greater depth and reduce forward lean without changing any other technique variable."
+        }
+      }
+    }
+  },
+  {
+    "video_id": "V3",
+    "fault": "Knee valgus (inward collapse)",
+    "option_a": {
+      "verdict": "Your most urgent fix is knee valgus collapse at the bottom of every rep \u2014 address this first because it is the root cause driving your feet to compensate with excessive external rotation. Strengthening and cueing your knees out will also clean up your foot symmetry; your torso lean is already trending in the right direction and needs only minor reinforcement.",
+      "issues": [
+        {
+          "rank": 1,
+          "label": "Late-phase knee valgus collapse",
+          "type": "root_cause",
+          "reps_affected": "6 of 7 valid reps",
+          "which_reps": "reps 2, 3, 4, 5, 6, 7",
+          "severity": "knee_valgus_distance below 0.22 threshold in reps 2\u20137 (values: 0.1826, 0.2027, 0.1927, 0.1775, 0.2072, 0.1646); mean 0.1879, worst rep 7 at 0.1646",
+          "trend": "worsening \u22120.0116 per rep across the set",
+          "caused_by": null,
+          "causes": [
+            "asymmetric foot turnout compensation",
+            "forward torso lean in early reps"
+          ],
+          "recommendation": "Place a light resistance band just above the knees and cue 'knees track over pinky toe' throughout the descent and at the bottom pause; hold the bottom position for a 3-count actively pressing knees out before rising."
+        },
+        {
+          "rank": 2,
+          "label": "Asymmetric foot turnout (left > right)",
+          "type": "downstream",
+          "reps_affected": "6 of 6 reps with bilateral data (reps 2\u20137)",
+          "which_reps": "reps 2, 3, 4, 5, 6, 7",
+          "severity": "left turnout mean 21.97\u00b0, right turnout mean 18.41\u00b0; peak bilateral difference 7.77\u00b0 (rep 7: left 21.68\u00b0 vs right 16.08\u00b0); difference approaches but does not exceed 10\u00b0 threshold in any single rep, yet is directionally consistent across all reps",
+          "trend": "stable; left consistently exceeds right by 3\u20136\u00b0 throughout the set",
+          "caused_by": "late-phase knee valgus collapse",
+          "causes": [],
+          "recommendation": "Before each set, mark symmetric foot position with tape at equal angles (~20\u00b0 each side); as knee valgus is corrected the left hip will unload and the asymmetry should self-resolve \u2014 if not, add 90/90 hip internal rotation stretching for the left side."
+        },
+        {
+          "rank": 3,
+          "label": "Excessive forward torso lean in rep 1 (back angle warning)",
+          "type": "contributing_factor",
+          "reps_affected": "2 of 7 valid reps",
+          "which_reps": "reps 1, 2",
+          "severity": "rep 1 back_angle_at_bottom 74.13\u00b0 (WARNING), rep 2 back_angle_at_bottom 38.19\u00b0 (WARNING); back_angle_max mean across set 40.69\u00b0",
+          "trend": "improving \u22125.35\u00b0 per rep across the set; reps 3\u20137 all ACCEPTABLE",
+          "caused_by": null,
+          "causes": [
+            "increased anterior knee shear load when lean is severe"
+          ],
+          "recommendation": "Use the goblet weight as a counterbalance by keeping elbows pressed down into your thighs at the bottom; cue 'chest tall, chin up' during descent to reinforce the upright position you are already achieving in later reps."
+        }
+      ],
+      "doing_well": [
+        "Squat depth is consistently excellent across all 7 reps \u2014 converted knee flexion averages ~76\u00b0 (knee_angle_min mean 103.90\u00b0 \u2192 180\u00b0\u2212103.90\u00b0 = 76.1\u00b0 flexion) with hip crease clearly below parallel every rep, classified 'deep' throughout.",
+        "Torso angle self-corrects strongly after rep 2, with back_angle_at_bottom dropping from 74.13\u00b0 in rep 1 to 27.72\u00b0 by rep 7, showing good within-session learning and body awareness."
+      ]
+    },
+    "option_b": {
+      "verdict": "Your most urgent fix is knee valgus collapse at the bottom: 6 of 7 valid reps show valgus distance below 0.22, and the trend is worsening (\u22120.0116/rep), which directly stresses your knees and will limit how upright you can keep your torso. Address valgus first by actively driving knees out at the bottom, and your back angle \u2014 which is already improving set-over-set \u2014 will continue to improve naturally as your hips open more freely.",
+      "analysis": {
+        "primary_issue": "knee valgus collapse (late-phase)",
+        "causal_chain": "limited hip abductor / external rotator strength \u2192 knee valgus collapse at bottom position \u2192 compensatory forward trunk lean to maintain balance \u2192 elevated back angle",
+        "chain_explained": "When the hip abductors and external rotators cannot maintain femoral alignment at depth, the knees track inward, shifting the center of mass forward; the trunk then leans forward to counterbalance, which explains the elevated back angle seen predominantly in reps 1\u20132 and partially resolving as the athlete warms up and self-corrects posture but cannot yet resolve the underlying valgus.",
+        "worsening_trends": [
+          "knee_valgus_distance worsening \u22120.0116 per rep (progressive collapse across set)",
+          "back_angle improving \u22125.35\u00b0/rep across set (positive trend, torso becoming more upright)"
+        ],
+        "asymmetry_flags": [
+          "foot_turnout asymmetry: left mean 21.97\u00b0 vs right mean 18.41\u00b0 \u2014 difference of 3.56\u00b0 is within tolerance across the set, but reps 2 and 7 show left\u2212right difference of 6.48\u00b0 and 5.60\u00b0 respectively, approaching threshold; monitor for hip mobility asymmetry on the left side"
+        ],
+        "rep_summary": {
+          "total_reps": "7",
+          "valid_reps": "7",
+          "walk_in_out_excluded": [
+            "Rep 1 total duration 1.8 s vs set median 2.6 s (ratio 1.44\u00d7, below 3\u00d7 threshold); not excluded \u2014 included in all analysis"
+          ],
+          "fault_reps": {
+            "knee_valgus_below_0.22": "6 of 7 valid reps: reps 2, 3, 4, 5, 6, 7 (distances: 0.183, 0.203, 0.193, 0.178, 0.207, 0.165)",
+            "back_angle_WARNING": "2 of 7 valid reps: reps 1 and 2 (back_angle_max 74.86\u00b0 and 40.53\u00b0 respectively)"
+          }
+        }
+      },
+      "feedback": {
+        "posture": {
+          "doing_well": "Your torso angle improved substantially across the set \u2014 back_angle_max dropped from 74.86\u00b0 (rep 1) to 32.16\u00b0 (rep 7), a trend of \u22125.35\u00b0/rep, and reps 3\u20137 all achieved ACCEPTABLE status. By the final rep you are holding a much more upright goblet squat position consistent with the exercise standard.",
+          "critical_observations": "Reps 1 and 2 showed WARNING-level forward lean (back_angle_max 74.86\u00b0 and 40.53\u00b0), with rep 1 spending 0.5 s in excessive lean territory. This was most severe at the start of the set, suggesting a warm-up or motor pattern initiation issue rather than a persistent fault.",
+          "recommendation": "Before each rep, brace the weight against your sternum and cue 'tall spine' \u2014 imagine the top of your head pressing toward the ceiling as you descend; this pre-activates the erectors and prevents the initial forward pitch seen in reps 1\u20132."
+        },
+        "stability": {
+          "doing_well": "Rep 1 achieved a valgus distance of 0.281, which is above the 0.22 threshold, indicating adequate knee tracking in that rep. Valgus is consistently late-phase only, meaning you control alignment through most of the descent and only collapse at the deepest position.",
+          "critical_observations": "6 of 7 valid reps (reps 2\u20137) show knee valgus distance below 0.22 at the bottom (range 0.165\u20130.207), and the trend is worsening at \u22120.0116 per rep, meaning rep 7 (0.165) is the worst of the set. All 7 reps show late-phase collapse, confirming this is a consistent strength-mobility deficit at end-range, not random variation.",
+          "recommendation": "At the very bottom of every rep, consciously push both knees outward against an imaginary wall \u2014 cue 'spread the floor with your feet' \u2014 and hold that position for a full second before ascending; this actively loads the hip abductors at end-range where they are currently failing."
+        },
+        "movement_quality": {
+          "doing_well": "All 7 reps achieved 'deep' depth classification with zero insufficient-depth reps \u2014 hip crease is consistently reaching or passing knee level. Your average knee angle at bottom (MediaPipe ~103.9\u00b0, converting: ~76.1\u00b0 flexion) confirms genuine deep squat depth across every rep of the set.",
+          "critical_observations": "Depth is trending slightly deeper across the set (depth_trend \u22123.98\u00b0/rep in MediaPipe knee angle, meaning increasing flexion), which is positive but also correlates with increasing valgus \u2014 going deeper without adequate hip external rotator strength is amplifying the collapse identified above.",
+          "recommendation": "Maintain current depth but pair it with the knee-out cue from stability: only go as deep as you can without letting knees cave \u2014 if valgus appears before full depth, stop 2\u20133 cm short and build strength at that controlled range before progressing deeper."
+        },
+        "range_of_motion": {
+          "doing_well": "Foot turnout is symmetrical and appropriate for a goblet squat \u2014 left mean 21.97\u00b0 and right mean 18.41\u00b0 (3.56\u00b0 difference, within the 10\u00b0 flag threshold). Toe angle in the 18\u201324\u00b0 range supports adequate hip external rotation for the depth you are achieving.",
+          "critical_observations": "Reps 2 and 7 show the largest left\u2212right foot turnout asymmetry (6.48\u00b0 and 5.60\u00b0 respectively), suggesting occasional inconsistency in foot placement setup between reps. This is sub-threshold but worth monitoring; if it exceeds 10\u00b0 in future sessions it may indicate left hip internal rotation restriction.",
+          "recommendation": "Mark consistent foot placement on the mat before your set (e.g., tape or chalk marks) to ensure identical stance width and turnout angle every rep, eliminating the variable foot position that is creating the occasional asymmetry."
+        }
+      }
+    }
+  },
+  {
+    "video_id": "V5",
+    "fault": "Excessive forward lean",
+    "option_a": {
+      "verdict": "Your primary fix is ankle dorsiflexion mobility \u2014 restricted ankles are forcing your torso to lean forward (back_angle averaging 46.4\u00b0 at the bottom across all 6 reps) as a compensation strategy to maintain balance. Elevating your heels on plates or improving ankle mobility will directly reduce the forward lean; once you address the root cause, the torso angle should self-correct without any separate cuing needed.",
+      "issues": [
+        {
+          "rank": 1,
+          "label": "Restricted ankle dorsiflexion (root cause)",
+          "type": "root_cause",
+          "reps_affected": "6 of 6 valid reps",
+          "which_reps": "reps 1, 2, 3, 4, 5, 6",
+          "severity": "dorsiflexion classified as 'restricted' at bottom position in every rep; knee_angle_min ranges 86.0\u00b0\u2013103.5\u00b0 (converted flexion 76.5\u00b0\u201394.0\u00b0), indicating the shin cannot travel forward sufficiently over the foot",
+          "trend": "stable \u2014 restriction present consistently across all reps with no improvement",
+          "caused_by": null,
+          "causes": [
+            "compensatory forward torso lean"
+          ],
+          "recommendation": "Before each session perform 2\u00d730s banded ankle distraction stretches per side and 3\u00d710 deep kneeling ankle rocks. Immediately elevate heels 1\u20132 cm on weight plates during all goblet squat sets until native dorsiflexion improves to \u226535\u00b0."
+        },
+        {
+          "rank": 2,
+          "label": "Excessive forward torso lean (downstream compensation)",
+          "type": "downstream",
+          "reps_affected": "6 of 6 valid reps",
+          "which_reps": "reps 1, 2, 3, 4, 5, 6",
+          "severity": "back_angle at bottom: rep1 46.9\u00b0, rep2 37.7\u00b0, rep3 47.9\u00b0, rep4 52.4\u00b0, rep5 44.0\u00b0, rep6 49.7\u00b0; mean 46.4\u00b0; target for goblet squat \u226430\u00b0. All 6 reps exceed WARNING threshold; reps 4 and 6 reach 52.4\u00b0\u201352.6\u00b0 maximum, approaching excessive territory.",
+          "trend": "worsening +1.21\u00b0/rep across the set (back_angle_trend = 1.2146), indicating progressive fatigue-driven degradation",
+          "caused_by": "restricted ankle dorsiflexion",
+          "causes": [
+            "increased lumbar load and shear stress at bottom position",
+            "reduced quadriceps engagement as load shifts to posterior chain"
+          ],
+          "recommendation": "Use the heel-elevation fix from Issue 1 as the primary intervention. As a secondary cue during the descent, actively drive elbows down between knees and think 'chest tall, elbows down' \u2014 this uses the goblet position to mechanically encourage an upright torso while the mobility limitation is being addressed."
+        }
+      ],
+      "doing_well": [
+        "Squat depth is consistently achieved: 5 of 6 reps classified 'deep' with knee flexion angles reaching as low as 86.0\u00b0 (rep 2), confirming hip crease at or below knee level \u2014 no depth deficit present.",
+        "Eccentric tempo is controlled and consistent (mean 0.78 s, range 0.7\u20130.8 s across all reps), demonstrating good movement discipline on the way down rather than dropping into the squat."
+      ]
+    },
+    "option_b": {
+      "verdict": "Your most urgent fix is ankle dorsiflexion mobility: restricted ankles are forcing your torso to lean forward on every rep (back_angle averaging 46.4\u00b0 at bottom, worsening +1.21\u00b0/rep), so resolving ankle restriction will directly reduce forward lean without any other technique change. Depth is currently adequate but is trending shallower (+1.26\u00b0 knee angle/rep), meaning continued ankle restriction will eventually compromise range of motion as well.",
+      "analysis": {
+        "primary_issue": "Ankle dorsiflexion restriction",
+        "causal_chain": "Ankle dorsiflexion restriction \u2192 compensatory forward torso lean (back_angle 46.4\u00b0 mean at bottom) \u2192 progressive depth reduction (knee_angle_min trending shallower +1.26\u00b0/rep)",
+        "chain_explained": "When the ankle cannot dorsiflex sufficiently to allow the tibia to travel forward over the foot, the lifter compensates by pitching the torso forward to keep the center of mass over the base of support. This forward lean is especially pronounced in a goblet squat where the load should counter-balance and encourage upright posture. Over successive reps, accumulated fatigue in the restricted ankle exacerbates the lean and forces the lifter to cut depth earlier to avoid further forward collapse.",
+        "worsening_trends": [
+          "back_angle_at_bottom worsening +1.21\u00b0/rep (Rep 1: 46.86\u00b0 \u2192 Rep 6: 49.66\u00b0, peak Rep 4: 52.40\u00b0)",
+          "knee_angle_min (depth) worsening (shallower) +1.26\u00b0/rep (Rep 2 deepest: 86.03\u00b0 \u2192 Rep 6 shallowest: 103.54\u00b0)",
+          "back_angle_max worsening: Rep 1: 46.86\u00b0 \u2192 Rep 6: 52.60\u00b0"
+        ],
+        "asymmetry_flags": [],
+        "rep_summary": {
+          "total_reps": "6",
+          "valid_reps": "6",
+          "walk_in_out_excluded": [],
+          "fault_reps": {
+            "forward_lean_warning": "6 of 6 valid reps (Reps 1\u20136); back_angle_at_bottom range 37.68\u00b0\u201352.40\u00b0, all exceeding acceptable goblet squat upright threshold (~30\u00b0)",
+            "ankle_dorsiflexion_restricted": "6 of 6 valid reps (Reps 1\u20136)",
+            "depth_shallowing_trend": "Rep 6 classified parallel (knee_angle_min 103.54\u00b0) vs. Reps 1\u20135 deep; trend worsening +1.26\u00b0/rep"
+          }
+        }
+      },
+      "feedback": {
+        "posture": {
+          "doing_well": "Your starting back angle is reasonably controlled in early reps (Rep 2 starts at 20.85\u00b0, Rep 1 at 29.64\u00b0), showing you initiate the descent with good intent before the ankle restriction forces compensation.",
+          "critical_observations": "Forward lean occurs in all 6 of 6 reps, with back_angle_at_bottom averaging 46.4\u00b0 and worsening at +1.21\u00b0/rep \u2014 Rep 4 and Rep 6 both hit 52\u00b0+, which represents significant torso inclination for a goblet squat. The time spent in the 'excessive' lean zone is also increasing (Rep 3: 1.6 s, Rep 4: 1.6 s, Rep 6: 1.2 s).",
+          "recommendation": "Cue 'chest up, elbows inside knees' at the bottom; if torso still drops, place a 1\u20132 cm heel elevation under both feet to temporarily compensate for ankle restriction until mobility improves."
+        },
+        "stability": {
+          "doing_well": "Tempo is consistent across the set (total duration 2.7\u20133.5 s, eccentric phase steady at 0.7\u20130.8 s), suggesting good neuromuscular control and no signs of lateral instability or balance loss visible in the frames.",
+          "critical_observations": "No bilateral foot turnout asymmetry data was available for left vs. right comparison from this side-view session; a front-view assessment would be needed to rule out unilateral valgus or rotational asymmetry. The progressive forward lean does increase anterior shear load on the knees and lumbar spine across the set.",
+          "recommendation": "Film one set from the front to confirm symmetrical knee tracking and equal foot turnout; prioritize this before increasing load beyond 20 kg."
+        },
+        "movement_quality": {
+          "doing_well": "Five of six reps achieve 'deep' classification, demonstrating good neuromuscular capacity to reach depth when ankle restriction is partially tolerated \u2014 this means the movement pattern itself is understood and hip mobility is not a limiting factor.",
+          "critical_observations": "Rep 6 degraded to 'parallel' (knee_angle_min 103.54\u00b0, flexion ~76\u00b0), and the depth trend is worsening at +1.26\u00b0 knee angle per rep (shallower each rep). The concentric phase also became more variable in later reps (Rep 4: 1.4 s, Rep 6: 1.2 s vs. 0.6\u20130.9 s early), indicating rising fatigue or reduced confidence at the bottom.",
+          "recommendation": "Reduce weight to 15 kg and add a pause of 2 s at the bottom for the next 2\u20133 sessions to reinforce motor control at depth before fatigue sets in."
+        },
+        "range_of_motion": {
+          "doing_well": "Hip mobility appears sufficient \u2014 depth is achieved in 5 of 6 reps without signs of butt wink or pelvic tuck visible in the frame sequence, meaning the hip joint is not the primary range-of-motion limiter.",
+          "critical_observations": "Ankle dorsiflexion is classified as 'restricted' in all 6 of 6 reps. This is the root cause of the entire fault chain: restricted ankles force forward lean (+1.21\u00b0/rep worsening), which in turn degrades depth over the set (+1.26\u00b0/rep shallowing). Without addressing ankle mobility, technical improvements in posture will be unsustainable.",
+          "recommendation": "Perform 3\u00d745-second kneeling ankle dorsiflexion stretches (knee-over-toe, banded) and 2\u00d720 reps of heel-elevated goblet squat holds daily for 4 weeks before reassessing; retest dorsiflexion range with a 5 cm wall test as a benchmark."
+        }
+      }
+    }
+  }
+]

@@ -301,48 +301,45 @@
         <div class="week-num">Week 7</div>
         <div class="week-dates">May 18–24</div>
       </div>
-      <div class="week-theme">Wire the complete AI pipeline end-to-end. First full form analysis — real video in, real coaching output out.</div>
+      <div class="week-theme">Wire the complete AI pipeline with Haiku. First full form analysis — real video in, real coaching output with longitudinal context out. Nemotron replaced by Claude Haiku 4.5.</div>
       <span class="week-milestone">Full Pipeline Live</span>
     </div>
 
     <div class="squad-block">
       <div class="squad-label sq1">Squad 1 — Frontend</div>
       <ul class="task-list">
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text"><strong>Replace all dummy data</strong> on Results screen with real pipeline output (Nemotron + Claude Sonnet coaching)<div class="task-tags"><span class="us-tag e4">US-06</span><span class="us-tag e4">US-07</span><span class="us-tag e4">US-08</span></div></div></li>
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text">Build <strong>Onboarding / Sign-up screen</strong>: Google OAuth, injury &amp; pain questions, preferences<div class="task-tags"><span class="us-tag e1">US-01</span><span class="us-tag e1">US-02</span></div></div></li>
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text">Build <strong>Workout Builder screen</strong>: muscle group selection, exercise list, exercise detail overlay<div class="task-tags"><span class="us-tag e6">US-11a</span></div></div></li>
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text">Build <strong>Workout Tracker screen</strong>: set/rep/weight logging, Save CTA, Add Set<div class="task-tags"><span class="us-tag e6">US-11b</span></div></div></li>
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text">Update Dashboard to reflect real session data once auth lands<div class="task-tags"><span class="us-tag e5">US-09</span></div></div></li>
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text">Build <strong>History screen</strong>: session list with form score trend, 6-month window<div class="task-tags"><span class="us-tag e5">US-10</span></div></div></li>
+        <li class="task-item"><span class="task-check">☐</span><div class="task-text"><strong>Form analysis 1st cut</strong> — wire Results screen to real Haiku output: verdict, total score (/100), positive observations, critical observations (root cause / symptom), recommendation, rep trend<div class="task-tags"><span class="us-tag e4">US-06</span><span class="us-tag e4">US-07</span><span class="us-tag e4">US-08</span></div></div></li>
+        <li class="task-item"><span class="task-check">☐</span><div class="task-text"><strong>Home screen build + Login page build</strong> — scaffold and build home / dashboard screen; build login page with user profile selection (3 demo user profiles)<div class="task-tags"><span class="us-tag e1">US-01</span><span class="us-tag e5">US-09</span></div></div></li>
+        <li class="task-item"><span class="task-check">☐</span><div class="task-text"><strong>Start build</strong> on Profile &amp; Login screen — initial scaffolding and component structure<div class="task-tags"><span class="us-tag e1">US-01</span><span class="us-tag e1">US-02</span></div></div></li>
       </ul>
-        <li class="task-item design"><span class="design-tag">Design</span><div class="task-text">Subpages from Profile + Onboarding screens — wireframes ready for dev handoff<div class="task-tags"><span class="us-tag e1">US-02</span><span class="us-tag e7">US-12a</span><span class="us-tag e7">US-12b</span></div></div></li>
-        <li class="task-item design"><span class="design-tag">Design</span><div class="task-text">Workout Builder & Tracker screens — wireframes ready for dev handoff<div class="task-tags"><span class="us-tag e6">US-11a</span><span class="us-tag e6">US-11b</span></div></div></li>
-      <div class="merge-note"><span class="merge-icon">⊕</span> Thu merge: Results screen live with real coaching output; Onboarding + Workout + History screens committed</div>
+        <li class="task-item design"><span class="design-tag">Design</span><div class="task-text">Profile + Onboarding user screens — wireframes finalised and handed off to dev<div class="task-tags"><span class="us-tag e1">US-02</span><span class="us-tag e7">US-12a</span></div></div></li>
+        <li class="task-item design"><span class="design-tag">Design</span><div class="task-text">Workout Builder &amp; Logger — design work begins this week<div class="task-tags"><span class="us-tag e6">US-11a</span><span class="us-tag e6">US-11b</span></div></div></li>
+      <div class="merge-note"><span class="merge-icon">⊕</span> Thu merge: Results screen live with real Haiku coaching output; Home screen committed; design handoffs delivered</div>
     </div>
 
     <div class="squad-block">
       <div class="squad-label sq2">Squad 2 — Backend</div>
       <ul class="task-list">
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text">Complete <strong>Nemotron integration</strong>: raw video + biomechanics JSON → structured JSON + chain-of-thought<div class="task-tags"><span class="us-tag e4">US-06</span><span class="us-tag e4">US-07</span></div></div></li>
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text">On Nemotron output: <strong>call Squad 3's RAG endpoint</strong> with relevant biomechanics context<div class="task-tags"><span class="us-tag e4">US-07</span></div></div></li>
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text">Query <strong>structured DB</strong>: retrieve user's weight history and past form sessions<div class="task-tags"><span class="us-tag e4">US-08</span><span class="us-tag e5">US-09</span></div></div></li>
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text">Pass Nemotron + RAG + user history → <strong>Claude Sonnet</strong> for coaching and progression recommendation<div class="task-tags"><span class="us-tag e4">US-07</span><span class="us-tag e4">US-08</span></div></div></li>
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text">Return full coaching response to frontend via SSE<div class="task-tags"><span class="us-tag e3">US-05</span><span class="us-tag e4">US-06</span></div></div></li>
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text">Implement <strong>authentication</strong> (Google OAuth, JWT): protect all user-specific endpoints; store injury data<div class="task-tags"><span class="us-tag e1">US-01</span><span class="us-tag e1">US-02</span><span class="us-tag e1">US-03</span></div></div></li>
+        <li class="task-item"><span class="task-check">☐</span><div class="task-text"><strong>Replace Nemotron with Claude Haiku 4.5</strong> — remove Nemotron integration; Haiku handles analysis + coaching end-to-end<div class="task-tags"><span class="us-tag e4">US-06</span><span class="us-tag e4">US-07</span></div></div></li>
+        <li class="task-item"><span class="task-check">☐</span><div class="task-text"><strong>Gold standard query</strong> — query Supabase gold standard squat table for elite trainer reference JSON; include in Haiku prompt for direct comparison<div class="task-tags"><span class="us-tag e4">US-07</span></div></div></li>
+        <li class="task-item"><span class="task-check">☐</span><div class="task-text"><strong>User session history query</strong> — pull last 3 sessions: weight used, MediaPipe JSON, and Haiku coaching output per session; pass as longitudinal context<div class="task-tags"><span class="us-tag e4">US-08</span><span class="us-tag e5">US-09</span></div></div></li>
+        <li class="task-item"><span class="task-check">☐</span><div class="task-text"><strong>RAG retrieval</strong> — retrieve coaching language from indexed .md files and transcribed coaching text; include in Haiku prompt<div class="task-tags"><span class="us-tag e4">US-07</span></div></div></li>
+        <li class="task-item"><span class="task-check">☐</span><div class="task-text"><strong>Assemble Haiku prompt</strong> — combine: current frames + MediaPipe JSON + current weight + gold standard JSON + 3-session history + RAG context → call Haiku → return structured coaching output via SSE<div class="task-tags"><span class="us-tag e3">US-05</span><span class="us-tag e4">US-06</span><span class="us-tag e4">US-07</span></div></div></li>
+        <li class="task-item"><span class="task-check">☐</span><div class="task-text"><strong>Demo user setup</strong> — create 3 hardcoded user IDs for demo day; all pipeline queries and session history scoped to these users; full auth (Google OAuth, JWT) deferred post-demo<div class="task-tags"><span class="us-tag e1">US-01</span></div></div></li>
       </ul>
-      <div class="merge-note"><span class="merge-icon">⊕</span> Thu merge: Full pipeline live (video → MediaPipe → Nemotron → RAG → Claude Sonnet → output); auth working</div>
+      <div class="merge-note"><span class="merge-icon">⊕</span> Thu merge: Full pipeline live (video → OpenCV + MediaPipe → multi-source prompt → Haiku → SSE output); auth working</div>
     </div>
 
     <div class="squad-block">
       <div class="squad-label sq3">Squad 3 — Data / Full Stack</div>
       <ul class="task-list">
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text"><strong>Enhance RAG corpus</strong>: add audio transcripts, muscle anatomy images, biomechanics edge cases<div class="task-tags"><span class="us-tag e4">US-07</span></div></div></li>
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text">Refine retrieval: tune chunking, re-rank results, improve joint-angle-specific query relevance<div class="task-tags"><span class="us-tag e4">US-07</span></div></div></li>
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text">Begin defining <strong>good/bad Goblet Squat scenarios</strong> for sample video testing (20–30 videos for Week 9)<div class="task-tags"><span class="us-tag e4">US-06</span></div></div></li>
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text">Source YouTube videos + muscle activation images per exercise for Workout Builder<div class="task-tags"><span class="us-tag e6">US-11a</span></div></div></li>
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text">Stress-test RAG endpoint under concurrent requests<div class="task-tags"><span class="us-tag e4">US-07</span></div></div></li>
+        <li class="task-item"><span class="task-check">☐</span><div class="task-text"><strong>MediaPipe pipeline update</strong> — (1) refine biomechanics JSON angle calculations based on A/B test findings; (2) update OpenCV wrapper from video overlay output to 8-frame composite grid extraction — this becomes the LLM visual input<div class="task-tags"><span class="us-tag e4">US-06</span></div></div></li>
+        <li class="task-item"><span class="task-check">☐</span><div class="task-text"><strong>Gold standard table</strong> — run MediaPipe on elite trainer goblet squat videos; store biomechanics JSON in Supabase using same schema as user session output<div class="task-tags"><span class="us-tag e4">US-07</span></div></div></li>
+        <li class="task-item"><span class="task-check">☐</span><div class="task-text"><strong>RAG corpus</strong> — index coaching .md files and transcribed coaching text; tune retrieval for biomechanics and form correction queries<div class="task-tags"><span class="us-tag e4">US-07</span></div></div></li>
+        <li class="task-item"><span class="task-check">☐</span><div class="task-text"><strong>Synthetic user data</strong> — seed a test user ID with 3 past sessions (weight + MediaPipe JSON + Haiku coaching output) to validate the longitudinal feedback flow end-to-end<div class="task-tags"><span class="us-tag e4">US-08</span><span class="us-tag e5">US-09</span></div></div></li>
+        <li class="task-item"><span class="task-check">☐</span><div class="task-text"><strong>Visual output scoping</strong> — prototype and compare: (1) annotated worst-rep bottom frame, (2) 5–8s slow-motion clip around key fault moment, (3) full skeleton overlay video. Document options for team review — no build decision yet<div class="task-tags"><span class="us-tag e4">US-06</span></div></div></li>
       </ul>
-      <div class="merge-note"><span class="merge-icon">⊕</span> Thu merge: Enhanced corpus + retrieval refinement + sample video scenarios + exercise content for Builder</div>
+      <div class="merge-note"><span class="merge-icon">⊕</span> Thu merge: MediaPipe pipeline updated; gold standard table populated; RAG indexed; synthetic data seeded; visual output options documented</div>
     </div>
   </div>
 

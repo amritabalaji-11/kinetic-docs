@@ -126,39 +126,42 @@
 
 ## Week 7 — May 18 | Connect the Full Pipeline
 
-**Theme:** Wire the complete AI pipeline end-to-end. First full form analysis session — real video in, real coaching output out.
+**Theme:** Wire the complete AI pipeline end-to-end with Haiku as the core model. First full form analysis session — real video in, real coaching output with longitudinal context out.
+
+> **Architecture decision (confirmed from A/B test):** Nemotron replaced by Claude Haiku 4.5. OpenCV extracts frames, Haiku receives MediaPipe JSON + frames + gold standard reference + user session history + RAG coaching context → returns structured coaching output.
 
 ### Squad 1 — Frontend
-- [ ] **Replace all dummy data** on Results screen with real pipeline output (Nemotron + Claude Sonnet coaching)
-- [ ] Build **Onboarding / Sign-up screen**: account creation, exercise preferences, training frequency
-- [ ] Build **Workout Logger screen**: log sets, reps, weight; link to form session
-- [ ] Update Dashboard to reflect real session data once auth lands
-- [ ] Build **History screen**: list of past sessions with form score trend line
-- [ ] **[Design]** Onboarding · Dashboard · Workout Builder & Tracker screens (wireframes ready for dev handoff by Thu) — all design handoffs complete by end of W7
+- [ ] **Form analysis 1st cut** — wire Results screen to real Haiku output schema: verdict, total score (/100), positive observations, critical observations (with root cause / symptom tagging), recommendation, rep trend
+- [ ] **Home screen build + Login page build** — scaffold and build home/dashboard screen; build login page with user profile selection (3 demo user profiles)
+- [ ] **[Design handoff]** Profile + Onboarding user screens — wireframes finalised and handed off to dev
+- [ ] **[Design]** Workout Builder & Logger — design work begins; not expected to complete this week
+- [ ] **Start build** on Profile & Login screen — initial scaffolding and component structure
 
-**Thursday merge:** Results screen live with real coaching output; Onboarding + History screens committed
+**Thursday merge:** Results screen live with real Haiku coaching output; Home screen committed; design handoffs delivered
 
 ---
 
 ### Squad 2 — Backend
-- [ ] Complete **Nemotron 3 Nano Omni integration**: raw video + biomechanics JSON → structured JSON output + word-level timestamps + chain-of-thought paragraphs
-- [ ] On Nemotron output generated: **call Squad 3's RAG endpoint** with relevant biomechanics context
-- [ ] Query **structured DB**: retrieve user's weight history and past form sessions for current exercise
-- [ ] Pass Nemotron output + RAG results + user history + current weight → **Claude Sonnet** for coaching and progression recommendation
-- [ ] Return full coaching response to frontend via SSE
-- [ ] Implement **authentication** (sign up, login, JWT): protect all user-specific endpoints
+- [ ] **Replace Nemotron with Claude Haiku 4.5** — remove Nemotron integration; Haiku handles analysis + coaching end-to-end
+- [ ] **Gold standard query** — query Supabase gold standard squat table for elite trainer reference JSON (same MediaPipe format); include in Haiku prompt for direct comparison
+- [ ] **User session history query** — pull last 3 sessions for current user + exercise: weight used, MediaPipe JSON, and Haiku coaching output from each session; pass as longitudinal context
+- [ ] **RAG retrieval** — retrieve relevant coaching language from indexed .md files and transcribed coaching text; include in Haiku prompt
+- [ ] **Assemble Haiku prompt** — combine all inputs: current frames + MediaPipe JSON + current weight + gold standard JSON + 3-session history + RAG context → call Haiku → return structured coaching output
+- [ ] **SSE delivery** — return Haiku coaching response to frontend via SSE; update processing states to reflect new multi-step pipeline
+- [ ] **Demo user setup** — create 3 hardcoded user IDs for demo day; all pipeline queries and session history scoped to these users; full auth (Google OAuth, JWT) deferred post-demo
 
-**Thursday merge:** Full pipeline live (video → MediaPipe → Nemotron → RAG + DB → Claude Sonnet → coaching output); auth endpoints working
+**Thursday merge:** Full pipeline live (video → OpenCV + MediaPipe → multi-source prompt → Haiku → coaching output via SSE); auth endpoints working
 
 ---
 
 ### Squad 3 — Data / Full Stack
-- [ ] **Enhance RAG corpus**: add audio transcripts from form videos, muscle anatomy images, additional biomechanics edge cases
-- [ ] Refine retrieval: tune chunking, re-rank results, improve relevance for joint-angle-specific queries
-- [ ] Begin defining **good/bad Goblet Squat scenarios** for sample video testing (target 20–30 videos for Week 9 validation)
-- [ ] Stress-test RAG endpoint under concurrent requests (Squad 2 will call this in the pipeline)
+- [ ] **MediaPipe pipeline update** — (1) refine biomechanics JSON output: validate and update angle calculations where possible based on A/B test findings; (2) update OpenCV wrapper from full video overlay output to 8-frame composite grid extraction as tested with Haiku — this becomes the visual input to the LLM going forward; (3) add `session_valgus_fault` boolean to `consolidated.stability` — computed as: ≥50% of valid reps (excl. walk-in/out) have `knee_valgus_distance < 0.22`. This moves the valgus majority rule from the LLM prompt into the pipeline output, making it deterministic and scalable across exercises
+- [ ] **Gold standard table** — run MediaPipe on elite trainer goblet squat videos; store biomechanics JSON in Supabase gold standard squat table in the same schema as user session output
+- [ ] **RAG corpus** — index coaching .md files and transcribed coaching text; ensure retrieval is tuned for biomechanics and form correction queries
+- [ ] **Synthetic user data** — seed a test user ID with 3 past sessions (weight + MediaPipe JSON + Haiku coaching output per session) to validate the longitudinal feedback flow end-to-end before real user data exists
+- [ ] **Visual output scoping** — prototype and compare 3 options for what the user sees as their form visual: (1) annotated worst-rep bottom frame, (2) 5–8 second slow-motion clip around key fault moment, (3) full processed video with skeleton overlay. No build decision — scope, test, present options to team.
 
-**Thursday merge:** Enhanced corpus ingested + retrieval refinement committed + sample video scenario definitions documented
+**Thursday merge:** Gold standard table populated; RAG corpus indexed; synthetic user data seeded; visual output options documented
 
 ---
 

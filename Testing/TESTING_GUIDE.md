@@ -5,100 +5,215 @@
 
 ---
 
-## Developer Handoff — What to do
-
-This section is for the developer running the test. Everything you need is below.
-
-### Step 1 — Folder structure
-
-All files go inside the `Testing/` folder. Create two subfolders if they don't exist:
-
-```
-Testing/
-  run_test.py              ← the test script (already here)
-  TESTING_GUIDE.md         ← this file
-  videos/                  ← PUT THE 6 VIDEOS HERE
-    v1_depth_fault.mp4
-    v2_depth_good.mp4
-    v3_knee_fault.mp4
-    v4_knee_good.mp4
-    v5_torso_fault.mp4
-    v6_torso_good.mp4
-  json/                    ← PUT YOUR MEDIAPIPE OUTPUT HERE (one file per video)
-    v1.json
-    v2.json
-    v3.json
-    v4.json
-    v5.json
-    v6.json
-  results/                 ← created automatically when the script runs
-    scores.csv
-    feedback_for_rating.md
-    raw_outputs.json
-```
-
-**File naming is exact — the script will skip any file it can't find by name.**
+## Developer Handoff — Step by Step
 
 ---
 
-### Step 2 — Run MediaPipe on each video
+### Step 1 — Install dependencies
 
-Run your MediaPipe extraction script on each of the 6 videos. Save the output as `.json` with the filenames above (`v1.json` through `v6.json`) in the `json/` folder.
+```bash
+pip install openai google-generativeai opencv-python
+```
 
-Each JSON file should be the raw MediaPipe output for that video — an array of frame objects with joint angles per frame. If your script outputs a different schema, update `JSON_FILES` at the top of `run_test.py`.
+Python 3.9+ required. Run this once — no need to repeat.
+
+---
+
+### Step 2 — Place all files in the correct folders
+
+All files go inside the `Testing/` folder. The structure must be exactly:
+
+```
+Testing/
+│
+├── run_test.py                          ← already here
+├── TESTING_GUIDE.md                     ← this file
+│
+├── videos/                              ← 6 original .mp4 recordings
+│     v1_depth_fault.mp4
+│     v2_depth_good.mp4
+│     v3_knee_fault.mp4
+│     v4_knee_good.mp4
+│     v5_torso_fault.mp4
+│     v6_torso_good.mp4
+│
+├── processed_videos/                    ← 6 MediaPipe-processed videos (10fps, skeleton overlay)
+│     v1_depth_fault_processed.mp4
+│     v2_depth_good_processed.mp4
+│     v3_knee_fault_processed.mp4
+│     v4_knee_good_processed.mp4
+│     v5_torso_fault_processed.mp4
+│     v6_torso_good_processed.mp4
+│
+├── json/                                ← 6 MediaPipe JSON files (one per video)
+│     v1.json
+│     v2.json
+│     v3.json
+│     v4.json
+│     v5.json
+│     v6.json
+│
+└── results/                             ← created automatically when the script runs
+      scores.csv
+      feedback_for_rating.md
+      raw_outputs.json
+```
+
+**Video → fault mapping:**
+
+| File prefix | Fault | Condition | Camera |
+|---|---|---|---|
+| v1 | Depth | FAULT | Side |
+| v2 | Depth | GOOD | Side |
+| v3 | Knee tracking | FAULT | Front |
+| v4 | Knee tracking | GOOD | Front |
+| v5 | Torso lean | FAULT | Side |
+| v6 | Torso lean | GOOD | Side |
+
+Each video has exactly 3 files: one in `videos/`, one in `processed_videos/`, one in `json/`. **File naming is exact — the script will skip any file it can't find by name.**
 
 ---
 
 ### Step 3 — Set API keys
 
+In your terminal, run all three export commands:
+
 ```bash
-export NVIDIA_API_KEY=<key provided by PM>
-export GOOGLE_API_KEY=<key provided by PM>
+export NVIDIA_API_KEY_70B=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
+export NVIDIA_API_KEY_90B=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
+export GOOGLE_API_KEY=AIzaSyC-F-OJASGgg_hAxJ2HIIoobKPN_mhPa20
+export OPENAI_API_KEY=<your_openai_key>
+export ANTHROPIC_API_KEY=<your_anthropic_key>
 ```
 
-Confirm they're set:
+Confirm all five are set:
 ```bash
-echo $NVIDIA_API_KEY
+echo $NVIDIA_API_KEY_70B
+echo $NVIDIA_API_KEY_90B
 echo $GOOGLE_API_KEY
+echo $OPENAI_API_KEY
+echo $ANTHROPIC_API_KEY
 ```
 
-> Keys only last for the current terminal session. If you close Terminal, re-run the export commands before running the script.
+Each should print a partial key value. If any prints blank, re-run that export line.
+
+> Keys only last for the current terminal session. If you close Terminal and reopen it, re-run the three export commands before running the script.
+
+> **Security:** Do not commit this file to GitHub with these keys in it.
 
 ---
 
-### Step 4 — Run the test
+### Step 4 — Smoke test (run this before the full test)
+
+Verify both API connections are working with a quick test before committing to the full 30–55 min run:
+
+```bash
+python3 -c "
+import os
+from openai import OpenAI
+import google.generativeai as genai
+
+# Test NVIDIA 70B
+client = OpenAI(api_key=os.getenv('NVIDIA_API_KEY_70B'), base_url='https://integrate.api.nvidia.com/v1')
+r = client.chat.completions.create(model='meta/llama-3.1-70b-instruct', messages=[{'role':'user','content':'say ok'}], max_tokens=5)
+print('NVIDIA 70B:', r.choices[0].message.content.strip())
+
+# Test NVIDIA 90B
+client2 = OpenAI(api_key=os.getenv('NVIDIA_API_KEY_90B'), base_url='https://integrate.api.nvidia.com/v1')
+r2 = client2.chat.completions.create(model='nvidia/llama-3.2-90b-vision-instruct', messages=[{'role':'user','content':'say ok'}], max_tokens=5)
+print('NVIDIA 90B:', r2.choices[0].message.content.strip())
+
+# Test Google
+genai.configure(api_key=os.getenv('GOOGLE_API_KEY'))
+r3 = genai.GenerativeModel('gemini-2.0-flash').generate_content('say ok')
+print('Google Gemini:', r3.text.strip())
+"
+```
+
+Expected output — all three lines should print something (not an error):
+```
+NVIDIA 70B: ok
+NVIDIA 90B: ok
+Google Gemini: ok
+```
+
+If any line throws an error, fix that connection before running the full test.
+
+---
+
+### Step 5 — Run the test
 
 ```bash
 cd /path/to/Testing
 python run_test.py
 ```
 
-Runs all three variants sequentially. Expected time:
-- Control: ~2–4 min
-- Variant A: ~5–10 min
-- Variant B: ~8–15 min (video upload + processing)
+Runs all five variants sequentially. Expected total time: **30–55 minutes.**
 
-Live output:
+| Variant | Expected time |
+|---|---|
+| Control | ~2–4 min |
+| Variant A | ~5–10 min |
+| Variant B | ~8–15 min |
+| Variant D | ~8–15 min |
+| Variant E | ~5–10 min |
+
+Live output looks like this:
 ```
-──────────────────────────────────────────
+──────────────────────────────────────────────────
   Control  (meta/llama-3.1-70b-instruct)
-──────────────────────────────────────────
+──────────────────────────────────────────────────
   V1 ... ✅  1240 ms
   V2 ... ✅  1180 ms
   V3 ... ❌  1310 ms
-  ...
+  V4 ... ✅  980 ms
+  V5 ... ✅  1420 ms
+  V6 ... ✅  1100 ms
 ```
+
+✅ = model got the fault detection correct. ❌ = wrong detection (not a crash — the test continues).
 
 ---
 
-### Step 5 — Send back these 3 files
+### Step 6 — Verify the run completed correctly
 
-Once the script finishes, send the PM all three files from the `results/` folder:
+Once the script finishes, check the following before sending results to the PM:
+
+**1. All 5 variants ran — no SKIP lines**
+If you see `SKIP — processed_videos/ folder not found`, Variants D and E were skipped. Add the processed videos and re-run.
+
+**2. Results folder has exactly 3 files**
+```bash
+ls results/
+```
+Should show: `scores.csv`, `feedback_for_rating.md`, `raw_outputs.json`
+
+**3. scores.csv has 30 rows (5 variants × 6 videos)**
+```bash
+wc -l results/scores.csv
+```
+Should print `31` (30 data rows + 1 header).
+
+**4. No ERROR entries**
+```bash
+grep ERROR results/scores.csv
+```
+Should return nothing. If errors appear, check `raw_outputs.json` for the model's raw response on that video — most errors are either a JSON parse failure (model returned prose) or a video upload timeout.
+
+**5. raw_outputs.json is valid JSON**
+```bash
+python3 -c "import json; json.load(open('results/raw_outputs.json')); print('valid')"
+```
+Should print `valid`.
+
+---
+
+### Step 7 — Send these 3 files to the PM
 
 | File | What it contains |
 |---|---|
 | `results/scores.csv` | Form accuracy per video per variant — auto-filled. Four coaching quality columns left blank for human rating. |
-| `results/feedback_for_rating.md` | Coaching text from all variants, grouped by video. Variant labels hidden inside comments — used for blind coaching quality rating. |
+| `results/feedback_for_rating.md` | Coaching text from all variants, grouped by video. Variant labels hidden — used for blind coaching quality rating. |
 | `results/raw_outputs.json` | Full model responses for debugging. Check the `evidence` field when a model gets something wrong. |
 
 ---
@@ -130,13 +245,24 @@ The test can run as soon as MediaPipe JSON is ready. PT rating is a parallel ste
 
 ## What we're testing
 
-Three model variants on 6 standardised Goblet Squat videos:
+Five variants on 6 standardised Goblet Squat videos:
 
 | | Variant | Input | Model |
 |---|---|---|---|
 | **Control** | JSON only | MediaPipe joint angles (no video) | Llama 3.1 70B (NVIDIA NIM) |
-| **Variant A** | JSON + frames | Joint angles + 32 sampled video frames | Llama 3.2 90B Vision (NVIDIA NIM) |
-| **Variant B** | JSON + video | Joint angles + full video file | Gemini 2.0 Flash (Google AI) |
+| **Variant A** | JSON + frames | Joint angles + 32 sampled frames (original video) | Llama 3.2 90B Vision (NVIDIA NIM) |
+| **Variant B** | JSON + original video | Joint angles + full original video | Gemini 2.0 Flash (Google AI) |
+| **Variant D** | JSON + processed video | Joint angles + 10fps skeleton-overlay video | Gemini 2.0 Flash (Google AI) |
+| **Variant E** | JSON + processed video | Joint angles + 10fps skeleton-overlay video | Llama 3.2 90B Vision (NVIDIA NIM) |
+
+**Why D and E together:**
+
+| | Original video | Processed video (10fps, skeleton overlay) |
+|---|---|---|
+| **Gemini 2.0 Flash** | Variant B | Variant D |
+| **Llama 3.2 90B Vision** | Variant A (frames) | Variant E |
+
+This lets you answer two questions from one test run: *does the skeleton overlay improve accuracy?* (B vs D, A vs E) and *which model handles annotated video better?* (D vs E).
 
 **What we measure (in priority order):**
 1. **Form accuracy** — does the model correctly detect the fault in each video?
@@ -223,6 +349,7 @@ If the model returns confidence ≥ 0.8 on an incorrect prediction, flag it — 
 | Gemini upload times out | Large video file | Trim to ≤ 30s or reduce to 720p |
 | JSON parse error | Model returned prose not JSON | Check `raw_outputs.json` — re-run that single video |
 | `videos/v1_depth_fault.mp4 not found` | Wrong filename | Rename to match exactly what's in `VIDEO_FILES` at top of `run_test.py` |
+| `processed_videos/v1_depth_fault_processed.mp4 not found` | Processed video missing | Re-run MediaPipe extraction — check that your script saves the overlay video to `processed_videos/` |
 | All variants score 6/6 | Faults too obvious | Re-test with subtler fault videos after pipeline is validated |
 
 ---
