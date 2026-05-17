@@ -1,87 +1,525 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Kinetic — Week 7 Tasks</title>
+<title>Kinetic — Week 7 ClickUp Tasks</title>
 <style>
 * { box-sizing:border-box; margin:0; padding:0; }
 body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
        background:#1a1a2e; color:#e0e8f0; padding:28px 20px; font-size:13px; }
-h1   { font-size:22px; font-weight:800; color:#fff; margin-bottom:4px; }
-.meta { font-size:12px; color:#7a9ab5; margin-bottom:6px; }
-.arch-note { background:#0f2035; border-left:3px solid #5b9bd5; padding:10px 14px;
-             border-radius:6px; font-size:12px; color:#9ab4cc; margin-bottom:24px; }
-
-/* Squad headers */
-.squad-header { display:flex; align-items:center; gap:12px; margin:32px 0 14px; }
-.squad-dot    { width:12px; height:12px; border-radius:50%; flex-shrink:0; }
-.sq1 { background:#4472C4; }
-.sq2 { background:#2E7D32; }
-.sq3 { background:#E65100; }
-.squad-title  { font-size:16px; font-weight:800; color:#fff; }
-.merge-note   { background:#0f2035; border:1px solid #1e3a5f; border-radius:8px;
-                padding:10px 14px; font-size:11px; color:#5b9bd5; margin-top:16px; }
-
-/* Task cards */
-.tasks { display:flex; flex-direction:column; gap:10px; }
-.task-card { background:#1e2d45; border-radius:10px; padding:14px 16px;
-             border:1px solid #243040; transition:border-color 0.2s; }
-.task-card:hover { border-color:#4472C4; }
-.task-top { display:flex; align-items:flex-start; gap:10px; margin-bottom:6px; }
-.task-id  { font-size:10px; font-weight:700; background:#243040; color:#5b9bd5;
-            padding:2px 8px; border-radius:4px; flex-shrink:0; margin-top:2px; }
-.task-name { font-weight:700; font-size:13px; color:#fff; line-height:1.4; }
-.task-meta { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:8px; margin-left:58px; }
-.badge { font-size:10px; font-weight:700; padding:2px 8px; border-radius:10px; }
-.status-todo   { background:#1e3a5f; color:#5b9bd5; }
-.status-design { background:#2e1f5e; color:#ab47bc; }
-.pri-high   { background:#1a2f1a; color:#66bb6a; }
-.pri-medium { background:#2a2010; color:#ffa726; }
-.task-desc { font-size:12px; color:#9ab4cc; line-height:1.6; margin-left:58px; }
-.task-desc ul { padding-left:16px; margin:4px 0; }
-.task-desc li { margin-bottom:3px; }
-.dep  { font-size:11px; color:#7a6030; background:#1a1505; padding:4px 10px;
-        border-radius:6px; margin-top:6px; margin-left:58px; display:inline-block; }
-
-/* Checklist */
-.checklist { background:#0f2035; border-radius:10px; padding:16px 20px; margin-top:32px; }
-.checklist h3 { font-size:14px; font-weight:700; color:#fff; margin-bottom:12px; }
+h1 { font-size:22px; font-weight:800; color:#fff; margin-bottom:4px; }
+.meta { font-size:12px; color:#7a9ab5; margin-bottom:8px; }
+.arch-note { background:#0f2035; border-left:3px solid #5b9bd5; padding:12px 16px;
+             border-radius:6px; font-size:12px; color:#9ab4cc; margin-bottom:28px; line-height:1.65; }
+.arch-note strong { color:#fff; }
+.squad-header { display:flex; align-items:center; gap:12px; margin:36px 0 16px; }
+.squad-dot { width:13px; height:13px; border-radius:50%; flex-shrink:0; }
+.sq1{background:#4472C4;} .sq2{background:#2E7D32;} .sq3{background:#E65100;}
+.squad-title { font-size:17px; font-weight:800; color:#fff; }
+.squad-sub { font-size:11px; color:#7a9ab5; margin-left:4px; }
+.merge-bar { background:#0f2035; border:1px solid #1e3a5f; border-radius:8px;
+             padding:10px 16px; font-size:11px; color:#5b9bd5; margin-top:20px; }
+.tasks { display:flex; flex-direction:column; gap:12px; }
+.task { background:#1e2d45; border-radius:10px; border:1px solid #243040; overflow:hidden; }
+.task:hover { border-color:#4472C4; }
+.task-hdr { padding:14px 16px 10px; display:flex; align-items:flex-start; gap:10px; cursor:pointer; }
+.tid { font-size:10px; font-weight:700; background:#243040; color:#5b9bd5; padding:3px 9px;
+       border-radius:5px; flex-shrink:0; margin-top:2px; white-space:nowrap; }
+.tname-wrap { flex:1; }
+.tname { font-weight:700; font-size:13px; color:#fff; line-height:1.4; margin-bottom:5px; }
+.tbadges { display:flex; gap:6px; flex-wrap:wrap; }
+.badge { font-size:10px; font-weight:700; padding:2px 9px; border-radius:10px; }
+.b-todo{background:#1e3a5f;color:#5b9bd5;}
+.b-design{background:#2e1f5e;color:#ab47bc;}
+.b-hi{background:#1a2f1a;color:#66bb6a;}
+.b-med{background:#2a2010;color:#ffa726;}
+.b-s1{background:#1a2540;color:#4472C4;}
+.b-s2{background:#1a2a1a;color:#2E7D32;}
+.b-s3{background:#2a1a0a;color:#E65100;}
+.chev { color:#5b9bd5; font-size:11px; flex-shrink:0; margin-top:3px; transition:transform 0.2s; }
+.chev.open { transform:rotate(180deg); }
+.tbody { display:none; padding:0 16px 16px; }
+.tbody.open { display:block; }
+.divider { height:1px; background:#243040; margin-bottom:14px; }
+.sec { margin-bottom:14px; }
+.slbl { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.6px;
+        color:#5b9bd5; margin-bottom:6px; }
+.slbl.ac{color:#66bb6a;} .slbl.dep{color:#ffa726;} .slbl.blocks{color:#ef5350;}
+.desc { font-size:12px; color:#9ab4cc; line-height:1.65; }
+.desc p{margin-bottom:6px;} .desc ul{padding-left:18px;} .desc li{margin-bottom:4px;}
+.desc strong{color:#e0e8f0;}
+.ac-list { list-style:none; padding:0; }
+.ac-list li { display:flex; gap:8px; font-size:12px; color:#9ab4cc; line-height:1.6;
+              margin-bottom:5px; align-items:flex-start; }
+.ac-list li::before { content:"☐"; color:#66bb6a; flex-shrink:0; font-size:13px; }
+.dep-row { display:flex; flex-wrap:wrap; gap:6px; }
+.dp { font-size:11px; font-weight:600; padding:3px 10px; border-radius:6px; }
+.dp-dep{background:#1a1505;border:1px solid #3a2a10;color:#ffa726;}
+.dp-blk{background:#1a0505;border:1px solid #3a1010;color:#ef5350;}
+.checklist { background:#0f2035; border-radius:10px; padding:18px 20px; margin-top:36px; }
+.checklist h3 { font-size:14px; font-weight:800; color:#fff; margin-bottom:14px; }
 table { width:100%; border-collapse:collapse; font-size:12px; }
 th { background:#1e2d45; color:#7a9ab5; font-size:10px; text-transform:uppercase;
      letter-spacing:0.5px; padding:8px 12px; text-align:left; }
 td { padding:10px 12px; border-bottom:1px solid #1e2d45; color:#9ab4cc; vertical-align:top; }
-td:first-child { color:#fff; font-weight:600; white-space:nowrap; }
-tr:last-child td { border-bottom:none; }
-</style></head>
+td:first-child{color:#fff;font-weight:700;white-space:nowrap;width:100px;}
+tr:last-child td{border-bottom:none;}
+td ul{padding-left:16px;} td li{margin-bottom:3px;}
+</style>
+</head>
 <body>
-<h1>Week 7 — May 18–24</h1>
-<div class="meta">Connect the Full Pipeline · Claude Haiku 4.5 replaces Nemotron · 17 tasks across 3 squads</div>
-<div class="arch-note">⚡ <strong>Architecture confirmed from A/B test:</strong> Nemotron replaced by Claude Haiku 4.5. OpenCV extracts 8 frames → composite grid → Haiku receives frames + MediaPipe JSON + gold standard + session history + RAG context. Full auth deferred — 3 demo user IDs used for demo day.</div>
+<h1>Week 7 — May 18–24 · ClickUp Tasks</h1>
+<div class="meta">17 tasks · 3 squads · Sprint goal: Full AI pipeline live with Claude Haiku 4.5</div>
+<div class="arch-note">
+  <strong>⚡ Architecture decision (confirmed from A/B test):</strong> Nemotron replaced by Claude Haiku 4.5 for analysis + coaching in a single call.
+  OpenCV extracts 8 frames → composite grid → Haiku receives: frames + MediaPipe JSON + gold standard reference JSON + last 3 sessions history + RAG coaching context → structured coaching output via SSE.<br>
+  <strong>Auth deferred:</strong> 3 hardcoded demo user IDs used for demo day. Google OAuth / JWT post-demo.
+</div>
 
-    <div class="squad-header">
-      <div class="squad-dot sq1"></div>
-      <div class="squad-title">Squad 1 — Frontend</div>
-    </div>
-    <div class="tasks"></div>
-    <div class="merge-note">⊕ Thu merge: Results screen live with real Haiku output · Home screen committed · Design handoffs delivered</div>
-    <div class="squad-header">
-      <div class="squad-dot sq2"></div>
-      <div class="squad-title">Squad 2 — Backend</div>
-    </div>
-    <div class="tasks"></div>
-    <div class="merge-note">⊕ Thu merge: Full pipeline fires end-to-end for ≥1 demo user · SSE events firing</div>
-    <div class="squad-header">
-      <div class="squad-dot sq3"></div>
-      <div class="squad-title">Squad 3 — Data / Full Stack</div>
-    </div>
-    <div class="tasks"></div>
-    <div class="merge-note">⊕ Thu merge: MediaPipe updated · Gold standard in Supabase · RAG indexed · Synthetic data seeded · Visual output options documented</div>
+<!-- SQUAD 1 -->
+<div class="squad-header">
+  <div class="squad-dot sq1"></div>
+  <div class="squad-title">Squad 1 — Frontend</div>
+  <span class="squad-sub">Designers + FE Devs + PM</span>
+</div>
+<div class="tasks">
 
+<div class="task"><div class="task-hdr" onclick="tog(this)">
+  <span class="tid">S1-W7-01</span>
+  <div class="tname-wrap"><div class="tname">Form Analysis Results — 1st Cut</div>
+  <div class="tbadges"><span class="badge b-todo">To Do</span><span class="badge b-hi">High</span><span class="badge b-s1">Squad 1</span></div></div>
+  <span class="chev">▼</span>
+</div><div class="tbody"><div class="divider"></div>
+<div class="sec"><div class="slbl">Description</div><div class="desc">
+<p>Wire the Results screen to the real Haiku pipeline output. Replace all dummy data with the live API response. The output schema has changed from Nemotron — implement these new fields:</p>
+<ul>
+  <li><strong>verdict</strong> — 2–3 sentence summary, always visible at top</li>
+  <li><strong>total_score</strong> — /100, prominent display</li>
+  <li><strong>positive_observations</strong> — up to 3, each with category tag (Posture / Stability / Movement Quality / Range of Motion)</li>
+  <li><strong>critical_observations</strong> — up to 3, ordered by severity, tagged root_cause or symptom with category</li>
+  <li><strong>recommendation</strong> — what to do next session, always visible</li>
+  <li><strong>rep_trend</strong> — observation on form across reps + 1-line next session recommendation</li>
+</ul>
+</div></div>
+<div class="sec"><div class="slbl ac">Acceptance Criteria</div><ul class="ac-list">
+  <li>All 6 fields rendered from real Haiku API response — no hardcoded values</li>
+  <li>verdict and recommendation always visible without user interaction</li>
+  <li>positive_observations and critical_observations show category tags and root_cause / symptom labels</li>
+  <li>total_score displayed as number /100</li>
+  <li>Screen handles null / empty optional fields gracefully (no crash)</li>
+  <li>Tested end-to-end with at least 1 real video through the full pipeline</li>
+</ul></div>
+<div class="sec"><div class="slbl dep">Blocked by</div><div class="dep-row">
+  <span class="dp dp-dep">S2-W7-05 — Haiku prompt assembled and returning response</span>
+</div></div>
+</div></div>
+
+<div class="task"><div class="task-hdr" onclick="tog(this)">
+  <span class="tid">S1-W7-02</span>
+  <div class="tname-wrap"><div class="tname">Home Screen Build + Login Page Build</div>
+  <div class="tbadges"><span class="badge b-todo">To Do</span><span class="badge b-hi">High</span><span class="badge b-s1">Squad 1</span></div></div>
+  <span class="chev">▼</span>
+</div><div class="tbody"><div class="divider"></div>
+<div class="sec"><div class="slbl">Description</div><div class="desc">
+<p>Build two screens:</p>
+<ul>
+  <li><strong>Home / Dashboard screen</strong> — main screen after login. Show recent sessions, quick upload CTA, and form score summary.</li>
+  <li><strong>Login page</strong> — no real auth this sprint. Show 3 demo user profiles as selectable options (tied to hardcoded user IDs from Squad 2). Tapping a profile sets the active user ID for the session.</li>
+</ul>
+</div></div>
+<div class="sec"><div class="slbl ac">Acceptance Criteria</div><ul class="ac-list">
+  <li>Login page shows 3 selectable demo user profiles (name + avatar)</li>
+  <li>Selecting a profile sets the active user ID for the session</li>
+  <li>Home screen renders with correct user name and recent session data for selected demo user</li>
+  <li>Upload CTA navigates to the upload flow</li>
+  <li>Switching profiles shows different session data</li>
+</ul></div>
+<div class="sec"><div class="slbl dep">Blocked by</div><div class="dep-row">
+  <span class="dp dp-dep">S2-W7-07 — Demo user IDs created and confirmed</span>
+</div></div>
+</div></div>
+
+<div class="task"><div class="task-hdr" onclick="tog(this)">
+  <span class="tid">S1-W7-03</span>
+  <div class="tname-wrap"><div class="tname">Start Build — Profile &amp; Login Screen</div>
+  <div class="tbadges"><span class="badge b-todo">To Do</span><span class="badge b-med">Medium</span><span class="badge b-s1">Squad 1</span></div></div>
+  <span class="chev">▼</span>
+</div><div class="tbody"><div class="divider"></div>
+<div class="sec"><div class="slbl">Description</div><div class="desc">
+<p>Initial scaffolding and component structure for the full Profile &amp; Login screen. Design handoff (S1-W7-04) must be received first. Full build continues in W8.</p>
+</div></div>
+<div class="sec"><div class="slbl ac">Acceptance Criteria</div><ul class="ac-list">
+  <li>Screen route created and navigable</li>
+  <li>Core layout components scaffolded matching design handoff</li>
+  <li>No functionality required this week — structure only</li>
+</ul></div>
+<div class="sec"><div class="slbl dep">Blocked by</div><div class="dep-row">
+  <span class="dp dp-dep">S1-W7-04 — Design handoff received</span>
+</div></div>
+</div></div>
+
+<div class="task"><div class="task-hdr" onclick="tog(this)">
+  <span class="tid">S1-W7-04</span>
+  <div class="tname-wrap"><div class="tname">[Design] Profile + Onboarding Screens — Dev Handoff</div>
+  <div class="tbadges"><span class="badge b-design">Design</span><span class="badge b-hi">High</span><span class="badge b-s1">Squad 1</span></div></div>
+  <span class="chev">▼</span>
+</div><div class="tbody"><div class="divider"></div>
+<div class="sec"><div class="slbl">Description</div><div class="desc">
+<p>Finalise wireframes for Profile and Onboarding user screens. Hand off to dev by Thursday.</p>
+</div></div>
+<div class="sec"><div class="slbl ac">Acceptance Criteria</div><ul class="ac-list">
+  <li>Figma frames for Profile screen complete and dev link shared</li>
+  <li>Figma frames for Onboarding screen complete and dev link shared</li>
+  <li>All interactive states (default, filled, error) specified</li>
+  <li>Handed off by Thursday merge</li>
+</ul></div>
+</div></div>
+
+<div class="task"><div class="task-hdr" onclick="tog(this)">
+  <span class="tid">S1-W7-05</span>
+  <div class="tname-wrap"><div class="tname">[Design] Workout Builder &amp; Logger — Design Begins</div>
+  <div class="tbadges"><span class="badge b-design">Design</span><span class="badge b-med">Medium</span><span class="badge b-s1">Squad 1</span></div></div>
+  <span class="chev">▼</span>
+</div><div class="tbody"><div class="divider"></div>
+<div class="sec"><div class="slbl">Description</div><div class="desc">
+<p>Design work begins on Workout Builder and Logger screens. Not expected to complete this week — continues into W8. Goal: initial concepts started so W8 build can begin immediately.</p>
+</div></div>
+<div class="sec"><div class="slbl ac">Acceptance Criteria</div><ul class="ac-list">
+  <li>Initial wireframes started for Workout Builder screen</li>
+  <li>Initial wireframes started for Workout Logger screen</li>
+  <li>Shared with PM for alignment before W8 handoff</li>
+</ul></div>
+</div></div>
+
+</div>
+<div class="merge-bar">⊕ <strong>Thu merge:</strong> Results screen live with real Haiku output · Home + Login screen committed · Design handoffs (S1-W7-04) delivered</div>
+
+<!-- SQUAD 2 -->
+<div class="squad-header">
+  <div class="squad-dot sq2"></div>
+  <div class="squad-title">Squad 2 — Backend</div>
+  <span class="squad-sub">BE Devs + PM</span>
+</div>
+<div class="tasks">
+
+<div class="task"><div class="task-hdr" onclick="tog(this)">
+  <span class="tid">S2-W7-01</span>
+  <div class="tname-wrap"><div class="tname">Replace Nemotron with Claude Haiku 4.5</div>
+  <div class="tbadges"><span class="badge b-todo">To Do</span><span class="badge b-hi">High</span><span class="badge b-s2">Squad 2</span></div></div>
+  <span class="chev">▼</span>
+</div><div class="tbody"><div class="divider"></div>
+<div class="sec"><div class="slbl">Description</div><div class="desc">
+<p>Remove the Nemotron 3 Nano Omni integration entirely. Claude Haiku 4.5 replaces it as the single model handling analysis + coaching in one call. Model ID: <strong>claude-haiku-4-5-20251001</strong> via Anthropic SDK.</p>
+</div></div>
+<div class="sec"><div class="slbl ac">Acceptance Criteria</div><ul class="ac-list">
+  <li>Nemotron integration code removed from codebase</li>
+  <li>Haiku client configured and authenticated via Anthropic API key</li>
+  <li>No remaining references to Nemotron in pipeline code or config</li>
+  <li>Smoke test: Haiku returns valid JSON for a test prompt</li>
+</ul></div>
+<div class="sec"><div class="slbl dep">Blocked by</div><div class="dep-row">
+  <span class="dp dp-dep">S3-W7-01 — OpenCV output format confirmed</span>
+</div></div>
+</div></div>
+
+<div class="task"><div class="task-hdr" onclick="tog(this)">
+  <span class="tid">S2-W7-02</span>
+  <div class="tname-wrap"><div class="tname">Gold Standard Query — Supabase</div>
+  <div class="tbadges"><span class="badge b-todo">To Do</span><span class="badge b-hi">High</span><span class="badge b-s2">Squad 2</span></div></div>
+  <span class="chev">▼</span>
+</div><div class="tbody"><div class="divider"></div>
+<div class="sec"><div class="slbl">Description</div><div class="desc">
+<p>Query the Supabase gold standard squat table for an elite trainer reference biomechanics JSON for the current exercise. JSON is in the same MediaPipe format as the user's session. Include in Haiku prompt for direct angle comparison.</p>
+</div></div>
+<div class="sec"><div class="slbl ac">Acceptance Criteria</div><ul class="ac-list">
+  <li>Query retrieves ≥1 gold standard JSON for Goblet Squat from Supabase</li>
+  <li>Retrieved JSON matches user session output schema exactly</li>
+  <li>Query parameterised by exercise type for future exercises</li>
+  <li>Handles no-result gracefully — omit from prompt, no crash</li>
+</ul></div>
+<div class="sec"><div class="slbl dep">Blocked by</div><div class="dep-row">
+  <span class="dp dp-dep">S3-W7-02 — Gold standard table populated</span>
+</div></div>
+</div></div>
+
+<div class="task"><div class="task-hdr" onclick="tog(this)">
+  <span class="tid">S2-W7-03</span>
+  <div class="tname-wrap"><div class="tname">User Session History Query</div>
+  <div class="tbadges"><span class="badge b-todo">To Do</span><span class="badge b-hi">High</span><span class="badge b-s2">Squad 2</span></div></div>
+  <span class="chev">▼</span>
+</div><div class="tbody"><div class="divider"></div>
+<div class="sec"><div class="slbl">Description</div><div class="desc">
+<p>Pull the last 3 sessions for the current user + exercise. For each session retrieve: weight used, MediaPipe JSON, and Haiku coaching output. Pass as longitudinal context in the Haiku prompt.</p>
+</div></div>
+<div class="sec"><div class="slbl ac">Acceptance Criteria</div><ul class="ac-list">
+  <li>Query returns up to 3 most recent sessions for user_id + exercise</li>
+  <li>Each session includes weight, mediapipe_json, coaching_output</li>
+  <li>Handles fewer than 3 sessions gracefully (1 or 2 is fine)</li>
+  <li>Tested against synthetic user data (S3-W7-04) — correct results confirmed</li>
+</ul></div>
+<div class="sec"><div class="slbl dep">Blocked by</div><div class="dep-row">
+  <span class="dp dp-dep">S3-W7-04 — Synthetic user data seeded</span>
+  <span class="dp dp-dep">S2-W7-07 — Demo user IDs created</span>
+</div></div>
+</div></div>
+
+<div class="task"><div class="task-hdr" onclick="tog(this)">
+  <span class="tid">S2-W7-04</span>
+  <div class="tname-wrap"><div class="tname">RAG Retrieval</div>
+  <div class="tbadges"><span class="badge b-todo">To Do</span><span class="badge b-hi">High</span><span class="badge b-s2">Squad 2</span></div></div>
+  <span class="chev">▼</span>
+</div><div class="tbody"><div class="divider"></div>
+<div class="sec"><div class="slbl">Description</div><div class="desc">
+<p>Retrieve coaching language from the RAG corpus (.md files + transcribed coaching text). Query using detected fault type + exercise. Include retrieved passages in the Haiku prompt.</p>
+</div></div>
+<div class="sec"><div class="slbl ac">Acceptance Criteria</div><ul class="ac-list">
+  <li>RAG retrieval endpoint callable from the pipeline</li>
+  <li>Query uses fault type + exercise as retrieval input</li>
+  <li>Returns relevant coaching passages (not generic results)</li>
+  <li>Retrieved context included as a section in Haiku prompt</li>
+  <li>Handles no-results gracefully — omit section from prompt</li>
+</ul></div>
+<div class="sec"><div class="slbl dep">Blocked by</div><div class="dep-row">
+  <span class="dp dp-dep">S3-W7-03 — RAG corpus indexed and endpoint live</span>
+</div></div>
+</div></div>
+
+<div class="task"><div class="task-hdr" onclick="tog(this)">
+  <span class="tid">S2-W7-05</span>
+  <div class="tname-wrap"><div class="tname">Assemble Haiku Prompt + Call API</div>
+  <div class="tbadges"><span class="badge b-todo">To Do</span><span class="badge b-hi">High</span><span class="badge b-s2">Squad 2</span></div></div>
+  <span class="chev">▼</span>
+</div><div class="tbody"><div class="divider"></div>
+<div class="sec"><div class="slbl">Description</div><div class="desc">
+<p>Combine all inputs into a single structured prompt and call Haiku. This ties together S2-W7-01 through S2-W7-04.</p>
+<p><strong>Prompt inputs:</strong></p>
+<ul>
+  <li>8-frame composite image (from S3-W7-01 OpenCV output)</li>
+  <li>Current session MediaPipe JSON + weight used today</li>
+  <li>Gold standard reference JSON (S2-W7-02)</li>
+  <li>Last 3 sessions: weight + MediaPipe JSON + coaching output (S2-W7-03)</li>
+  <li>RAG coaching context (S2-W7-04)</li>
+</ul>
+<p><strong>Expected output:</strong> verdict, total_score, positive_observations, critical_observations, recommendation, rep_trend</p>
+</div></div>
+<div class="sec"><div class="slbl ac">Acceptance Criteria</div><ul class="ac-list">
+  <li>All 6 input sources assembled into a single Haiku prompt without errors</li>
+  <li>Haiku returns valid JSON matching the output schema</li>
+  <li>All 6 output fields present (or graceful null for optional fields)</li>
+  <li>End-to-end test: upload real video → pipeline fires → Haiku returns coaching JSON</li>
+  <li>Total pipeline latency under 60s</li>
+</ul></div>
+<div class="sec"><div class="slbl dep">Blocked by</div><div class="dep-row">
+  <span class="dp dp-dep">S2-W7-01</span><span class="dp dp-dep">S2-W7-02</span>
+  <span class="dp dp-dep">S2-W7-03</span><span class="dp dp-dep">S2-W7-04</span>
+  <span class="dp dp-dep">S3-W7-01 — 8-frame composite available</span>
+</div></div>
+</div></div>
+
+<div class="task"><div class="task-hdr" onclick="tog(this)">
+  <span class="tid">S2-W7-06</span>
+  <div class="tname-wrap"><div class="tname">SSE Delivery — Return Coaching Output to Frontend</div>
+  <div class="tbadges"><span class="badge b-todo">To Do</span><span class="badge b-hi">High</span><span class="badge b-s2">Squad 2</span></div></div>
+  <span class="chev">▼</span>
+</div><div class="tbody"><div class="divider"></div>
+<div class="sec"><div class="slbl">Description</div><div class="desc">
+<p>Stream the Haiku response to the frontend via SSE. Update processing states to reflect the new multi-step pipeline. Coordinate event names with Squad 1.</p>
+<p><strong>States to emit:</strong> uploading → extracting_frames → analysing → generating_coaching → complete / error</p>
+</div></div>
+<div class="sec"><div class="slbl ac">Acceptance Criteria</div><ul class="ac-list">
+  <li>SSE events fire in correct order for a real video upload</li>
+  <li>Frontend receives complete coaching JSON on the complete event</li>
+  <li>Error state fires with a descriptive message if any step fails</li>
+  <li>Tested with Squad 1 — frontend renders each processing state correctly</li>
+</ul></div>
+<div class="sec"><div class="slbl dep">Blocked by</div><div class="dep-row">
+  <span class="dp dp-dep">S2-W7-05 — Haiku returning valid response</span>
+</div></div>
+</div></div>
+
+<div class="task"><div class="task-hdr" onclick="tog(this)">
+  <span class="tid">S2-W7-07</span>
+  <div class="tname-wrap"><div class="tname">Demo User Setup — 3 Hardcoded User IDs</div>
+  <div class="tbadges"><span class="badge b-todo">To Do</span><span class="badge b-hi">High</span><span class="badge b-s2">Squad 2</span></div></div>
+  <span class="chev">▼</span>
+</div><div class="tbody"><div class="divider"></div>
+<div class="sec"><div class="slbl">Description</div><div class="desc">
+<p>Create 3 hardcoded user IDs in the DB for demo day. Full OAuth / JWT deferred post-demo. All pipeline queries scoped to these 3 users. Share user IDs with Squad 1 (for login profile picker) and Squad 3 (for synthetic data).</p>
+</div></div>
+<div class="sec"><div class="slbl ac">Acceptance Criteria</div><ul class="ac-list">
+  <li>3 user records in DB with stable user_ids</li>
+  <li>All session queries accept user_id parameter and scope results correctly</li>
+  <li>User IDs shared with Squad 1 and Squad 3</li>
+  <li>Switching between demo users on frontend shows different session data</li>
+</ul></div>
+</div></div>
+
+</div>
+<div class="merge-bar">⊕ <strong>Thu merge:</strong> Full pipeline fires end-to-end for ≥1 demo user · SSE events firing · Haiku returning structured coaching JSON</div>
+
+<!-- SQUAD 3 -->
+<div class="squad-header">
+  <div class="squad-dot sq3"></div>
+  <div class="squad-title">Squad 3 — Data / Full Stack</div>
+  <span class="squad-sub">Data Scientists + Full Stack + PM</span>
+</div>
+<div class="tasks">
+
+<div class="task"><div class="task-hdr" onclick="tog(this)">
+  <span class="tid">S3-W7-01</span>
+  <div class="tname-wrap"><div class="tname">MediaPipe Pipeline Update — JSON + OpenCV</div>
+  <div class="tbadges"><span class="badge b-todo">To Do</span><span class="badge b-hi">High</span><span class="badge b-s3">Squad 3</span></div></div>
+  <span class="chev">▼</span>
+</div><div class="tbody"><div class="divider"></div>
+<div class="sec"><div class="slbl">Description</div><div class="desc">
+<p>Two updates — this task <strong>blocks Squad 2</strong> and should be completed first:</p>
+<ul>
+  <li><strong>JSON angle refinements:</strong> validate and update angle calculations based on A/B test findings. Ensure dorsiflexion_at_bottom_deg (numeric float) is output alongside the classification string. Confirm valgus distance thresholds align with the 50% majority rule.</li>
+  <li><strong>OpenCV wrapper update:</strong> change output from full video with skeleton overlay to 8-frame composite grid JPEG. Reference the A/B test implementation: Testing/run_test.py → extract_frames_uniform() + build_composite_frame().</li>
+</ul>
+</div></div>
+<div class="sec"><div class="slbl ac">Acceptance Criteria</div><ul class="ac-list">
+  <li>OpenCV script outputs an 8-frame composite JPEG (4×2 grid) — not a video</li>
+  <li>Composite image returned in format Squad 2 can pass directly to Haiku</li>
+  <li>dorsiflexion_at_bottom_deg (float) present in ankle_data JSON output</li>
+  <li>JSON schema validated against Kinetic_Biomechanics_Output_Schema.json</li>
+  <li>Tested on ≥2 videos (one fault, one good form)</li>
+</ul></div>
+<div class="sec"><div class="slbl blocks">Blocks</div><div class="dep-row">
+  <span class="dp dp-blk">S2-W7-01 — Haiku integration</span>
+  <span class="dp dp-blk">S2-W7-05 — Prompt assembly</span>
+</div></div>
+</div></div>
+
+<div class="task"><div class="task-hdr" onclick="tog(this)">
+  <span class="tid">S3-W7-02</span>
+  <div class="tname-wrap"><div class="tname">Gold Standard Table — Populate Supabase</div>
+  <div class="tbadges"><span class="badge b-todo">To Do</span><span class="badge b-hi">High</span><span class="badge b-s3">Squad 3</span></div></div>
+  <span class="chev">▼</span>
+</div><div class="tbody"><div class="divider"></div>
+<div class="sec"><div class="slbl">Description</div><div class="desc">
+<p>Run MediaPipe on elite trainer goblet squat videos. Store biomechanics JSON in the Supabase gold standard squat table using the same schema as user session output. Minimum 2–3 records for W7 testing.</p>
+</div></div>
+<div class="sec"><div class="slbl ac">Acceptance Criteria</div><ul class="ac-list">
+  <li>≥2 gold standard records in Supabase for Goblet Squat</li>
+  <li>Each record's JSON schema matches user session output exactly</li>
+  <li>Records queryable by exercise type</li>
+  <li>Squad 2 confirms S2-W7-02 query works against these records</li>
+</ul></div>
+<div class="sec"><div class="slbl blocks">Blocks</div><div class="dep-row">
+  <span class="dp dp-blk">S2-W7-02 — Gold standard query</span>
+</div></div>
+</div></div>
+
+<div class="task"><div class="task-hdr" onclick="tog(this)">
+  <span class="tid">S3-W7-03</span>
+  <div class="tname-wrap"><div class="tname">RAG Corpus — Index Coaching Content</div>
+  <div class="tbadges"><span class="badge b-todo">To Do</span><span class="badge b-hi">High</span><span class="badge b-s3">Squad 3</span></div></div>
+  <span class="chev">▼</span>
+</div><div class="tbody"><div class="divider"></div>
+<div class="sec"><div class="slbl">Description</div><div class="desc">
+<p>Index coaching .md files and transcribed coaching text into the RAG pipeline. Tune retrieval for biomechanics and form correction queries. Expose retrieval endpoint for Squad 2 to call.</p>
+</div></div>
+<div class="sec"><div class="slbl ac">Acceptance Criteria</div><ul class="ac-list">
+  <li>Coaching .md files and transcripts ingested and indexed</li>
+  <li>Retrieval endpoint accepts a query string and returns ranked passages</li>
+  <li>Test query "insufficient depth goblet squat" returns relevant coaching content</li>
+  <li>Test query "knee valgus correction" returns relevant cues and drills</li>
+  <li>Endpoint URL + input/output schema shared with Squad 2</li>
+</ul></div>
+<div class="sec"><div class="slbl blocks">Blocks</div><div class="dep-row">
+  <span class="dp dp-blk">S2-W7-04 — RAG retrieval in pipeline</span>
+</div></div>
+</div></div>
+
+<div class="task"><div class="task-hdr" onclick="tog(this)">
+  <span class="tid">S3-W7-04</span>
+  <div class="tname-wrap"><div class="tname">Synthetic User Data — Seed 3 Past Sessions</div>
+  <div class="tbadges"><span class="badge b-todo">To Do</span><span class="badge b-hi">High</span><span class="badge b-s3">Squad 3</span></div></div>
+  <span class="chev">▼</span>
+</div><div class="tbody"><div class="divider"></div>
+<div class="sec"><div class="slbl">Description</div><div class="desc">
+<p>Seed a test user ID with 3 past sessions to validate the longitudinal feedback pipeline before real user data exists. Each session must include:</p>
+<ul>
+  <li>Weight used (e.g. 10kg, 12kg, 14kg across sessions)</li>
+  <li>MediaPipe biomechanics JSON (can reuse existing test JSON files)</li>
+  <li>Haiku coaching output (can use outputs from A/B test results)</li>
+</ul>
+<p>Coordinate user ID with Squad 2 (S2-W7-07).</p>
+</div></div>
+<div class="sec"><div class="slbl ac">Acceptance Criteria</div><ul class="ac-list">
+  <li>Test user ID has exactly 3 past sessions in the sessions DB</li>
+  <li>Each session has weight, mediapipe_json, and coaching_output populated</li>
+  <li>Sessions are for Goblet Squat exercise type</li>
+  <li>S2-W7-03 query returns all 3 sessions correctly for this user ID</li>
+  <li>Haiku prompt with historical context includes all 3 sessions in context block</li>
+</ul></div>
+<div class="sec"><div class="slbl dep">Blocked by</div><div class="dep-row">
+  <span class="dp dp-dep">S2-W7-07 — Demo user IDs confirmed</span>
+</div></div>
+<div class="sec"><div class="slbl blocks">Blocks</div><div class="dep-row">
+  <span class="dp dp-blk">S2-W7-03 — Session history query testing</span>
+</div></div>
+</div></div>
+
+<div class="task"><div class="task-hdr" onclick="tog(this)">
+  <span class="tid">S3-W7-05</span>
+  <div class="tname-wrap"><div class="tname">Visual Output Scoping — Frame vs Clip vs Overlay</div>
+  <div class="tbadges"><span class="badge b-todo">To Do</span><span class="badge b-med">Medium</span><span class="badge b-s3">Squad 3</span></div></div>
+  <span class="chev">▼</span>
+</div><div class="tbody"><div class="divider"></div>
+<div class="sec"><div class="slbl">Description</div><div class="desc">
+<p>Scope and prototype 3 options for the form analysis visual shown to the user. <strong>No build decision this week</strong> — produce examples and a recommendation for the team to review.</p>
+<ul>
+  <li><strong>Option 1 — Annotated bottom frame:</strong> Single JPEG of the worst-rep lowest point with joint angle or fault overlays.</li>
+  <li><strong>Option 2 — Slow-motion clip:</strong> 5–8 second extraction around the key fault moment, slowed down, optionally with text overlay.</li>
+  <li><strong>Option 3 — Full processed video:</strong> 10fps skeleton overlay video already generated by the MediaPipe pipeline.</li>
+</ul>
+</div></div>
+<div class="sec"><div class="slbl ac">Acceptance Criteria</div><ul class="ac-list">
+  <li>At least 1 working example of each option produced using existing test videos</li>
+  <li>Effort estimate per option documented (build time, storage cost, latency impact)</li>
+  <li>Options presented to PM + team by Thursday with a clear recommendation</li>
+  <li>No code merged to main — exploratory only</li>
+</ul></div>
+</div></div>
+
+</div>
+<div class="merge-bar">⊕ <strong>Thu merge:</strong> MediaPipe updated · ≥2 gold standard records in Supabase · RAG endpoint returning results · Synthetic user data seeded · Visual output options documented</div>
+
+<!-- Checklist -->
 <div class="checklist">
-  <h3>✅ Thursday Merge Checklist</h3>
+  <h3>✅ Thursday Merge Gate — Week 7</h3>
   <table>
     <tr><th>Squad</th><th>Done when...</th></tr>
-    <tr><td>Squad 1</td><td>Results screen renders real Haiku output · Home + Login committed · Design handoffs delivered</td></tr>
-    <tr><td>Squad 2</td><td>Full pipeline fires end-to-end for at least 1 demo user ID · SSE events firing correctly</td></tr>
-    <tr><td>Squad 3</td><td>MediaPipe updated · ≥2 gold standard records in Supabase · RAG endpoint returning results · Synthetic user data queryable</td></tr>
+    <tr><td>Squad 1</td><td><ul>
+      <li>Results screen renders all 6 real Haiku output fields — no dummy data</li>
+      <li>Home + Login screen committed (3 demo profiles selectable)</li>
+      <li>Design handoffs (S1-W7-04) delivered to dev by Thursday</li>
+    </ul></td></tr>
+    <tr><td>Squad 2</td><td><ul>
+      <li>Full pipeline fires end-to-end for ≥1 demo user ID without error</li>
+      <li>SSE events firing in correct order on the frontend</li>
+      <li>Haiku returning valid structured JSON coaching response</li>
+    </ul></td></tr>
+    <tr><td>Squad 3</td><td><ul>
+      <li>OpenCV outputs 8-frame composite JPEG (not video)</li>
+      <li>≥2 gold standard records queryable in Supabase</li>
+      <li>RAG endpoint returning relevant results for test queries</li>
+      <li>Synthetic user data seeded — S2-W7-03 query returning 3 sessions</li>
+      <li>Visual output options documented and presented to team</li>
+    </ul></td></tr>
   </table>
 </div>
-</body></html>
+
+<script>
+function tog(hdr) {
+  const body = hdr.nextElementSibling;
+  const chev = hdr.querySelector('.chev');
+  body.classList.toggle('open');
+  chev.classList.toggle('open');
+}
+</script>
+</body>
+</html>
