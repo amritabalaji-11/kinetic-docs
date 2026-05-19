@@ -683,9 +683,9 @@ h1 { font-size: 22px; font-weight: 800; color: #f8fafc; letter-spacing: -0.5px; 
         </div>
         <div class="pipe-content">
           <div class="pipe-text">
-            <div class="pipe-name">OpenCV Part 1 — full video overlay</div>
-            <div class="pipe-io">Draws green skeleton lines on every frame of the raw video · saves full overlay video to GCS · sent to Nemotron, NOT shown to user</div>
-            <div class="pipe-sse">overlay_complete (+ overlay_video_url)</div>
+            <div class="pipe-name">OpenCV Part 1 — 8-frame composite grid</div>
+            <div class="pipe-io">Extracts 8 evenly-spaced frames · draws skeleton lines · arranges in 4×2 grid · saves composite JPEG to GCS · sent to Haiku as visual input, NOT shown to user</div>
+            <div class="pipe-sse">frames_extracted (+ composite_grid_url)</div>
           </div>
           <div class="pipe-visual">
             <div class="pv-header">Output — overlay video</div>
@@ -739,19 +739,18 @@ h1 { font-size: 22px; font-weight: 800; color: #f8fafc; letter-spacing: -0.5px; 
         </div>
         <div class="pipe-content">
           <div class="pipe-text">
-            <div class="pipe-name">Nemotron 3 Nano Omni</div>
-            <div class="pipe-io">IN: overlay video + biomechanics JSON · OUT: per-rep scores · worst_rep_number · identified issues · chain-of-thought</div>
-            <div class="pipe-sse">nemotron_started → nemotron_complete</div>
+            <div class="pipe-name">Claude Haiku 4.5 — Call 1 · form analysis + coaching</div>
+            <div class="pipe-io">IN: 8-frame composite + biomechanics JSON + weight + gold standard + last 3 sessions + .md coaching files · OUT: scores (overall + 4 params + per-rep) + full coaching JSON · Tab 1 unlocks</div>
+            <div class="pipe-sse">haiku_started → analysis_ready (Tab 1 unlocked)</div>
           </div>
           <div class="pipe-visual">
-            <div class="pv-header">Nemotron output</div>
+            <div class="pv-header">Haiku Call 1 output</div>
             <div class="pv-body">
               <div class="pv-row"><span class="pv-key">overall_score</span><span class="pv-val amber">72</span></div>
-              <div class="pv-row"><span class="pv-key">worst_rep</span><span class="pv-val red">3</span></div>
-              <div class="pv-divider"></div>
-              <div style="font-size:8px;color:#334155;margin-bottom:3px;text-transform:uppercase;letter-spacing:0.3px;">Issues identified</div>
-              <div><span class="pv-tag pv-issue">knee_valgus</span></div>
-              <div><span class="pv-tag pv-issue">ankle_dorsiflexion</span></div>
+              <div class="pv-row"><span class="pv-key">posture</span><span class="pv-val amber">74</span></div>
+              <div class="pv-row"><span class="pv-key">stability</span><span class="pv-val red">61</span></div>
+              <div class="pv-row"><span class="pv-key">movement</span><span class="pv-val amber">78</span></div>
+              <div class="pv-row"><span class="pv-key">range_of_motion</span><span class="pv-val red">68</span></div>
               <div class="pv-divider"></div>
               <div class="pv-row"><span class="pv-key">rep scores</span><span class="pv-val" style="color:#94a3b8;">82·79·68·74·71…</span></div>
             </div>
@@ -769,14 +768,15 @@ h1 { font-size: 22px; font-weight: 800; color: #f8fafc; letter-spacing: -0.5px; 
         </div>
         <div class="pipe-content">
           <div class="pipe-text">
-            <div class="pipe-name">OpenCV Part 2 — worst-rep frame extraction</div>
-            <div class="pipe-io">Seeks to worst rep's bottom_timestamp_ms · extracts raw frame · overlays actual angles + gold standard · saves annotated image — shown to user</div>
+            <div class="pipe-name">OpenCV Part 2 — worst-rep frame extraction (runs after Haiku)</div>
+            <div class="pipe-io">Finds lowest-scoring rep from Haiku rep_scores[] · looks up bottom_timestamp_ms from biomechanics JSON · extracts frame · annotates with angles + gold standard · saves JPEG · shown to user</div>
             <div class="pipe-tags">
-              <span class="pipe-tag tag-db-read">gold_standard_biomechanics: ideal angle ranges for comparison</span>
-              <span class="pipe-tag tag-db-read">form_analysis_results: bottom_timestamp_ms for worst rep</span>
+              <span class="pipe-tag tag-db-read">form_analysis_results: rep_scores[] from Haiku to identify worst rep</span>
+              <span class="pipe-tag tag-db-read">form_analysis_results: bottom_timestamp_ms for that rep</span>
+              <span class="pipe-tag tag-db-read">gold_standard: ideal angle ranges for comparison overlay</span>
               <span class="pipe-tag tag-db-write">form_analysis_results: annotated_frame_url</span>
             </div>
-            <div class="pipe-sse">frames_extracting → frames_ready (+ frame_url)</div>
+            <div class="pipe-sse">frame_ready (+ annotated_frame_url) — image loads in Tab 1 ~2–3s after coaching text</div>
           </div>
           <div class="pipe-visual">
             <div class="pv-header">Annotated frame · worst rep</div>
@@ -814,26 +814,26 @@ h1 { font-size: 22px; font-weight: 800; color: #f8fafc; letter-spacing: -0.5px; 
         </div>
         <div class="pipe-content">
           <div class="pipe-text">
-            <div class="pipe-name">Claude Sonnet — coaching + progression recommendation</div>
-            <div class="pipe-io">Receives Nemotron analysis + DB weight history + RAG coaching context · produces coaching paragraphs + weight-specific progression recommendation</div>
+            <div class="pipe-name">Claude Haiku 4.5 — Call 2 · longitudinal coaching · async</div>
+            <div class="pipe-io">Runs async after Call 1 is saved to DB · IN: current scores + last 5 sessions' scores + Haiku outputs from form_analysis_results · OUT: today vs previous comparison + 5-session trend insights + weight decision · Tab 2 unlocks</div>
             <div class="pipe-tags">
-              <span class="pipe-tag tag-db-read">workout_logs: past weights + form scores → weight-based reasoning</span>
-              <span class="pipe-tag tag-rag">5–10 MD coaching docs in system prompt (coaching language + form cues)</span>
-              <span class="pipe-tag tag-db-write">form_analysis_results: coaching_output, progression_recommendation, status: complete</span>
+              <span class="pipe-tag tag-db-read">form_analysis_results: current + last 5 sessions (scores + Haiku output per session)</span>
+              <span class="pipe-tag tag-db-write">form_analysis_results: progression_output, status: complete</span>
             </div>
             <div style="margin-top:6px;padding:7px 9px;background:#0a1205;border:1px solid #166534;border-radius:6px;font-size:9.5px;color:#86efac;line-height:1.5;">
-              <strong style="color:#4ade80;">Weight history → Claude, not Nemotron.</strong> Claude needs past sessions to say <em style="color:#64748b;">"Form at 12kg solid across 3 sessions → ready for 14kg"</em> or <em style="color:#64748b;">"Tempo degrades at rep 6 at 16kg → hold weight."</em>
+              <strong style="color:#4ade80;">No .md files in Call 2.</strong> Focused prompt — longitudinal comparison only. Rep-by-rep graph + 5-session graph rendered by frontend from DB data, not produced by Haiku.
             </div>
-            <div class="pipe-sse">claude_started → claude_complete → analysis_complete</div>
+            <div class="pipe-sse">progression_ready → Tab 2 unlocks</div>
           </div>
           <div class="pipe-visual">
-            <div class="pv-header">Claude output</div>
+            <div class="pv-header">Haiku Call 2 output</div>
             <div class="pv-body">
-              <div class="pv-coaching">"At 12kg your posture holds well but ankle dorsiflexion limits your depth from rep 5 onwards. This is typical at this load — your heel is compensating."</div>
+              <div class="pv-row"><span class="pv-key">vs previous</span><span class="pv-val green">+7</span></div>
+              <div class="pv-row"><span class="pv-key">posture Δ</span><span class="pv-val green">+5</span></div>
+              <div class="pv-row"><span class="pv-key">stability Δ</span><span class="pv-val amber">+2</span></div>
               <div class="pv-divider"></div>
-              <div style="font-size:8px;color:#334155;text-transform:uppercase;letter-spacing:0.3px;margin-bottom:2px;">Progression</div>
               <div class="pv-rec rec-hold">HOLD WEIGHT AT 12KG</div>
-              <div style="font-size:8px;color:#475569;margin-top:3px;text-align:center;">Improve ankle mobility first</div>
+              <div style="font-size:8px;color:#475569;margin-top:3px;text-align:center;">Ankle mobility still limiting</div>
             </div>
           </div>
         </div>
@@ -856,7 +856,7 @@ h1 { font-size: 22px; font-weight: 800; color: #f8fafc; letter-spacing: -0.5px; 
           <div style="width:10px;height:10px;border-radius:50%;background:#22c55e;flex-shrink:0;"></div>
           <div>
             <div style="font-size:11px;font-weight:700;color:#86efac;">Squad 2 — Backend</div>
-            <div style="font-size:10px;color:#475569;">FastAPI · GCS · Nemotron · Claude</div>
+            <div style="font-size:10px;color:#475569;">FastAPI · GCS · Claude Haiku 4.5</div>
           </div>
         </div>
         <div style="display:flex;align-items:center;gap:8px;">
@@ -1033,7 +1033,7 @@ def process_video(<br>
 &nbsp;&nbsp;<span class="jc"># On success returns:</span><br>
 &nbsp;&nbsp;return {<br>
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="jk">"status"</span>: <span class="js">"success"</span>,<br>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="jk">"overlay_video_url"</span>: <span class="js">"gs://..."</span>,       <span class="jc"># Step 5 output — sent to Nemotron</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="jk">"composite_grid_url"</span>: <span class="js">"gs://..."</span>,      <span class="jc"># Step 5 output — sent to Haiku Call 1</span><br>
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="jk">"biomechanics_json"</span>: { ... },            <span class="jc"># Step 6 output — stored in DB</span><br>
 &nbsp;&nbsp;}<br>
 &nbsp;&nbsp;<span class="jc"># On quality gate failure returns:</span><br>
@@ -1048,7 +1048,7 @@ def process_video(<br>
   <div style="margin-top:10px;">
     <div class="sub-label" style="margin-bottom:8px;">What Squad 2 does with the return value</div>
     <div style="display:flex;flex-direction:column;gap:5px;font-size:11px;color:#94a3b8;">
-      <div><strong style="color:#4ade80;">On success:</strong> stores biomechanics_json to DB · sends overlay_video_url to Nemotron · emits biomechanics_complete SSE</div>
+      <div><strong style="color:#4ade80;">On success:</strong> stores biomechanics_json to DB · emits biomechanics_complete SSE · calls Haiku Call 1 with composite_grid_url + biomechanics_json</div>
       <div><strong style="color:#f87171;">On failure:</strong> updates <code>form_analyses</code> status to "failed" · emits full error SSE event: { analysis_id, session_id, user_id, error_code, error_stage, retryable, message } — see <code>FE_SSE_and_Errors.md</code> for required shape and retryable values per error_code</div>
     </div>
   </div>
@@ -1160,7 +1160,7 @@ def process_video(<br>
   <div class="step-header">
     <span class="step-num">Step 5 · OpenCV Part 1</span>
     <div>
-      <div class="step-title">OpenCV — full video overlay with green skeleton</div>
+      <div class="step-title">OpenCV — 8-frame composite grid extraction</div>
       <div class="step-squad">Squad 3 — Data / Full Stack · Runs only if quality gate passes</div>
     </div>
     <span class="step-badge badge-s3">Squad 3</span>
@@ -1168,14 +1168,14 @@ def process_video(<br>
   <div class="step-body">
     <div class="io-block">
       <div class="io-row"><div class="io-label io-in">IN</div><div class="io-val">Raw video frames · MediaPipe landmark coordinates per frame from Step 3</div></div>
-      <div class="io-row"><div class="io-label io-out">OUT</div><div class="io-val">Full video with green skeleton lines drawn on every frame. Saved to GCS at <code>analyses/{analysis_id}/overlay.mp4</code>. Returns <code>overlay_video_url</code> to the pipeline.</div></div>
-      <div class="io-row"><div class="io-label io-sse">SSE</div><div class="io-val"><code>overlay_complete</code> → { analysis_id, session_id, user_id, overlay_video_url }</div></div>
+      <div class="io-row"><div class="io-label io-out">OUT</div><div class="io-val">Single composite JPEG — 8 evenly-spaced frames in a 4×2 grid with skeleton lines drawn. Saved to GCS at <code>analyses/{analysis_id}/composite_grid.jpg</code>. Returns <code>composite_grid_url</code> to the pipeline.</div></div>
+      <div class="io-row"><div class="io-label io-sse">SSE</div><div class="io-val"><code>frames_extracted</code> → { analysis_id, session_id, user_id, composite_grid_url }</div></div>
     </div>
     <div class="req-block">
       <div class="req-label">What Squad 2 receives from this step</div>
       <div class="req-list">
-        <div class="req-item"><code>overlay_video_url</code> — the GCS path of the overlay video. Squad 2 passes this directly to Nemotron (Step 7) as the primary visual input.</div>
-        <div class="req-item">This video is NOT shown to the user — it is the AI input only.</div>
+        <div class="req-item"><code>composite_grid_url</code> — GCS path of the 8-frame composite image. Squad 2 passes this to Haiku Call 1 (Step 7) as the visual input alongside the biomechanics JSON.</div>
+        <div class="req-item">Not shown to the user — LLM visual input only. Single JPEG (~200–400KB) is significantly faster to process than the previous full overlay video.</div>
       </div>
     </div>
   </div>
@@ -1203,24 +1203,33 @@ def process_video(<br>
       <div class="io-row"><div class="io-label io-sse">SSE</div><div class="io-val"><code>biomechanics_complete</code> → { analysis_id, session_id, user_id, rep_count, joints_computed, avg_confidence }</div></div>
     </div>
     <div class="gap-block">
-      <div class="gap-label">Schema change required — add to every rep object</div>
-      <div class="gap-text">Two fields must be added to the biomechanics JSON output per rep. Without these, Step 8 (OpenCV frame extraction) cannot function.</div>
+      <div class="gap-label">Schema changes required — 2 additions to every rep object + 1 to consolidated</div>
+      <div class="gap-text">Two fields must be added per rep for OpenCV Part 2 to seek the correct frame. One field added to consolidated for session-level valgus detection.</div>
     </div>
     <div class="code-block" style="margin-top:0;">
-<span class="jc"># Current rep object — missing two fields</span><br>
+<span class="jc"># Per-rep additions</span><br>
 {<br>
 &nbsp;&nbsp;<span class="jk">"rep_number"</span>: <span class="jn">3</span>,<br>
-&nbsp;&nbsp;<span class="added"><span class="jk">"bottom_frame"</span>: <span class="jn">342</span>,</span>           <span class="jc"># ADD — frame index at bottom position</span><br>
-&nbsp;&nbsp;<span class="added"><span class="jk">"bottom_timestamp_ms"</span>: <span class="jn">5700.0</span>,</span>  <span class="jc"># ADD — (bottom_frame / fps) × 1000</span><br>
+&nbsp;&nbsp;<span class="added"><span class="jk">"bottom_frame"</span>: <span class="jn">342</span>,</span>           <span class="jc"># ADD — frame index at squat bottom position</span><br>
+&nbsp;&nbsp;<span class="added"><span class="jk">"bottom_timestamp_ms"</span>: <span class="jn">5700.0</span>,</span>  <span class="jc"># ADD — (bottom_frame / fps) × 1000. OpenCV seeks here.</span><br>
 &nbsp;&nbsp;<span class="jk">"depth_data"</span>: { <span class="jk">"knee_angle_at_bottom"</span>: <span class="jn">88.2</span>, ... },<br>
 &nbsp;&nbsp;<span class="jp">...</span><br>
+}<br>
+<br>
+<span class="jc"># Consolidated additions</span><br>
+{<br>
+&nbsp;&nbsp;<span class="jk">"stability"</span>: {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="added"><span class="jk">"session_valgus_fault"</span>: <span class="jn">true</span>,</span>  <span class="jc"># ADD — true if ≥50% valid reps have knee_valgus_distance &lt; 0.22</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="jp">...</span><br>
+&nbsp;&nbsp;}<br>
 }
     </div>
     <div class="req-block" style="margin-top:0;">
       <div class="req-label">What Squad 2 receives from process_video() — the full return dict</div>
       <div class="req-list">
-        <div class="req-item"><code>overlay_video_url</code> — passed to Nemotron (Step 7)</div>
-        <div class="req-item"><code>biomechanics_json</code> — stored to DB in <code>form_analysis_results</code>. Squad 2 uses this in Step 8 to look up <code>bottom_timestamp_ms</code> for the worst rep.</div>
+        <div class="req-item"><code>composite_grid_url</code> — passed to Haiku Call 1 (Step 7) as visual input</div>
+        <div class="req-item"><code>biomechanics_json</code> — stored to DB in <code>form_analysis_results</code>. Step 8 looks up <code>bottom_timestamp_ms</code> for the rep identified as worst by Haiku.</div>
+        <div class="req-item"><strong>Note:</strong> worst_rep_number is NOT computed by the biomechanics script. Haiku Call 1 outputs per-rep scores — Step 8 finds the lowest-scoring rep from Haiku's output, then looks up its timestamp here.</div>
       </div>
     </div>
   </div>
@@ -1236,24 +1245,25 @@ def process_video(<br>
     <span class="handoff-badge">Handoff C</span>
     <span class="handoff-title">Squad 3 → Squad 2 &nbsp;·&nbsp; <span class="chip-decided">Pattern agreed — function returns dict</span></span>
   </div>
-  <div class="handoff-desc">Squad 3's <code>process_video()</code> returns its result dict to Squad 2. Squad 2 then: (1) stores biomechanics_json to DB, (2) emits biomechanics_complete SSE, (3) proceeds to call Nemotron with overlay_video_url.</div>
+  <div class="handoff-desc">Squad 3's <code>process_video()</code> returns its result dict to Squad 2. Squad 2 then: (1) stores biomechanics_json to DB, (2) emits biomechanics_complete SSE, (3) calls Haiku Call 1 with composite_grid_url + biomechanics_json. OpenCV Part 2 runs after Haiku — it needs Haiku's per-rep scores to identify the worst rep.</div>
   <div class="code-block">
 <span class="jc"># Squad 2 — after process_video() returns</span><br>
 result = await process_video(gcs_path, analysis_id)<br>
 <br>
 if result[<span class="js">"status"</span>] == <span class="js">"failed"</span>:<br>
 &nbsp;&nbsp;db.update_form_analyses(analysis_id, status=<span class="js">"failed"</span>)<br>
-&nbsp;&nbsp;sse.emit(<span class="js">"error"</span>, { analysis_id, session_id, user_id, error_code: result[<span class="js">"error_code"</span>], error_stage: result[<span class="js">"error_stage"</span>], retryable: <span class="js">"false"</span>, message: result.get(<span class="js">"message"</span>, <span class="js">""</span>) })<br>
+&nbsp;&nbsp;sse.emit(<span class="js">"error"</span>, { analysis_id, error_code: result[<span class="js">"error_code"</span>], retryable: <span class="js">"false"</span> })<br>
 &nbsp;&nbsp;return<br>
 <br>
 <span class="jc"># Store biomechanics JSON to DB</span><br>
 db.store_biomechanics(analysis_id, result[<span class="js">"biomechanics_json"</span>])<br>
 sse.emit(<span class="js">"biomechanics_complete"</span>, { analysis_id, rep_count: ... })<br>
 <br>
-<span class="jc"># Hand off to Nemotron</span><br>
-nemotron_input = {<br>
-&nbsp;&nbsp;<span class="jk">"overlay_video_url"</span>: result[<span class="js">"overlay_video_url"</span>],<br>
-&nbsp;&nbsp;<span class="jk">"biomechanics_json"</span>: result[<span class="js">"biomechanics_json"</span>]<br>
+<span class="jc"># Step 7 — call Haiku with composite grid + biomechanics JSON</span><br>
+haiku_input = {<br>
+&nbsp;&nbsp;<span class="jk">"composite_grid_url"</span>: result[<span class="js">"composite_grid_url"</span>],<br>
+&nbsp;&nbsp;<span class="jk">"biomechanics_json"</span>: result[<span class="js">"biomechanics_json"</span>],<br>
+&nbsp;&nbsp;<span class="jc"># + weight, exercise, gold standard, session history, .md files</span><br>
 }
   </div>
 </div>
@@ -1268,20 +1278,37 @@ nemotron_input = {<br>
   <div class="step-header">
     <span class="step-num">Step 7</span>
     <div>
-      <div class="step-title">Nemotron 3 Nano Omni — video + biomechanics analysis</div>
-      <div class="step-squad">Squad 2 — Backend · NVIDIA NIM API call</div>
+      <div class="step-title">Claude Haiku 4.5 — form analysis + coaching (Call 1)</div>
+      <div class="step-squad">Squad 2 — Backend · Anthropic API · Current session only</div>
     </div>
     <span class="step-badge badge-s2">Squad 2</span>
   </div>
   <div class="step-body">
     <div class="io-block">
-      <div class="io-row"><div class="io-label io-in">IN</div><div class="io-val"><code>overlay_video_url</code> (from Step 5) + <code>biomechanics_json</code> (from Step 6) — dual input. Input format confirmed via S2-W5-09 (NVIDIA NIM API access task).</div></div>
-      <div class="io-row"><div class="io-label io-out">OUT</div><div class="io-val">Per-rep scores · overall_score · identified issues · chain-of-thought paragraphs · <code>worst_rep_number</code> (lowest scoring rep)</div></div>
-      <div class="io-row"><div class="io-label io-sse">SSE</div><div class="io-val"><code>nemotron_started</code> → { analysis_id, session_id, user_id, video_url* } &nbsp;·&nbsp; <code>nemotron_complete</code> → { analysis_id, session_id, user_id, overall_score, issues_count }</div></div>
+      <div class="io-row"><div class="io-label io-in">IN</div><div class="io-val">
+        <code>composite_grid_url</code> (8-frame image from Step 5) ·
+        <code>biomechanics_json</code> (from Step 6) ·
+        <code>form_analyses</code> fields: user_id, analysis_id, weight_value, weight_unit, exercise_id, exercise_name ·
+        gold standard JSON (from Supabase) ·
+        last 3 sessions (weight + MediaPipe JSON + past Haiku output, from <code>form_analysis_results</code>) ·
+        coaching .md files (injected into prompt)
+      </div></div>
+      <div class="io-row"><div class="io-label io-out">OUT</div><div class="io-val">
+        Structured JSON — two sections in one call:<br>
+        <strong>Analysis:</strong> faults_detected · confidence · fault_detail (rep count, which reps, severity, trend) · causal_chain · trends<br>
+        <strong>Coaching:</strong> overall_score · posture_score · stability_score · movement_quality_score · range_of_motion_score · rep_scores[] (per-rep across 4 params) · verdict · positive_observations · critical_observations · recommendation · rep_trend
+      </div></div>
+      <div class="io-row"><div class="io-label io-db">DB</div><div class="io-val">Stores full Haiku output to <code>form_analysis_results</code>: all scores + coaching JSON. Status → "analysis_complete".</div></div>
+      <div class="io-row"><div class="io-label io-sse">SSE</div><div class="io-val"><code>haiku_started</code> → { analysis_id, session_id, user_id } &nbsp;·&nbsp; <code>analysis_ready</code> → { analysis_id, session_id, user_id, overall_score } — Tab 1 unlocks, user reads coaching while frame loads</div></div>
     </div>
-    <div class="decision-block">
-      <div class="decision-label">Confirmed — overlay video + biomechanics JSON (Test C)</div>
-      <div style="font-size:11px;color:#86efac;line-height:1.6;">Nemotron receives both inputs together: the <code>overlay_video_url</code> (green skeleton video from Step 5) and the <code>biomechanics_json</code> (from Step 6). This is the dual-input configuration — Test C from the A/B/C test plan. The A/B/C tests this week (S2-W6-05) will validate this is performing as expected, but the architecture decision is confirmed.</div>
+    <div class="req-block">
+      <div class="req-label">Tab 1 scope — current session only</div>
+      <div class="req-list">
+        <div class="req-item">This call is about THIS video only — verdict, score, observations, coaching</div>
+        <div class="req-item">No weight decision, no progression comparison — those are Tab 2 (Haiku Call 2, async)</div>
+        <div class="req-item">Per-rep scores from this output are stored to DB — used by Tab 2 and by OpenCV Part 2 (Step 8) to identify the worst rep</div>
+        <div class="req-item">Model ID: <code>claude-haiku-4-5-20251001</code> via Anthropic SDK</div>
+      </div>
     </div>
   </div>
 </div>
@@ -1296,35 +1323,42 @@ nemotron_input = {<br>
   <div class="step-header">
     <span class="step-num">Step 8 · OpenCV Part 2</span>
     <div>
-      <div class="step-title">OpenCV — worst-rep frame extraction + angle overlay</div>
-      <div class="step-squad">Squad 3 — Data / Full Stack · Runs after Nemotron completes</div>
+      <div class="step-title">OpenCV — worst-rep frame extraction + angle annotation</div>
+      <div class="step-squad">Squad 3 — Data / Full Stack · Runs after Haiku Call 1 completes</div>
     </div>
     <span class="step-badge badge-s3">Squad 3</span>
     <span class="step-badge badge-new">NEW</span>
   </div>
   <div class="step-body">
     <div class="io-block">
-      <div class="io-row"><div class="io-label io-in">IN</div><div class="io-val"><code>raw_video_url</code> (from GCS) · <code>worst_rep_number</code> (from Nemotron output) · <code>bottom_timestamp_ms</code> for that rep (looked up from biomechanics JSON in DB)</div></div>
-      <div class="io-row"><div class="io-label io-out">OUT</div><div class="io-val">Annotated still image — worst-rep bottom frame from raw video with: skeleton lines + joint markers + actual angle values + gold standard comparison text. Saved to GCS at <code>analyses/{analysis_id}/worst_rep_frame.jpg</code>.</div></div>
+      <div class="io-row"><div class="io-label io-in">IN</div><div class="io-val">
+        <code>raw_video_url</code> (from GCS) ·
+        <code>rep_scores[]</code> from Haiku Call 1 output (to identify worst rep) ·
+        <code>bottom_timestamp_ms</code> for that rep (looked up from biomechanics JSON in DB) ·
+        <code>worst_rep_data</code> — angle values for that rep from biomechanics JSON ·
+        gold standard angles (from Supabase gold standard table)
+      </div></div>
+      <div class="io-row"><div class="io-label io-out">OUT</div><div class="io-val">Static annotated JPEG — worst-rep bottom frame with: skeleton lines + joint markers (colour-coded by status) + user's actual angle values + gold standard comparison. Saved to GCS at <code>analyses/{analysis_id}/worst_rep_frame.jpg</code>.</div></div>
       <div class="io-row"><div class="io-label io-db">DB</div><div class="io-val">Updates <code>form_analysis_results</code>: <code>annotated_frame_url</code> set to GCS image path.</div></div>
-      <div class="io-row"><div class="io-label io-sse">SSE</div><div class="io-val"><code>frames_extracting</code> → { analysis_id, session_id, user_id, video_url, frames_total } &nbsp;·&nbsp; <code>frames_ready</code> → { analysis_id, session_id, user_id, frame_url }</div></div>
+      <div class="io-row"><div class="io-label io-sse">SSE</div><div class="io-val"><code>frame_ready</code> → { analysis_id, session_id, user_id, annotated_frame_url } — frontend swaps image placeholder in Tab 1</div></div>
     </div>
     <div class="req-block">
-      <div class="req-label">What Squad 2 passes to Squad 3's frame extraction function</div>
+      <div class="req-label">Worst rep identification — from Haiku, not biomechanics script</div>
       <div class="req-list">
-        <div class="req-item">Squad 2 queries the stored biomechanics JSON from DB to get the <code>bottom_timestamp_ms</code> for <code>worst_rep_number</code></div>
-        <div class="req-item">Calls Squad 3's frame extraction function: <code>extract_worst_rep_frame(raw_video_url, bottom_timestamp_ms, worst_rep_data)</code></div>
-        <div class="req-item"><code>worst_rep_data</code> contains the angle values (knee_angle_at_bottom, hip_angle_at_bottom, dorsiflexion_at_bottom) needed for the text overlay</div>
+        <div class="req-item">Haiku Call 1 outputs <code>rep_scores[]</code> — per-rep scores across all 4 parameters</div>
+        <div class="req-item">Squad 2 finds the rep with the lowest overall score from this array → that is <code>worst_rep_number</code></div>
+        <div class="req-item">Squad 2 then looks up <code>bottom_timestamp_ms</code> for that rep number from the biomechanics JSON stored in DB (Step 6)</div>
+        <div class="req-item">Calls: <code>extract_worst_rep_frame(raw_video_url, bottom_timestamp_ms, worst_rep_data, gold_standard_angles)</code></div>
       </div>
     </div>
     <div class="req-block" style="border-color:#5b21b6;background:#0d0720;">
-      <div class="req-label" style="color:#a78bfa;">Overlay spec — Option 3 scope (agreed)</div>
+      <div class="req-label" style="color:#a78bfa;">Annotation spec — static image, first cut</div>
       <div class="req-list" style="color:#c4b5fd;">
-        <div class="req-item">Skeleton lines (hip→knee, knee→ankle) drawn using <code>cv2.line</code> — already built in Part 1</div>
+        <div class="req-item">Skeleton lines (hip→knee, knee→ankle) drawn using <code>cv2.line</code></div>
         <div class="req-item">Joint markers at knee, hip, ankle — colour by status: green (in range), amber (borderline), red (outside range)</div>
-        <div class="req-item">Actual angle values as text labels — e.g. "Knee: 88°" — using <code>cv2.putText</code> with semi-transparent background</div>
-        <div class="req-item">Gold standard comparison text alongside actual — e.g. "Ideal: 80–95°" in green</div>
-        <div class="req-item">Gold standard values from <code>gold_standard_biomechanics</code> table (prepped in W6 data prep)</div>
+        <div class="req-item">Actual angle values as text labels — e.g. "Knee: 88°" — <code>cv2.putText</code> with semi-transparent background</div>
+        <div class="req-item">Gold standard comparison alongside — e.g. "Ideal: 80–95°" in green · values from Supabase gold standard table</div>
+        <div class="req-item">Expected render time: 2–3s after Haiku completes · user is already reading coaching text in Tab 1</div>
       </div>
     </div>
   </div>
@@ -1340,33 +1374,43 @@ nemotron_input = {<br>
   <div class="step-header">
     <span class="step-num">Step 9</span>
     <div>
-      <div class="step-title">MD files + Claude Sonnet — coaching output + progression</div>
-      <div class="step-squad">Squad 2 — Backend · Claude Sonnet API call (Anthropic)</div>
+      <div class="step-title">Claude Haiku 4.5 — longitudinal coaching (Call 2) · async</div>
+      <div class="step-squad">Squad 2 — Backend · Runs async after Step 7 output is saved · Tab 2 only</div>
     </div>
     <span class="step-badge badge-s2">Squad 2</span>
   </div>
   <div class="step-body">
     <div class="io-block">
-      <div class="io-row"><div class="io-label io-in">IN</div><div class="io-val">Nemotron output (issues, per-rep scores, chain-of-thought) · MD file content injected into system prompt · user history (weight_value + past form scores from form_analysis_results)</div></div>
-      <div class="io-row"><div class="io-label io-out">OUT</div><div class="io-val">Coaching paragraphs specific to identified form issues · weight-based progression recommendation: <code>progress</code> / <code>hold</code> / <code>drop</code> with reasoning</div></div>
-      <div class="io-row"><div class="io-label io-db">DB</div><div class="io-val">Updates <code>form_analysis_results</code>: coaching_output, progression_recommendation, status: "complete"</div></div>
-      <div class="io-row"><div class="io-label io-sse">SSE</div><div class="io-val"><code>rag_started</code> · <code>rag_complete</code> · <code>claude_started</code> · <code>claude_complete</code> · <code>analysis_complete</code> → { analysis_id, session_id, user_id, full_result_url }</div></div>
+      <div class="io-row"><div class="io-label io-in">IN</div><div class="io-val">
+        From <code>form_analyses</code>: current analysis_id, exercise_id, user_id, weight_value ·
+        From <code>form_analysis_results</code> (current session): overall_score, posture_score, stability_score, movement_quality_score, range_of_motion_score, rep_scores[], full Haiku Call 1 coaching output ·
+        From <code>form_analysis_results</code> (last 5 sessions for same exercise_id): weight + all scores + Haiku coaching output per session
+      </div></div>
+      <div class="io-row"><div class="io-label io-out">OUT</div><div class="io-val">
+        Structured JSON — two sections:<br>
+        <strong>Section 1 (today vs previous):</strong> date + weight both sessions · overall score + variance · 1-line verdict · 4× parameter variance + 1-sentence verdict each · weight decision (hold / good to progress / drop weight)<br>
+        <strong>Section 2 (progression timeline):</strong> 3-point insight summary on trend across last 5 sessions
+      </div></div>
+      <div class="io-row"><div class="io-label io-db">DB</div><div class="io-val">Stores progression output to <code>form_analysis_results</code>: <code>progression_output</code> JSON · status → "complete"</div></div>
+      <div class="io-row"><div class="io-label io-sse">SSE</div><div class="io-val"><code>progression_ready</code> → { analysis_id, session_id, user_id } — Tab 2 unlocks · frontend calls <code>GET /analysis/{analysis_id}/progression</code> to fetch Section 1 + Section 2 JSON</div></div>
     </div>
     <div class="req-block">
-      <div class="req-label">Revised RAG approach — MD files in system prompt (no vector DB)</div>
+      <div class="req-label">What Tab 2 shows and where the data comes from</div>
       <div class="req-list">
-        <div class="req-item">5–10 curated documents covering PT coaching language, Goblet Squat form cues, and progression principles</div>
-        <div class="req-item">Converted to clean MD files by Squad 3 during W6 (data prep week)</div>
-        <div class="req-item">Injected directly into Claude's system prompt — no retrieval endpoint, no embeddings</div>
-        <div class="req-item"><code>rag_started</code> / <code>rag_complete</code> SSE events now represent the MD file injection step, not a vector DB call — Squad 1 UI copy unchanged</div>
+        <div class="req-item"><strong>Section 1 — today vs previous:</strong> score variances + per-parameter verdicts + weight decision → from Haiku Call 2 output</div>
+        <div class="req-item"><strong>Section 1 — rep-by-rep graph:</strong> both sessions' <code>rep_scores[]</code> pulled directly from DB · frontend renders chart · not produced by Haiku</div>
+        <div class="req-item"><strong>Section 2 — progression graph:</strong> last 5 sessions' scores + weights pulled from DB · frontend renders chart · not produced by Haiku</div>
+        <div class="req-item"><strong>Section 2 — 3-point insight summary:</strong> from Haiku Call 2 output</div>
+        <div class="req-item">No .md files in this call — focused prompt on longitudinal comparison only</div>
       </div>
     </div>
     <div class="req-block">
-      <div class="req-label">What Squad 1 receives at analysis_complete to render the Results screen</div>
+      <div class="req-label">What Squad 1 receives at analysis_ready (Tab 1) — via GET /analysis/{id}/result</div>
       <div class="req-list">
-        <div class="req-item">Calls <code>GET /analysis/{analysis_id}/result</code> on <code>analysis_complete</code> SSE event</div>
-        <div class="req-item">Response includes: overall_score · 4 parameter scores · coaching paragraphs · progression recommendation · <code>annotated_frame_url</code> (worst-rep image from Step 8) · rep_scores array</div>
-        <div class="req-item">Schema defined in <code>FE_Response_Schemas.md</code> — confirm shape has not drifted before wiring</div>
+        <div class="req-item">overall_score · posture_score · stability_score · movement_quality_score · range_of_motion_score</div>
+        <div class="req-item">verdict · positive_observations · critical_observations · recommendation · rep_trend</div>
+        <div class="req-item"><code>annotated_frame_url</code> — arrives separately via <code>frame_ready</code> SSE (2–3s after analysis_ready)</div>
+        <div class="req-item">Schema defined in <code>FE_Response_Schemas.md</code> — confirm shape before wiring</div>
       </div>
     </div>
   </div>
@@ -1463,9 +1507,9 @@ nemotron_input = {<br>
       <div class="pipe-content">
         <div class="pipe-io">
           <div class="io-row"><div class="io-dir io-in">IN</div><div class="io-val">raw video (from GCS) · MediaPipe landmarks per frame</div></div>
-          <div class="io-row"><div class="io-dir io-out">OUT</div><div class="io-val">overlay_video_url — full video with green skeleton lines drawn on every frame · saved to GCS</div></div>
-          <div class="io-row"><div class="io-dir io-sse">SSE</div><div class="io-val">overlay_complete → { analysis_id, session_id, user_id, overlay_video_url }</div></div>
-          <div class="io-note" style="margin-left:52px;font-size:10px;">This overlay video goes to Nemotron — NOT shown to the user</div>
+          <div class="io-row"><div class="io-dir io-out">OUT</div><div class="io-val">composite_grid_url — 8-frame 4×2 composite JPEG with skeleton lines · saved to GCS</div></div>
+          <div class="io-row"><div class="io-dir io-sse">SSE</div><div class="io-val">frames_extracted → { analysis_id, session_id, user_id, composite_grid_url }</div></div>
+          <div class="io-note" style="margin-left:52px;font-size:10px;">Composite image goes to Haiku as visual input — NOT shown to the user</div>
         </div>
       </div>
     </div>
@@ -1490,15 +1534,15 @@ nemotron_input = {<br>
     <div class="pipe-step">
       <div class="pipe-meta">
         <div class="pipe-step-num">Step 7</div>
-        <div class="pipe-step-name">Nemotron — video analysis</div>
+        <div class="pipe-step-name">Claude Haiku 4.5 — Call 1 · form analysis + coaching</div>
         <div class="pipe-owner">Backend</div>
         <div class="pipe-badge badge-s2">Squad 2</div>
       </div>
       <div class="pipe-content">
         <div class="pipe-io">
-          <div class="io-row"><div class="io-dir io-in">IN</div><div class="io-val">overlay_video_url · biomechanics JSON</div></div>
-          <div class="io-row"><div class="io-dir io-out">OUT</div><div class="io-val">per-rep scores · overall_score · issues · chain-of-thought · <strong style="color:#fde68a;">worst_rep_number</strong></div></div>
-          <div class="io-row"><div class="io-dir io-sse">SSE</div><div class="io-val">nemotron_started · nemotron_complete → { analysis_id, session_id, user_id, overall_score, issues_count }</div></div>
+          <div class="io-row"><div class="io-dir io-in">IN</div><div class="io-val">composite_grid_url · biomechanics JSON · weight + exercise from form_analyses · gold standard JSON · last 3 sessions · .md coaching files</div></div>
+          <div class="io-row"><div class="io-dir io-out">OUT</div><div class="io-val">overall_score · posture/stability/movement/range_of_motion scores · rep_scores[] · faults · coaching JSON · Tab 1 unlocks</div></div>
+          <div class="io-row"><div class="io-dir io-sse">SSE</div><div class="io-val">haiku_started · analysis_ready → { analysis_id, session_id, user_id, overall_score }</div></div>
         </div>
       </div>
     </div>
@@ -1513,11 +1557,11 @@ nemotron_input = {<br>
       </div>
       <div class="pipe-content">
         <div class="pipe-io">
-          <div class="io-row"><div class="io-dir io-in">IN</div><div class="io-val">raw video (from GCS) · worst_rep_number (from Nemotron) · bottom_timestamp_ms for that rep (from DB — biomechanics JSON)</div></div>
-          <div class="io-row"><div class="io-dir io-out">OUT</div><div class="io-val">annotated still image — user's worst-rep bottom frame with actual vs gold standard angles overlaid · saved to GCS</div></div>
+          <div class="io-row"><div class="io-dir io-in">IN</div><div class="io-val">raw video (from GCS) · rep_scores[] from Haiku to identify worst rep · bottom_timestamp_ms for that rep (from biomechanics JSON in DB) · gold standard angles</div></div>
+          <div class="io-row"><div class="io-dir io-out">OUT</div><div class="io-val">static annotated JPEG — worst-rep bottom frame with skeleton + user angles + gold standard comparison · saved to GCS</div></div>
           <div class="io-row"><div class="io-dir io-out">DB</div><div class="io-val">form_analysis_results: annotated_frame_url updated</div></div>
-          <div class="io-row"><div class="io-dir io-sse">SSE</div><div class="io-val">frames_extracting · frames_ready → { analysis_id, session_id, user_id, video_url, frames_total } / { …, frame_url }</div></div>
-          <div class="io-note" style="margin-left:52px;font-size:10px;">This image IS shown to the user in the Results screen</div>
+          <div class="io-row"><div class="io-dir io-sse">SSE</div><div class="io-val">frame_ready → { analysis_id, session_id, user_id, annotated_frame_url } — loads ~2–3s after coaching text in Tab 1</div></div>
+          <div class="io-note" style="margin-left:52px;font-size:10px;">Runs after Haiku Call 1 completes · this image IS shown to the user in Tab 1</div>
         </div>
       </div>
     </div>
@@ -1525,15 +1569,15 @@ nemotron_input = {<br>
     <div class="pipe-step">
       <div class="pipe-meta">
         <div class="pipe-step-num">Step 9</div>
-        <div class="pipe-step-name">RAG retrieval + Claude Sonnet</div>
-        <div class="pipe-owner">Squad 2 + Squad 3</div>
+        <div class="pipe-step-name">Claude Haiku 4.5 — Call 2 · longitudinal · async</div>
+        <div class="pipe-owner">Backend</div>
         <div class="pipe-badge badge-s2">Squad 2</div>
       </div>
       <div class="pipe-content">
         <div class="pipe-io">
-          <div class="io-row"><div class="io-dir io-in">IN</div><div class="io-val">Nemotron output · RAG passages · user history · weight_value</div></div>
-          <div class="io-row"><div class="io-dir io-out">OUT</div><div class="io-val">coaching paragraphs · progression recommendation (ready / hold / drop)</div></div>
-          <div class="io-row"><div class="io-dir io-sse">SSE</div><div class="io-val">rag_started · rag_complete · claude_started · claude_complete · analysis_complete</div></div>
+          <div class="io-row"><div class="io-dir io-in">IN</div><div class="io-val">current scores + coaching output · last 5 sessions' scores + Haiku outputs (from form_analysis_results) · no .md files</div></div>
+          <div class="io-row"><div class="io-dir io-out">OUT</div><div class="io-val">today vs previous comparison (score variances + verdicts + weight decision) · 5-session trend summary · Tab 2 unlocks</div></div>
+          <div class="io-row"><div class="io-dir io-sse">SSE</div><div class="io-val">progression_ready → { analysis_id, session_id, user_id } — Tab 2 unlocks</div></div>
         </div>
       </div>
     </div>
