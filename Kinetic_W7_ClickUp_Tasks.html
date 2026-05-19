@@ -73,7 +73,7 @@ td ul{padding-left:16px;} td li{margin-bottom:3px;}
 <div class="meta">17 tasks · 3 squads · Sprint goal: Full AI pipeline live with Claude Haiku 4.5</div>
 <div class="arch-note">
   <strong>⚡ Architecture decision (confirmed from A/B test):</strong> Nemotron replaced by Claude Haiku 4.5 for analysis + coaching in a single call.
-  OpenCV extracts 8 frames → composite grid → Haiku receives: frames + MediaPipe JSON + gold standard reference JSON + last 3 sessions history + RAG coaching context → structured coaching output via SSE.<br>
+  OpenCV extracts 8 frames → composite grid → Haiku receives: frames + MediaPipe JSON + gold standard reference JSON + last 3 sessions history + coaching language from .md files → structured coaching output via SSE.<br>
   <strong>Auth deferred:</strong> 3 hardcoded demo user IDs used for demo day. Google OAuth / JWT post-demo.
 </div>
 
@@ -266,22 +266,22 @@ td ul{padding-left:16px;} td li{margin-bottom:3px;}
 
 <div class="task"><div class="task-hdr" onclick="tog(this)">
   <span class="tid">S2-W7-04</span>
-  <div class="tname-wrap"><div class="tname">RAG Retrieval</div>
+  <div class="tname-wrap"><div class="tname">Coaching Content Retrieval — .md Files</div>
   <div class="tbadges"><span class="badge b-todo">To Do</span><span class="badge b-hi">High</span><span class="badge b-s2">Squad 2</span></div></div>
   <span class="chev">▼</span>
 </div><div class="tbody"><div class="divider"></div>
 <div class="sec"><div class="slbl">Description</div><div class="desc">
-<p>Retrieve coaching language from the RAG corpus (.md files + transcribed coaching text). Query using detected fault type + exercise. Include retrieved passages in the Haiku prompt.</p>
+<p>Retrieve relevant coaching language from curated .md files. Query by detected fault type + exercise and include the matching passages in the Haiku prompt. <strong>No vector DB — direct file-based retrieval.</strong> Vector DB and embedding ingestion pipeline are out of scope.</p>
 </div></div>
 <div class="sec"><div class="slbl ac">Acceptance Criteria</div><ul class="ac-list">
-  <li>RAG retrieval endpoint callable from the pipeline</li>
+  <li>Retrieval function callable from the pipeline — returns coaching passages for a given fault + exercise</li>
   <li>Query uses fault type + exercise as retrieval input</li>
   <li>Returns relevant coaching passages (not generic results)</li>
   <li>Retrieved context included as a section in Haiku prompt</li>
   <li>Handles no-results gracefully — omit section from prompt</li>
 </ul></div>
 <div class="sec"><div class="slbl dep">Blocked by</div><div class="dep-row">
-  <span class="dp dp-dep">S3-W7-03 — RAG corpus indexed and endpoint live</span>
+  <span class="dp dp-dep">S3-W7-03 — Coaching .md files curated and retrieval function ready</span>
 </div></div>
 </div></div>
 
@@ -299,7 +299,7 @@ td ul{padding-left:16px;} td li{margin-bottom:3px;}
   <li>Current session MediaPipe JSON + weight used today</li>
   <li>Gold standard reference JSON (S2-W7-02)</li>
   <li>Last 3 sessions: weight + MediaPipe JSON + coaching output (S2-W7-03)</li>
-  <li>RAG coaching context (S2-W7-04)</li>
+  <li>Coaching language from .md files (S2-W7-04)</li>
 </ul>
 <p><strong>Expected output:</strong> verdict, total_score, positive_observations, critical_observations, recommendation, rep_trend</p>
 </div></div>
@@ -414,12 +414,12 @@ td ul{padding-left:16px;} td li{margin-bottom:3px;}
 
 <div class="task"><div class="task-hdr" onclick="tog(this)">
   <span class="tid">S3-W7-03</span>
-  <div class="tname-wrap"><div class="tname">RAG Corpus — Index Coaching Content</div>
+  <div class="tname-wrap"><div class="tname">Coaching .md Files — Curate and Organise</div>
   <div class="tbadges"><span class="badge b-todo">To Do</span><span class="badge b-hi">High</span><span class="badge b-s3">Squad 3</span></div></div>
   <span class="chev">▼</span>
 </div><div class="tbody"><div class="divider"></div>
 <div class="sec"><div class="slbl">Description</div><div class="desc">
-<p>Index coaching .md files and transcribed coaching text into the RAG pipeline. Tune retrieval for biomechanics and form correction queries. Expose retrieval endpoint for Squad 2 to call.</p>
+<p>Finalise and organise coaching content .md files used for retrieval. Ensure content is well-structured and covers key fault patterns for Goblet Squat (knee valgus, forward lean, depth, tempo). <strong>No vector DB or embedding pipeline</strong> — content is retrieved directly from .md files by the pipeline.</p>
 </div></div>
 <div class="sec"><div class="slbl ac">Acceptance Criteria</div><ul class="ac-list">
   <li>Coaching .md files and transcripts ingested and indexed</li>
@@ -429,7 +429,7 @@ td ul{padding-left:16px;} td li{margin-bottom:3px;}
   <li>Endpoint URL + input/output schema shared with Squad 2</li>
 </ul></div>
 <div class="sec"><div class="slbl blocks">Blocks</div><div class="dep-row">
-  <span class="dp dp-blk">S2-W7-04 — RAG retrieval in pipeline</span>
+  <span class="dp dp-blk">S2-W7-04 — Coaching content retrieval wired into pipeline</span>
 </div></div>
 </div></div>
 
@@ -486,7 +486,7 @@ td ul{padding-left:16px;} td li{margin-bottom:3px;}
 </div></div>
 
 </div>
-<div class="merge-bar">⊕ <strong>Thu merge:</strong> MediaPipe updated · ≥2 gold standard records in Supabase · RAG endpoint returning results · Synthetic user data seeded · Visual output options documented</div>
+<div class="merge-bar">⊕ <strong>Thu merge:</strong> MediaPipe updated · ≥2 gold standard records in Supabase · Coaching .md files curated + retrieval working · Synthetic user data seeded · Visual output options documented</div>
 
 <!-- Checklist -->
 <div class="checklist">
@@ -506,7 +506,7 @@ td ul{padding-left:16px;} td li{margin-bottom:3px;}
     <tr><td>Squad 3</td><td><ul>
       <li>OpenCV outputs 8-frame composite JPEG (not video)</li>
       <li>≥2 gold standard records queryable in Supabase</li>
-      <li>RAG endpoint returning relevant results for test queries</li>
+      <li>Coaching .md file retrieval returning relevant passages for test fault queries</li>
       <li>Synthetic user data seeded — S2-W7-03 query returning 3 sessions</li>
       <li>Visual output options documented and presented to team</li>
     </ul></td></tr>
