@@ -17,7 +17,7 @@
 ## Architecture Decisions (confirmed)
 
 > - **Nemotron → Claude Haiku 4.5** — A/B test concluded Haiku handles analysis + coaching end-to-end. Nemotron removed from all pipelines.
-> - **RAG ingestion scrapped** — Vector DB ingestion pipeline dropped. Coaching context delivered via gold standard JSON + session history passed directly into Haiku prompt.
+> - **Vector DB + ingestion pipeline scrapped** — No vector DB, no embedding pipeline. Coaching context delivered via gold standard JSON + session history + direct .md file retrieval in Haiku prompt.
 > - **Authentication → Demo user IDs** — Full Google OAuth / JWT deferred post-demo. 3 hardcoded user IDs used for all W7 pipeline testing and demo day.
 
 ---
@@ -116,7 +116,7 @@
 **Parallel track — LLM input A/B test (informs W7 architecture):**
 - ✅ **Test A:** Joint overlay video only → Nemotron → output quality + response time recorded `[S2-W6-P1]`
 - 🟠 **Tests B + C + findings → PM** — JSON only, both inputs; log comparison; feed to PM `[S2-W6-P2 — closes with S2-W6-04]`
-- *Outcome: Haiku 4.5 selected. Nemotron and RAG dropped from pipeline.*
+- *Outcome: Haiku 4.5 selected. Nemotron dropped. Vector DB ingestion dropped — coaching content retrieved directly from .md files.*
 
 **Thursday merge (E2E slice):** Upload video → GCS → MediaPipe → biomechanics JSON → SSE firing → Squad 1 renders real data
 
@@ -136,7 +136,7 @@
 
 **Theme:** Wire the complete AI pipeline end-to-end with Haiku 4.5 as the core model. First full form analysis session — real video in, real coaching output with longitudinal context out.
 
-> **Architecture (confirmed):** OpenCV extracts 8-frame composite grid. Haiku 4.5 receives: MediaPipe JSON + 8 frames + gold standard reference JSON + last 3 user sessions → returns structured coaching output. No RAG. No Nemotron. Auth deferred — 3 demo user IDs used.
+> **Architecture (confirmed):** OpenCV extracts 8-frame composite grid. Haiku 4.5 receives: MediaPipe JSON + 8 frames + gold standard reference JSON + last 3 user sessions + coaching language from .md files → returns structured coaching output. No Nemotron. No vector DB. Auth deferred — 3 demo user IDs used.
 
 ### Squad 1 — Frontend
 - [ ] **Form analysis 1st cut** — wire Results screen to real Haiku output: verdict, total score (/100), positive observations, critical observations (root cause / symptom tagging), recommendation, rep trend
@@ -152,7 +152,8 @@
 - [ ] **Integrate Claude Haiku 4.5** — single call handles full analysis + coaching output; Nemotron removed entirely
 - [ ] **Gold standard query** — query Supabase gold standard squat table for elite trainer reference JSON; include in Haiku prompt
 - [ ] **User session history query** — pull last 3 sessions for demo user + exercise: weight, MediaPipe JSON, coaching output; pass as longitudinal context
-- [ ] **Assemble Haiku prompt** — combine: current 8-frame composite + MediaPipe JSON + weight + gold standard JSON + 3-session history → call Haiku → return structured coaching output
+- [ ] **Coaching content retrieval** — retrieve relevant coaching language from curated .md files; include in Haiku prompt. No vector DB — direct file-based retrieval
+- [ ] **Assemble Haiku prompt** — combine: current 8-frame composite + MediaPipe JSON + weight + gold standard JSON + 3-session history + coaching .md content → call Haiku → return structured coaching output
 - [ ] **SSE delivery** — return Haiku coaching response via SSE; update processing states for new multi-step pipeline
 - [ ] **Demo user setup** — create 3 hardcoded user IDs; scope all pipeline queries to these users; full Google OAuth / JWT deferred post-demo
 
@@ -163,6 +164,7 @@
 ### Squad 3 — Data / Full Stack
 - [ ] **MediaPipe pipeline update** — (1) refine angle calculations from A/B test findings; (2) update OpenCV wrapper to 8-frame composite grid extraction (replaces full video overlay); (3) add `session_valgus_fault` boolean to `consolidated.stability` — ≥50% of valid reps with `knee_valgus_distance < 0.22`
 - [ ] **Gold standard table** — run MediaPipe on elite trainer goblet squat videos; store biomechanics JSON in Supabase gold standard table (same schema as user session output). Minimum 2–3 reference videos for W7 testing
+- [ ] **Coaching .md files — curate and organise** — finalise coaching content files used for retrieval; ensure content covers key fault patterns for Goblet Squat. No vector DB or embedding pipeline
 - [ ] **Synthetic user data** — seed a test user ID with 3 past sessions (weight + MediaPipe JSON + Haiku coaching output per session) to validate longitudinal feedback flow before real user data exists
 - [ ] **Visual output scoping** — prototype and compare 3 options: (1) annotated worst-rep bottom frame, (2) 5–8s slow-motion clip around fault moment, (3) full processed video with skeleton overlay. No build decision — scope, test, present recommendation
 - 🟠 **[S3-W5-01]** Carry-over from W5 — In Progress

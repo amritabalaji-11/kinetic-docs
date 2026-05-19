@@ -371,7 +371,7 @@
     </div>
 
     <div class="arch-note">
-      <strong>Architecture (confirmed from A/B test):</strong> OpenCV extracts 8-frame composite grid. Claude Haiku 4.5 receives: MediaPipe JSON + 8 frames + gold standard reference JSON + last 3 user sessions → returns structured coaching output. No Nemotron. No RAG. Auth deferred — 3 demo user IDs used instead.
+      <strong>Architecture (confirmed from A/B test):</strong> OpenCV extracts 8-frame composite grid. Claude Haiku 4.5 receives: MediaPipe JSON + 8 frames + gold standard reference JSON + last 3 user sessions + coaching language from .md files → returns structured coaching output. No Nemotron. No vector DB. Auth deferred — 3 demo user IDs used instead.
     </div>
 
     <!-- W7 Squad 1 -->
@@ -394,7 +394,7 @@
         <li class="task-item todo"><span class="task-check">☐</span><div class="task-text"><strong>Gold standard query</strong> — query Supabase gold standard squat table for elite trainer reference JSON; include in Haiku prompt for direct comparison<div class="task-tags"><span class="us-tag e4">US-07</span></div></div></li>
         <li class="task-item todo"><span class="task-check">☐</span><div class="task-text"><strong>User session history query</strong> — pull last 3 sessions for demo user + exercise: weight, MediaPipe JSON, Haiku coaching output; pass as longitudinal context<div class="task-tags"><span class="us-tag e4">US-08</span><span class="us-tag e5">US-09</span></div></div></li>
         <li class="task-item todo"><span class="task-check">☐</span><div class="task-text"><strong>Assemble Haiku prompt</strong> — combine: current 8-frame composite + MediaPipe JSON + current weight + gold standard JSON + 3-session history → call Haiku → return structured coaching output via SSE<div class="task-tags"><span class="us-tag e3">US-05</span><span class="us-tag e4">US-06</span><span class="us-tag e4">US-07</span></div></div></li>
-        <li class="task-item scrapped"><span class="task-check">✕</span><div class="task-text"><strong>RAG retrieval</strong> — retrieve coaching language from indexed .md files and transcribed coaching text <span class="scrapped-badge">Scrapped</span><div class="task-tags"><span class="us-tag e4">US-07</span></div></div></li>
+        <li class="task-item todo"><span class="task-check">☐</span><div class="task-text"><strong>Coaching content retrieval</strong> — retrieve relevant coaching language from curated .md files; include in Haiku prompt. No vector DB — direct file-based retrieval<div class="task-tags"><span class="us-tag e4">US-07</span></div></div></li>
         <li class="task-item todo"><span class="task-check">☐</span><div class="task-text"><strong>Demo user setup</strong> — create 3 hardcoded user IDs; scope all pipeline queries to these users; full Google OAuth / JWT deferred post-demo<div class="task-tags"><span class="us-tag e1">US-01</span></div></div></li>
       </ul>
       <div class="merge-note"><span class="merge-icon">⊕</span> Thu merge: Full pipeline live (video → OpenCV + MediaPipe → Haiku prompt → SSE coaching output) · Demo users queryable</div>
@@ -406,7 +406,7 @@
       <ul class="task-list">
         <li class="task-item todo"><span class="task-check">☐</span><div class="task-text"><strong>MediaPipe pipeline update</strong> — (1) refine angle calculations from A/B test findings; (2) update OpenCV wrapper to 8-frame composite grid extraction (replaces full video overlay); (3) add <code>session_valgus_fault</code> boolean to consolidated.stability<div class="task-tags"><span class="us-tag e4">US-06</span></div></div></li>
         <li class="task-item todo"><span class="task-check">☐</span><div class="task-text"><strong>Gold standard table</strong> — run MediaPipe on elite trainer goblet squat videos; store biomechanics JSON in Supabase using same schema as user session output. Min 2–3 reference videos<div class="task-tags"><span class="us-tag e4">US-07</span></div></div></li>
-        <li class="task-item scrapped"><span class="task-check">✕</span><div class="task-text"><strong>RAG corpus</strong> — index coaching .md files and transcribed coaching text; tune retrieval for biomechanics queries <span class="scrapped-badge">Scrapped</span><div class="task-tags"><span class="us-tag e4">US-07</span></div></div></li>
+        <li class="task-item todo"><span class="task-check">☐</span><div class="task-text"><strong>Coaching .md files — curate and organise</strong> — finalise coaching content files used for retrieval; ensure content is well-structured and covers key fault patterns for Goblet Squat. No vector DB or embedding pipeline<div class="task-tags"><span class="us-tag e4">US-07</span></div></div></li>
         <li class="task-item todo"><span class="task-check">☐</span><div class="task-text"><strong>Synthetic user data</strong> — seed a test user ID with 3 past sessions (weight + MediaPipe JSON + Haiku coaching output) to validate the longitudinal feedback flow end-to-end<div class="task-tags"><span class="us-tag e4">US-08</span><span class="us-tag e5">US-09</span></div></div></li>
         <li class="task-item todo"><span class="task-check">☐</span><div class="task-text"><strong>Visual output scoping</strong> — prototype and compare: (1) annotated worst-rep bottom frame, (2) 5–8s slow-motion clip around key fault moment, (3) full skeleton overlay video. No build decision — scope, test, present recommendation<div class="task-tags"><span class="us-tag e4">US-06</span></div></div></li>
       </ul>
@@ -461,7 +461,7 @@
         <li class="task-item todo"><span class="task-check">☐</span><div class="task-text">Label ground truth for each video (expected form scores, joint corrections) for Week 9 validation<div class="task-tags"><span class="us-tag e4">US-06</span><span class="us-tag e4">US-07</span></div></div></li>
         <li class="task-item todo"><span class="task-check">☐</span><div class="task-text">Validate visual output decision from W7 scoping — confirm format to build in W9<div class="task-tags"><span class="us-tag e4">US-06</span></div></div></li>
         <li class="task-item scrapped"><span class="task-check">✕</span><div class="task-text">Refine ingestion pipeline: add more Goblet Squat RAG sources if retrieval gaps found <span class="scrapped-badge">Scrapped</span><div class="task-tags"><span class="us-tag e4">US-07</span></div></div></li>
-        <li class="task-item scrapped"><span class="task-check">✕</span><div class="task-text">Test full RAG-to-Claude-Sonnet flow: validate retrieval meaningfully improves coaching quality <span class="scrapped-badge">Scrapped</span><div class="task-tags"><span class="us-tag e4">US-07</span><span class="us-tag e4">US-08</span></div></div></li>
+        <li class="task-item todo"><span class="task-check">☐</span><div class="task-text">Test coaching .md retrieval in Haiku prompt — validate that coaching content meaningfully improves output quality vs. without it<div class="task-tags"><span class="us-tag e4">US-07</span><span class="us-tag e4">US-08</span></div></div></li>
       </ul>
       <div class="merge-note"><span class="merge-icon">⊕</span> Thu merge: Test video set ready (labelled) · Visual output format confirmed</div>
     </div>
@@ -510,7 +510,7 @@
         <li class="task-item todo"><span class="task-check">☐</span><div class="task-text">Measure: form score agreement ≥80%, rep count accuracy ≥90%, joint correction relevance<div class="task-tags"><span class="us-tag e4">US-06</span><span class="us-tag e4">US-07</span></div></div></li>
         <li class="task-item todo"><span class="task-check">☐</span><div class="task-text">Document failures and edge cases — feed findings to Squad 2 for Haiku prompt refinement<div class="task-tags"><span class="us-tag e4">US-07</span></div></div></li>
         <li class="task-item todo"><span class="task-check">☐</span><div class="task-text">Validate visual output format in-app with internal testers<div class="task-tags"><span class="us-tag e4">US-06</span></div></div></li>
-        <li class="task-item scrapped"><span class="task-check">✕</span><div class="task-text">Final RAG refinement pass based on validation gaps <span class="scrapped-badge">Scrapped</span><div class="task-tags"><span class="us-tag e4">US-07</span></div></div></li>
+        <li class="task-item todo"><span class="task-check">☐</span><div class="task-text">Final coaching content refinement — update .md files based on accuracy validation gaps; ensure retrieval covers all identified fault patterns<div class="task-tags"><span class="us-tag e4">US-07</span></div></div></li>
       </ul>
       <div class="merge-note"><span class="merge-icon">⊕</span> Thu merge: Accuracy validation report committed · ≥80% expert agreement confirmed or refinements in progress</div>
     </div>
