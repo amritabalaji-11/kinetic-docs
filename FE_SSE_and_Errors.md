@@ -1,8 +1,7 @@
 # Kinetic — SSE Events, Error Codes & Frontend Messages
-**Task:** S1-W5-06a  
-**Last updated:** May 12, 2026  
-**Scope:** SSE event shapes · Error taxonomy · HTTP error codes · Frontend UI copy  
-**Produced by:** S2 — Backend  
+**Last updated:** May 19, 2026 *(architecture update: Nemotron → Haiku 4.5, Tab 1/Tab 2 model)*
+**Scope:** SSE event shapes · Error taxonomy · HTTP error codes · Frontend UI copy
+**Produced by:** S2 — Backend
 **Consumed by:** S1 — Frontend
 
 ---
@@ -14,10 +13,10 @@
 1. `POST /upload` returns `{"analysis_id": "uuid"}` as normal JSON immediately — no streaming, closes right away.
 2. S1 opens a separate `EventSource` at `GET /analysis/{analysis_id}/stream` to receive live pipeline events.
 
-The stream opens and holds until `analysis_complete` or `error` fires, then closes.
+*(Updated May 19, 2026 — sequence diagram rewritten for Haiku 4.5 architecture)*
 
 ```
-Frontend (S1)                     Backend (S2)                    AI/MediaPipe (S3)
+Frontend (S1)                     Backend (S2)                    Data/CV (S3)
    |                                 |                                 |
    |--- POST /upload --------------> |                                 |
    |<-- { "analysis_id": "uuid" } -- |  ← JSON, closes immediately    |
@@ -29,63 +28,52 @@ Frontend (S1)                     Backend (S2)                    AI/MediaPipe (
    |<-- mediapipe_started ---------- |                                 |
    |                                 |<-- keypoints returned --------- |
    |<-- mediapipe_complete --------- |                                 |
-   |                                 |--- run OpenCV overlay --------> |
-   |                                 |<-- overlay_video_url returned - |
-   |<-- overlay_complete ----------- |                                 |
    |                                 |<-- biomechanics JSON returned - |
-   |<-- biomechanics_complete ------ |                                 |
-   |                                 |--- dispatch Nemotron job -----> |
-   |<-- nemotron_started ----------- |                                 |
-   |                                 |<-- scored output returned ----- |
-   |<-- nemotron_complete ---------- |                                 |
-   |<-- frames_extracting ---------- | (S2 runs OpenCV internally — squad ownership WIP) |
-   |<-- frames_ready --------------- |                                 |
-   |<-- rag_started ---------------- | (S2 injects MD files)           |
-   |<-- rag_complete --------------- |                                 |
-   |<-- claude_started ------------- | (S2 calls Claude API)           |
-   |<-- claude_complete ------------ |                                 |
-   |<-- analysis_complete ---------- |  ← stream closes               |
+   |<-- biomechanics_complete ------ | (silent — % bar only)          |
+   |                                 |--- call Haiku Call 1 ---------> |
+   |<-- haiku_started -------------- |                                 |
+   |                                 |<-- coaching JSON returned ----- |
+   |<-- analysis_ready ------------- |  ← Tab 1 unlocks               |
    |                                 |                                 |
-   |--- GET /analysis/{id}/result -> |                                 |
-   |<-- form analysis response ------ |                                |
+   |--- GET /analysis/{id}/result -> |  ← S1 fetches full results     |
+   |<-- full coaching response ------ |                                |
+   |                                 |                                 |
+   | [Tab 1 visible, user reading]   |                                 |
+   |                                 |--- OpenCV Part 2 runs --------> |
+   |                                 |<-- annotated_frame_url -------- |
+   |<-- frame_ready ---------------- |  ← image swaps in Tab 1        |
+   |                                 |                                 |
+   | [async — Tab 2 loading state]   |                                 |
+   |                                 |--- call Haiku Call 2 (async) -> |
+   |                                 |<-- progression JSON returned -- |
+   |<-- progression_ready ---------- |  ← Tab 2 unlocks               |
+   |                                 |                                 |
+   |--- GET /analysis/{id}/progression|  ← S1 fetches Tab 2 data     |
+   |<-- Section 1 + Section 2 ------- |                               |
 ```
 
-> The `comparison_ready` event fires **after** `analysis_complete` on a separate async path — S2 runs a second Claude call. Frontend listens to enable the comparison tab. See Section 3.
+> The stream stays open after `analysis_ready` to receive `frame_ready` and `progression_ready`. It may be closed after `progression_ready` fires or after a timeout.
 
 ---
 
 ## Squad Dependencies Overview
+
+*(Updated May 19, 2026 — removed Nemotron/RAG/Claude events, added Haiku events)*
 
 | Event | Fired by | Consumed by | Inter-squad dependency |
 |---|---|---|---|
 | `upload_received` | S2 | S1 | S1 POST triggers S2 |
 | `mediapipe_started` | S2 | S1 | S2 dispatches job to S3 — **S3 must be ready to accept jobs** |
 | `mediapipe_complete` | S2 | S1 | **S3 must return keypoints to S2** before S2 can fire this |
-| `overlay_complete` | S2 | S1 | **S3 must complete OpenCV skeleton overlay and return overlay_video_url to S2** before S2 can fire this |
 | `biomechanics_complete` | S2 | S1 | **S3 must return biomechanics JSON to S2** before S2 can fire this |
-| `nemotron_started` | S2 | S1 | S2 dispatches to Nemotron via S3 — **S3 owns Nemotron integration** |
-| `nemotron_complete` | S2 | S1 | **S3 must return Nemotron scored output to S2** before S2 can fire this |
-| `frames_extracting` | S2 | S1 | S2-internal (OpenCV) — no S3 dependency · **squad ownership WIP** |
-| `frames_ready` | S2 | S1 | S2-internal (OpenCV) — no S3 dependency · **squad ownership WIP** |
-| `rag_started` | S2 | S1 | S2-internal — no S3 dependency |
-| `rag_complete` | S2 | S1 | S2-internal — no S3 dependency |
-| `claude_started` | S2 | S1 | S2-internal — no S3 dependency |
-| `claude_complete` | S2 | S1 | S2-internal — no S3 dependency |
-| `analysis_complete` | S2 | S1 | All upstream stages must complete |
-| `comparison_ready` | S2 | S1 | Async — S2 runs a second Claude call after `analysis_complete` |
-| `error` | S2 (pipeline errors) or S1 (pre-upload) | S1 | Stage-dependent — see error taxonomy |
+| `haiku_started` | S2 | S1 | S2-internal — no S3 dependency |
+| `analysis_ready` | S2 | S1 | Haiku Call 1 must complete + all scores written to DB |
+| `frame_ready` | S2 | S1 | **S3 must run OpenCV Part 2 and return annotated_frame_url** before S2 fires this |
+| `progression_ready` | S2 | S1 | Haiku Call 2 must complete + progression_output written to DB — async |
+| `error` | S2 (pipeline) or S1 (pre-upload) | S1 | Stage-dependent — see error taxonomy |
 
-**SSE contract handshake between squads:**
-
-| Step | Who | Task | Dependency |
-|---|---|---|---|
-| 1 | S1 defines SSE contract | S1-W5-06 | S1 delivers event names + payloads to S2 **before S2 builds emission** |
-| 2 | S2 builds server-side emission | S2-W6-06 | Blocked on S1-W5-06 |
-| 3 | S2 exposes stub SSE endpoint | S2-W6-06 | Endpoint: `GET /analysis/{id}/stream` — S1 needs this to test client wiring |
-| 4 | S1 wires client-side | S1-W6-03 | S1 opens `EventSource("/analysis/{id}/stream")` after receiving `analysis_id` from POST /upload response |
-
-**S2 ↔ S3 output format dependency:**  
-S2 fires `mediapipe_complete`, `biomechanics_complete`, and `nemotron_complete` using data returned by S3. S2 must not hardcode field assumptions — S3 output schemas defined in `Kinetic_Biomechanics_Output_Schema.json` and `Nemotron_Testing_Guide.docx` are the contract. Any S3 schema change must be communicated to S2 before S2 builds the emission logic.
+**S2 ↔ S3 output format dependency:**
+S2 fires `mediapipe_complete` and `biomechanics_complete` using data returned by S3. S2 fires `frame_ready` when S3 returns `annotated_frame_url`. S2 must not hardcode field assumptions — S3 output schemas defined in `Kinetic_Biomechanics_Output_Schema.json` are the contract.
 
 ---
 
@@ -103,8 +91,10 @@ Every event (including `error`) always carries these three fields:
 
 ## 1. Pipeline SSE Events
 
+*(Updated May 19, 2026 — events rewritten for Haiku architecture)*
+
 ### `upload_received`
-**Fired by:** S2 — Backend  ·  **Consumed by:** S1 — Frontend  ·  **S3 dependency:** None
+**Fired by:** S2 — Backend · **Consumed by:** S1 — Frontend · **S3 dependency:** None
 
 Fires immediately after S2 receives and stores the video to GCS and writes the initial `form_analyses` row.
 
@@ -119,18 +109,18 @@ Fires immediately after S2 receives and stores the video to GCS and writes the i
 }
 ```
 
-| Field | Type | Nullable | Range / Max | Format | FE Note |
-|---|---|---|---|---|---|
-| `filename` | string | No | max 255 chars | — | Original filename as uploaded. Display in processing screen if helpful. |
-| `size_mb` | float | No | 0 – 500 | 2 dp | Internal reference. Not required to display. |
-| `created_at` | timestamp | No | — | ISO 8601 UTC | Not displayed at this stage — used later in results. |
+| Field | Type | Nullable | FE Note |
+|---|---|---|---|
+| `filename` | string | No | Original filename. Display on processing screen if helpful. |
+| `size_mb` | float | No | Internal reference. Not required to display. |
+| `created_at` | timestamp | No | ISO 8601 UTC. Used later in results — not displayed during processing. |
 
-**Suggested UI copy:** "Video received — starting analysis"
+**Suggested UI copy:** "Video received. Preparing your session..."
 
 ---
 
 ### `mediapipe_started`
-**Fired by:** S2 — Backend  ·  **Consumed by:** S1 — Frontend  ·  **S3 dependency:** S2 dispatches MediaPipe job to S3 immediately before firing this
+**Fired by:** S2 — Backend · **Consumed by:** S1 — Frontend · **S3 dependency:** S2 dispatches MediaPipe job to S3 immediately before firing
 
 Fires when S2 dispatches the pose detection job to S3.
 
@@ -147,14 +137,14 @@ Fires when S2 dispatches the pose detection job to S3.
 |---|---|---|---|
 | `video_url` | string (GCS URI) | No | Internal reference passed to S3. Do not display or link — GCS URIs are not public URLs. |
 
-**Suggested UI copy:** "Detecting your movement..."
+**Suggested UI copy:** "Reading your movement patterns..."
 
 ---
 
 ### `mediapipe_complete`
-**Fired by:** S2 — Backend  ·  **Consumed by:** S1 — Frontend  ·  **S3 dependency:** S3 must return keypoints to S2 before S2 fires this
+**Fired by:** S2 — Backend · **Consumed by:** S1 — Frontend · **S3 dependency:** S3 must return keypoints to S2 before S2 fires this
 
-Fires when S3 returns MediaPipe keypoints to S2 and pose detection is confirmed complete.
+Fires when S3 returns MediaPipe keypoints to S2.
 
 ```json
 {
@@ -168,43 +158,21 @@ Fires when S3 returns MediaPipe keypoints to S2 and pose detection is confirmed 
 }
 ```
 
-| Field | Type | Nullable | Range / Max | Format | FE Note |
-|---|---|---|---|---|---|
-| `rep_count` | integer | No | 1 – 99 | — | Can surface as "X reps detected" on processing screen. |
-| `fps` | integer | No | 1 – 240 | — | Internal. Not required to display. |
-| `keypoints_detected` | integer | No | 33 (fixed for MediaPipe) | — | Internal. Not required to display. |
-| `frames_processed` | integer | No | 1 – 99,999 | — | Internal. Not required to display. |
+| Field | Type | Nullable | FE Note |
+|---|---|---|---|
+| `rep_count` | integer | No | Can surface as "X reps detected" on processing screen. |
+| `fps` | integer | No | Internal. Not required to display. |
+| `keypoints_detected` | integer | No | Internal. Not required to display. |
+| `frames_processed` | integer | No | Internal. Not required to display. |
 
 **Suggested UI copy:** "Movement detected — {rep_count} reps found"
 
 ---
 
-### `overlay_complete`
-**Fired by:** S2 — Backend  ·  **Consumed by:** S1 — Frontend  ·  **S3 dependency:** S3 must complete OpenCV skeleton overlay and return overlay_video_url to S2
-
-Fires when S3 finishes drawing the skeleton overlay on the full video. The overlay video is the visual input sent to Nemotron — it is not shown to the user.
-
-```json
-{
-  "analysis_id":       "uuid",
-  "session_id":        "uuid",
-  "user_id":           "uuid",
-  "overlay_video_url": "gs://kinetic-videos/analyses/{analysis_id}/overlay.mp4"
-}
-```
-
-| Field | Type | Nullable | Notes |
-|---|---|---|---|
-| `overlay_video_url` | string (GCS URI) | No | GCS path of the skeleton overlay video. Not shown to user — passed to Nemotron as AI input. |
-
-**Suggested UI copy:** "Processing your movement..."
-
----
-
 ### `biomechanics_complete`
-**Fired by:** S2 — Backend  ·  **Consumed by:** S1 — Frontend  ·  **S3 dependency:** S3 must return biomechanics JSON to S2 before S2 fires this
+**Fired by:** S2 — Backend · **Consumed by:** S1 — Frontend · **S3 dependency:** S3 must return biomechanics JSON to S2 before S2 fires this
 
-Fires when S3 returns the joint angle and biomechanics output to S2.
+Silent event — % bar advances only. No user-facing message change. Fires after S3 returns the joint angle and biomechanics output.
 
 ```json
 {
@@ -217,107 +185,83 @@ Fires when S3 returns the joint angle and biomechanics output to S2.
 }
 ```
 
-| Field | Type | Nullable | Range / Max | Format | FE Note |
-|---|---|---|---|---|---|
-| `rep_count` | integer | No | 1 – 99 | — | Same as mediapipe_complete — confirms consistency. |
-| `joints_computed` | integer | No | 1 – 33 | — | Internal. Not required to display. |
-| `avg_confidence` | float | No | 0.00 – 1.00 | 2 dp | Internal. Not required to display. |
+| Field | Type | Nullable | FE Note |
+|---|---|---|---|
+| `rep_count` | integer | No | Confirms rep count consistency. Internal. |
+| `joints_computed` | integer | No | Internal. Not required to display. |
+| `avg_confidence` | float | No | Internal. Not required to display. |
 
-**Suggested UI copy:** "Calculating joint angles..."
+**Suggested UI copy:** No message change — % bar nudges only.
 
 ---
 
-### `nemotron_started`
-**Fired by:** S2 — Backend  ·  **Consumed by:** S1 — Frontend  ·  **S3 dependency:** S2 dispatches to Nemotron via S3 immediately before firing this — S3 owns Nemotron integration
+### `haiku_started` *(Added May 19, 2026)*
+**Fired by:** S2 — Backend · **Consumed by:** S1 — Frontend · **S3 dependency:** None — S2 calls Anthropic API internally
 
-Fires when S2 dispatches the Nemotron form analysis job.
+Fires when S2 begins the Haiku Call 1 API request (form analysis + coaching in one call).
 
 ```json
 {
   "analysis_id": "uuid",
   "session_id":  "uuid",
-  "user_id":     "uuid",
-  "video_url":   "gs://..."
+  "user_id":     "uuid"
 }
 ```
 
-> `video_url` is only present if video is sent to Nemotron directly (pending S2-W6-05 test results). Frontend should not depend on it — treat as optional.
-
-**Suggested UI copy:** "Analysing your form..."
+**Suggested UI copy:** "Analysing your form frame by frame..."
 
 ---
 
-### `nemotron_complete`
-**Fired by:** S2 — Backend  ·  **Consumed by:** S1 — Frontend  ·  **S3 dependency:** S3 must return Nemotron scored output to S2 before S2 fires this
+### `analysis_ready` *(Added May 19, 2026 — replaces `analysis_complete`)*
+**Fired by:** S2 — Backend · **Consumed by:** S1 — Frontend · **S3 dependency:** None — fires after Haiku Call 1 completes and all scores + coaching_output are written to DB
 
-Fires when S3 returns Nemotron output (scores, issues, chain of thought) to S2.
+**Tab 1 unlocks on this event.** S1 fetches full results via `GET /analysis/{id}/result`.
 
 ```json
 {
   "analysis_id":   "uuid",
   "session_id":    "uuid",
   "user_id":       "uuid",
-  "overall_score": 72,
-  "issues_count":  2
+  "overall_score": 72
 }
 ```
 
-| Field | Type | Nullable | Range / Max | Format | FE Note |
-|---|---|---|---|---|---|
-| `overall_score` | integer | No | 0 – 100 | — | Can show as teaser on processing screen if desired. Not the final score. |
-| `issues_count` | integer | No | 0 – 99 | — | Internal. Not required to display. |
-
-**Suggested UI copy:** "Form analysis complete — generating your coaching..."
-
----
-
-### `frames_extracting`
-**Fired by:** S2 — Backend  ·  **Consumed by:** S1 — Frontend  ·  **S3 dependency:** None — S2 runs OpenCV internally  ·  **⚠ Squad ownership WIP — confirm S2 vs S3 before build**
-
-Fires when frame extraction begins.
-
-```json
-{
-  "analysis_id":  "uuid",
-  "session_id":   "uuid",
-  "user_id":      "uuid",
-  "video_url":    "gs://...",
-  "frames_total": 12
-}
-```
-
-| Field | Type | Nullable | Notes |
+| Field | Type | Nullable | FE Note |
 |---|---|---|---|
-| `frames_total` | integer | No | Total frames to extract. Can be used for a progress indicator if implemented. |
+| `overall_score` | integer | No | Overall form score 0–100. Can preview on processing screen as it transitions to results. |
 
-**Suggested UI copy:** "Capturing key frames..."
+**Frontend action on receipt:** Navigate to Results screen (Tab 1). Call `GET /analysis/{id}/result` to load full coaching data.
 
 ---
 
-### `frames_ready`
-**Fired by:** S2 — Backend  ·  **Consumed by:** S1 — Frontend  ·  **S3 dependency:** None — S2 runs OpenCV internally  ·  **⚠ Squad ownership WIP — confirm S2 vs S3 before build**
+### `frame_ready` *(Added May 19, 2026 — replaces `frames_extracting` + `frames_ready`)*
+**Fired by:** S2 — Backend · **Consumed by:** S1 — Frontend · **S3 dependency:** S3 runs OpenCV Part 2 and returns annotated_frame_url before S2 fires this
 
-Fires when frame extraction is complete and annotated frames are stored in GCS.
+Fires ~2–3 seconds after `analysis_ready`. Tab 1 coaching text is already visible. Image placeholder swaps to annotated frame.
 
 ```json
 {
-  "analysis_id": "uuid",
-  "session_id":  "uuid",
-  "user_id":     "uuid",
-  "frame_url":   "gs://kinetic-videos/videos/{user_id}/{analysis_id}/frames/frame_bottom.jpg"
+  "analysis_id":         "uuid",
+  "session_id":          "uuid",
+  "user_id":             "uuid",
+  "annotated_frame_url": "https://storage.googleapis.com/kinetic-videos/analyses/{analysis_id}/worst_rep_frame.jpg"
 }
 ```
 
-> `frame_url` is a GCS URI — not a public URL. The results screen uses `annotated_frame_url` from the API response (FE_Response_Schemas.md Section 1), not this GCS URI directly.
+| Field | Type | Nullable | FE Note |
+|---|---|---|---|
+| `annotated_frame_url` | string (URL) | No | Public signed URL. Use directly as `<img src>`. No separate API call needed. |
 
-**Suggested UI copy:** "Frames captured"
+**Frontend action on receipt:** Swap image placeholder with annotated frame in Tab 1.
 
 ---
 
-### `rag_started`
-**Fired by:** S2 — Backend  ·  **Consumed by:** S1 — Frontend  ·  **S3 dependency:** None — S2 queries vector DB internally
+### `progression_ready` *(Added May 19, 2026 — replaces `comparison_ready`)*
+**Fired by:** S2 — Backend · **Consumed by:** S1 — Frontend · **S3 dependency:** None — S2 runs Haiku Call 2 async after `analysis_ready`
 
-Fires when S2 begins retrieving biomechanics knowledge from the vector DB.
+Fires asynchronously after `analysis_ready`. Tab 1 is already fully visible. Tab 2 (User Progression) unlocks on this event.
+
+Only fires if a previous completed analysis exists for the same `exercise_id` + `user_id`.
 
 ```json
 {
@@ -327,98 +271,17 @@ Fires when S2 begins retrieving biomechanics knowledge from the vector DB.
 }
 ```
 
-**Suggested UI copy:** "Looking up coaching knowledge..."
+**Frontend action on receipt:** Unlock Tab 2. Call `GET /analysis/{id}/progression` to load Section 1 (today vs previous) + Section 2 (5-session trend).
 
----
+**If tab is opened before event fires:** Show a loading state — Tab 2 is visible but locked.
 
-### `rag_complete`
-**Fired by:** S2 — Backend  ·  **Consumed by:** S1 — Frontend  ·  **S3 dependency:** None — S2 queries vector DB internally
-
-Fires when S2 finishes RAG retrieval.
-
-```json
-{
-  "analysis_id":        "uuid",
-  "session_id":         "uuid",
-  "user_id":            "uuid",
-  "passages_retrieved": 8
-}
-```
-
-| Field | Type | Nullable | Notes |
-|---|---|---|---|
-| `passages_retrieved` | integer | No | Number of research passages retrieved. Internal — not required to display. |
-
-**Suggested UI copy:** "Almost there — writing your report..."
-
----
-
-### `claude_started`
-**Fired by:** S2 — Backend  ·  **Consumed by:** S1 — Frontend  ·  **S3 dependency:** None — S2 calls Claude API internally
-
-Fires when S2 begins the Claude Sonnet coaching generation call.
-
-```json
-{
-  "analysis_id": "uuid",
-  "session_id":  "uuid",
-  "user_id":     "uuid"
-}
-```
-
-**Suggested UI copy:** "Writing your personalised coaching..."
-
----
-
-### `claude_complete`
-**Fired by:** S2 — Backend  ·  **Consumed by:** S1 — Frontend  ·  **S3 dependency:** None — S2 calls Claude API internally
-
-Fires when Claude returns and S2 writes coaching output to DB.
-
-```json
-{
-  "analysis_id":    "uuid",
-  "session_id":     "uuid",
-  "user_id":        "uuid",
-  "recommendation": "hold"
-}
-```
-
-| Field | Type | Nullable | Range / Max | Format | FE Note |
-|---|---|---|---|---|---|
-| `recommendation` | enum | No | `hold` \| `progress` \| `drop` | — | Can preview on processing screen before results load. Not required. |
-
-**Suggested UI copy:** "Done! Loading your results..."
-
----
-
-### `analysis_complete`
-**Fired by:** S2 — Backend  ·  **Consumed by:** S1 — Frontend  ·  **S3 dependency:** All upstream S3 stages (MediaPipe, Biomechanics, Nemotron) must be complete
-
-Final pipeline event. S1 navigates to the Results screen on receipt.
-
-```json
-{
-  "analysis_id":     "uuid",
-  "session_id":      "uuid",
-  "user_id":         "uuid",
-  "full_result_url": "/analysis/{analysis_id}/result"
-}
-```
-
-| Field | Type | Nullable | Notes |
-|---|---|---|---|
-| `full_result_url` | string (path) | No | Relative path. Frontend navigates to this route to load results. |
-
-**Frontend action on receipt:** Navigate to `full_result_url`. SSE stream closes.
+**If no previous session exists:** `progression_ready` fires with `NO_PREVIOUS_SESSION` error instead — Tab 2 shows empty state message.
 
 ---
 
 ## 2. Error SSE Event
 
-**Fired by:** S2 — Backend (all pipeline stages) or S1 — Frontend (pre-upload validation only)  ·  **Consumed by:** S1 — Frontend
-
-A single `error` event shape is used across all pipeline stages. `error_stage` and `error_code` identify exactly what failed.
+**Fired by:** S2 — Backend (all pipeline stages) or S1 — Frontend (pre-upload validation only) · **Consumed by:** S1 — Frontend
 
 ```json
 {
@@ -432,50 +295,28 @@ A single `error` event shape is used across all pipeline stages. `error_stage` a
 }
 ```
 
-**Field Reference**
+**Field Reference** *(Updated May 19, 2026 — error_stage enum updated)*
 
 | Field | Type | Nullable | Values | FE Note |
 |---|---|---|---|---|
-| `error_code` | enum (string) | No | See taxonomy below | Use this to look up user-facing copy. All caps snake_case. |
-| `error_stage` | enum (string) | No | `quality_gate` · `biomechanics` · `nemotron` · `frame_extraction` · `rag` · `claude` · `pipeline` | Identifies which pipeline stage failed. |
-| `retryable` | enum (string) | No | `"true"` · `"false"` · `"partial"` | **This is a string, not a boolean.** Use string comparison: `retryable === "true"`. Never check truthiness — the string `"false"` is truthy in JS. |
-| `message` | string | No | max 500 chars | **Internal log message — never show to user.** Frontend derives user-facing copy from `error_code`. |
+| `error_code` | enum (string) | No | See taxonomy below | Use this to look up user-facing copy. SCREAMING_SNAKE_CASE. |
+| `error_stage` | enum (string) | No | `quality_gate` · `biomechanics` · `haiku_call_1` · `opencv_part_2` · `haiku_call_2` · `pipeline` | Identifies which pipeline stage failed. *(Updated May 19 — removed `nemotron`, `frame_extraction`, `rag`, `claude`)* |
+| `retryable` | enum (string) | No | `"true"` · `"false"` · `"partial"` | **String, not boolean.** Use `retryable === "true"`. Never check truthiness — `"false"` is truthy in JS. |
+| `message` | string | No | max 500 chars | **Internal log — never show to user.** Frontend derives copy from `error_code`. |
 
 **CTA logic based on `retryable`:**
 
 | Value | Meaning | Frontend action |
 |---|---|---|
-| `"true"` | Infra failure — same video is fine | Show **"Try again"** button. Re-submit the same upload. |
+| `"true"` | Infra failure — same video is fine | Show **"Try again"** button. Re-submit same upload. |
 | `"false"` | Video itself must change | Show **"Re-film and upload"** button. Navigate back to upload screen. |
 | `"partial"` | Pipeline degraded but continues | Show **inline warning** — no blocking CTA. Results still load. |
 
 ---
 
-## 3. Comparison Ready Event
+## 3. Error Code Taxonomy
 
-**Fired by:** S2 — Backend  ·  **Consumed by:** S1 — Frontend  ·  **S3 dependency:** None — S2 runs a second Claude call internally after `analysis_complete`
-
-Fires asynchronously **after** `analysis_complete`. Does not block the results screen from loading.
-
-```json
-{
-  "analysis_id": "uuid",
-  "session_id":  "uuid",
-  "user_id":     "uuid"
-}
-```
-
-**Frontend action on receipt:** Enable the Form Comparison tab on the Results screen.  
-**If tab is opened before event fires:** Show a brief loading state (expected < 5s after `analysis_complete`).  
-**If no previous session exists:** S2 stores `has_comparison: false` immediately — `comparison_ready` still fires so the tab can show the empty state.
-
----
-
-## 4. Error Code Taxonomy
-
-### Pre-upload — S1 validates client-side only · never reaches SSE
-
-**Owner: S1 — Frontend.** These checks run in the browser before the POST request is sent. S2 never sees these errors.
+### Pre-upload — S1 validates client-side · never reaches SSE
 
 | error_code | Trigger | User-facing message | retryable |
 |---|---|---|---|
@@ -486,19 +327,17 @@ Fires asynchronously **after** `analysis_complete`. Does not block the results s
 
 ---
 
-### Quality Gate — `error_stage: "quality_gate"` · V2
+### Quality Gate — `error_stage: "quality_gate"`
 
-**Owner: S3 evaluates · S2 fires the error event.**  
-S3 runs the Landmark Quality Framework against the MediaPipe keypoints and returns a pass/fail result to S2. S2 fires the `error` SSE event using that result. Fires **before any AI processing** — if rejected here, no Nemotron or Claude calls are made.
+**Owner: S3 evaluates · S2 fires the error event.**
+Fires before any AI processing. If rejected here, no Haiku calls are made. All quality gate errors: `retryable: "false"`.
 
-All quality gate errors: `retryable: "false"` — the video must be re-filmed.
-
-> **`landmark_medians` field:** For `occlusion_*` and `out_of_frame_*` codes, the error payload also includes a `landmark_medians` object with `median_visibility` and `median_presence` per critical landmark (knee/hip/heel, both sides). Frontend uses this to confirm the left/right message variant. Not present for `poor_video_quality`, `no_reps_detected`, or `insufficient_reps`.
+> **`landmark_medians` field:** For `occlusion_*` and `out_of_frame_*` codes, the error payload also includes a `landmark_medians` object with `median_visibility` and `median_presence` per critical landmark (knee/hip/heel, both sides). Used to confirm left/right message variant.
 
 | error_code | Gate | Trigger condition | User-facing message | retryable |
 |---|---|---|---|---|
-| `occlusion_left_side` | M1 | ≥1 of knee/hip/heel on left side visibility ≤ 0.60. Right side passes. | "Part of your left side was hidden from view. Rather than switching sides, rotate your camera slightly toward the front of your body." | `"false"` |
-| `occlusion_right_side` | M1 | ≥1 of knee/hip/heel on right side visibility ≤ 0.60. Left side passes. | "Part of your right side was hidden from view. Rather than switching sides, rotate your camera slightly toward the front of your body." | `"false"` |
+| `occlusion_left_side` | M1 | ≥1 of knee/hip/heel on left side visibility ≤ 0.60. Right passes. | "Part of your left side was hidden from view. Rather than switching sides, rotate your camera slightly toward the front of your body." | `"false"` |
+| `occlusion_right_side` | M1 | ≥1 of knee/hip/heel on right side visibility ≤ 0.60. Left passes. | "Part of your right side was hidden from view. Rather than switching sides, rotate your camera slightly toward the front of your body." | `"false"` |
 | `occlusion_both_sides` | M2 | ≥1 of knee/hip/heel visibility ≤ 0.60 on both sides. | "We couldn't see your lower body clearly. Try angling your camera slightly toward the front so both legs are fully in view." | `"false"` |
 | `out_of_frame_left` | M3 | Visibility passes but ≥1 of knee/hip/heel on left side median_presence ≤ 0.50. | "Your left side kept moving out of frame. Move the camera back slightly so your full body stays visible throughout the squat." | `"false"` |
 | `out_of_frame_right` | M3 | Visibility passes but ≥1 of knee/hip/heel on right side median_presence ≤ 0.50. | "Your right side kept moving out of frame. Move the camera back slightly so your full body stays visible throughout the squat." | `"false"` |
@@ -510,8 +349,7 @@ All quality gate errors: `retryable: "false"` — the video must be re-filmed.
 
 ### Biomechanics — `error_stage: "biomechanics"`
 
-**Owner: S3 runs the script · S2 fires the error event.**  
-MediaPipe ran and produced keypoints, but S3's Python biomechanics script could not compute valid metrics from them. S3 returns the failure to S2, which fires the error event.
+**Owner: S3 runs the script · S2 fires the error event.**
 
 | error_code | Trigger | User-facing message | retryable |
 |---|---|---|---|
@@ -522,61 +360,50 @@ MediaPipe ran and produced keypoints, but S3's Python biomechanics script could 
 
 ---
 
-### Nemotron — `error_stage: "nemotron"`
+### Haiku Call 1 — `error_stage: "haiku_call_1"` *(Added May 19, 2026 — replaces `nemotron` stage)*
 
-**Owner: S3 runs Nemotron · S2 fires the error event.**  
-S3 owns the Nemotron API integration. If Nemotron fails, S3 returns the failure to S2, which fires the error event.
+**Owner: S2 — Backend calls Anthropic API · S2 fires the error event.**
+Blocks Tab 1. If Haiku Call 1 fails, no results are available and Tab 2 never starts.
 
 | error_code | Trigger | User-facing message | retryable |
 |---|---|---|---|
-| `NEMOTRON_TIMEOUT` | API call exceeds timeout | "Form analysis is taking longer than expected. We'll retry automatically — hang tight." | `"true"` |
-| `NEMOTRON_NO_OUTPUT` | Response empty or malformed | "The AI couldn't interpret your movement data. Try re-uploading — if it persists, let us know." | `"true"` |
-| `NEMOTRON_CONTEXT_OVERFLOW` | Video too long → token limit hit | "That video is too long for detailed analysis. Try uploading a 30–60 second clip." | `"false"` |
+| `HAIKU_TIMEOUT` | Anthropic API call exceeds timeout | "Form analysis is taking longer than expected. We'll retry automatically — hang tight." | `"true"` |
+| `HAIKU_INVALID_OUTPUT` | Response missing required fields or malformed JSON | "The AI couldn't complete your form analysis. Try re-uploading — if it persists, let us know." | `"true"` |
+| `HAIKU_CONTEXT_OVERFLOW` | Prompt too large — video too long or biomechanics JSON exceeds token limit | "That video is too long for detailed analysis. Try uploading a 30–60 second clip." | `"false"` |
+| `HAIKU_API_ERROR` | Anthropic API returns 5xx or rate limit hit | "We hit a temporary issue with our AI service. Please try again in a moment." | `"true"` |
 
 ---
 
-### Frame Extraction — `error_stage: "frame_extraction"`
+### OpenCV Part 2 — `error_stage: "opencv_part_2"` *(Added May 19, 2026 — replaces `frame_extraction` stage)*
 
-**Owner: S2 — Backend runs OpenCV · S2 fires the error event. ⚠ Squad ownership WIP — confirm S2 vs S3 before build.**
+**Owner: S3 runs OpenCV · S2 fires the error event.**
+Non-blocking — Tab 1 coaching text is already visible. Image placeholder just stays as placeholder. Use `retryable: "partial"` — no blocking CTA.
 
 | error_code | Trigger | User-facing message | retryable |
 |---|---|---|---|
-| `FRAME_EXTRACTION_FAILED` | OpenCV can't seek to Nemotron timestamp | "We identified form issues but couldn't extract the frames to show you. Your text coaching is still available below." | `"partial"` |
+| `FRAME_EXTRACTION_FAILED` | OpenCV can't seek to `bottom_timestamp_ms` — video file corrupt or timestamp missing | "We couldn't generate the form snapshot. Your coaching is still fully available above." | `"partial"` |
+| `ANNOTATION_FAILED` | Frame extracted but OpenCV failed to draw overlays or save to GCS | "We couldn't generate the form snapshot. Your coaching is still fully available above." | `"partial"` |
 
-> `partial` — results screen still loads. `annotated_frame_url` is null. Show text coaching only, no image overlay.
+> Both errors are `partial` — Tab 1 renders with coaching text. `annotated_frame_url` is null. Show coaching only, no image.
 
 ---
 
-### RAG — `error_stage: "rag"`
+### Haiku Call 2 — `error_stage: "haiku_call_2"` *(Added May 19, 2026 — replaces `claude` stage)*
 
-**Owner: S2 — Backend queries vector DB · S2 fires the error event.**  
-Fully within S2. No S3 dependency.
+**Owner: S2 — Backend calls Anthropic API async · S2 fires the error event.**
+Async — Tab 1 is already fully visible. Failure only affects Tab 2. Use `retryable: "partial"` — Tab 1 is always unaffected.
 
-| error_code | Trigger | User-facing message | retryable |
+| error_code | Trigger | User-facing message (Tab 2 only) | retryable |
 |---|---|---|---|
-| `RAG_UNAVAILABLE` | Vector DB timeout or service down | "Coaching library is temporarily unavailable. Your form analysis is ready, but personalised drills may be limited." | `"partial"` |
-| `RAG_NO_RESULTS` | No matching coaching context found | "We couldn't find specific drills for your movement pattern yet. General coaching below." | `"partial"` |
-
-> Both RAG errors are `partial` — pipeline continues to Claude without RAG context. Results still load.
-
----
-
-### Claude — `error_stage: "claude"`
-
-**Owner: S2 — Backend calls Claude API · S2 fires the error event.**  
-Fully within S2. No S3 dependency.
-
-| error_code | Trigger | User-facing message | retryable |
-|---|---|---|---|
-| `CLAUDE_TIMEOUT` | Claude API exceeds timeout | "Your coaching report is taking longer than expected. Refreshing should show your results shortly." | `"true"` |
-| `CLAUDE_ERROR` | Malformed or empty Claude response | "We hit a snag writing your coaching report. Your raw form data is saved — try refreshing." | `"true"` |
+| `HAIKU_CALL_2_TIMEOUT` | Anthropic API call for longitudinal coaching exceeds timeout | "Progression data is taking longer than expected. Try tapping the tab again in a moment." | `"partial"` |
+| `HAIKU_CALL_2_ERROR` | Malformed response or API error | "We couldn't load your progression data. Your form analysis above is complete and saved." | `"partial"` |
+| `NO_PREVIOUS_SESSION` | No prior completed analysis for same `exercise_id` + `user_id` | "This is your first session for this exercise — progression tracking will appear after your next upload." | `"false"` |
 
 ---
 
 ### Infrastructure / Pipeline — `error_stage: "pipeline"`
 
-**Owner: S2 — Backend infrastructure · S2 fires the error event.**  
-Worker-level failures. No S3 dependency.
+**Owner: S2 — Backend infrastructure · S2 fires the error event.**
 
 | error_code | Trigger | User-facing message | retryable |
 |---|---|---|---|
@@ -585,49 +412,56 @@ Worker-level failures. No S3 dependency.
 
 ---
 
-## 5. HTTP Error Codes
+## 4. HTTP Error Codes
 
 ### `POST /upload` — S1 sends · S2 receives · S2 returns HTTP status
 
 | HTTP Status | When | Response body | FE action |
 |---|---|---|---|
 | `400 Bad Request` | Required field missing in POST body | `{ "error": "MISSING_FIELD", "field": "exercise_id" }` | Show inline validation error on upload form |
-| `413 Payload Too Large` | File > 500 MB caught at server | `{ "error": "FILE_TOO_LARGE" }` | Show file size error (same copy as pre-upload `FILE_TOO_LARGE`) |
-| `415 Unsupported Media Type` | Wrong MIME type reaches server | `{ "error": "FORMAT_UNSUPPORTED" }` | Show format error (same copy as pre-upload `FORMAT_UNSUPPORTED`) |
+| `413 Payload Too Large` | File > 500 MB caught at server | `{ "error": "FILE_TOO_LARGE" }` | Show file size error |
+| `415 Unsupported Media Type` | Wrong MIME type reaches server | `{ "error": "FORMAT_UNSUPPORTED" }` | Show format error |
 | `500 Internal Server Error` | S2 crashed before SSE stream opened | `{ "error": "SYSTEM_ERROR" }` | Show generic "Something went wrong" + "Try again" |
 | `503 Service Unavailable` | S2 pipeline infrastructure down | `{ "error": "SERVICE_UNAVAILABLE" }` | Show "Service is temporarily down — try again shortly" |
 
-### `GET /analysis/{id}/result` — S1 requests · S2 returns
+### `GET /analysis/{id}/result` — S1 requests on `analysis_ready` · S2 returns
 
 | HTTP Status | When | FE action |
 |---|---|---|
-| `200 OK` | Analysis complete and results available | Render results screen |
-| `202 Accepted` | Pipeline still in progress (user navigated directly) | Show processing/waiting screen. Resume SSE polling if needed. |
+| `200 OK` | Haiku Call 1 complete, results available | Render Tab 1 results screen |
+| `202 Accepted` | Pipeline still in progress | Show processing/waiting screen. |
 | `404 Not Found` | `analysis_id` does not exist | Show "Analysis not found" — navigate back to upload |
 | `500 Internal Server Error` | S2 DB read failed | Show "Couldn't load your results — try refreshing" |
 
-### `GET /analysis/{id}/comparison` — S1 requests · S2 returns
+### `GET /analysis/{id}/progression` — S1 requests on `progression_ready` · S2 returns *(Updated May 19, 2026 — replaces `/comparison`)*
 
 | HTTP Status | When | FE action |
 |---|---|---|
-| `200 OK` | Comparison data available (`has_comparison: true` or `false`) | Render comparison tab |
-| `202 Accepted` | Async comparison still generating in S2 | Show brief loading state in tab |
-| `404 Not Found` | `analysis_id` does not exist | Hide comparison tab |
-| `500 Internal Server Error` | S2 DB read failed | Show "Comparison unavailable — try refreshing" inline in tab |
+| `200 OK` | Haiku Call 2 complete, progression data available | Render Tab 2 — Section 1 + Section 2 |
+| `202 Accepted` | Haiku Call 2 still generating | Show loading state in Tab 2 |
+| `404 Not Found` | `analysis_id` does not exist | Hide Tab 2 |
+| `500 Internal Server Error` | S2 DB read failed | Show "Progression unavailable — try refreshing" inline in Tab 2 |
 
 ---
 
-## 6. Roadmap Task IDs
+## 5. Roadmap Task IDs
 
 | Role | Squad | Task | Notes |
 |---|---|---|---|
 | Defines SSE shapes | S1 | S1-W5-03 | FE JSON schema including SSE event shapes (this file) |
-| Defines SSE contract | S1 | S1-W5-06 | SSE skeleton — all event names + payloads delivered to S2. **S2 blocked until this is done.** |
-| Emits server-side | S2 | S2-W6-06 | S2 emits correct SSE events at each pipeline stage. Depends on S1-W5-06. |
-| Wires client-side | S1 | S1-W6-03 | S1 wires SSE to processing states — tested against S2 stub endpoint. Depends on S2-W6-06 stub. |
+| Defines SSE contract | S1 | S1-W5-06 | SSE skeleton — all event names + payloads delivered to S2 |
+| Emits server-side | S2 | S2-W7-06 | S2 emits correct SSE events at each pipeline stage |
+| Wires client-side | S1 | S1-W7-01 | S1 wires SSE to Tab 1 — `analysis_ready` triggers Results screen |
+| Schema patches | S2 | PATCH-S2-W7-B | Update SSE contract — retire old events, add new events |
 
 ---
 
 ## Changelog
-- May 12, 2026: Initial definition — all SSE events, error taxonomy (pre-upload + 7 pipeline stages), HTTP error codes, frontend UI copy, CTA logic
-- May 12, 2026: Added squad ownership and inter-squad dependencies to every event, error stage, HTTP endpoint, and roadmap task section
+- May 19, 2026: Full rewrite — Nemotron → Haiku 4.5 architecture.
+  - Removed events: `overlay_complete`, `nemotron_started`, `nemotron_complete`, `frames_extracting`, `frames_ready`, `rag_started`, `rag_complete`, `claude_started`, `claude_complete`, `analysis_complete`, `comparison_ready`
+  - Added events: `haiku_started`, `analysis_ready` (Tab 1 unlocks), `frame_ready` (image loads ~2–3s later), `progression_ready` (Tab 2 unlocks async)
+  - `error_stage` enum updated: removed `nemotron`, `frame_extraction`, `rag`, `claude` → added `haiku_call_1`, `opencv_part_2`, `haiku_call_2`
+  - Error codes: `NEMOTRON_*` → `HAIKU_*` · `CLAUDE_*` → `HAIKU_CALL_2_*` · RAG errors removed
+  - HTTP endpoint: `/analysis/{id}/comparison` → `/analysis/{id}/progression`
+  - Stream lifecycle: closes after `progression_ready` (not `analysis_complete`)
+- May 12, 2026: Initial definition — all SSE events, error taxonomy, HTTP codes, frontend UI copy, CTA logic, squad ownership
