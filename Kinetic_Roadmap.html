@@ -26,6 +26,10 @@
       --s1: #818cf8; --s1-soft: rgba(129,140,248,0.12);
       --s2: #f59e0b; --s2-soft: rgba(245,158,11,0.12);
       --s3: #10b981; --s3-soft: rgba(16,185,129,0.12);
+
+      --done: #22c55e;
+      --wip: #f97316;
+      --scrapped: #6b7280;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -46,12 +50,18 @@
     .header-sub { color: var(--text-muted); font-size: 14px; }
 
     /* Legend */
-    .legend { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px 24px; margin-bottom: 32px; }
+    .legend { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px 24px; margin-bottom: 16px; }
     .legend-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin-bottom: 14px; }
     .legend-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 8px; }
     .legend-item { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--text-dim); }
     .legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
     .legend-ids { font-size: 11px; color: var(--text-muted); margin-left: auto; }
+
+    /* Status legend */
+    .status-legend { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px 24px; margin-bottom: 32px; display: flex; gap: 24px; flex-wrap: wrap; align-items: center; }
+    .status-legend-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin-right: 8px; }
+    .status-legend-item { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-dim); }
+    .status-icon { font-size: 14px; line-height: 1; }
 
     /* Squad key */
     .squad-key { display: flex; gap: 12px; margin-bottom: 40px; flex-wrap: wrap; }
@@ -70,12 +80,16 @@
     .week-num { font-size: 22px; font-weight: 800; color: #fff; min-width: 80px; }
     .week-dates { font-size: 13px; color: var(--text-muted); }
     .week-theme { font-size: 14px; color: var(--text-dim); font-style: italic; border-left: 2px solid var(--border); padding-left: 16px; }
+    .week-badges { margin-left: auto; display: flex; gap: 8px; align-items: center; flex-shrink: 0; }
     .week-milestone {
       display: inline-block; font-size: 11px; font-weight: 700; text-transform: uppercase;
-      letter-spacing: 0.06em; padding: 3px 10px; border-radius: 4px; margin-left: auto;
+      letter-spacing: 0.06em; padding: 3px 10px; border-radius: 4px;
       background: rgba(52,211,153,0.12); color: #34d399; border: 1px solid rgba(52,211,153,0.25);
       white-space: nowrap;
     }
+    .week-status { display: inline-block; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; padding: 3px 10px; border-radius: 4px; white-space: nowrap; }
+    .week-status.complete { background: rgba(34,197,94,0.12); color: var(--done); border: 1px solid rgba(34,197,94,0.25); }
+    .week-status.in-progress { background: rgba(249,115,22,0.12); color: var(--wip); border: 1px solid rgba(249,115,22,0.25); }
 
     /* Squad section */
     .squad-block { margin-bottom: 16px; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
@@ -94,10 +108,28 @@
       padding: 10px 20px; border-bottom: 1px solid var(--border); font-size: 14px; color: var(--text-dim);
     }
     .task-item:last-child { border-bottom: none; }
-    .task-check { color: var(--text-muted); font-size: 13px; margin-top: 2px; flex-shrink: 0; }
+    .task-check { font-size: 13px; margin-top: 2px; flex-shrink: 0; width: 16px; text-align: center; }
     .task-text { flex: 1; line-height: 1.5; }
     .task-text strong { color: var(--text); font-weight: 500; }
     .task-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
+
+    /* Task status states */
+    .task-item.done { background: rgba(34,197,94,0.03); }
+    .task-item.done .task-check { color: var(--done); }
+    .task-item.done .task-text { color: var(--text-muted); }
+    .task-item.done .task-text strong { color: var(--text-dim); }
+
+    .task-item.wip { background: rgba(249,115,22,0.04); }
+    .task-item.wip .task-check { color: var(--wip); }
+    .task-item.wip .task-text { color: var(--text); }
+
+    .task-item.todo .task-check { color: var(--text-muted); }
+
+    .task-item.scrapped { background: rgba(239,68,68,0.02); }
+    .task-item.scrapped .task-check { color: var(--scrapped); }
+    .task-item.scrapped .task-text { text-decoration: line-through; color: var(--text-muted); opacity: 0.55; }
+    .task-item.scrapped .task-text strong { color: var(--text-muted); }
+    .scrapped-badge { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; padding: 1px 5px; border-radius: 3px; background: rgba(239,68,68,0.1); color: #ef4444; border: 1px solid rgba(239,68,68,0.2); margin-left: 8px; text-decoration: none; display: inline-block; vertical-align: middle; }
 
     /* US tags */
     .us-tag {
@@ -113,7 +145,6 @@
     .us-tag.e7 { background: var(--e7-soft); color: var(--e7); border: 1px solid var(--e7-border); }
     .us-tag.infra { background: rgba(115,115,115,0.12); color: var(--text-muted); border: 1px solid var(--border); }
 
-    /* Merge note */
     /* Design task row */
     .task-item.design { background: rgba(129,140,248,0.04); }
     .design-tag {
@@ -122,6 +153,14 @@
       background: rgba(129,140,248,0.12); color: #818cf8; border: 1px solid rgba(129,140,248,0.25);
       flex-shrink: 0; margin-top: 2px;
     }
+
+    /* Architecture note */
+    .arch-note {
+      font-size: 13px; color: var(--text-dim); background: rgba(34,211,238,0.06);
+      border: 1px solid rgba(34,211,238,0.2); border-radius: 8px; padding: 12px 16px;
+      margin: 0 0 16px 0; line-height: 1.6;
+    }
+    .arch-note strong { color: #22d3ee; }
 
     .merge-note {
       font-size: 12px; color: var(--text-muted); background: var(--surface-2);
@@ -139,6 +178,9 @@
     tbody td { padding: 14px 20px; color: var(--text-dim); border-bottom: 1px solid var(--border); vertical-align: top; line-height: 1.6; }
     tbody tr:last-child td { border-bottom: none; }
     tbody tr:hover td { background: var(--surface-2); }
+    .ms-done { color: var(--done); font-weight: 600; }
+    .ms-wip  { color: var(--wip);  font-weight: 600; }
+    .ms-upcoming { color: var(--text-muted); }
 
     /* Launch checklist */
     .checklist { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 24px 28px; margin-bottom: 40px; }
@@ -155,7 +197,7 @@
       h1 { font-size: 24px; }
       .week-header { flex-wrap: wrap; }
       .week-theme { border-left: none; padding-left: 0; width: 100%; }
-      .week-milestone { margin-left: 0; }
+      .week-badges { margin-left: 0; }
     }
   </style>
 </head>
@@ -168,9 +210,19 @@
       <span class="badge">May 4 – June 8, 2026</span>
       <span class="badge">Weeks 5–10</span>
       <span class="badge">3 Squads</span>
+      <span class="badge">Updated May 19, 2026</span>
     </div>
     <h1>Kinetic — Squad Roadmap</h1>
     <p class="header-sub">Thursday merges · First E2E slice end of Week 6 · Launch June 15</p>
+  </div>
+
+  <!-- Status Legend -->
+  <div class="status-legend">
+    <span class="status-legend-title">Task Status</span>
+    <div class="status-legend-item"><span class="status-icon" style="color:var(--done)">✓</span> Done</div>
+    <div class="status-legend-item"><span class="status-icon" style="color:var(--wip)">◉</span> In Progress</div>
+    <div class="status-legend-item"><span class="status-icon" style="color:var(--text-muted)">☐</span> Not Started</div>
+    <div class="status-legend-item"><span class="status-icon" style="color:var(--scrapped)">✕</span> <span style="text-decoration:line-through;opacity:0.6">Scrapped</span> — direction changed</div>
   </div>
 
   <!-- Colour Legend -->
@@ -195,7 +247,7 @@
     <span class="squad-pill sq3">Squad 3 — Data / Full Stack (1.5 PM + 1.5 DS + 1 FS)</span>
   </div>
 
-  <!-- Week 5 -->
+  <!-- ═══════════════════════════════ WEEK 5 ═══════════════════════════════ -->
   <div class="week">
     <div class="week-header">
       <div>
@@ -203,49 +255,54 @@
         <div class="week-dates">May 4–8</div>
       </div>
       <div class="week-theme">Scaffold everything. Agree on all shared contracts before building. No squad should be blocked by another after this week.</div>
+      <div class="week-badges"><span class="week-status complete">✓ Complete</span></div>
     </div>
 
+    <!-- W5 Squad 1 -->
     <div class="squad-block">
       <div class="squad-label sq1">Squad 1 — Frontend</div>
       <ul class="task-list">
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text">Scaffold React + Tailwind project, confirm folder structure and component conventions<div class="task-tags"><span class="us-tag infra">Infra</span></div></div></li>
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text">Define and document <strong>JSON schema for all frontend-consumed responses</strong> (form analysis result, auth, workout log, SSE events)<div class="task-tags"><span class="us-tag e4">US-06</span><span class="us-tag e4">US-07</span><span class="us-tag e4">US-08</span><span class="us-tag e3">US-05</span></div></div></li>
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text">Build dummy data fixtures matching agreed JSON schema<div class="task-tags"><span class="us-tag e4">US-06</span><span class="us-tag e4">US-07</span><span class="us-tag e4">US-08</span></div></div></li>
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text">Scaffold core screen shells: Upload, Results, Dashboard, History, Workout Logger, Onboarding<div class="task-tags"><span class="us-tag e1">US-01</span><span class="us-tag e1">US-02</span><span class="us-tag e2">US-04</span><span class="us-tag e3">US-05</span><span class="us-tag e4">US-06</span><span class="us-tag e5">US-09</span><span class="us-tag e5">US-10</span><span class="us-tag e6">US-11b</span></div></div></li>
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text">Implement <strong>SSE skeleton</strong> on Upload screen — define processing states and render placeholder UI for each state<div class="task-tags"><span class="us-tag e3">US-05</span></div></div></li>
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text">Agree SSE event names + payloads with Squad 2<div class="task-tags"><span class="us-tag e3">US-05</span></div></div></li>
+        <li class="task-item done"><span class="task-check">✓</span><div class="task-text">Scaffold React + Tailwind project, confirm folder structure and component conventions<div class="task-tags"><span class="us-tag infra">Infra</span></div></div></li>
+        <li class="task-item done"><span class="task-check">✓</span><div class="task-text">Define and document <strong>JSON schema for all frontend-consumed responses</strong> (form analysis result, workout log, SSE events)<div class="task-tags"><span class="us-tag e4">US-06</span><span class="us-tag e4">US-07</span><span class="us-tag e4">US-08</span><span class="us-tag e3">US-05</span></div></div></li>
+        <li class="task-item done"><span class="task-check">✓</span><div class="task-text">Build dummy data fixtures matching agreed JSON schema<div class="task-tags"><span class="us-tag e4">US-06</span><span class="us-tag e4">US-07</span><span class="us-tag e4">US-08</span></div></div></li>
+        <li class="task-item done"><span class="task-check">✓</span><div class="task-text">Scaffold core screen shells: Upload, Results, Dashboard, History, Workout Logger, Onboarding<div class="task-tags"><span class="us-tag e1">US-01</span><span class="us-tag e1">US-02</span><span class="us-tag e2">US-04</span><span class="us-tag e3">US-05</span><span class="us-tag e4">US-06</span><span class="us-tag e5">US-09</span><span class="us-tag e5">US-10</span><span class="us-tag e6">US-11b</span></div></div></li>
+        <li class="task-item done"><span class="task-check">✓</span><div class="task-text">Implement <strong>SSE skeleton</strong> on Upload screen — define processing states and render placeholder UI for each state<div class="task-tags"><span class="us-tag e3">US-05</span></div></div></li>
+        <li class="task-item done"><span class="task-check">✓</span><div class="task-text">Agree SSE event names + payloads with Squad 2<div class="task-tags"><span class="us-tag e3">US-05</span></div></div></li>
+        <li class="task-item design done"><span class="design-tag">Design</span><div class="task-text">Upload flow screens → Form Analysis results screens — wireframes ready for dev handoff<div class="task-tags"><span class="us-tag e2">US-04</span><span class="us-tag e3">US-05</span><span class="us-tag e4">US-06</span><span class="us-tag e4">US-07</span></div></div></li>
       </ul>
-        <li class="task-item design"><span class="design-tag">Design</span><div class="task-text">Upload flow screens → Form Analysis results screens — wireframes ready for dev handoff<div class="task-tags"><span class="us-tag e2">US-04</span><span class="us-tag e3">US-05</span><span class="us-tag e4">US-06</span><span class="us-tag e4">US-07</span></div></div></li>
-      <div class="merge-note"><span class="merge-icon">⊕</span> Thu merge: React scaffold + dummy data + SSE state skeleton + agreed JSON contracts</div>
+      <div class="merge-note"><span class="merge-icon">✓</span> Thu merge: React scaffold + dummy data + SSE state skeleton + agreed JSON contracts — committed</div>
     </div>
 
+    <!-- W5 Squad 2 -->
     <div class="squad-block">
       <div class="squad-label sq2">Squad 2 — Backend</div>
       <ul class="task-list">
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text">Provision GCP project, S3/Cloud Storage buckets, API Gateway<div class="task-tags"><span class="us-tag infra">Infra</span></div></div></li>
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text">Scaffold Python API project structure (routes, services, models)<div class="task-tags"><span class="us-tag infra">Infra</span></div></div></li>
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text">Define and agree <strong>biomechanics output JSON format</strong> with Squad 1 and Squad 3<div class="task-tags"><span class="us-tag e4">US-06</span><span class="us-tag e4">US-07</span></div></div></li>
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text">Scope MediaPipe integration for Goblet Squat: keypoints, joint angle computations, rep segmentation<div class="task-tags"><span class="us-tag e4">US-06</span></div></div></li>
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text">Define structured DB schema: users, sessions, exercises, workout_logs, form_scores<div class="task-tags"><span class="us-tag e1">US-01</span><span class="us-tag e5">US-10</span><span class="us-tag e6">US-11b</span></div></div></li>
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text">Stub <strong>/upload</strong> and <strong>/analyze</strong> endpoints (return hardcoded biomechanics JSON)<div class="task-tags"><span class="us-tag e2">US-04</span><span class="us-tag e3">US-05</span><span class="us-tag e4">US-06</span></div></div></li>
+        <li class="task-item done"><span class="task-check">✓</span><div class="task-text">Provision GCP project, Cloud Storage buckets, API Gateway<div class="task-tags"><span class="us-tag infra">Infra</span></div></div></li>
+        <li class="task-item done"><span class="task-check">✓</span><div class="task-text">Scaffold Python API project structure (routes, services, models)<div class="task-tags"><span class="us-tag infra">Infra</span></div></div></li>
+        <li class="task-item done"><span class="task-check">✓</span><div class="task-text">Define and agree <strong>biomechanics output JSON format</strong> with Squad 1 and Squad 3<div class="task-tags"><span class="us-tag e4">US-06</span><span class="us-tag e4">US-07</span></div></div></li>
+        <li class="task-item done"><span class="task-check">✓</span><div class="task-text">Scope MediaPipe integration for Goblet Squat: keypoints, joint angle computations, rep segmentation<div class="task-tags"><span class="us-tag e4">US-06</span></div></div></li>
+        <li class="task-item done"><span class="task-check">✓</span><div class="task-text">Define structured DB schema: users, sessions, exercises, workout_logs, form_scores<div class="task-tags"><span class="us-tag e1">US-01</span><span class="us-tag e5">US-10</span><span class="us-tag e6">US-11b</span></div></div></li>
+        <li class="task-item done"><span class="task-check">✓</span><div class="task-text">Stub <strong>/upload</strong> and <strong>/analyze</strong> endpoints (return hardcoded biomechanics JSON)<div class="task-tags"><span class="us-tag e2">US-04</span><span class="us-tag e3">US-05</span><span class="us-tag e4">US-06</span></div></div></li>
+        <li class="task-item done"><span class="task-check">✓</span><div class="task-text">Define LLM input test plan (Scenarios A, B, C) — write test scripts + sample JSON. Executed in W6 parallel track → confirmed Haiku 4.5 as pipeline model<div class="task-tags"><span class="us-tag e4">US-06</span><span class="us-tag e4">US-07</span></div></div></li>
       </ul>
-      <div class="merge-note"><span class="merge-icon">⊕</span> Thu merge: GCP infra live + API scaffold + stubbed endpoints + schema docs</div>
+      <div class="merge-note"><span class="merge-icon">✓</span> Thu merge: GCP infra live + API scaffold + stubbed endpoints + schema docs — committed</div>
     </div>
 
+    <!-- W5 Squad 3 -->
     <div class="squad-block">
       <div class="squad-label sq3">Squad 3 — Data / Full Stack</div>
       <ul class="task-list">
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text">Collect 20–30 high-quality RAG sources for Goblet Squat (research papers, YouTube transcripts, Kaggle, biomechanics refs)<div class="task-tags"><span class="us-tag e4">US-06</span><span class="us-tag e4">US-07</span></div></div></li>
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text">Define <strong>vector DB schema</strong>: document structure, metadata fields, embedding strategy<div class="task-tags"><span class="us-tag infra">Infra</span></div></div></li>
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text">Define structured DB schema (coordinate with Squad 2 — single source of truth)<div class="task-tags"><span class="us-tag infra">Infra</span></div></div></li>
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text">Evaluate and select vector DB (Pinecone, Weaviate, pgvector) — document rationale<div class="task-tags"><span class="us-tag infra">Infra</span></div></div></li>
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text">Define ingestion pipeline architecture: chunking strategy, embedding model, metadata tagging<div class="task-tags"><span class="us-tag e4">US-07</span></div></div></li>
+        <li class="task-item done"><span class="task-check">✓</span><div class="task-text">Collect Goblet Squat reference sources (research papers, biomechanics refs, coaching transcripts)<div class="task-tags"><span class="us-tag e4">US-06</span><span class="us-tag e4">US-07</span></div></div></li>
+        <li class="task-item done"><span class="task-check">✓</span><div class="task-text">Define structured DB schema (coordinate with Squad 2 — single source of truth)<div class="task-tags"><span class="us-tag infra">Infra</span></div></div></li>
+        <li class="task-item scrapped"><span class="task-check">✕</span><div class="task-text"><strong>Define vector DB schema</strong>: document structure, metadata fields, embedding strategy <span class="scrapped-badge">Scrapped</span><div class="task-tags"><span class="us-tag infra">Infra</span></div></div></li>
+        <li class="task-item scrapped"><span class="task-check">✕</span><div class="task-text"><strong>Evaluate and select vector DB</strong> (Pinecone, Weaviate, pgvector) — document rationale <span class="scrapped-badge">Scrapped</span><div class="task-tags"><span class="us-tag infra">Infra</span></div></div></li>
+        <li class="task-item scrapped"><span class="task-check">✕</span><div class="task-text"><strong>Define ingestion pipeline architecture</strong>: chunking strategy, embedding model, metadata tagging <span class="scrapped-badge">Scrapped</span><div class="task-tags"><span class="us-tag e4">US-07</span></div></div></li>
       </ul>
-      <div class="merge-note"><span class="merge-icon">⊕</span> Thu merge: Source list + vector DB + structured DB schemas agreed + ingestion architecture</div>
+      <div class="merge-note"><span class="merge-icon">✓</span> Thu merge: Reference sources documented + structured DB schema agreed — committed. RAG ingestion direction dropped.</div>
     </div>
   </div>
 
-  <!-- Week 6 -->
+  <!-- ═══════════════════════════════ WEEK 6 ═══════════════════════════════ -->
   <div class="week">
     <div class="week-header">
       <div>
@@ -253,145 +310,164 @@
         <div class="week-dates">May 11–17</div>
       </div>
       <div class="week-theme">Build core features. By Thursday all three squads connect — upload a real video, get real biomechanics data on the frontend.</div>
-      <span class="week-milestone">First E2E Slice</span>
+      <div class="week-badges">
+        <span class="week-status in-progress">◉ In Progress</span>
+        <span class="week-milestone">First E2E Slice</span>
+      </div>
     </div>
 
+    <!-- W6 Squad 1 -->
     <div class="squad-block">
       <div class="squad-label sq1">Squad 1 — Frontend</div>
       <ul class="task-list">
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text"><strong>Build Upload screen</strong> (full): exercise selector, weight input, video file upload, filming tips overlay<div class="task-tags"><span class="us-tag e2">US-04</span><span class="us-tag e1">US-03</span></div></div></li>
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text">Wire SSE to real processing states — test against Squad 2's stub endpoint<div class="task-tags"><span class="us-tag e3">US-05</span></div></div></li>
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text"><strong>Build Results screen</strong> using dummy data: form score, joint angle overlay, corrections, coaching tips, rep-by-rep chart<div class="task-tags"><span class="us-tag e4">US-06</span><span class="us-tag e4">US-07</span><span class="us-tag e4">US-08</span></div></div></li>
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text">Build <strong>Dashboard shell</strong> with dummy session history and score trend chart<div class="task-tags"><span class="us-tag e5">US-09</span></div></div></li>
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text">Replace Upload dummy data with real <strong>/upload endpoint</strong> — first real video upload working in browser<div class="task-tags"><span class="us-tag e1">US-03</span><span class="us-tag e2">US-04</span></div></div></li>
+        <li class="task-item todo"><span class="task-check">☐</span><div class="task-text"><strong>Build Upload screen</strong> (full): exercise selector, weight input, video file upload, filming tips overlay<div class="task-tags"><span class="us-tag e2">US-04</span><span class="us-tag e1">US-03</span></div></div></li>
+        <li class="task-item todo"><span class="task-check">☐</span><div class="task-text">Wire SSE to real processing states — test against Squad 2's stub endpoint<div class="task-tags"><span class="us-tag e3">US-05</span></div></div></li>
+        <li class="task-item done"><span class="task-check">✓</span><div class="task-text"><strong>Build Results screen</strong> using dummy data: form score, joint angle overlay, corrections, coaching tips, rep-by-rep chart<div class="task-tags"><span class="us-tag e4">US-06</span><span class="us-tag e4">US-07</span><span class="us-tag e4">US-08</span></div></div></li>
+        <li class="task-item done"><span class="task-check">✓</span><div class="task-text">Build <strong>Dashboard shell</strong> with dummy session history and score trend chart<div class="task-tags"><span class="us-tag e5">US-09</span></div></div></li>
+        <li class="task-item todo"><span class="task-check">☐</span><div class="task-text">Replace Upload dummy data with real <strong>/upload endpoint</strong> — first real video upload working in browser<div class="task-tags"><span class="us-tag e1">US-03</span><span class="us-tag e2">US-04</span></div></div></li>
+        <li class="task-item design todo"><span class="design-tag">Design</span><div class="task-text">Home Screen + Authentication screens — wireframes ready for dev handoff<div class="task-tags"><span class="us-tag e1">US-01</span><span class="us-tag e1">US-02</span><span class="us-tag e5">US-09</span></div></div></li>
+        <li class="task-item design todo"><span class="design-tag">Design</span><div class="task-text">Dashboard &amp; Profile screens — wireframes ready for dev handoff<div class="task-tags"><span class="us-tag e5">US-09</span><span class="us-tag e5">US-10</span><span class="us-tag e7">US-12a</span><span class="us-tag e7">US-12b</span></div></div></li>
       </ul>
-        <li class="task-item design"><span class="design-tag">Design</span><div class="task-text">Home Screen + Authentication screens — wireframes ready for dev handoff<div class="task-tags"><span class="us-tag e1">US-01</span><span class="us-tag e1">US-02</span><span class="us-tag e1">US-03</span><span class="us-tag e5">US-09</span></div></div></li>
-        <li class="task-item design"><span class="design-tag">Design</span><div class="task-text">Dashboard & Profile screens — wireframes ready for dev handoff<div class="task-tags"><span class="us-tag e5">US-09</span><span class="us-tag e5">US-10</span><span class="us-tag e7">US-12a</span><span class="us-tag e7">US-12b</span></div></div></li>
       <div class="merge-note"><span class="merge-icon">⊕</span> Thu E2E slice: Upload → real endpoint → MediaPipe biomechanics JSON → displayed on Results screen</div>
     </div>
 
+    <!-- W6 Squad 2 -->
     <div class="squad-block">
       <div class="squad-label sq2">Squad 2 — Backend</div>
       <ul class="task-list">
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text">Implement <strong>video upload endpoint</strong>: receive video, store to GCS, return upload confirmation + SSE stream<div class="task-tags"><span class="us-tag e1">US-03</span><span class="us-tag e3">US-05</span></div></div></li>
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text">Integrate <strong>MediaPipe</strong> for Goblet Squat: extract joint keypoints, compute angles (knee, hip, torso), rep segmentation<div class="task-tags"><span class="us-tag e4">US-06</span></div></div></li>
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text">Return structured <strong>biomechanics JSON</strong> from /analyze endpoint (real MediaPipe output)<div class="task-tags"><span class="us-tag e4">US-06</span><span class="us-tag e4">US-07</span></div></div></li>
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text">Begin <strong>Nemotron 3 Nano Omni integration</strong>: send raw video + biomechanics JSON as dual input<div class="task-tags"><span class="us-tag e4">US-06</span><span class="us-tag e4">US-07</span></div></div></li>
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text">Emit correct <strong>SSE events</strong> at each pipeline stage<div class="task-tags"><span class="us-tag e3">US-05</span></div></div></li>
+        <li class="task-item done"><span class="task-check">✓</span><div class="task-text">Implement <strong>video upload endpoint</strong>: receive video, store to GCS, return upload confirmation + SSE stream<div class="task-tags"><span class="us-tag e1">US-03</span><span class="us-tag e3">US-05</span></div></div></li>
+        <li class="task-item done"><span class="task-check">✓</span><div class="task-text">Integrate <strong>MediaPipe</strong> for Goblet Squat: extract joint keypoints, compute angles (knee, hip, torso), rep segmentation<div class="task-tags"><span class="us-tag e4">US-06</span></div></div></li>
+        <li class="task-item wip"><span class="task-check">◉</span><div class="task-text">Return structured <strong>biomechanics JSON</strong> from /analyze endpoint (real MediaPipe output)<div class="task-tags"><span class="us-tag e4">US-06</span><span class="us-tag e4">US-07</span></div></div></li>
+        <li class="task-item scrapped"><span class="task-check">✕</span><div class="task-text"><strong>Begin Nemotron 3 Nano Omni integration</strong>: send raw video + biomechanics JSON as dual input <span class="scrapped-badge">Scrapped</span><div class="task-tags"><span class="us-tag e4">US-06</span><span class="us-tag e4">US-07</span></div></div></li>
+        <li class="task-item done"><span class="task-check">✓</span><div class="task-text">Emit correct <strong>SSE events</strong> at each pipeline stage<div class="task-tags"><span class="us-tag e3">US-05</span></div></div></li>
+        <li class="task-item done"><span class="task-check">✓</span><div class="task-text"><strong>LLM A/B test — Test A complete:</strong> joint overlay video only → Nemotron → output quality + response time recorded<div class="task-tags"><span class="us-tag e4">US-06</span><span class="us-tag e4">US-07</span></div></div></li>
+        <li class="task-item wip"><span class="task-check">◉</span><div class="task-text"><strong>LLM A/B test — Tests B + C + findings:</strong> JSON only, both inputs; log comparison; feed findings to PM → closes when /analyze endpoint is done<div class="task-tags"><span class="us-tag e4">US-06</span><span class="us-tag e4">US-07</span></div></div></li>
       </ul>
       <div class="merge-note"><span class="merge-icon">⊕</span> Thu E2E slice: Upload → MediaPipe runs → biomechanics JSON → SSE events firing → Squad 1 renders real data</div>
     </div>
 
+    <!-- W6 Squad 3 -->
     <div class="squad-block">
       <div class="squad-label sq3">Squad 3 — Data / Full Stack</div>
       <ul class="task-list">
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text"><strong>Ingest Goblet Squat corpus</strong> into vector DB: chunk, embed, store with metadata<div class="task-tags"><span class="us-tag e4">US-07</span></div></div></li>
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text">Implement and test <strong>RAG retrieval</strong>: given a biomechanics query, retrieve top-k relevant passages<div class="task-tags"><span class="us-tag e4">US-07</span></div></div></li>
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text">Validate retrieval quality manually — check top results are relevant and grounded<div class="task-tags"><span class="us-tag e4">US-07</span></div></div></li>
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text">Expose <strong>RAG retrieval endpoint</strong> for Squad 2 to call<div class="task-tags"><span class="us-tag e4">US-06</span><span class="us-tag e4">US-07</span></div></div></li>
+        <li class="task-item done"><span class="task-check">✓</span><div class="task-text"><strong>Goblet Squat corpus collected</strong> and reference materials documented<div class="task-tags"><span class="us-tag e4">US-07</span></div></div></li>
+        <li class="task-item scrapped"><span class="task-check">✕</span><div class="task-text"><strong>Implement and test RAG retrieval</strong>: given a biomechanics query, retrieve top-k relevant passages <span class="scrapped-badge">Scrapped</span><div class="task-tags"><span class="us-tag e4">US-07</span></div></div></li>
+        <li class="task-item scrapped"><span class="task-check">✕</span><div class="task-text">Validate retrieval quality manually — check top results are relevant and grounded <span class="scrapped-badge">Scrapped</span><div class="task-tags"><span class="us-tag e4">US-07</span></div></div></li>
+        <li class="task-item scrapped"><span class="task-check">✕</span><div class="task-text">Expose <strong>RAG retrieval endpoint</strong> for Squad 2 to call <span class="scrapped-badge">Scrapped</span><div class="task-tags"><span class="us-tag e4">US-06</span><span class="us-tag e4">US-07</span></div></div></li>
       </ul>
-      <div class="merge-note"><span class="merge-icon">⊕</span> Thu merge: Vector DB seeded + RAG retrieval endpoint live + retrieval quality spot-checked</div>
+      <div class="merge-note"><span class="merge-icon">⊕</span> Thu merge: Corpus documented. RAG retrieval dropped — coaching context delivered via gold standard JSON + session history in Haiku prompt.</div>
     </div>
   </div>
 
-  <!-- Week 7 -->
+  <!-- ═══════════════════════════════ WEEK 7 ═══════════════════════════════ -->
   <div class="week">
     <div class="week-header">
       <div>
         <div class="week-num">Week 7</div>
         <div class="week-dates">May 18–24</div>
       </div>
-      <div class="week-theme">Wire the complete AI pipeline with Haiku. First full form analysis — real video in, real coaching output with longitudinal context out. Nemotron replaced by Claude Haiku 4.5.</div>
-      <span class="week-milestone">Full Pipeline Live</span>
+      <div class="week-theme">Wire the complete AI pipeline with Haiku 4.5. First full form analysis — real video in, real coaching output with longitudinal context out.</div>
+      <div class="week-badges"><span class="week-milestone">Full Pipeline Live</span></div>
     </div>
 
+    <div class="arch-note">
+      <strong>Architecture (confirmed from A/B test):</strong> OpenCV extracts 8-frame composite grid. Claude Haiku 4.5 receives: MediaPipe JSON + 8 frames + gold standard reference JSON + last 3 user sessions → returns structured coaching output. No Nemotron. No RAG. Auth deferred — 3 demo user IDs used instead.
+    </div>
+
+    <!-- W7 Squad 1 -->
     <div class="squad-block">
       <div class="squad-label sq1">Squad 1 — Frontend</div>
       <ul class="task-list">
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text"><strong>Form analysis 1st cut</strong> — wire Results screen to real Haiku output: verdict, total score (/100), positive observations, critical observations (root cause / symptom), recommendation, rep trend<div class="task-tags"><span class="us-tag e4">US-06</span><span class="us-tag e4">US-07</span><span class="us-tag e4">US-08</span></div></div></li>
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text"><strong>Home screen build + Login page build</strong> — scaffold and build home / dashboard screen; build login page with user profile selection (3 demo user profiles)<div class="task-tags"><span class="us-tag e1">US-01</span><span class="us-tag e5">US-09</span></div></div></li>
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text"><strong>Start build</strong> on Profile &amp; Login screen — initial scaffolding and component structure<div class="task-tags"><span class="us-tag e1">US-01</span><span class="us-tag e1">US-02</span></div></div></li>
+        <li class="task-item todo"><span class="task-check">☐</span><div class="task-text"><strong>Form analysis 1st cut</strong> — wire Results screen to real Haiku output: verdict, total score (/100), positive observations, critical observations (root cause / symptom), recommendation, rep trend<div class="task-tags"><span class="us-tag e4">US-06</span><span class="us-tag e4">US-07</span><span class="us-tag e4">US-08</span></div></div></li>
+        <li class="task-item todo"><span class="task-check">☐</span><div class="task-text"><strong>Home screen + Login page</strong> — scaffold and build home/dashboard; login page shows 3 demo user profile selector (no real auth)<div class="task-tags"><span class="us-tag e1">US-01</span><span class="us-tag e5">US-09</span></div></div></li>
+        <li class="task-item design todo"><span class="design-tag">Design</span><div class="task-text">Form Comparison &amp; Progression screen — review and finalise wireframes; handed off to dev by end of week<div class="task-tags"><span class="us-tag e4">US-08</span><span class="us-tag e5">US-09</span></div></div></li>
+        <li class="task-item design todo"><span class="design-tag">Design</span><div class="task-text">Workout Builder &amp; Logger — design work begins this week<div class="task-tags"><span class="us-tag e6">US-11a</span><span class="us-tag e6">US-11b</span></div></div></li>
       </ul>
-        <li class="task-item design"><span class="design-tag">Design</span><div class="task-text">Profile + Onboarding user screens — wireframes finalised and handed off to dev<div class="task-tags"><span class="us-tag e1">US-02</span><span class="us-tag e7">US-12a</span></div></div></li>
-        <li class="task-item design"><span class="design-tag">Design</span><div class="task-text">Workout Builder &amp; Logger — design work begins this week<div class="task-tags"><span class="us-tag e6">US-11a</span><span class="us-tag e6">US-11b</span></div></div></li>
-      <div class="merge-note"><span class="merge-icon">⊕</span> Thu merge: Results screen live with real Haiku coaching output; Home screen committed; design handoffs delivered</div>
+      <div class="merge-note"><span class="merge-icon">⊕</span> Thu merge: Results screen live with real Haiku coaching output · Home screen committed · Form Comparison design handed off</div>
     </div>
 
+    <!-- W7 Squad 2 -->
     <div class="squad-block">
       <div class="squad-label sq2">Squad 2 — Backend</div>
       <ul class="task-list">
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text"><strong>Replace Nemotron with Claude Haiku 4.5</strong> — remove Nemotron integration; Haiku handles analysis + coaching end-to-end<div class="task-tags"><span class="us-tag e4">US-06</span><span class="us-tag e4">US-07</span></div></div></li>
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text"><strong>Gold standard query</strong> — query Supabase gold standard squat table for elite trainer reference JSON; include in Haiku prompt for direct comparison<div class="task-tags"><span class="us-tag e4">US-07</span></div></div></li>
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text"><strong>User session history query</strong> — pull last 3 sessions: weight used, MediaPipe JSON, and Haiku coaching output per session; pass as longitudinal context<div class="task-tags"><span class="us-tag e4">US-08</span><span class="us-tag e5">US-09</span></div></div></li>
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text"><strong>RAG retrieval</strong> — retrieve coaching language from indexed .md files and transcribed coaching text; include in Haiku prompt<div class="task-tags"><span class="us-tag e4">US-07</span></div></div></li>
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text"><strong>Assemble Haiku prompt</strong> — combine: current frames + MediaPipe JSON + current weight + gold standard JSON + 3-session history + RAG context → call Haiku → return structured coaching output via SSE<div class="task-tags"><span class="us-tag e3">US-05</span><span class="us-tag e4">US-06</span><span class="us-tag e4">US-07</span></div></div></li>
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text"><strong>Demo user setup</strong> — create 3 hardcoded user IDs for demo day; all pipeline queries and session history scoped to these users; full auth (Google OAuth, JWT) deferred post-demo<div class="task-tags"><span class="us-tag e1">US-01</span></div></div></li>
+        <li class="task-item todo"><span class="task-check">☐</span><div class="task-text"><strong>Integrate Claude Haiku 4.5</strong> — single call handles full analysis + coaching output; Nemotron removed entirely<div class="task-tags"><span class="us-tag e4">US-06</span><span class="us-tag e4">US-07</span></div></div></li>
+        <li class="task-item todo"><span class="task-check">☐</span><div class="task-text"><strong>Gold standard query</strong> — query Supabase gold standard squat table for elite trainer reference JSON; include in Haiku prompt for direct comparison<div class="task-tags"><span class="us-tag e4">US-07</span></div></div></li>
+        <li class="task-item todo"><span class="task-check">☐</span><div class="task-text"><strong>User session history query</strong> — pull last 3 sessions for demo user + exercise: weight, MediaPipe JSON, Haiku coaching output; pass as longitudinal context<div class="task-tags"><span class="us-tag e4">US-08</span><span class="us-tag e5">US-09</span></div></div></li>
+        <li class="task-item todo"><span class="task-check">☐</span><div class="task-text"><strong>Assemble Haiku prompt</strong> — combine: current 8-frame composite + MediaPipe JSON + current weight + gold standard JSON + 3-session history → call Haiku → return structured coaching output via SSE<div class="task-tags"><span class="us-tag e3">US-05</span><span class="us-tag e4">US-06</span><span class="us-tag e4">US-07</span></div></div></li>
+        <li class="task-item scrapped"><span class="task-check">✕</span><div class="task-text"><strong>RAG retrieval</strong> — retrieve coaching language from indexed .md files and transcribed coaching text <span class="scrapped-badge">Scrapped</span><div class="task-tags"><span class="us-tag e4">US-07</span></div></div></li>
+        <li class="task-item todo"><span class="task-check">☐</span><div class="task-text"><strong>Demo user setup</strong> — create 3 hardcoded user IDs; scope all pipeline queries to these users; full Google OAuth / JWT deferred post-demo<div class="task-tags"><span class="us-tag e1">US-01</span></div></div></li>
       </ul>
-      <div class="merge-note"><span class="merge-icon">⊕</span> Thu merge: Full pipeline live (video → OpenCV + MediaPipe → multi-source prompt → Haiku → SSE output); auth working</div>
+      <div class="merge-note"><span class="merge-icon">⊕</span> Thu merge: Full pipeline live (video → OpenCV + MediaPipe → Haiku prompt → SSE coaching output) · Demo users queryable</div>
     </div>
 
+    <!-- W7 Squad 3 -->
     <div class="squad-block">
       <div class="squad-label sq3">Squad 3 — Data / Full Stack</div>
       <ul class="task-list">
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text"><strong>MediaPipe pipeline update</strong> — (1) refine biomechanics JSON angle calculations based on A/B test findings; (2) update OpenCV wrapper from video overlay output to 8-frame composite grid extraction — this becomes the LLM visual input<div class="task-tags"><span class="us-tag e4">US-06</span></div></div></li>
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text"><strong>Gold standard table</strong> — run MediaPipe on elite trainer goblet squat videos; store biomechanics JSON in Supabase using same schema as user session output<div class="task-tags"><span class="us-tag e4">US-07</span></div></div></li>
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text"><strong>RAG corpus</strong> — index coaching .md files and transcribed coaching text; tune retrieval for biomechanics and form correction queries<div class="task-tags"><span class="us-tag e4">US-07</span></div></div></li>
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text"><strong>Synthetic user data</strong> — seed a test user ID with 3 past sessions (weight + MediaPipe JSON + Haiku coaching output) to validate the longitudinal feedback flow end-to-end<div class="task-tags"><span class="us-tag e4">US-08</span><span class="us-tag e5">US-09</span></div></div></li>
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text"><strong>Visual output scoping</strong> — prototype and compare: (1) annotated worst-rep bottom frame, (2) 5–8s slow-motion clip around key fault moment, (3) full skeleton overlay video. Document options for team review — no build decision yet<div class="task-tags"><span class="us-tag e4">US-06</span></div></div></li>
+        <li class="task-item todo"><span class="task-check">☐</span><div class="task-text"><strong>MediaPipe pipeline update</strong> — (1) refine angle calculations from A/B test findings; (2) update OpenCV wrapper to 8-frame composite grid extraction (replaces full video overlay); (3) add <code>session_valgus_fault</code> boolean to consolidated.stability<div class="task-tags"><span class="us-tag e4">US-06</span></div></div></li>
+        <li class="task-item todo"><span class="task-check">☐</span><div class="task-text"><strong>Gold standard table</strong> — run MediaPipe on elite trainer goblet squat videos; store biomechanics JSON in Supabase using same schema as user session output. Min 2–3 reference videos<div class="task-tags"><span class="us-tag e4">US-07</span></div></div></li>
+        <li class="task-item scrapped"><span class="task-check">✕</span><div class="task-text"><strong>RAG corpus</strong> — index coaching .md files and transcribed coaching text; tune retrieval for biomechanics queries <span class="scrapped-badge">Scrapped</span><div class="task-tags"><span class="us-tag e4">US-07</span></div></div></li>
+        <li class="task-item todo"><span class="task-check">☐</span><div class="task-text"><strong>Synthetic user data</strong> — seed a test user ID with 3 past sessions (weight + MediaPipe JSON + Haiku coaching output) to validate the longitudinal feedback flow end-to-end<div class="task-tags"><span class="us-tag e4">US-08</span><span class="us-tag e5">US-09</span></div></div></li>
+        <li class="task-item todo"><span class="task-check">☐</span><div class="task-text"><strong>Visual output scoping</strong> — prototype and compare: (1) annotated worst-rep bottom frame, (2) 5–8s slow-motion clip around key fault moment, (3) full skeleton overlay video. No build decision — scope, test, present recommendation<div class="task-tags"><span class="us-tag e4">US-06</span></div></div></li>
       </ul>
-      <div class="merge-note"><span class="merge-icon">⊕</span> Thu merge: MediaPipe pipeline updated; gold standard table populated; RAG indexed; synthetic data seeded; visual output options documented</div>
+      <div class="merge-note"><span class="merge-icon">⊕</span> Thu merge: MediaPipe updated · ≥2 gold standard records in Supabase · Synthetic data seeded · Visual output options documented</div>
     </div>
   </div>
 
-  <!-- Week 8 -->
+  <!-- ═══════════════════════════════ WEEK 8 ═══════════════════════════════ -->
   <div class="week">
     <div class="week-header">
       <div>
         <div class="week-num">Week 8</div>
         <div class="week-dates">May 25–31</div>
       </div>
-      <div class="week-theme">Complete the longitudinal layer — progression recommendations, workout logging, full auth flow. Finalize prototype screens.</div>
+      <div class="week-theme">Complete the longitudinal layer — progression recommendations, workout logging. Finalise prototype screens.</div>
     </div>
 
+    <!-- W8 Squad 1 -->
     <div class="squad-block">
       <div class="squad-label sq1">Squad 1 — Frontend</div>
       <ul class="task-list">
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text">Wire <strong>auth flow</strong>: onboarding connects to real auth endpoints; session persistence<div class="task-tags"><span class="us-tag e1">US-01</span><span class="us-tag e1">US-02</span><span class="us-tag e1">US-03</span></div></div></li>
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text">Complete <strong>Workout Tracker</strong>: log workout entries, link to form analysis sessions<div class="task-tags"><span class="us-tag e6">US-11a</span><span class="us-tag e6">US-11b</span></div></div></li>
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text">Surface <strong>Form Comparison toggle</strong> on Results screen with side-by-side view + rep-by-rep charts<div class="task-tags"><span class="us-tag e4">US-08</span></div></div></li>
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text">Build <strong>Profile → Preferences</strong> screens: training preferences + injury &amp; pain profile<div class="task-tags"><span class="us-tag e7">US-12a</span><span class="us-tag e7">US-12b</span></div></div></li>
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text">Finalize <strong>prototype screens</strong> — all screens review-ready for design sign-off<div class="task-tags"><span class="us-tag infra">All US</span></div></div></li>
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text">Responsive design pass: ensure all screens are mobile-friendly<div class="task-tags"><span class="us-tag infra">All US</span></div></div></li>
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text">Begin filming tips screen (inline summary + Detailed Filming Tips overlay)<div class="task-tags"><span class="us-tag e2">US-04</span></div></div></li>
+        <li class="task-item todo"><span class="task-check">☐</span><div class="task-text"><strong>Demo user profile selector</strong> — user picks from 3 demo profiles on login screen; session scoped to selected user ID<div class="task-tags"><span class="us-tag e1">US-01</span><span class="us-tag e1">US-02</span></div></div></li>
+        <li class="task-item todo"><span class="task-check">☐</span><div class="task-text"><strong>Profile screen build</strong> — full build of Profile screen<div class="task-tags"><span class="us-tag e7">US-12a</span><span class="us-tag e7">US-12b</span></div></div></li>
+        <li class="task-item design todo"><span class="design-tag">Design</span><div class="task-text">Profile + Onboarding screens — wireframes finalised and handed off to dev<div class="task-tags"><span class="us-tag e1">US-02</span><span class="us-tag e7">US-12a</span></div></div></li>
+        <li class="task-item todo"><span class="task-check">☐</span><div class="task-text">Complete <strong>Workout Tracker</strong>: log workout entries, link to form analysis sessions<div class="task-tags"><span class="us-tag e6">US-11a</span><span class="us-tag e6">US-11b</span></div></div></li>
+        <li class="task-item todo"><span class="task-check">☐</span><div class="task-text">Surface <strong>weight-based progression recommendation</strong> prominently on Results screen<div class="task-tags"><span class="us-tag e4">US-08</span></div></div></li>
+        <li class="task-item todo"><span class="task-check">☐</span><div class="task-text">Finalise <strong>prototype screens</strong> — all screens review-ready for design sign-off<div class="task-tags"><span class="us-tag infra">All US</span></div></div></li>
+        <li class="task-item todo"><span class="task-check">☐</span><div class="task-text">Responsive design pass: ensure all screens are mobile-friendly<div class="task-tags"><span class="us-tag infra">All US</span></div></div></li>
+        <li class="task-item todo"><span class="task-check">☐</span><div class="task-text">Begin filming tips screen (camera angle, distance, lighting, clothing guidance)<div class="task-tags"><span class="us-tag e2">US-04</span></div></div></li>
       </ul>
-      <div class="merge-note"><span class="merge-icon">⊕</span> Thu merge: Auth flow live; workout tracker wired; form comparison toggle; profile screens; prototype finalized</div>
+      <div class="merge-note"><span class="merge-icon">⊕</span> Thu merge: Demo profile selector live · Workout tracker wired · Progression recommendation displayed · Prototype screens finalised</div>
     </div>
 
+    <!-- W8 Squad 2 -->
     <div class="squad-block">
       <div class="squad-label sq2">Squad 2 — Backend</div>
       <ul class="task-list">
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text">Implement <strong>progression recommendation logic</strong>: compare current vs. past sessions → ready_to_progress / hold / drop_weight<div class="task-tags"><span class="us-tag e4">US-08</span></div></div></li>
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text">Complete <strong>workout logging endpoints</strong>: create/read entries, associate with form sessions<div class="task-tags"><span class="us-tag e6">US-11b</span></div></div></li>
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text">Implement <strong>user history query</strong>: return all past form sessions for an exercise with weights and scores<div class="task-tags"><span class="us-tag e5">US-09</span><span class="us-tag e5">US-10</span></div></div></li>
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text">Refine Claude Sonnet prompt engineering: improve coaching language and specificity<div class="task-tags"><span class="us-tag e4">US-07</span><span class="us-tag e4">US-08</span></div></div></li>
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text">Harden error handling: MediaPipe failure, Nemotron timeout, RAG no-results cases<div class="task-tags"><span class="us-tag e3">US-05</span></div></div></li>
+        <li class="task-item todo"><span class="task-check">☐</span><div class="task-text">Implement <strong>progression recommendation logic</strong>: compare current vs. past sessions → ready_to_progress / hold / drop_weight with reasoning<div class="task-tags"><span class="us-tag e4">US-08</span></div></div></li>
+        <li class="task-item todo"><span class="task-check">☐</span><div class="task-text">Complete <strong>workout logging endpoints</strong>: create/read entries, associate with form sessions<div class="task-tags"><span class="us-tag e6">US-11b</span></div></div></li>
+        <li class="task-item todo"><span class="task-check">☐</span><div class="task-text">Implement <strong>user history query</strong>: return all past form sessions for an exercise with weights and scores<div class="task-tags"><span class="us-tag e5">US-09</span><span class="us-tag e5">US-10</span></div></div></li>
+        <li class="task-item todo"><span class="task-check">☐</span><div class="task-text">Refine <strong>Haiku prompt engineering</strong>: improve coaching language specificity and actionability based on W7 output review<div class="task-tags"><span class="us-tag e4">US-07</span><span class="us-tag e4">US-08</span></div></div></li>
+        <li class="task-item todo"><span class="task-check">☐</span><div class="task-text">Harden error handling: MediaPipe keypoint detection failure, Haiku timeout, no session history available<div class="task-tags"><span class="us-tag e3">US-05</span></div></div></li>
       </ul>
-      <div class="merge-note"><span class="merge-icon">⊕</span> Thu merge: Progression logic live; workout logging endpoints; Claude Sonnet refinements</div>
+      <div class="merge-note"><span class="merge-icon">⊕</span> Thu merge: Progression logic live · Workout logging endpoints · Haiku prompt refinements committed</div>
     </div>
 
+    <!-- W8 Squad 3 -->
     <div class="squad-block">
       <div class="squad-label sq3">Squad 3 — Data / Full Stack</div>
       <ul class="task-list">
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text"><strong>Collect sample test videos</strong> (Goblet Squat): 20–30 videos with defined good/bad form scenarios<div class="task-tags"><span class="us-tag e4">US-06</span></div></div></li>
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text">Label ground truth for each video (expected form scores, joint corrections) for Week 9 validation<div class="task-tags"><span class="us-tag e4">US-06</span><span class="us-tag e4">US-07</span></div></div></li>
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text">Refine ingestion pipeline: add more Goblet Squat sources if retrieval gaps found<div class="task-tags"><span class="us-tag e4">US-07</span></div></div></li>
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text">Test full RAG-to-Claude-Sonnet flow: validate retrieval meaningfully improves coaching quality<div class="task-tags"><span class="us-tag e4">US-07</span><span class="us-tag e4">US-08</span></div></div></li>
+        <li class="task-item todo"><span class="task-check">☐</span><div class="task-text"><strong>Collect sample test videos</strong> (Goblet Squat): 20–30 videos with defined good/bad form scenarios<div class="task-tags"><span class="us-tag e4">US-06</span></div></div></li>
+        <li class="task-item todo"><span class="task-check">☐</span><div class="task-text">Label ground truth for each video (expected form scores, joint corrections) for Week 9 validation<div class="task-tags"><span class="us-tag e4">US-06</span><span class="us-tag e4">US-07</span></div></div></li>
+        <li class="task-item todo"><span class="task-check">☐</span><div class="task-text">Validate visual output decision from W7 scoping — confirm format to build in W9<div class="task-tags"><span class="us-tag e4">US-06</span></div></div></li>
+        <li class="task-item scrapped"><span class="task-check">✕</span><div class="task-text">Refine ingestion pipeline: add more Goblet Squat RAG sources if retrieval gaps found <span class="scrapped-badge">Scrapped</span><div class="task-tags"><span class="us-tag e4">US-07</span></div></div></li>
+        <li class="task-item scrapped"><span class="task-check">✕</span><div class="task-text">Test full RAG-to-Claude-Sonnet flow: validate retrieval meaningfully improves coaching quality <span class="scrapped-badge">Scrapped</span><div class="task-tags"><span class="us-tag e4">US-07</span><span class="us-tag e4">US-08</span></div></div></li>
       </ul>
-      <div class="merge-note"><span class="merge-icon">⊕</span> Thu merge: Sample video test set ready (labeled); RAG ingestion refined; integration test results documented</div>
+      <div class="merge-note"><span class="merge-icon">⊕</span> Thu merge: Test video set ready (labelled) · Visual output format confirmed</div>
     </div>
   </div>
 
-  <!-- Week 9 -->
+  <!-- ═══════════════════════════════ WEEK 9 ═══════════════════════════════ -->
   <div class="week">
     <div class="week-header">
       <div>
@@ -399,44 +475,48 @@
         <div class="week-dates">Jun 1–7</div>
       </div>
       <div class="week-theme">Validate everything. Hit accuracy and latency targets. Refine until launch-ready.</div>
-      <span class="week-milestone">≥80% Accuracy Target</span>
+      <div class="week-badges"><span class="week-milestone">≥80% Accuracy Target</span></div>
     </div>
 
+    <!-- W9 Squad 1 -->
     <div class="squad-block">
       <div class="squad-label sq1">Squad 1 — Frontend</div>
       <ul class="task-list">
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text">Complete <strong>filming tips screen</strong>: inline summary + Detailed Filming Tips overlay<div class="task-tags"><span class="us-tag e2">US-04</span></div></div></li>
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text">Polish <strong>SSE experience</strong>: smooth progress indicators, clear stage messaging<div class="task-tags"><span class="us-tag e3">US-05</span></div></div></li>
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text">Final mobile responsiveness pass across all screens<div class="task-tags"><span class="us-tag infra">All US</span></div></div></li>
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text">Bug fixes from internal testing<div class="task-tags"><span class="us-tag infra">All US</span></div></div></li>
+        <li class="task-item todo"><span class="task-check">☐</span><div class="task-text">Complete <strong>filming tips screen</strong>: in-app guidance before upload (camera angle, distance, lighting, clothing)<div class="task-tags"><span class="us-tag e2">US-04</span></div></div></li>
+        <li class="task-item todo"><span class="task-check">☐</span><div class="task-text">Polish <strong>SSE experience</strong>: smooth progress indicators, clear stage messaging at each pipeline step<div class="task-tags"><span class="us-tag e3">US-05</span></div></div></li>
+        <li class="task-item todo"><span class="task-check">☐</span><div class="task-text">Final mobile responsiveness pass across all screens<div class="task-tags"><span class="us-tag infra">All US</span></div></div></li>
+        <li class="task-item todo"><span class="task-check">☐</span><div class="task-text">Bug fixes from internal testing<div class="task-tags"><span class="us-tag infra">All US</span></div></div></li>
       </ul>
-      <div class="merge-note"><span class="merge-icon">⊕</span> Thu merge: Filming tips live; SSE UX polished; mobile responsive</div>
+      <div class="merge-note"><span class="merge-icon">⊕</span> Thu merge: Filming tips live · SSE UX polished · Mobile responsive</div>
     </div>
 
+    <!-- W9 Squad 2 -->
     <div class="squad-block">
       <div class="squad-label sq2">Squad 2 — Backend</div>
       <ul class="task-list">
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text"><strong>End-to-end latency optimisation</strong>: profile pipeline, identify bottlenecks, target &lt;30s<div class="task-tags"><span class="us-tag e3">US-05</span></div></div></li>
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text">Refine <strong>prompt engineering</strong> based on accuracy validation findings from Squad 3<div class="task-tags"><span class="us-tag e4">US-07</span><span class="us-tag e4">US-08</span></div></div></li>
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text">Implement <strong>confidence thresholding</strong>: flag low-certainty outputs rather than returning unreliable results<div class="task-tags"><span class="us-tag e4">US-06</span><span class="us-tag e4">US-07</span></div></div></li>
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text">Load test API endpoints; fix stability issues<div class="task-tags"><span class="us-tag infra">Infra</span></div></div></li>
+        <li class="task-item todo"><span class="task-check">☐</span><div class="task-text"><strong>End-to-end latency optimisation</strong>: profile pipeline, identify bottlenecks, target &lt;30s upload-to-results<div class="task-tags"><span class="us-tag e3">US-05</span></div></div></li>
+        <li class="task-item todo"><span class="task-check">☐</span><div class="task-text">Refine <strong>Haiku prompt engineering</strong> based on accuracy validation findings from Squad 3<div class="task-tags"><span class="us-tag e4">US-07</span><span class="us-tag e4">US-08</span></div></div></li>
+        <li class="task-item todo"><span class="task-check">☐</span><div class="task-text">Implement <strong>confidence thresholding</strong>: flag low-certainty outputs rather than returning unreliable results<div class="task-tags"><span class="us-tag e4">US-06</span><span class="us-tag e4">US-07</span></div></div></li>
+        <li class="task-item todo"><span class="task-check">☐</span><div class="task-text">Load test API endpoints; fix stability issues<div class="task-tags"><span class="us-tag infra">Infra</span></div></div></li>
       </ul>
-      <div class="merge-note"><span class="merge-icon">⊕</span> Thu merge: Latency &lt;30s validated; confidence thresholding live; load test results documented</div>
+      <div class="merge-note"><span class="merge-icon">⊕</span> Thu merge: Latency &lt;30s validated · Confidence thresholding live · Load test results documented</div>
     </div>
 
+    <!-- W9 Squad 3 -->
     <div class="squad-block">
       <div class="squad-label sq3">Squad 3 — Data / Full Stack</div>
       <ul class="task-list">
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text">Run <strong>accuracy validation</strong>: test pipeline on 20–30 labeled sample videos<div class="task-tags"><span class="us-tag e4">US-06</span><span class="us-tag e4">US-07</span></div></div></li>
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text">Measure: form score agreement ≥80%, rep count accuracy ≥90%, joint correction relevance<div class="task-tags"><span class="us-tag e4">US-06</span><span class="us-tag e4">US-07</span></div></div></li>
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text">Document failures and edge cases — feed findings back to Squad 2<div class="task-tags"><span class="us-tag e4">US-07</span></div></div></li>
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text">Final RAG refinement pass based on validation gaps<div class="task-tags"><span class="us-tag e4">US-07</span></div></div></li>
+        <li class="task-item todo"><span class="task-check">☐</span><div class="task-text">Run <strong>accuracy validation</strong>: test pipeline on 20–30 labelled sample videos<div class="task-tags"><span class="us-tag e4">US-06</span><span class="us-tag e4">US-07</span></div></div></li>
+        <li class="task-item todo"><span class="task-check">☐</span><div class="task-text">Measure: form score agreement ≥80%, rep count accuracy ≥90%, joint correction relevance<div class="task-tags"><span class="us-tag e4">US-06</span><span class="us-tag e4">US-07</span></div></div></li>
+        <li class="task-item todo"><span class="task-check">☐</span><div class="task-text">Document failures and edge cases — feed findings to Squad 2 for Haiku prompt refinement<div class="task-tags"><span class="us-tag e4">US-07</span></div></div></li>
+        <li class="task-item todo"><span class="task-check">☐</span><div class="task-text">Validate visual output format in-app with internal testers<div class="task-tags"><span class="us-tag e4">US-06</span></div></div></li>
+        <li class="task-item scrapped"><span class="task-check">✕</span><div class="task-text">Final RAG refinement pass based on validation gaps <span class="scrapped-badge">Scrapped</span><div class="task-tags"><span class="us-tag e4">US-07</span></div></div></li>
       </ul>
-      <div class="merge-note"><span class="merge-icon">⊕</span> Thu merge: Accuracy validation report committed; ≥80% expert agreement confirmed or refinements in progress</div>
+      <div class="merge-note"><span class="merge-icon">⊕</span> Thu merge: Accuracy validation report committed · ≥80% expert agreement confirmed or refinements in progress</div>
     </div>
   </div>
 
-  <!-- Week 10 -->
+  <!-- ═══════════════════════════════ WEEK 10 ═══════════════════════════════ -->
   <div class="week">
     <div class="week-header">
       <div>
@@ -444,46 +524,53 @@
         <div class="week-dates">Jun 8</div>
       </div>
       <div class="week-theme">Harden, validate with real users, prepare to ship and present.</div>
-      <span class="week-milestone">UAT + Launch Ready</span>
+      <div class="week-badges"><span class="week-milestone">UAT + Launch Ready</span></div>
     </div>
 
+    <!-- W10 All Squads -->
     <div class="squad-block">
       <div class="squad-label all">All Squads</div>
       <ul class="task-list">
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text"><strong>UAT</strong>: end-to-end user acceptance testing with real users (VOC participants)<div class="task-tags"><span class="us-tag e1">US-01</span><span class="us-tag e1">US-02</span><span class="us-tag e2">US-04</span><span class="us-tag e3">US-05</span><span class="us-tag e4">US-06</span><span class="us-tag e4">US-07</span><span class="us-tag e4">US-08</span><span class="us-tag e5">US-09</span><span class="us-tag e5">US-10</span><span class="us-tag e6">US-11b</span></div></div></li>
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text"><strong>E2E test suite</strong>: sign up → upload video → view results → log workout → view history → progression recommendation<div class="task-tags"><span class="us-tag e1">US-01</span><span class="us-tag e1">US-03</span><span class="us-tag e3">US-05</span><span class="us-tag e4">US-06</span><span class="us-tag e4">US-08</span><span class="us-tag e5">US-09</span><span class="us-tag e5">US-10</span><span class="us-tag e6">US-11b</span></div></div></li>
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text">Fix all high and medium severity bugs surfaced in UAT<div class="task-tags"><span class="us-tag infra">All US</span></div></div></li>
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text">Verify all <strong>launch criteria</strong> from PRD are checked off<div class="task-tags"><span class="us-tag infra">All US</span></div></div></li>
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text">Confirm metrics instrumentation: session uploads, form score events, SSE completion, weekly retention<div class="task-tags"><span class="us-tag infra">Infra</span></div></div></li>
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text"><strong>Final pitch preparation</strong>: demo video, slide deck, live demo rehearsal<div class="task-tags"><span class="us-tag infra">Infra</span></div></div></li>
+        <li class="task-item todo"><span class="task-check">☐</span><div class="task-text"><strong>UAT</strong>: end-to-end user acceptance testing with real users (VOC participants)<div class="task-tags"><span class="us-tag e1">US-01</span><span class="us-tag e2">US-04</span><span class="us-tag e3">US-05</span><span class="us-tag e4">US-06</span><span class="us-tag e4">US-07</span><span class="us-tag e4">US-08</span><span class="us-tag e5">US-09</span><span class="us-tag e5">US-10</span><span class="us-tag e6">US-11b</span></div></div></li>
+        <li class="task-item todo"><span class="task-check">☐</span><div class="task-text"><strong>E2E test suite</strong>: select demo profile → upload video → view results → log workout → view history → progression recommendation<div class="task-tags"><span class="us-tag e1">US-01</span><span class="us-tag e1">US-03</span><span class="us-tag e3">US-05</span><span class="us-tag e4">US-06</span><span class="us-tag e4">US-08</span><span class="us-tag e5">US-09</span><span class="us-tag e5">US-10</span><span class="us-tag e6">US-11b</span></div></div></li>
+        <li class="task-item todo"><span class="task-check">☐</span><div class="task-text">Fix all high and medium severity bugs surfaced in UAT<div class="task-tags"><span class="us-tag infra">All US</span></div></div></li>
+        <li class="task-item todo"><span class="task-check">☐</span><div class="task-text">Verify all <strong>launch criteria</strong> from PRD are checked off<div class="task-tags"><span class="us-tag infra">All US</span></div></div></li>
+        <li class="task-item todo"><span class="task-check">☐</span><div class="task-text">Confirm metrics instrumentation: session uploads, form score events, SSE completion, weekly retention<div class="task-tags"><span class="us-tag infra">Infra</span></div></div></li>
+        <li class="task-item todo"><span class="task-check">☐</span><div class="task-text"><strong>Final pitch preparation</strong>: demo video, slide deck, live demo rehearsal<div class="task-tags"><span class="us-tag infra">Infra</span></div></div></li>
       </ul>
     </div>
 
+    <!-- W10 Squad 1 -->
     <div class="squad-block">
       <div class="squad-label sq1">Squad 1 — Frontend</div>
       <ul class="task-list">
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text">Final UI polish pass<div class="task-tags"><span class="us-tag infra">All US</span></div></div></li>
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text">Confirm all screens match approved design prototype<div class="task-tags"><span class="us-tag infra">All US</span></div></div></li>
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text">Verify filming tips are clear and effective (test with non-technical users)<div class="task-tags"><span class="us-tag e2">US-04</span></div></div></li>
+        <li class="task-item todo"><span class="task-check">☐</span><div class="task-text">Final UI polish pass<div class="task-tags"><span class="us-tag infra">All US</span></div></div></li>
+        <li class="task-item todo"><span class="task-check">☐</span><div class="task-text">Confirm all screens match approved design prototype<div class="task-tags"><span class="us-tag infra">All US</span></div></div></li>
+        <li class="task-item todo"><span class="task-check">☐</span><div class="task-text">Verify filming tips are clear and effective (test with non-technical users)<div class="task-tags"><span class="us-tag e2">US-04</span></div></div></li>
       </ul>
     </div>
 
+    <!-- W10 Squad 2 -->
     <div class="squad-block">
       <div class="squad-label sq2">Squad 2 — Backend</div>
       <ul class="task-list">
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text">Confirm all endpoints stable under expected load<div class="task-tags"><span class="us-tag infra">Infra</span></div></div></li>
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text">Privacy / data handling check: video storage, retention policy (6-month hide rule)<div class="task-tags"><span class="us-tag e5">US-10</span></div></div></li>
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text">Final pipeline smoke test<div class="task-tags"><span class="us-tag e3">US-05</span><span class="us-tag e4">US-06</span></div></div></li>
+        <li class="task-item todo"><span class="task-check">☐</span><div class="task-text">Confirm all endpoints stable under expected load<div class="task-tags"><span class="us-tag infra">Infra</span></div></div></li>
+        <li class="task-item todo"><span class="task-check">☐</span><div class="task-text">Privacy / data handling check: video storage, retention policy<div class="task-tags"><span class="us-tag e5">US-10</span></div></div></li>
+        <li class="task-item todo"><span class="task-check">☐</span><div class="task-text">Final pipeline smoke test<div class="task-tags"><span class="us-tag e3">US-05</span><span class="us-tag e4">US-06</span></div></div></li>
       </ul>
       <div class="merge-note"><span class="merge-icon">⊕</span> Release candidate: All squads green. Launch criteria met.</div>
     </div>
 
+    <!-- W10 Squad 3 -->
     <div class="squad-block">
       <div class="squad-label sq3">Squad 3 — Data / Full Stack</div>
       <ul class="task-list">
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text">Final RAG retrieval quality check<div class="task-tags"><span class="us-tag e4">US-07</span></div></div></li>
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text">Confirm vector DB performance under load<div class="task-tags"><span class="us-tag e4">US-07</span></div></div></li>
-        <li class="task-item"><span class="task-check">☐</span><div class="task-text">Document RAG corpus and ingestion pipeline for handoff<div class="task-tags"><span class="us-tag infra">Infra</span></div></div></li>
+        <li class="task-item todo"><span class="task-check">☐</span><div class="task-text">Final accuracy spot-check on pipeline output<div class="task-tags"><span class="us-tag e4">US-06</span><span class="us-tag e4">US-07</span></div></div></li>
+        <li class="task-item todo"><span class="task-check">☐</span><div class="task-text">Confirm gold standard table is complete and queryable in Supabase<div class="task-tags"><span class="us-tag e4">US-07</span></div></div></li>
+        <li class="task-item todo"><span class="task-check">☐</span><div class="task-text">Document MediaPipe pipeline and gold standard setup for handoff<div class="task-tags"><span class="us-tag infra">Infra</span></div></div></li>
+        <li class="task-item scrapped"><span class="task-check">✕</span><div class="task-text">Final RAG retrieval quality check <span class="scrapped-badge">Scrapped</span><div class="task-tags"><span class="us-tag e4">US-07</span></div></div></li>
+        <li class="task-item scrapped"><span class="task-check">✕</span><div class="task-text">Confirm vector DB performance under load <span class="scrapped-badge">Scrapped</span><div class="task-tags"><span class="us-tag e4">US-07</span></div></div></li>
+        <li class="task-item scrapped"><span class="task-check">✕</span><div class="task-text">Document RAG corpus and ingestion pipeline for handoff <span class="scrapped-badge">Scrapped</span><div class="task-tags"><span class="us-tag infra">Infra</span></div></div></li>
       </ul>
     </div>
   </div>
@@ -492,14 +579,14 @@
   <div class="milestones">
     <div class="milestones-header"><h2>Weekly Milestone Summary</h2></div>
     <table>
-      <thead><tr><th>Week</th><th>Dates</th><th>Milestone</th></tr></thead>
+      <thead><tr><th>Week</th><th>Dates</th><th>Milestone</th><th>Status</th></tr></thead>
       <tbody>
-        <tr><td><strong>5</strong></td><td>May 4–8</td><td>All scaffolds live. JSON contracts agreed. Schemas defined. No squad blocked.</td></tr>
-        <tr><td><strong>6</strong></td><td>May 11–17</td><td><strong>First thin E2E slice:</strong> Real video upload → MediaPipe → biomechanics JSON → displayed on frontend. RAG queryable.</td></tr>
-        <tr><td><strong>7</strong></td><td>May 18–24</td><td><strong>Full pipeline live:</strong> Nemotron + RAG + Claude Sonnet coaching output on screen. Auth working.</td></tr>
-        <tr><td><strong>8</strong></td><td>May 25–31</td><td>Form comparison toggle live. Workout tracker wired. Profile &amp; Preferences screens. Prototype final.</td></tr>
-        <tr><td><strong>9</strong></td><td>Jun 1–7</td><td>Accuracy ≥80% validated. Latency &lt;30s. Confidence thresholding live.</td></tr>
-        <tr><td><strong>10</strong></td><td>Jun 8</td><td>UAT + E2E testing complete. Launch criteria all green. Final pitch ready.</td></tr>
+        <tr><td><strong>5</strong></td><td>May 4–8</td><td>All scaffolds live. JSON contracts agreed. Schemas defined. No squad blocked.</td><td><span class="ms-done">✓ Complete</span></td></tr>
+        <tr><td><strong>6</strong></td><td>May 11–17</td><td><strong>First thin E2E slice:</strong> Real video upload → MediaPipe → biomechanics JSON → displayed on frontend.</td><td><span class="ms-wip">◉ In Progress</span></td></tr>
+        <tr><td><strong>7</strong></td><td>May 18–24</td><td><strong>Full pipeline live:</strong> Claude Haiku 4.5 analysis + coaching output on screen. Demo user IDs working.</td><td><span class="ms-upcoming">— Upcoming</span></td></tr>
+        <tr><td><strong>8</strong></td><td>May 25–31</td><td>Progression recommendations live. Workout tracker wired. Demo profile selector. Prototype screens final.</td><td><span class="ms-upcoming">— Upcoming</span></td></tr>
+        <tr><td><strong>9</strong></td><td>Jun 1–7</td><td>Accuracy ≥80% validated. Latency &lt;30s. Confidence thresholding live.</td><td><span class="ms-upcoming">— Upcoming</span></td></tr>
+        <tr><td><strong>10</strong></td><td>Jun 8</td><td>UAT + E2E testing complete. Launch criteria all green. Final pitch ready.</td><td><span class="ms-upcoming">— Upcoming</span></td></tr>
       </tbody>
     </table>
   </div>
@@ -524,7 +611,7 @@
 
   <!-- Footer -->
   <div class="footer">
-    <strong>Last updated:</strong> May 7, 2026 — User Story colour codes added; US tags mapped to all roadmap tasks
+    <strong>Last updated:</strong> May 19, 2026 — Architecture decisions applied: Nemotron → Haiku 4.5, RAG ingestion scrapped, auth → demo user IDs. Task statuses updated W5–W6.
   </div>
 
 </div>
