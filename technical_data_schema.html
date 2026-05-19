@@ -1982,48 +1982,28 @@ coaching_content = load_md_files(exercise=<span class="js">"goblet_squat"</span>
     </div>
     <div style="color:#334155;font-size:14px;padding:0 2px;">→</div>
     <div style="display:flex;flex-direction:column;align-items:center;gap:3px;padding:0 6px;">
+      <div class="sse-pill">biomechanics_complete</div>
+      <div style="font-size:8.5px;color:#475569;">Step 4 · silent</div>
+    </div>
+    <div style="color:#334155;font-size:14px;padding:0 2px;">→</div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:3px;padding:0 6px;">
       <div class="sse-pill">haiku_started</div>
       <div style="font-size:8.5px;color:#475569;">Step 5</div>
     </div>
     <div style="color:#334155;font-size:14px;padding:0 2px;">→</div>
     <div style="display:flex;flex-direction:column;align-items:center;gap:3px;padding:0 6px;">
-      <div class="sse-pill">haiku_started → analysis_ready</div>
-      <div style="font-size:8.5px;color:#475569;">Step 5</div>
+      <div class="sse-pill" style="background:#0a2010;border-color:#14532d;color:#86efac;">analysis_ready</div>
+      <div style="font-size:8.5px;color:#4ade80;">Tab 1 unlocks</div>
     </div>
     <div style="color:#334155;font-size:14px;padding:0 2px;">→</div>
     <div style="display:flex;flex-direction:column;align-items:center;gap:3px;padding:0 6px;">
-      <div class="sse-pill">frames_extracting</div>
-      <div style="font-size:8.5px;color:#475569;">Step 5</div>
+      <div class="sse-pill" style="background:#0a2010;border-color:#14532d;color:#86efac;">frame_ready</div>
+      <div style="font-size:8.5px;color:#4ade80;">Image loads ~2–3s</div>
     </div>
     <div style="color:#334155;font-size:14px;padding:0 2px;">→</div>
     <div style="display:flex;flex-direction:column;align-items:center;gap:3px;padding:0 6px;">
-      <div class="sse-pill">frames_ready</div>
-      <div style="font-size:8.5px;color:#475569;">Step 5</div>
-    </div>
-    <div style="color:#334155;font-size:14px;padding:0 2px;">→</div>
-    <div style="display:flex;flex-direction:column;align-items:center;gap:3px;padding:0 6px;">
-      <div class="sse-pill">md_files_loaded</div>
-      <div style="font-size:8.5px;color:#475569;">RAG</div>
-    </div>
-    <div style="color:#334155;font-size:14px;padding:0 2px;">→</div>
-    <div style="display:flex;flex-direction:column;align-items:center;gap:3px;padding:0 6px;">
-      <div class="sse-pill">coaching_content_loaded</div>
-      <div style="font-size:8.5px;color:#475569;">RAG</div>
-    </div>
-    <div style="color:#334155;font-size:14px;padding:0 2px;">→</div>
-    <div style="display:flex;flex-direction:column;align-items:center;gap:3px;padding:0 6px;">
-      <div class="sse-pill">haiku_call_2_started</div>
-      <div style="font-size:8.5px;color:#475569;">Step 7</div>
-    </div>
-    <div style="color:#334155;font-size:14px;padding:0 2px;">→</div>
-    <div style="display:flex;flex-direction:column;align-items:center;gap:3px;padding:0 6px;">
-      <div class="sse-pill">progression_ready</div>
-      <div style="font-size:8.5px;color:#475569;">Step 7</div>
-    </div>
-    <div style="color:#334155;font-size:14px;padding:0 2px;">→</div>
-    <div style="display:flex;flex-direction:column;align-items:center;gap:3px;padding:0 6px;">
-      <div class="sse-pill" style="background:#0a2010;border-color:#14532d;color:#86efac;">analysis_complete</div>
-      <div style="font-size:8.5px;color:#475569;">Step 7–8</div>
+      <div class="sse-pill" style="background:#0a2010;border-color:#14532d;color:#86efac;">progression_ready</div>
+      <div style="font-size:8.5px;color:#4ade80;">Tab 2 unlocks · async</div>
     </div>
     <div style="color:#334155;font-size:14px;padding:0 2px;">|</div>
     <div style="display:flex;flex-direction:column;align-items:center;gap:3px;padding:0 6px;">
@@ -2078,74 +2058,34 @@ coaching_content = load_md_files(exercise=<span class="js">"goblet_squat"</span>
       <tr style="border-bottom:1px solid #111827;">
         <td style="padding:6px 10px;font-family:monospace;color:#c4b5fd;">haiku_started</td>
         <td style="padding:6px 10px;color:#4ade80;">FastAPI — before Haiku Call 1 API call</td>
-        <td style="padding:6px 10px;color:#94a3b8;">Cloud Run → NVIDIA API</td>
-        <td style="padding:6px 10px;color:#93c5fd;">React SSE client</td>
-        <td style="padding:6px 10px;color:#94a3b8;">5</td>
-        <td style="padding:6px 10px;font-family:monospace;font-size:9.5px;color:#64748b;">{ analysis_id, session_id, user_id }</td>
-      </tr>
-      <tr style="border-bottom:1px solid #111827;background:#080d12;">
-        <td style="padding:6px 10px;font-family:monospace;color:#c4b5fd;">haiku_started → analysis_ready</td>
-        <td style="padding:6px 10px;color:#4ade80;">FastAPI — on Haiku Call 1 response</td>
-        <td style="padding:6px 10px;color:#94a3b8;">Cloud Run</td>
-        <td style="padding:6px 10px;color:#93c5fd;">React SSE client</td>
-        <td style="padding:6px 10px;color:#94a3b8;">5</td>
-        <td style="padding:6px 10px;font-family:monospace;font-size:9.5px;color:#64748b;">{ analysis_id, session_id, user_id, overall_score, issues_count }</td>
-      </tr>
-      <tr style="border-bottom:1px solid #111827;">
-        <td style="padding:6px 10px;font-family:monospace;color:#c4b5fd;">frames_extracting</td>
-        <td style="padding:6px 10px;color:#4ade80;">OpenCV frame extractor</td>
-        <td style="padding:6px 10px;color:#94a3b8;">Cloud Run</td>
-        <td style="padding:6px 10px;color:#93c5fd;">React SSE client</td>
-        <td style="padding:6px 10px;color:#94a3b8;">5</td>
-        <td style="padding:6px 10px;font-family:monospace;font-size:9.5px;color:#64748b;">{ analysis_id, session_id, user_id, video_url, frames_total }</td>
-      </tr>
-      <tr style="border-bottom:1px solid #111827;background:#080d12;">
-        <td style="padding:6px 10px;font-family:monospace;color:#c4b5fd;">frames_ready</td>
-        <td style="padding:6px 10px;color:#4ade80;">FastAPI — after frames written to GCS</td>
-        <td style="padding:6px 10px;color:#94a3b8;">Cloud Run</td>
-        <td style="padding:6px 10px;color:#93c5fd;">React SSE client</td>
-        <td style="padding:6px 10px;color:#94a3b8;">5</td>
-        <td style="padding:6px 10px;font-family:monospace;font-size:9.5px;color:#64748b;">{ analysis_id, session_id, user_id, frame_urls: [...] }</td>
-      </tr>
-      <tr style="border-bottom:1px solid #111827;">
-        <td style="padding:6px 10px;font-family:monospace;color:#c4b5fd;">md_files_loaded</td>
-        <td style="padding:6px 10px;color:#4ade80;">FastAPI — before calling Squad 3 RAG endpoint</td>
-        <td style="padding:6px 10px;color:#94a3b8;">Cloud Run → Squad 3 service</td>
-        <td style="padding:6px 10px;color:#93c5fd;">React SSE client</td>
-        <td style="padding:6px 10px;color:#94a3b8;">RAG</td>
-        <td style="padding:6px 10px;font-family:monospace;font-size:9.5px;color:#64748b;">{ analysis_id, session_id, user_id }</td>
-      </tr>
-      <tr style="border-bottom:1px solid #111827;background:#080d12;">
-        <td style="padding:6px 10px;font-family:monospace;color:#c4b5fd;">coaching_content_loaded</td>
-        <td style="padding:6px 10px;color:#4ade80;">FastAPI — on RAG response received</td>
-        <td style="padding:6px 10px;color:#94a3b8;">Cloud Run</td>
-        <td style="padding:6px 10px;color:#93c5fd;">React SSE client</td>
-        <td style="padding:6px 10px;color:#94a3b8;">RAG</td>
-        <td style="padding:6px 10px;font-family:monospace;font-size:9.5px;color:#64748b;">{ analysis_id, session_id, user_id, passages_retrieved: 8 }</td>
-      </tr>
-      <tr style="border-bottom:1px solid #111827;">
-        <td style="padding:6px 10px;font-family:monospace;color:#c4b5fd;">haiku_call_2_started</td>
-        <td style="padding:6px 10px;color:#4ade80;">FastAPI — before Haiku Call 2 async start</td>
         <td style="padding:6px 10px;color:#94a3b8;">Cloud Run → Anthropic API</td>
         <td style="padding:6px 10px;color:#93c5fd;">React SSE client</td>
-        <td style="padding:6px 10px;color:#94a3b8;">7</td>
+        <td style="padding:6px 10px;color:#94a3b8;">5</td>
         <td style="padding:6px 10px;font-family:monospace;font-size:9.5px;color:#64748b;">{ analysis_id, session_id, user_id }</td>
       </tr>
       <tr style="border-bottom:1px solid #111827;background:#080d12;">
-        <td style="padding:6px 10px;font-family:monospace;color:#c4b5fd;">progression_ready</td>
-        <td style="padding:6px 10px;color:#4ade80;">FastAPI — on Claude response received</td>
+        <td style="padding:6px 10px;font-family:monospace;color:#86efac;font-weight:700;">analysis_ready</td>
+        <td style="padding:6px 10px;color:#4ade80;">FastAPI — on Haiku Call 1 complete + DB written</td>
         <td style="padding:6px 10px;color:#94a3b8;">Cloud Run</td>
-        <td style="padding:6px 10px;color:#93c5fd;">React SSE client</td>
-        <td style="padding:6px 10px;color:#94a3b8;">7</td>
-        <td style="padding:6px 10px;font-family:monospace;font-size:9.5px;color:#64748b;">{ analysis_id, session_id, user_id, recommendation: "hold" }</td>
+        <td style="padding:6px 10px;color:#86efac;font-weight:600;">React — Tab 1 unlocks, coaching text + scores render</td>
+        <td style="padding:6px 10px;color:#94a3b8;">5</td>
+        <td style="padding:6px 10px;font-family:monospace;font-size:9.5px;color:#64748b;">{ analysis_id, session_id, user_id, overall_score: 72 }</td>
       </tr>
       <tr style="border-bottom:1px solid #111827;">
-        <td style="padding:6px 10px;font-family:monospace;color:#86efac;font-weight:700;">analysis_complete</td>
-        <td style="padding:6px 10px;color:#4ade80;">FastAPI — DB updated, all stages done</td>
+        <td style="padding:6px 10px;font-family:monospace;color:#86efac;font-weight:700;">frame_ready</td>
+        <td style="padding:6px 10px;color:#4ade80;">FastAPI — on OpenCV Part 2 complete + annotated_frame_url written</td>
         <td style="padding:6px 10px;color:#94a3b8;">Cloud Run</td>
-        <td style="padding:6px 10px;color:#93c5fd;font-weight:600;">React — triggers full Results render</td>
-        <td style="padding:6px 10px;color:#94a3b8;">7→8</td>
-        <td style="padding:6px 10px;font-family:monospace;font-size:9.5px;color:#64748b;">{ analysis_id, session_id, user_id, full_result_url }</td>
+        <td style="padding:6px 10px;color:#86efac;font-weight:600;">React — annotated image swaps into Tab 1 (~2–3s after analysis_ready)</td>
+        <td style="padding:6px 10px;color:#94a3b8;">5b</td>
+        <td style="padding:6px 10px;font-family:monospace;font-size:9.5px;color:#64748b;">{ analysis_id, session_id, user_id, annotated_frame_url: "gs://.../worst_rep_frame.jpg" }</td>
+      </tr>
+      <tr style="border-bottom:1px solid #111827;background:#080d12;">
+        <td style="padding:6px 10px;font-family:monospace;color:#86efac;font-weight:700;">progression_ready</td>
+        <td style="padding:6px 10px;color:#4ade80;">FastAPI — on Haiku Call 2 complete + progression_output written</td>
+        <td style="padding:6px 10px;color:#94a3b8;">Cloud Run → Anthropic API (async)</td>
+        <td style="padding:6px 10px;color:#86efac;font-weight:600;">React — Tab 2 unlocks · FE calls GET /analysis/{id}/progression</td>
+        <td style="padding:6px 10px;color:#94a3b8;">7 async</td>
+        <td style="padding:6px 10px;font-family:monospace;font-size:9.5px;color:#64748b;">{ analysis_id, session_id, user_id }</td>
       </tr>
       <tr style="background:#1a0500;">
         <td style="padding:6px 10px;font-family:monospace;color:#f87171;font-weight:700;">error</td>
@@ -2189,17 +2129,23 @@ coaching_content = load_md_files(exercise=<span class="js">"goblet_squat"</span>
         <td style="padding:8px 10px;text-align:center;color:#94a3b8;">35%</td>
         <td style="padding:8px 10px;color:#64748b;font-size:10px;">Longest step — "frame by frame" implies precision without surfacing AI jargon</td>
       </tr>
+      <tr style="border-bottom:1px solid #111827;background:#080d12;">
+        <td style="padding:8px 10px;font-family:monospace;font-size:9.5px;color:#86efac;">analysis_ready</td>
+        <td style="padding:8px 10px;color:#f1f5f9;font-weight:600;">Tab 1 renders — coaching text, scores, all 4 parameters visible</td>
+        <td style="padding:8px 10px;text-align:center;color:#94a3b8;">100%</td>
+        <td style="padding:8px 10px;color:#64748b;font-size:10px;">Processing bar completes. User starts reading coaching while image still loads.</td>
+      </tr>
       <tr style="border-bottom:1px solid #111827;">
-        <td style="padding:8px 10px;font-family:monospace;font-size:9.5px;color:#c4b5fd;">haiku_started → analysis_ready<br><span style="color:#334155;">frame_ready<br>md_files_loaded · coaching_content_loaded</span></td>
-        <td style="padding:8px 10px;color:#f1f5f9;font-weight:600;">"Form patterns identified. Building your report..."</td>
-        <td style="padding:8px 10px;text-align:center;color:#94a3b8;">65% → 85%</td>
-        <td style="padding:8px 10px;color:#64748b;font-size:10px;">4 events share this message — internal steps (OpenCV, RAG) not surfaced to user</td>
+        <td style="padding:8px 10px;font-family:monospace;font-size:9.5px;color:#86efac;">frame_ready</td>
+        <td style="padding:8px 10px;color:#f1f5f9;font-weight:600;">Annotated image swaps into Tab 1</td>
+        <td style="padding:8px 10px;text-align:center;color:#94a3b8;">— (~2–3s after)</td>
+        <td style="padding:8px 10px;color:#64748b;font-size:10px;">No % bar change — image placeholder silently swaps to annotated frame</td>
       </tr>
       <tr style="border-bottom:1px solid #111827;background:#080d12;">
-        <td style="padding:8px 10px;font-family:monospace;font-size:9.5px;color:#c4b5fd;">haiku_call_2_started<br><span style="color:#334155;">progression_ready</span></td>
-        <td style="padding:8px 10px;color:#f1f5f9;font-weight:600;">"Writing your personalised coaching..."</td>
-        <td style="padding:8px 10px;text-align:center;color:#94a3b8;">88% → 96%</td>
-        <td style="padding:8px 10px;color:#64748b;font-size:10px;">"Personalised" signals tailored output — % advances on progression_ready</td>
+        <td style="padding:8px 10px;font-family:monospace;font-size:9.5px;color:#86efac;">progression_ready</td>
+        <td style="padding:8px 10px;color:#f1f5f9;font-weight:600;">Tab 2 unlocks — user can tap to view progression</td>
+        <td style="padding:8px 10px;text-align:center;color:#94a3b8;">— (async)</td>
+        <td style="padding:8px 10px;color:#64748b;font-size:10px;">Tab 2 shows loading state until this fires. No % bar — separate async path.</td>
       </tr>
       <tr style="border-bottom:1px solid #111827;">
         <td style="padding:8px 10px;font-family:monospace;font-size:9.5px;color:#c4b5fd;">progression_ready</td>
