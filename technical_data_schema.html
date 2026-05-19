@@ -1964,7 +1964,10 @@ coaching_content = load_md_files(exercise=<span class="js">"goblet_squat"</span>
 
 <!-- ─── SSE Timeline Summary ─── -->
 <div style="margin-top:24px; background:#080d14; border:1px solid #1e2433; border-radius:12px; padding:16px 20px;">
-  <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:0.7px;color:#475569;margin-bottom:12px;">Complete SSE Event Timeline</div>
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+    <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:0.7px;color:#475569;">Complete SSE Event Timeline</div>
+    <div style="font-size:10px;font-weight:700;color:#f59e0b;background:#1c1309;border:1px solid #78350f;border-radius:4px;padding:2px 8px;">✎ Updated May 19, 2026 — events rewritten for Haiku architecture</div>
+  </div>
   <div style="display:flex; gap:0; align-items:center; flex-wrap:wrap;">
     <div style="display:flex;flex-direction:column;align-items:center;gap:3px;padding:0 6px;">
       <div class="sse-pill">upload_received</div>
@@ -2012,7 +2015,10 @@ coaching_content = load_md_files(exercise=<span class="js">"goblet_squat"</span>
     </div>
   </div>
   <div style="margin-top:14px; border-top:1px solid #1e2433; padding-top:12px;">
-    <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:0.7px;color:#475569;margin-bottom:10px;">SSE Events — Platform Execution Table</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+      <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:0.7px;color:#475569;">SSE Events — Platform Execution Table</div>
+      <div style="font-size:10px;font-weight:700;color:#f59e0b;background:#1c1309;border:1px solid #78350f;border-radius:4px;padding:2px 8px;">✎ Updated May 19, 2026</div>
+    </div>
     <div style="font-size:10px;color:#64748b;margin-bottom:10px;">Transport route: <code style="background:#0d1117;padding:1px 5px;border-radius:4px;color:#a5f3fc;">Cloud Run → HTTPS Load Balancer → Browser</code> &nbsp;·&nbsp; <span style="color:#f97316;">Does NOT route through API Gateway</span> — buffering breaks SSE streaming (see S2-W5-02)</div>
     <table style="width:100%;border-collapse:collapse;font-size:11px;margin-bottom:20px;">
       <tr style="border-bottom:1px solid #1e2433;">
@@ -2096,7 +2102,10 @@ coaching_content = load_md_files(exercise=<span class="js">"goblet_squat"</span>
         <td style="padding:6px 10px;font-family:monospace;font-size:9.5px;color:#64748b;">{ analysis_id, session_id, user_id, error_code, error_stage, retryable, message }</td>
       </tr>
     </table>
-    <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:0.7px;color:#475569;margin:20px 0 10px;">User-Facing Frontend Messages — per SSE Event</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin:20px 0 10px;">
+      <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:0.7px;color:#475569;">User-Facing Frontend Messages — per SSE Event</div>
+      <div style="font-size:10px;font-weight:700;color:#f59e0b;background:#1c1309;border:1px solid #78350f;border-radius:4px;padding:2px 8px;">✎ Updated May 19, 2026</div>
+    </div>
     <div style="font-size:10px;color:#64748b;margin-bottom:10px;">6 distinct messages · <code style="background:#0d1117;padding:1px 4px;border-radius:3px;font-size:9px;">biomechanics_complete</code> and remaining events advance % bar only · copy defined in <span style="color:#60a5fa;">S1-W5-06</span></div>
     <table style="width:100%;border-collapse:collapse;font-size:11px;margin-bottom:20px;">
       <tr style="border-bottom:1px solid #1e2433;">
@@ -2316,7 +2325,11 @@ coaching_content = load_md_files(exercise=<span class="js">"goblet_squat"</span>
     </table>
 
     <!-- Haiku Call 1 errors -->
-    <div style="font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#a78bfa;margin:10px 0 6px;">Haiku Call 1 Stage — error_stage: "haiku_call_1"</div>
+    <div style="font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#a78bfa;margin:10px 0 6px;">
+      Haiku Call 1 Stage — error_stage: "haiku_call_1"
+      <span style="font-size:9px;font-weight:800;padding:1px 7px;border-radius:3px;background:#422006;color:#fde68a;border:1px solid #854d0e;margin-left:8px;">✎ Updated May 19, 2026</span>
+    </div>
+    <div style="font-size:9px;color:#475569;margin-bottom:6px;">Blocks Tab 1 — these are hard failures. Tab 2 never starts if Haiku Call 1 fails.</div>
     <table style="width:100%;border-collapse:collapse;font-size:11px;margin-bottom:14px;">
       <tr style="background:#1e293b;">
         <th style="padding:6px 10px;text-align:left;color:#64748b;font-size:10px;font-weight:700;border:1px solid #1e2433;">error_code</th>
@@ -2324,13 +2337,18 @@ coaching_content = load_md_files(exercise=<span class="js">"goblet_squat"</span>
         <th style="padding:6px 10px;text-align:left;color:#64748b;font-size:10px;font-weight:700;border:1px solid #1e2433;">User-facing message</th>
         <th style="padding:6px 10px;text-align:center;color:#64748b;font-size:10px;font-weight:700;border:1px solid #1e2433;">retryable</th>
       </tr>
-      <tr style="background:#080d12;"><td style="padding:6px 10px;font-family:monospace;font-size:10px;color:#f87171;border:1px solid #1e2433;">NEMOTRON_TIMEOUT</td><td style="padding:6px 10px;font-size:10px;color:#94a3b8;border:1px solid #1e2433;">API call exceeds timeout</td><td style="padding:6px 10px;font-size:10px;color:#f1f5f9;border:1px solid #1e2433;">"Form analysis is taking longer than expected. We'll retry automatically — hang tight."</td><td style="padding:6px 10px;text-align:center;border:1px solid #1e2433;color:#4ade80;">true</td></tr>
-      <tr><td style="padding:6px 10px;font-family:monospace;font-size:10px;color:#f87171;border:1px solid #1e2433;">NEMOTRON_NO_OUTPUT</td><td style="padding:6px 10px;font-size:10px;color:#94a3b8;border:1px solid #1e2433;">Response empty or malformed</td><td style="padding:6px 10px;font-size:10px;color:#f1f5f9;border:1px solid #1e2433;">"The AI couldn't interpret your movement data. Try re-uploading — if it persists, let us know."</td><td style="padding:6px 10px;text-align:center;border:1px solid #1e2433;color:#4ade80;">true</td></tr>
-      <tr style="background:#080d12;"><td style="padding:6px 10px;font-family:monospace;font-size:10px;color:#f87171;border:1px solid #1e2433;">NEMOTRON_CONTEXT_OVERFLOW</td><td style="padding:6px 10px;font-size:10px;color:#94a3b8;border:1px solid #1e2433;">Video too long → token limit hit</td><td style="padding:6px 10px;font-size:10px;color:#f1f5f9;border:1px solid #1e2433;">"That video is too long for detailed analysis. Try uploading a 30–60 second clip."</td><td style="padding:6px 10px;text-align:center;border:1px solid #1e2433;color:#f87171;">false</td></tr>
+      <tr style="background:#080d12;"><td style="padding:6px 10px;font-family:monospace;font-size:10px;color:#f87171;border:1px solid #1e2433;">HAIKU_TIMEOUT</td><td style="padding:6px 10px;font-size:10px;color:#94a3b8;border:1px solid #1e2433;">Anthropic API call exceeds timeout</td><td style="padding:6px 10px;font-size:10px;color:#f1f5f9;border:1px solid #1e2433;">"Form analysis is taking longer than expected. We'll retry automatically — hang tight."</td><td style="padding:6px 10px;text-align:center;border:1px solid #1e2433;color:#4ade80;">true</td></tr>
+      <tr><td style="padding:6px 10px;font-family:monospace;font-size:10px;color:#f87171;border:1px solid #1e2433;">HAIKU_INVALID_OUTPUT</td><td style="padding:6px 10px;font-size:10px;color:#94a3b8;border:1px solid #1e2433;">Response missing required fields or malformed JSON</td><td style="padding:6px 10px;font-size:10px;color:#f1f5f9;border:1px solid #1e2433;">"The AI couldn't complete your form analysis. Try re-uploading — if it persists, let us know."</td><td style="padding:6px 10px;text-align:center;border:1px solid #1e2433;color:#4ade80;">true</td></tr>
+      <tr style="background:#080d12;"><td style="padding:6px 10px;font-family:monospace;font-size:10px;color:#f87171;border:1px solid #1e2433;">HAIKU_CONTEXT_OVERFLOW</td><td style="padding:6px 10px;font-size:10px;color:#94a3b8;border:1px solid #1e2433;">Prompt too large — video too long or biomechanics JSON exceeds token limit</td><td style="padding:6px 10px;font-size:10px;color:#f1f5f9;border:1px solid #1e2433;">"That video is too long for detailed analysis. Try uploading a 30–60 second clip."</td><td style="padding:6px 10px;text-align:center;border:1px solid #1e2433;color:#f87171;">false</td></tr>
+      <tr><td style="padding:6px 10px;font-family:monospace;font-size:10px;color:#f87171;border:1px solid #1e2433;">HAIKU_API_ERROR</td><td style="padding:6px 10px;font-size:10px;color:#94a3b8;border:1px solid #1e2433;">Anthropic API returns 5xx or rate limit hit</td><td style="padding:6px 10px;font-size:10px;color:#f1f5f9;border:1px solid #1e2433;">"We hit a temporary issue with our AI service. Please try again in a moment."</td><td style="padding:6px 10px;text-align:center;border:1px solid #1e2433;color:#4ade80;">true</td></tr>
     </table>
 
-    <!-- Frame extraction errors -->
-    <div style="font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#34d399;margin:10px 0 6px;">Frame Extraction Stage — error_stage: "frame_extraction"</div>
+    <!-- OpenCV Part 2 errors -->
+    <div style="font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#34d399;margin:10px 0 6px;">
+      OpenCV Part 2 Stage — error_stage: "opencv_part_2"
+      <span style="font-size:9px;font-weight:800;padding:1px 7px;border-radius:3px;background:#422006;color:#fde68a;border:1px solid #854d0e;margin-left:8px;">✎ Updated May 19, 2026</span>
+    </div>
+    <div style="font-size:9px;color:#475569;margin-bottom:6px;">Non-blocking — Tab 1 coaching text already visible. Image just won't show. Use retryable="partial" so Tab 1 renders without blocking.</div>
     <table style="width:100%;border-collapse:collapse;font-size:11px;margin-bottom:14px;">
       <tr style="background:#1e293b;">
         <th style="padding:6px 10px;text-align:left;color:#64748b;font-size:10px;font-weight:700;border:1px solid #1e2433;">error_code</th>
@@ -2338,33 +2356,26 @@ coaching_content = load_md_files(exercise=<span class="js">"goblet_squat"</span>
         <th style="padding:6px 10px;text-align:left;color:#64748b;font-size:10px;font-weight:700;border:1px solid #1e2433;">User-facing message</th>
         <th style="padding:6px 10px;text-align:center;color:#64748b;font-size:10px;font-weight:700;border:1px solid #1e2433;">retryable</th>
       </tr>
-      <tr style="background:#080d12;"><td style="padding:6px 10px;font-family:monospace;font-size:10px;color:#f87171;border:1px solid #1e2433;">FRAME_EXTRACTION_FAILED</td><td style="padding:6px 10px;font-size:10px;color:#94a3b8;border:1px solid #1e2433;">OpenCV can't seek to bottom_timestamp_ms from biomechanics JSON</td><td style="padding:6px 10px;font-size:10px;color:#f1f5f9;border:1px solid #1e2433;">"We identified form issues but couldn't extract the frames to show you. Your text coaching is still available below."</td><td style="padding:6px 10px;text-align:center;border:1px solid #1e2433;color:#fbbf24;">partial</td></tr>
+      <tr style="background:#080d12;"><td style="padding:6px 10px;font-family:monospace;font-size:10px;color:#f87171;border:1px solid #1e2433;">FRAME_EXTRACTION_FAILED</td><td style="padding:6px 10px;font-size:10px;color:#94a3b8;border:1px solid #1e2433;">OpenCV can't seek to bottom_timestamp_ms — video file corrupt or rep timestamp missing</td><td style="padding:6px 10px;font-size:10px;color:#f1f5f9;border:1px solid #1e2433;">"We couldn't generate the form snapshot. Your coaching is still fully available above."</td><td style="padding:6px 10px;text-align:center;border:1px solid #1e2433;color:#fbbf24;">partial</td></tr>
+      <tr><td style="padding:6px 10px;font-family:monospace;font-size:10px;color:#f87171;border:1px solid #1e2433;">ANNOTATION_FAILED</td><td style="padding:6px 10px;font-size:10px;color:#94a3b8;border:1px solid #1e2433;">Frame extracted but OpenCV failed to draw overlays or save to GCS</td><td style="padding:6px 10px;font-size:10px;color:#f1f5f9;border:1px solid #1e2433;">"We couldn't generate the form snapshot. Your coaching is still fully available above."</td><td style="padding:6px 10px;text-align:center;border:1px solid #1e2433;color:#fbbf24;">partial</td></tr>
     </table>
 
-    <!-- RAG errors -->
-    <div style="font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#fb923c;margin:10px 0 6px;">RAG Stage — error_stage: "rag"</div>
+    <!-- Haiku Call 2 errors -->
+    <div style="font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#60a5fa;margin:10px 0 6px;">
+      Haiku Call 2 Stage — error_stage: "haiku_call_2"
+      <span style="font-size:9px;font-weight:800;padding:1px 7px;border-radius:3px;background:#422006;color:#fde68a;border:1px solid #854d0e;margin-left:8px;">✎ Updated May 19, 2026 — replaces Claude Stage</span>
+    </div>
+    <div style="font-size:9px;color:#475569;margin-bottom:6px;">Async — Tab 1 is already fully visible when this runs. Failure only affects Tab 2. Use retryable="partial" — Tab 1 is unaffected, Tab 2 shows error state.</div>
     <table style="width:100%;border-collapse:collapse;font-size:11px;margin-bottom:14px;">
       <tr style="background:#1e293b;">
         <th style="padding:6px 10px;text-align:left;color:#64748b;font-size:10px;font-weight:700;border:1px solid #1e2433;">error_code</th>
         <th style="padding:6px 10px;text-align:left;color:#64748b;font-size:10px;font-weight:700;border:1px solid #1e2433;">Trigger</th>
-        <th style="padding:6px 10px;text-align:left;color:#64748b;font-size:10px;font-weight:700;border:1px solid #1e2433;">User-facing message</th>
+        <th style="padding:6px 10px;text-align:left;color:#64748b;font-size:10px;font-weight:700;border:1px solid #1e2433;">User-facing message (Tab 2 only)</th>
         <th style="padding:6px 10px;text-align:center;color:#64748b;font-size:10px;font-weight:700;border:1px solid #1e2433;">retryable</th>
       </tr>
-      <tr style="background:#080d12;"><td style="padding:6px 10px;font-family:monospace;font-size:10px;color:#f87171;border:1px solid #1e2433;">RAG_UNAVAILABLE</td><td style="padding:6px 10px;font-size:10px;color:#94a3b8;border:1px solid #1e2433;">Vector DB timeout or service down</td><td style="padding:6px 10px;font-size:10px;color:#f1f5f9;border:1px solid #1e2433;">"Coaching library is temporarily unavailable. Your form analysis is ready, but personalised drills may be limited."</td><td style="padding:6px 10px;text-align:center;border:1px solid #1e2433;color:#fbbf24;">partial</td></tr>
-      <tr><td style="padding:6px 10px;font-family:monospace;font-size:10px;color:#f87171;border:1px solid #1e2433;">RAG_NO_RESULTS</td><td style="padding:6px 10px;font-size:10px;color:#94a3b8;border:1px solid #1e2433;">No matching coaching context found</td><td style="padding:6px 10px;font-size:10px;color:#f1f5f9;border:1px solid #1e2433;">"We couldn't find specific drills for your movement pattern yet. General coaching below."</td><td style="padding:6px 10px;text-align:center;border:1px solid #1e2433;color:#fbbf24;">partial</td></tr>
-    </table>
-
-    <!-- Claude errors -->
-    <div style="font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#60a5fa;margin:10px 0 6px;">Claude Stage — error_stage: "claude"</div>
-    <table style="width:100%;border-collapse:collapse;font-size:11px;margin-bottom:14px;">
-      <tr style="background:#1e293b;">
-        <th style="padding:6px 10px;text-align:left;color:#64748b;font-size:10px;font-weight:700;border:1px solid #1e2433;">error_code</th>
-        <th style="padding:6px 10px;text-align:left;color:#64748b;font-size:10px;font-weight:700;border:1px solid #1e2433;">Trigger</th>
-        <th style="padding:6px 10px;text-align:left;color:#64748b;font-size:10px;font-weight:700;border:1px solid #1e2433;">User-facing message</th>
-        <th style="padding:6px 10px;text-align:center;color:#64748b;font-size:10px;font-weight:700;border:1px solid #1e2433;">retryable</th>
-      </tr>
-      <tr style="background:#080d12;"><td style="padding:6px 10px;font-family:monospace;font-size:10px;color:#f87171;border:1px solid #1e2433;">CLAUDE_TIMEOUT</td><td style="padding:6px 10px;font-size:10px;color:#94a3b8;border:1px solid #1e2433;">Claude API exceeds timeout</td><td style="padding:6px 10px;font-size:10px;color:#f1f5f9;border:1px solid #1e2433;">"Your coaching report is taking longer than expected. Refreshing should show your results shortly."</td><td style="padding:6px 10px;text-align:center;border:1px solid #1e2433;color:#4ade80;">true</td></tr>
-      <tr><td style="padding:6px 10px;font-family:monospace;font-size:10px;color:#f87171;border:1px solid #1e2433;">CLAUDE_ERROR</td><td style="padding:6px 10px;font-size:10px;color:#94a3b8;border:1px solid #1e2433;">Malformed or empty Claude response</td><td style="padding:6px 10px;font-size:10px;color:#f1f5f9;border:1px solid #1e2433;">"We hit a snag writing your coaching report. Your raw form data is saved — try refreshing."</td><td style="padding:6px 10px;text-align:center;border:1px solid #1e2433;color:#4ade80;">true</td></tr>
+      <tr style="background:#080d12;"><td style="padding:6px 10px;font-family:monospace;font-size:10px;color:#f87171;border:1px solid #1e2433;">HAIKU_CALL_2_TIMEOUT</td><td style="padding:6px 10px;font-size:10px;color:#94a3b8;border:1px solid #1e2433;">Anthropic API call for longitudinal coaching exceeds timeout</td><td style="padding:6px 10px;font-size:10px;color:#f1f5f9;border:1px solid #1e2433;">"Progression data is taking longer than expected. Try tapping the tab again in a moment."</td><td style="padding:6px 10px;text-align:center;border:1px solid #1e2433;color:#fbbf24;">partial</td></tr>
+      <tr><td style="padding:6px 10px;font-family:monospace;font-size:10px;color:#f87171;border:1px solid #1e2433;">HAIKU_CALL_2_ERROR</td><td style="padding:6px 10px;font-size:10px;color:#94a3b8;border:1px solid #1e2433;">Malformed response or API error from Anthropic</td><td style="padding:6px 10px;font-size:10px;color:#f1f5f9;border:1px solid #1e2433;">"We couldn't load your progression data. Your form analysis above is complete and saved."</td><td style="padding:6px 10px;text-align:center;border:1px solid #1e2433;color:#fbbf24;">partial</td></tr>
+      <tr style="background:#080d12;"><td style="padding:6px 10px;font-family:monospace;font-size:10px;color:#f87171;border:1px solid #1e2433;">NO_PREVIOUS_SESSION</td><td style="padding:6px 10px;font-size:10px;color:#94a3b8;border:1px solid #1e2433;">No prior completed analysis found for same exercise_id + user_id — nothing to compare against</td><td style="padding:6px 10px;font-size:10px;color:#f1f5f9;border:1px solid #1e2433;">"This is your first session for this exercise — progression tracking will appear after your next upload."</td><td style="padding:6px 10px;text-align:center;border:1px solid #1e2433;color:#f87171;">false</td></tr>
     </table>
 
     <!-- Infrastructure errors -->
