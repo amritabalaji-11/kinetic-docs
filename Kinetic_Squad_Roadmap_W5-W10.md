@@ -159,6 +159,11 @@
 
 **Thursday merge:** Full pipeline live (video → OpenCV + MediaPipe → Haiku prompt → coaching output via SSE) · Demo users queryable
 
+#### Schema + Contract Patches (W7 — must complete before pipeline wiring)
+- [ ] **[PATCH-S2-W7-A] DB schema — add new columns to `form_analysis_results`** — add `range_of_motion_score` (int), `rep_scores` (jsonb), `progression_output` (jsonb). Update `annotated_frames_urls` → `annotated_frame_url` (single GCS URI). Remove `nemotron_output_url`, `chain_of_thought`.
+- [ ] **[PATCH-S2-W7-B] SSE event contract update** — retire: `nemotron_started/complete`, `overlay_complete`, `frames_extracting/ready`, `rag_started/complete`, `claude_started/complete`, `analysis_complete`. Add: `haiku_started`, `analysis_ready`, `frame_ready`, `progression_ready`. Update `FE_SSE_and_Errors.md` + `FE_Response_Schemas.md` to match.
+- [ ] **[PATCH-S2-W7-C] Haiku Call 2 async endpoint** — implement `GET /analysis/{id}/progression` endpoint; returns `progression_output` JSON (Section 1 + Section 2) from `form_analysis_results`.
+
 ---
 
 ### Squad 3 — Data / Full Stack
@@ -169,6 +174,10 @@
 - [ ] **Visual output scoping** — prototype and compare 3 options: (1) annotated worst-rep bottom frame, (2) 5–8s slow-motion clip around fault moment, (3) full processed video with skeleton overlay. No build decision — scope, test, present recommendation
 - 🟠 **[S3-W5-01]** Carry-over from W5 — In Progress
 - 🟠 **[S3-W5-08]** Carry-over from W5 — In Progress
+
+#### Biomechanics Schema Patches (W7 — required for OpenCV Part 2)
+- [ ] **[PATCH-S3-W7-A] Add `bottom_frame` + `bottom_timestamp_ms` to biomechanics JSON per rep** — frame index and timestamp (ms) at the squat bottom position. Required by OpenCV Part 2 to seek the correct frame. Without these, worst-rep frame extraction cannot function.
+- [ ] **[PATCH-S3-W7-B] Add `session_valgus_fault` to `consolidated.stability`** — boolean: `true` if ≥50% valid reps have `knee_valgus_distance < 0.22`. Makes valgus detection deterministic in the pipeline rather than relying on LLM.
 
 **Thursday merge:** MediaPipe updated · ≥2 gold standard records in Supabase · Synthetic user data seeded · Visual output options documented
 

@@ -356,7 +356,32 @@ td ul{padding-left:16px;} td li{margin-bottom:3px;}
 </div></div>
 
 </div>
-<div class="merge-bar">⊕ <strong>Thu merge:</strong> Full pipeline fires end-to-end for ≥1 demo user · SSE events firing · Haiku returning structured coaching JSON</div>
+<div style="margin-top:20px;padding:14px 18px;background:#1a0a2e;border:1px solid #6d28d9;border-radius:10px;">
+  <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:0.6px;color:#a78bfa;margin-bottom:10px;">🔧 Schema + Contract Patches — complete before pipeline wiring</div>
+
+  <div style="display:flex;flex-direction:column;gap:10px;">
+    <div style="background:#0d0720;border:1px solid #4c1d95;border-radius:8px;padding:10px 14px;">
+      <div style="font-size:11px;font-weight:700;color:#c4b5fd;margin-bottom:4px;">[PATCH-S2-W7-A] DB schema — add new columns to <code style="background:#150d24;padding:1px 4px;border-radius:3px;">form_analysis_results</code></div>
+      <div style="font-size:11px;color:#94a3b8;line-height:1.6;">Add: <code style="background:#0d1117;padding:1px 4px;border-radius:3px;color:#fde68a;">range_of_motion_score</code> (int) · <code style="background:#0d1117;padding:1px 4px;border-radius:3px;color:#fde68a;">rep_scores</code> (jsonb) · <code style="background:#0d1117;padding:1px 4px;border-radius:3px;color:#fde68a;">progression_output</code> (jsonb) · <code style="background:#0d1117;padding:1px 4px;border-radius:3px;color:#fde68a;">annotated_frame_url</code> (single GCS URI — replaces array). Remove: <code style="background:#0d1117;padding:1px 4px;border-radius:3px;color:#f87171;">nemotron_output_url</code> · <code style="background:#0d1117;padding:1px 4px;border-radius:3px;color:#f87171;">chain_of_thought</code> · <code style="background:#0d1117;padding:1px 4px;border-radius:3px;color:#f87171;">annotated_frames_urls</code>.</div>
+    </div>
+
+    <div style="background:#0d0720;border:1px solid #4c1d95;border-radius:8px;padding:10px 14px;">
+      <div style="font-size:11px;font-weight:700;color:#c4b5fd;margin-bottom:4px;">[PATCH-S2-W7-B] SSE event contract update</div>
+      <div style="font-size:11px;color:#94a3b8;line-height:1.6;">
+        <strong style="color:#f87171;">Retire:</strong> <code style="background:#0d1117;padding:1px 4px;border-radius:3px;">nemotron_started/complete</code> · <code style="background:#0d1117;padding:1px 4px;border-radius:3px;">overlay_complete</code> · <code style="background:#0d1117;padding:1px 4px;border-radius:3px;">frames_extracting/ready</code> · <code style="background:#0d1117;padding:1px 4px;border-radius:3px;">rag_started/complete</code> · <code style="background:#0d1117;padding:1px 4px;border-radius:3px;">claude_started/complete</code> · <code style="background:#0d1117;padding:1px 4px;border-radius:3px;">analysis_complete</code><br>
+        <strong style="color:#4ade80;">Add:</strong> <code style="background:#0d1117;padding:1px 4px;border-radius:3px;color:#fde68a;">haiku_started</code> · <code style="background:#0d1117;padding:1px 4px;border-radius:3px;color:#fde68a;">analysis_ready</code> (Tab 1 unlocks) · <code style="background:#0d1117;padding:1px 4px;border-radius:3px;color:#fde68a;">frame_ready</code> (image loads ~2–3s later) · <code style="background:#0d1117;padding:1px 4px;border-radius:3px;color:#fde68a;">progression_ready</code> (Tab 2 unlocks)<br>
+        Update <code style="background:#0d1117;padding:1px 4px;border-radius:3px;">FE_SSE_and_Errors.md</code> + <code style="background:#0d1117;padding:1px 4px;border-radius:3px;">FE_Response_Schemas.md</code> before S1 wires the Results screen.
+      </div>
+    </div>
+
+    <div style="background:#0d0720;border:1px solid #4c1d95;border-radius:8px;padding:10px 14px;">
+      <div style="font-size:11px;font-weight:700;color:#c4b5fd;margin-bottom:4px;">[PATCH-S2-W7-C] Haiku Call 2 async + progression endpoint</div>
+      <div style="font-size:11px;color:#94a3b8;line-height:1.6;">Implement async Haiku Call 2 (longitudinal coaching — Tab 2). Implement <code style="background:#0d1117;padding:1px 4px;border-radius:3px;color:#fde68a;">GET /analysis/{id}/progression</code> endpoint that returns <code style="background:#0d1117;padding:1px 4px;border-radius:3px;">progression_output</code> JSON (Section 1 + Section 2) from <code style="background:#0d1117;padding:1px 4px;border-radius:3px;">form_analysis_results</code>. Fires <code style="background:#0d1117;padding:1px 4px;border-radius:3px;">progression_ready</code> SSE on completion.</div>
+    </div>
+  </div>
+</div>
+
+<div class="merge-bar">⊕ <strong>Thu merge:</strong> Full pipeline fires end-to-end for ≥1 demo user · SSE events firing · Haiku returning structured coaching JSON · Schema patches committed</div>
 
 <!-- SQUAD 3 -->
 <div class="squad-header">
@@ -486,7 +511,23 @@ td ul{padding-left:16px;} td li{margin-bottom:3px;}
 </div></div>
 
 </div>
-<div class="merge-bar">⊕ <strong>Thu merge:</strong> MediaPipe updated · ≥2 gold standard records in Supabase · Coaching .md files curated + retrieval working · Synthetic user data seeded · Visual output options documented</div>
+<div style="margin-top:20px;padding:14px 18px;background:#1a0a2e;border:1px solid #6d28d9;border-radius:10px;">
+  <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:0.6px;color:#a78bfa;margin-bottom:10px;">🔧 Biomechanics Schema Patches — required for OpenCV Part 2</div>
+
+  <div style="display:flex;flex-direction:column;gap:10px;">
+    <div style="background:#0d0720;border:1px solid #4c1d95;border-radius:8px;padding:10px 14px;">
+      <div style="font-size:11px;font-weight:700;color:#c4b5fd;margin-bottom:4px;">[PATCH-S3-W7-A] Add <code style="background:#150d24;padding:1px 4px;border-radius:3px;">bottom_frame</code> + <code style="background:#150d24;padding:1px 4px;border-radius:3px;">bottom_timestamp_ms</code> to biomechanics JSON — per rep</div>
+      <div style="font-size:11px;color:#94a3b8;line-height:1.6;"><code style="background:#0d1117;padding:1px 4px;border-radius:3px;color:#fde68a;">bottom_frame</code> (int): frame index at squat bottom position. <code style="background:#0d1117;padding:1px 4px;border-radius:3px;color:#fde68a;">bottom_timestamp_ms</code> (float): (bottom_frame / fps) × 1000. Required by OpenCV Part 2 to seek the correct frame in the raw video. Without these two fields, worst-rep frame extraction cannot function.</div>
+    </div>
+
+    <div style="background:#0d0720;border:1px solid #4c1d95;border-radius:8px;padding:10px 14px;">
+      <div style="font-size:11px;font-weight:700;color:#c4b5fd;margin-bottom:4px;">[PATCH-S3-W7-B] Add <code style="background:#150d24;padding:1px 4px;border-radius:3px;">session_valgus_fault</code> to <code style="background:#150d24;padding:1px 4px;border-radius:3px;">consolidated.stability</code></div>
+      <div style="font-size:11px;color:#94a3b8;line-height:1.6;">Boolean: <code style="background:#0d1117;padding:1px 4px;border-radius:3px;color:#fde68a;">true</code> if ≥50% of valid reps (excluding walk-in/walk-out) have <code style="background:#0d1117;padding:1px 4px;border-radius:3px;">knee_valgus_distance &lt; 0.22</code>. Moves valgus majority-rule detection from the LLM prompt into the pipeline output — deterministic and scalable.</div>
+    </div>
+  </div>
+</div>
+
+<div class="merge-bar">⊕ <strong>Thu merge:</strong> MediaPipe updated · ≥2 gold standard records in Supabase · Coaching .md files curated + retrieval working · Synthetic user data seeded · Visual output options documented · Biomechanics schema patches committed</div>
 
 <!-- Checklist -->
 <div class="checklist">
