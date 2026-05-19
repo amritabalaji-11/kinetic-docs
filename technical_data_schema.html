@@ -454,47 +454,45 @@ h1 { font-size:20px; font-weight:700; color:#f8fafc; }
       </div>
       <div class="mm-arrow">→</div>
 
-      <!-- Step 5: Nemotron -->
+      <!-- Step 5: Haiku Call 1 -->
       <div class="mm-col">
         <div class="mm-node mm-be mm-ai">
           <div class="mm-stepnum">Step 5</div>
           <div class="mm-icon">🤖</div>
-          <div class="mm-title">Nemotron</div>
-          <div class="mm-owner">S2 · Backend · NVIDIA API</div>
+          <div class="mm-title">Haiku 4.5 · Call 1</div>
+          <div class="mm-owner">S2 · Backend · Anthropic API</div>
         </div>
         <div class="mm-sse-col">
-          <span class="mm-sse">nemotron_started</span>
-          <span class="mm-sse">nemotron_complete</span>
+          <span class="mm-sse">haiku_started</span>
+          <span class="mm-sse">analysis_ready → Tab 1</span>
         </div>
       </div>
       <div class="mm-arrow">→</div>
 
-      <!-- Step 5b: OpenCV -->
+      <!-- Step 5b: OpenCV Part 2 (runs after Haiku) -->
       <div class="mm-col">
         <div class="mm-node mm-be mm-proc">
           <div class="mm-stepnum">Step 5b</div>
           <div class="mm-icon">🎞️</div>
-          <div class="mm-title">OpenCV Frame Extraction</div>
-          <div class="mm-owner">S2 · Backend</div>
+          <div class="mm-title">OpenCV Part 2</div>
+          <div class="mm-owner">S3 · After Haiku Call 1</div>
         </div>
         <div class="mm-sse-col">
-          <span class="mm-sse">frames_extracting</span>
-          <span class="mm-sse">frames_ready</span>
+          <span class="mm-sse">frame_ready → image in Tab 1</span>
         </div>
       </div>
       <div class="mm-arrow">→</div>
 
-      <!-- Step 7: Claude (RAG feeds in — shown in branch row) -->
+      <!-- Step 7: Haiku Call 2 async -->
       <div class="mm-col">
         <div class="mm-node mm-be mm-ai">
           <div class="mm-stepnum">Step 7</div>
-          <div class="mm-icon">💡</div>
-          <div class="mm-title">Claude Sonnet 4.6</div>
-          <div class="mm-owner">S2 · Backend · Anthropic API</div>
+          <div class="mm-icon">📈</div>
+          <div class="mm-title">Haiku 4.5 · Call 2 · async</div>
+          <div class="mm-owner">S2 · Backend · Longitudinal</div>
         </div>
         <div class="mm-sse-col">
-          <span class="mm-sse">claude_started</span>
-          <span class="mm-sse">claude_complete</span>
+          <span class="mm-sse">progression_ready → Tab 2</span>
         </div>
       </div>
       <div class="mm-arrow">→</div>
@@ -504,11 +502,12 @@ h1 { font-size:20px; font-weight:700; color:#f8fafc; }
         <div class="mm-node mm-fe mm-out">
           <div class="mm-stepnum">Step 8</div>
           <div class="mm-icon">📊</div>
-          <div class="mm-title">Coaching Output</div>
+          <div class="mm-title">Tab 1 + Tab 2</div>
           <div class="mm-owner">S1 · Frontend</div>
         </div>
         <div class="mm-sse-col">
-          <span class="mm-sse">analysis_complete</span>
+          <span class="mm-sse">analysis_ready · frame_ready</span>
+          <span class="mm-sse">progression_ready</span>
         </div>
       </div>
 
@@ -546,8 +545,8 @@ h1 { font-size:20px; font-weight:700; color:#f8fafc; }
           <div class="mm-owner">S3 · Data</div>
         </div>
         <div class="mm-sse-col">
-          <span class="mm-sse">rag_started</span>
-          <span class="mm-sse">rag_complete</span>
+          <span class="mm-sse">md_files_loaded</span>
+          <span class="mm-sse">coaching_content_loaded</span>
         </div>
       </div>
 
@@ -916,7 +915,7 @@ h1 { font-size:20px; font-weight:700; color:#f8fafc; }
         <div class="io-row"><span class="io-pill io-in">MediaPipe keypoints (all frames)</span></div>
       </div>
       <div class="sub-section">
-        <div class="sub-label">Biomechanics Output JSON — passed to Nemotron</div>
+        <div class="sub-label">Biomechanics Output JSON — passed to Haiku Call 1 · 🆕 new fields highlighted</div>
         <div class="json-block">
 <span class="jp">{</span>
   <span class="jk">"session_id"</span><span class="jp">:</span> <span class="js">"uuid"</span><span class="jp">,</span>
@@ -927,6 +926,8 @@ h1 { font-size:20px; font-weight:700; color:#f8fafc; }
     <span class="jp">{</span>
       <span class="jk">"rep_number"</span><span class="jp">:</span> <span class="jn">1</span><span class="jp">,</span>
       <span class="jk">"start_ms"</span><span class="jp">:</span> <span class="jn">1200</span><span class="jp">,</span> <span class="jk">"end_ms"</span><span class="jp">:</span> <span class="jn">4000</span><span class="jp">,</span>
+      <span class="jk" style="color:#fde68a;">"bottom_frame"</span><span class="jp">:</span> <span class="jn">342</span><span class="jp">,</span>          <span class="jc">// 🆕 NEW — frame index at squat bottom</span>
+      <span class="jk" style="color:#fde68a;">"bottom_timestamp_ms"</span><span class="jp">:</span> <span class="jn">5700.0</span><span class="jp">,</span>  <span class="jc">// 🆕 NEW — (bottom_frame / fps) × 1000</span>
       <span class="jk">"descent_s"</span><span class="jp">:</span> <span class="jn">1.4</span><span class="jp">,</span> <span class="jk">"ascent_s"</span><span class="jp">:</span> <span class="jn">1.2</span><span class="jp">,</span>
       <span class="jk">"joint_angles"</span><span class="jp">:</span> <span class="jp">{</span>
         <span class="jk">"knee_left_min"</span><span class="jp">:</span> <span class="jn">88</span><span class="jp">,</span>  <span class="jk">"knee_left_max"</span><span class="jp">:</span> <span class="jn">165</span><span class="jp">,</span>
@@ -938,6 +939,12 @@ h1 { font-size:20px; font-weight:700; color:#f8fafc; }
     <span class="jp">},</span>
     <span class="jc">// ... reps 2–8</span>
   <span class="jp">],</span>
+  <span class="jk">"consolidated"</span><span class="jp">:</span> <span class="jp">{</span>
+    <span class="jk">"stability"</span><span class="jp">:</span> <span class="jp">{</span>
+      <span class="jk" style="color:#fde68a;">"session_valgus_fault"</span><span class="jp">:</span> <span class="jb">false</span><span class="jp">,</span>  <span class="jc">// 🆕 NEW — true if ≥50% valid reps have knee_valgus_distance &lt; 0.22</span>
+      <span class="jk">"knee_valgus_mean"</span><span class="jp">:</span> <span class="jn">0.28</span>
+    <span class="jp">}</span>
+  <span class="jp">},</span>
   <span class="jk">"tracking_confidence_avg"</span><span class="jp">:</span> <span class="jn">0.87</span><span class="jp">,</span>
   <span class="jk">"low_confidence_frames"</span><span class="jp">:</span> <span class="jn">14</span>
 <span class="jp">}</span></div>
@@ -947,7 +954,7 @@ h1 { font-size:20px; font-weight:700; color:#f8fafc; }
         <div class="sse-row">
           <span class="sse-pill">biomechanics_complete → { analysis_id, session_id, user_id, rep_count, joints_computed, avg_confidence }</span>
         </div>
-        <div style="font-size:10px;color:#475569;margin-top:4px;">Silent event — no user-facing message change. % bar advances from 30% → 33%. Used by developers to confirm the script ran without errors before Nemotron starts.</div>
+        <div style="font-size:10px;color:#475569;margin-top:4px;">Silent event — no user-facing message change. % bar advances. Used by developers to confirm the script ran without errors before Haiku Call 1 starts.</div>
       </div>
       <div class="sub-section">
         <div class="sub-label">Roadmap Task IDs</div>
@@ -955,8 +962,8 @@ h1 { font-size:20px; font-weight:700; color:#f8fafc; }
           <div class="task-map-row"><span class="task-map-role role-defines">Defines</span><span class="tid tid-s3">S3-W5-07</span><span style="font-size:10px;color:#475569;">Defines biomechanics output JSON format — joint angles, rep count, stability, posture fields</span></div>
           <div class="task-map-row"><span class="task-map-role role-implements">Implements</span><span class="tid tid-s2">S2-W6-03</span><span style="font-size:10px;color:#475569;">Integrates MediaPipe — computes angles and segments reps from keypoints</span></div>
           <div class="task-map-row"><span class="task-map-role role-implements">Implements</span><span class="tid tid-s2">S2-W6-04</span><span style="font-size:10px;color:#475569;">Returns real biomechanics JSON from /analyze (replaces stub)</span></div>
-          <div class="task-map-row"><span class="task-map-role role-consumes">Consumes</span><span class="tid tid-s2">S2-W6-05</span><span style="font-size:10px;color:#475569;">Begin Nemotron integration — biomechanics JSON is first input to Nemotron</span></div>
-          <div class="task-map-row"><span class="task-map-role role-tests">Tests</span><span class="tid tid-tst">TST-W6-01</span><span style="font-size:10px;color:#475569;">Nemotron T1 — sends biomechanics JSON only into Nemotron, logs what model understands</span></div>
+          <div class="task-map-row"><span class="task-map-role role-consumes">Consumes</span><span class="tid tid-s2">S2-W6-05</span><span style="font-size:10px;color:#475569;">Biomechanics JSON is core input to Haiku Call 1</span></div>
+          <div class="task-map-row"><span class="task-map-role role-tests">Tests</span><span class="tid tid-tst">TST-W6-01</span><span style="font-size:10px;color:#475569;">Haiku Call 1 — first end-to-end analysis + coaching output test</span></div>
         </div>
       </div>
     </div>
@@ -964,131 +971,84 @@ h1 { font-size:20px; font-weight:700; color:#f8fafc; }
 
   <div class="connector"><span>↓</span></div>
 
-  <!-- ═══ STEP 5: NEMOTRON ═══ -->
+  <!-- ═══ STEP 5: HAIKU CALL 1 ═══ -->
   <div class="step backend ai">
     <div class="step-header">
       <div class="step-num">5</div>
       <div class="step-icon">🤖</div>
-      <div><div class="step-title">Nemotron 3 Nano Omni — Video Analysis</div><div class="step-squad">Squad 2 — Backend</div></div>
+      <div><div class="step-title">Claude Haiku 4.5 — Form Analysis + Coaching · Call 1</div><div class="step-squad">Squad 2 — Backend · Anthropic API · Tab 1 · model: claude-haiku-4-5-20251001</div></div>
     </div>
     <div class="step-body">
       <div class="sub-section">
-        <div class="sub-label">Dual Inputs</div>
+        <div class="sub-label">Inputs — all assembled by Squad 2 before the API call</div>
         <div class="io-row">
-          <span class="io-pill io-in">Raw video (from S3)</span>
-          <span class="io-pill io-in">Biomechanics JSON (from Step 4)</span>
+          <span class="io-pill io-in">composite_grid_b64 — 8-frame JPEG as base64 (in memory, no GCS)</span>
+          <span class="io-pill io-in">biomechanics_json (from Step 4)</span>
+          <span class="io-pill io-in">form_analyses: user_id, analysis_id, weight_value, weight_unit, exercise_id, exercise_name</span>
+          <span class="io-pill io-in">gold standard JSON (from Supabase gold standard table)</span>
+          <span class="io-pill io-in">last 3 sessions: weight + MediaPipe JSON + past Haiku output (from form_analysis_results)</span>
+          <span class="io-pill io-in">.md coaching files — injected into system prompt</span>
         </div>
       </div>
       <div class="sub-section">
-        <div class="sub-label">Nemotron Output JSON</div>
+        <div class="sub-label">Haiku Call 1 Output JSON — single call, analysis + coaching in one response</div>
         <div class="json-block">
 <span class="jp">{</span>
-  <span class="jk">"session_id"</span><span class="jp">:</span> <span class="js">"uuid"</span><span class="jp">,</span>
-  <span class="jk">"exercise"</span><span class="jp">:</span> <span class="js">"goblet_squat"</span><span class="jp">,</span>
-  <span class="jk">"weight_kg"</span><span class="jp">:</span> <span class="jn">12</span><span class="jp">,</span>
-  <span class="jk">"processed_at"</span><span class="jp">:</span> <span class="js">"2026-05-04T10:32:00Z"</span><span class="jp">,</span>
-
-  <span class="jk">"summary"</span><span class="jp">:</span> <span class="jp">{</span>
-    <span class="jk">"overall_form_score"</span><span class="jp">:</span> <span class="jn">72</span><span class="jp">,</span>         <span class="jc">// 0–100</span>
-    <span class="jk">"movement_quality_score"</span><span class="jp">:</span> <span class="jn">68</span><span class="jp">,</span>
-    <span class="jk">"stability_score"</span><span class="jp">:</span> <span class="jn">75</span><span class="jp">,</span>
-    <span class="jk">"posture_score"</span><span class="jp">:</span> <span class="jn">73</span><span class="jp">,</span>
-    <span class="jk">"tempo_score"</span><span class="jp">:</span> <span class="jn">71</span><span class="jp">,</span>              <span class="jc">// derived from biomechanics tempo_data passed as input</span>
-    <span class="jk">"rep_count"</span><span class="jp">:</span> <span class="jn">8</span><span class="jp">,</span>
-    <span class="jk">"avg_rep_duration_s"</span><span class="jp">:</span> <span class="jn">2.8</span><span class="jp">,</span>
-    <span class="jk">"chain_of_thought"</span><span class="jp">:</span> <span class="js">"Athlete shows good depth but consistent knee valgus on ascent from rep 3..."</span>
+  <span class="jc">// ── ANALYSIS SECTION ───────────────────────────────────────</span>
+  <span class="jk">"faults_detected"</span><span class="jp">:</span> <span class="jp">{</span>
+    <span class="jk">"insufficient_depth"</span><span class="jp">:</span> <span class="jb">false</span><span class="jp">,</span>
+    <span class="jk">"knee_valgus"</span><span class="jp">:</span> <span class="jb">true</span><span class="jp">,</span>
+    <span class="jk">"excessive_forward_lean"</span><span class="jp">:</span> <span class="jb">false</span>
+  <span class="jp">},</span>
+  <span class="jk">"confidence"</span><span class="jp">:</span> <span class="jp">{</span> <span class="jk">"insufficient_depth"</span><span class="jp">:</span> <span class="jn">0.9</span><span class="jp">,</span> <span class="jk">"knee_valgus"</span><span class="jp">:</span> <span class="jn">0.85</span><span class="jp">,</span> <span class="jk">"excessive_forward_lean"</span><span class="jp">:</span> <span class="jn">0.92</span> <span class="jp">},</span>
+  <span class="jk">"causal_chain"</span><span class="jp">:</span> <span class="jp">{</span>
+    <span class="jk">"root_cause"</span><span class="jp">:</span> <span class="js">"ankle_restriction"</span><span class="jp">,</span>
+    <span class="jk">"chain"</span><span class="jp">:</span> <span class="js">"ankle restriction → forward lean → depth deficit"</span>
   <span class="jp">},</span>
 
-  <span class="jk">"reps"</span><span class="jp">:</span> <span class="jp">[{</span>                           <span class="jc">// OpenCV Step 5b reads these scores to identify lowest → worst rep for frame extraction</span>
-    <span class="jk">"rep_number"</span><span class="jp">:</span> <span class="jn">1</span><span class="jp">,</span>
-    <span class="jk">"start_ms"</span><span class="jp">:</span> <span class="jn">1200</span><span class="jp">,</span> <span class="jk">"end_ms"</span><span class="jp">:</span> <span class="jn">4000</span><span class="jp">,</span>
-    <span class="jk">"form_score"</span><span class="jp">:</span> <span class="jn">85</span><span class="jp">,</span>
-    <span class="jk">"joint_angles"</span><span class="jp">:</span> <span class="jp">{</span>
-      <span class="jk">"knee_left"</span><span class="jp">:</span>  <span class="jp">{</span> <span class="jk">"value"</span><span class="jp">:</span> <span class="jn">88</span><span class="jp">,</span> <span class="jk">"ideal_min"</span><span class="jp">:</span> <span class="jn">85</span><span class="jp">,</span> <span class="jk">"ideal_max"</span><span class="jp">:</span> <span class="jn">170</span><span class="jp">,</span> <span class="jk">"status"</span><span class="jp">:</span> <span class="js">"good"</span> <span class="jp">},</span>
-      <span class="jk">"torso_lean"</span><span class="jp">:</span> <span class="jp">{</span> <span class="jk">"value"</span><span class="jp">:</span> <span class="jn">38</span><span class="jp">,</span> <span class="jk">"ideal_min"</span><span class="jp">:</span> <span class="jn">10</span><span class="jp">,</span> <span class="jk">"ideal_max"</span><span class="jp">:</span> <span class="jn">40</span><span class="jp">,</span>  <span class="jk">"status"</span><span class="jp">:</span> <span class="js">"good"</span> <span class="jp">},</span>
-      <span class="jk">"ankle_dorsiflexion"</span><span class="jp">:</span> <span class="jp">{</span> <span class="jk">"value"</span><span class="jp">:</span> <span class="jn">18</span><span class="jp">,</span> <span class="jk">"ideal_min"</span><span class="jp">:</span> <span class="jn">20</span><span class="jp">,</span> <span class="jk">"status"</span><span class="jp">:</span> <span class="js">"warning"</span> <span class="jp">}</span>
-    <span class="jp">},</span>
-    <span class="jk">"issues"</span><span class="jp">:</span> <span class="jp">[]</span>
+  <span class="jc">// ── COACHING SECTION ───────────────────────────────────────</span>
+  <span class="jk">"total_score"</span><span class="jp">:</span> <span class="jn">72</span><span class="jp">,</span>
+  <span class="jk">"posture_score"</span><span class="jp">:</span> <span class="jn">73</span><span class="jp">,</span>
+  <span class="jk">"stability_score"</span><span class="jp">:</span> <span class="jn">61</span><span class="jp">,</span>
+  <span class="jk">"movement_quality_score"</span><span class="jp">:</span> <span class="jn">78</span><span class="jp">,</span>
+  <span class="jk">"range_of_motion_score"</span><span class="jp">:</span> <span class="jn">68</span><span class="jp">,</span>
+  <span class="jk">"rep_scores"</span><span class="jp">:</span> <span class="jp">[</span>                              <span class="jc">// OpenCV Part 2 reads this → finds lowest → worst rep</span>
+    <span class="jp">{</span> <span class="jk">"rep_number"</span><span class="jp">:</span> <span class="jn">1</span><span class="jp">,</span> <span class="jk">"overall"</span><span class="jp">:</span> <span class="jn">82</span><span class="jp">,</span> <span class="jk">"posture"</span><span class="jp">:</span> <span class="jn">84</span><span class="jp">,</span> <span class="jk">"stability"</span><span class="jp">:</span> <span class="jn">75</span><span class="jp">,</span> <span class="jk">"movement_quality"</span><span class="jp">:</span> <span class="jn">85</span><span class="jp">,</span> <span class="jk">"range_of_motion"</span><span class="jp">:</span> <span class="jn">78</span> <span class="jp">},</span>
+    <span class="jp">{</span> <span class="jk">"rep_number"</span><span class="jp">:</span> <span class="jn">3</span><span class="jp">,</span> <span class="jk">"overall"</span><span class="jp">:</span> <span class="jn">58</span><span class="jp">,</span> <span class="jk">"posture"</span><span class="jp">:</span> <span class="jn">60</span><span class="jp">,</span> <span class="jk">"stability"</span><span class="jp">:</span> <span class="jn">42</span><span class="jp">,</span> <span class="jk">"movement_quality"</span><span class="jp">:</span> <span class="jn">68</span><span class="jp">,</span> <span class="jk">"range_of_motion"</span><span class="jp">:</span> <span class="jn">55</span> <span class="jp">}</span>
+    <span class="jc">// ... remaining reps</span>
+  <span class="jp">],</span>
+  <span class="jk">"verdict"</span><span class="jp">:</span> <span class="js">"Your depth is solid across all 8 reps — hip crease below knee every time. Knee valgus is developing from rep 3 on the ascent, and it's getting worse as you fatigue."</span><span class="jp">,</span>
+  <span class="jk">"positive_observations"</span><span class="jp">:</span> <span class="jp">[{</span> <span class="jk">"observation"</span><span class="jp">:</span> <span class="js">"Consistent depth across all 8 reps"</span><span class="jp">,</span> <span class="jk">"category"</span><span class="jp">:</span> <span class="js">"Range of Motion"</span> <span class="jp">}],</span>
+  <span class="jk">"critical_observations"</span><span class="jp">:</span> <span class="jp">[{</span>
+    <span class="jk">"observation"</span><span class="jp">:</span> <span class="js">"Knee valgus on ascent — reps 3–8 (6 of 8). Distance dropping from 0.28 → 0.18 across session."</span><span class="jp">,</span>
+    <span class="jk">"category"</span><span class="jp">:</span> <span class="js">"Stability"</span><span class="jp">,</span> <span class="jk">"type"</span><span class="jp">:</span> <span class="js">"root_cause"</span><span class="jp">,</span> <span class="jk">"caused_by"</span><span class="jp">:</span> <span class="jb">null</span>
   <span class="jp">}],</span>
-
-  <span class="jk">"form_issues"</span><span class="jp">:</span> <span class="jp">[{</span>
-    <span class="jk">"issue_id"</span><span class="jp">:</span> <span class="js">"issue_001"</span><span class="jp">,</span>
-    <span class="jk">"type"</span><span class="jp">:</span> <span class="js">"knee_valgus"</span><span class="jp">,</span>
-    <span class="jk">"severity"</span><span class="jp">:</span> <span class="js">"moderate"</span><span class="jp">,</span>         <span class="jc">// low | moderate | high</span>
-    <span class="jk">"severity_score"</span><span class="jp">:</span> <span class="jn">58</span><span class="jp">,</span>             <span class="jc">// 0–100 for gradient styling</span>
-    <span class="jk">"joint"</span><span class="jp">:</span> <span class="js">"knee_left"</span><span class="jp">,</span>
-    <span class="jk">"description"</span><span class="jp">:</span> <span class="js">"Left knee collapses inward during ascent"</span><span class="jp">,</span>
-    <span class="jk">"affected_reps"</span><span class="jp">:</span> <span class="jp">[</span><span class="jn">3</span><span class="jp">,</span><span class="jn">4</span><span class="jp">,</span><span class="jn">5</span><span class="jp">,</span><span class="jn">6</span><span class="jp">,</span><span class="jn">7</span><span class="jp">,</span><span class="jn">8</span><span class="jp">],</span>
-    <span class="jk">"first_detected_ms"</span><span class="jp">:</span> <span class="jn">8400</span><span class="jp">,</span>
-    <span class="jk">"measured_angle"</span><span class="jp">:</span> <span class="jn">12</span><span class="jp">,</span>
-    <span class="jk">"ideal_angle"</span><span class="jp">:</span> <span class="jn">0</span><span class="jp">,</span>
-    <span class="jk">"key_frames"</span><span class="jp">:</span> <span class="jp">[{</span>
-      <span class="jk">"timestamp_ms"</span><span class="jp">:</span> <span class="jn">8400</span><span class="jp">,</span>
-      <span class="jk">"rep_number"</span><span class="jp">:</span> <span class="jn">3</span><span class="jp">,</span>
-      <span class="jk">"phase"</span><span class="jp">:</span> <span class="js">"ascent"</span><span class="jp">,</span>
-      <span class="jk">"frame_url"</span><span class="jp">:</span> <span class="js">"gs://kinetic-videos/videos/{user_id}/{analysis_id}/frames/issue_001_rep3.jpg"</span><span class="jp">,</span>
-      <span class="jk">"overlay_annotations"</span><span class="jp">:</span> <span class="jp">[</span>
-        <span class="jp">{</span> <span class="jk">"type"</span><span class="jp">:</span> <span class="js">"angle_arc"</span><span class="jp">,</span>       <span class="jk">"joint"</span><span class="jp">:</span> <span class="js">"knee_left"</span><span class="jp">,</span> <span class="jk">"measured"</span><span class="jp">:</span> <span class="jn">12</span><span class="jp">,</span> <span class="jk">"ideal"</span><span class="jp">:</span> <span class="jn">0</span><span class="jp">,</span> <span class="jk">"color"</span><span class="jp">:</span> <span class="js">"#ef4444"</span> <span class="jp">},</span>
-        <span class="jp">{</span> <span class="jk">"type"</span><span class="jp">:</span> <span class="js">"arrow"</span><span class="jp">,</span>            <span class="jk">"label"</span><span class="jp">:</span> <span class="js">"Knee caving inward"</span><span class="jp">,</span> <span class="jk">"color"</span><span class="jp">:</span> <span class="js">"#ef4444"</span> <span class="jp">},</span>
-        <span class="jp">{</span> <span class="jk">"type"</span><span class="jp">:</span> <span class="js">"joint_highlight"</span><span class="jp">,</span> <span class="jk">"joints"</span><span class="jp">:</span> <span class="jp">[</span><span class="js">"knee_left"</span><span class="jp">],</span> <span class="jk">"color"</span><span class="jp">:</span> <span class="js">"#ef4444"</span> <span class="jp">}</span>
-      <span class="jp">]</span>
-    <span class="jp">}],</span>
-    <span class="jk">"word_timestamps"</span><span class="jp">:</span> <span class="jp">[</span>
-      <span class="jp">{</span> <span class="jk">"word"</span><span class="jp">:</span> <span class="js">"Left"</span><span class="jp">,</span>      <span class="jk">"start_ms"</span><span class="jp">:</span> <span class="jn">0</span><span class="jp">,</span>   <span class="jk">"end_ms"</span><span class="jp">:</span> <span class="jn">180</span> <span class="jp">},</span>
-      <span class="jp">{</span> <span class="jk">"word"</span><span class="jp">:</span> <span class="js">"knee"</span><span class="jp">,</span>      <span class="jk">"start_ms"</span><span class="jp">:</span> <span class="jn">180</span><span class="jp">,</span> <span class="jk">"end_ms"</span><span class="jp">:</span> <span class="jn">420</span> <span class="jp">},</span>
-      <span class="jp">{</span> <span class="jk">"word"</span><span class="jp">:</span> <span class="js">"collapses"</span><span class="jp">,</span> <span class="jk">"start_ms"</span><span class="jp">:</span> <span class="jn">420</span><span class="jp">,</span> <span class="jk">"end_ms"</span><span class="jp">:</span> <span class="jn">780</span> <span class="jp">}</span>
-    <span class="jp">]</span>
-  <span class="jp">}],</span>
-
-  <span class="jk">"frame_extraction"</span><span class="jp">:</span> <span class="jp">{</span>
-    <span class="jk">"method"</span><span class="jp">:</span> <span class="js">"opencv_timestamp"</span><span class="jp">,</span>
-    <span class="jk">"frames_extracted"</span><span class="jp">:</span> <span class="jn">12</span><span class="jp">,</span>
-    <span class="jk">"frames"</span><span class="jp">:</span> <span class="jp">[{</span>
-      <span class="jk">"frame_id"</span><span class="jp">:</span> <span class="js">"f_001"</span><span class="jp">,</span>
-      <span class="jk">"timestamp_ms"</span><span class="jp">:</span> <span class="jn">8400</span><span class="jp">,</span>
-      <span class="jk">"rep_number"</span><span class="jp">:</span> <span class="jn">3</span><span class="jp">,</span>
-      <span class="jk">"phase"</span><span class="jp">:</span> <span class="js">"ascent"</span><span class="jp">,</span>
-      <span class="jk">"trigger"</span><span class="jp">:</span> <span class="js">"issue_detected"</span><span class="jp">,</span>
-      <span class="jk">"issue_ref"</span><span class="jp">:</span> <span class="js">"issue_001"</span><span class="jp">,</span>
-      <span class="jk">"raw_frame_url"</span><span class="jp">:</span>        <span class="js">"gs://kinetic-videos/videos/{user_id}/{analysis_id}/frames/raw/f_001.jpg"</span>
-      <span class="jc">// annotated_frame_url NOT here — produced by OpenCV Step 5b after this output, written to form_analysis_results</span>
-    <span class="jp">}]</span>
-  <span class="jp">},</span>
-
-  <span class="jk">"mediapipe_meta"</span><span class="jp">:</span> <span class="jp">{</span>
-    <span class="jk">"keypoints_count"</span><span class="jp">:</span> <span class="jn">33</span><span class="jp">,</span>
-    <span class="jk">"avg_tracking_confidence"</span><span class="jp">:</span> <span class="jn">0.87</span><span class="jp">,</span>
-    <span class="jk">"frames_processed"</span><span class="jp">:</span> <span class="jn">1356</span><span class="jp">,</span>
-    <span class="jk">"fps"</span><span class="jp">:</span> <span class="jn">30</span>
+  <span class="jk">"recommendation"</span><span class="jp">:</span> <span class="js">"Work hip abductor activation before your next session — clamshells (3×15) and banded walks (2×20 steps). Push the knee out over your pinky toe on every ascent."</span><span class="jp">,</span>
+  <span class="jk">"rep_trend"</span><span class="jp">:</span> <span class="jp">{</span>
+    <span class="jk">"observation"</span><span class="jp">:</span> <span class="js">"Form holds well for reps 1–2 then valgus intensifies from rep 3 onwards — fatigue-driven pattern."</span><span class="jp">,</span>
+    <span class="jk">"recommendation"</span><span class="jp">:</span> <span class="js">"Stop at rep 6 next session to keep form clean while building strength."</span>
   <span class="jp">}</span>
 <span class="jp">}</span></div>
       </div>
       <div class="sub-section">
         <div class="sub-label">SSE Events Fired</div>
         <div class="sse-row">
-          <span class="sse-pill">nemotron_started → { analysis_id, session_id, user_id, video_url* }</span>
-          <span class="sse-pill">nemotron_complete → { analysis_id, session_id, user_id, overall_score: 72, issues_count: 2 }</span>
-          <span class="sse-pill">frames_extracting → { analysis_id, session_id, user_id, video_url, frames_total: 12 }</span>
-          <span class="sse-pill">frames_ready → { analysis_id, session_id, user_id, frame_urls: [...] }</span>
+          <span class="sse-pill">haiku_started → { analysis_id, session_id, user_id }</span>
+          <span class="sse-pill">analysis_ready → { analysis_id, session_id, user_id, overall_score: 72 } — Tab 1 unlocks</span>
         </div>
       </div>
       <div class="sub-section">
         <div class="sub-label">Roadmap Task IDs</div>
         <div class="task-map">
-          <div class="task-map-row"><span class="task-map-role role-implements">Implements</span><span class="tid tid-s2">S2-W6-05</span><span style="font-size:10px;color:#475569;">Begin Nemotron integration — dual input (video + biomechanics JSON) → structured JSON + CoT</span></div>
-          <div class="task-map-row"><span class="task-map-role role-implements">Implements</span><span class="tid tid-s2">S2-W7-01</span><span style="font-size:10px;color:#475569;">Complete Nemotron integration — full JSON output, word-level timestamps, chain-of-thought</span></div>
-          <div class="task-map-row"><span class="task-map-role role-implements">Emits SSE</span><span class="tid tid-s2">S2-W6-06</span><span style="font-size:10px;color:#475569;">Emits nemotron_started, nemotron_complete, frames_extracting, frames_ready SSE events</span></div>
-          <div class="task-map-row"><span class="task-map-role role-consumes">Consumes (FE)</span><span class="tid tid-s1">S1-W7-02</span><span style="font-size:10px;color:#475569;">Replace dummy data on Results screen with real Nemotron pipeline output</span></div>
-          <div class="task-map-row"><span class="task-map-role role-tests">Tests</span><span class="tid tid-tst">TST-W6-01</span><span style="font-size:10px;color:#475569;">Nemotron T1 — biomechanics JSON only baseline</span></div>
-          <div class="task-map-row"><span class="task-map-role role-tests">Tests</span><span class="tid tid-tst">TST-W7-01</span><span style="font-size:10px;color:#475569;">Nemotron T2 — raw video only</span></div>
-          <div class="task-map-row"><span class="task-map-role role-tests">Tests</span><span class="tid tid-tst">TST-W7-02</span><span style="font-size:10px;color:#475569;">Nemotron T3 — combined biomechanics + video</span></div>
-          <div class="task-map-row"><span class="task-map-role role-tests">Tests</span><span class="tid tid-tst">TST-W8-01</span><span style="font-size:10px;color:#475569;">Nemotron T4 — combined + RAG retrieval (full production input)</span></div>
+          <div class="task-map-row"><span class="task-map-role role-implements">Implements</span><span class="tid tid-s2">S2-W7-01</span><span style="font-size:10px;color:#475569;">Integrate Claude Haiku 4.5 — single call handles analysis + coaching end-to-end</span></div>
+          <div class="task-map-row"><span class="task-map-role role-implements">Implements</span><span class="tid tid-s2">S2-W7-05</span><span style="font-size:10px;color:#475569;">Assemble Haiku prompt — composite grid + biomechanics + weight + gold standard + sessions + .md files</span></div>
+          <div class="task-map-row"><span class="task-map-role role-consumes">Consumes (FE)</span><span class="tid tid-s1">S1-W7-01</span><span style="font-size:10px;color:#475569;">Wire Results screen to real Haiku output — verdict, scores, observations, recommendation</span></div>
         </div>
       </div>
     </div>
   </div>
 
-  <div class="connector"><span>↓ Nemotron output contains issue timestamps → passed to OpenCV</span></div>
+  <div class="connector"><span>↓ Haiku Call 1 complete → OpenCV Part 2 reads rep_scores[] to find worst rep</span></div>
 
   <!-- ═══ STEP 5b: OPENCV FRAME EXTRACTION ═══ -->
   <div class="step backend process">
@@ -1105,22 +1065,24 @@ h1 { font-size:20px; font-weight:700; color:#f8fafc; }
       <div class="sub-section">
         <div class="sub-label">Why this step exists</div>
         <div style="background:#070a0f; border:1px solid #1e2433; border-radius:8px; padding:12px 14px; font-size:11px; color:#94a3b8; line-height:1.7;">
-          The biomechanics script identifies the worst rep (lowest overall score) and its bottom position frame. This step extracts that one frame from the video and draws the joint overlay — green lines for correct angles, red highlights for deviations. The annotated frame is what the user sees on the Results screen and the Form Comparison toggle. It's the visual proof of the coaching diagnosis.
+          Haiku Call 1 outputs per-rep scores. This step finds the rep with the lowest overall score, seeks to its bottom-position frame using <code>bottom_timestamp_ms</code> from the biomechanics JSON, extracts the frame, and draws joint angle overlays with gold standard comparison. The annotated image is what the user sees in Tab 1. Runs after Haiku Call 1 completes — not in parallel.
         </div>
       </div>
       <div class="sub-section">
         <div class="sub-label">Input</div>
         <div class="io-row">
           <span class="io-pill io-in">Original video file (GCS URI from form_analyses.video_url)</span>
-          <span class="io-pill io-in">Worst rep bottom frame — timestamp_ms from biomechanics output (rep with lowest overall score, position_tag="bottom")</span>
-          <span class="io-pill io-in">Screen landmarks for that frame — joint x/y positions for drawing overlays</span>
+          <span class="io-pill io-in">rep_scores[] from Haiku Call 1 output — Squad 2 finds lowest overall score → worst_rep_number</span>
+          <span class="io-pill io-in">bottom_timestamp_ms for that rep — looked up from biomechanics JSON in DB</span>
+          <span class="io-pill io-in">worst_rep angle values from biomechanics JSON (knee, hip, ankle) — for text overlay</span>
+          <span class="io-pill io-in">gold standard angles from Supabase gold standard table — for comparison overlay</span>
         </div>
       </div>
       <div class="sub-section">
         <div class="sub-label">Frame Selection Logic <span style="font-size:9px;font-weight:800;padding:1px 6px;border-radius:3px;background:#1c1000;color:#fb923c;border:1px solid #78350f;">V2</span></div>
         <div style="background:#070a0f; border:1px solid #1e2433; border-radius:8px; padding:12px 14px; font-size:11px; color:#94a3b8; line-height:1.8;">
-          <strong style="color:#cbd5e1;">1. Find worst rep</strong> — <code style="background:#0d1117;padding:1px 4px;border-radius:3px;color:#86efac;">worst_rep = min(rep_scores, key=lambda r: r["score"])</code><br>
-          <strong style="color:#cbd5e1;">2. Get bottom frame</strong> — from biomechanics frame data, find the frame where <code style="background:#0d1117;padding:1px 4px;border-radius:3px;color:#86efac;">rep_index == worst_rep AND position_tag == "bottom"</code><br>
+          <strong style="color:#cbd5e1;">1. Find worst rep</strong> — from Haiku Call 1 <code style="background:#0d1117;padding:1px 4px;border-radius:3px;color:#86efac;">rep_scores[]</code>: <code style="background:#0d1117;padding:1px 4px;border-radius:3px;color:#86efac;">worst_rep = min(rep_scores, key=lambda r: r["overall"])</code><br>
+          <strong style="color:#cbd5e1;">2. Get bottom frame</strong> — look up <code style="background:#0d1117;padding:1px 4px;border-radius:3px;color:#86efac;">bottom_timestamp_ms</code> for that rep number from biomechanics JSON stored in DB (Step 4)<br>
           <strong style="color:#cbd5e1;">3. Seek to timestamp</strong> — <code style="background:#0d1117;padding:1px 4px;border-radius:3px;color:#fde68a;">cv2.VideoCapture.set(cv2.CAP_PROP_POS_MSEC, frame.timestamp_ms)</code><br>
           <strong style="color:#cbd5e1;">4. Extract raw frame</strong> — save to GCS: <code style="background:#0d1117;padding:1px 4px;border-radius:3px;color:#fde68a;">gs://.../analyses/{analysis_id}/frame_raw.jpg</code><br>
           <strong style="color:#cbd5e1;">5. Draw joint overlays</strong> — using screen_landmarks from that frame:
@@ -1144,15 +1106,14 @@ h1 { font-size:20px; font-weight:700; color:#f8fafc; }
       <div class="sub-section">
         <div class="sub-label">SSE Events Fired</div>
         <div class="sse-row">
-          <span class="sse-pill">frames_extracting → { analysis_id, session_id, user_id, frames_total: 1 }</span>
-          <span class="sse-pill">frames_ready → { analysis_id, session_id, user_id, frame_url: "gs://.../frame_bottom.jpg" }</span>
+          <span class="sse-pill">frame_ready → { analysis_id, session_id, user_id, annotated_frame_url: "gs://.../worst_rep_frame.jpg" } — image loads in Tab 1 ~2–3s after analysis_ready</span>
         </div>
       </div>
       <div class="sub-section">
         <div class="sub-label">Roadmap Task IDs</div>
         <div class="task-map">
           <div class="task-map-row"><span class="task-map-role role-defines">Defines schema</span><span class="tid tid-s3">S3-W5-07</span><span style="font-size:10px;color:#475569;">Biomechanics output JSON defines key_frames[] structure — timestamp_ms, overlay_annotations[] that this step reads</span></div>
-          <div class="task-map-row"><span class="task-map-role role-implements">Implements</span><span class="tid tid-s2">S2-W7-01</span><span style="font-size:10px;color:#475569;">Complete Nemotron integration — frame extraction runs as part of this, produces annotated_frames_urls</span></div>
+          <div class="task-map-row"><span class="task-map-role role-implements">Implements</span><span class="tid tid-s2">S2-W7-01</span><span style="font-size:10px;color:#475569;">OpenCV Part 2 — worst-rep frame extraction after Haiku Call 1 completes</span></div>
           <div class="task-map-row"><span class="task-map-role role-consumes">Consumes (FE)</span><span class="tid tid-s1">S1-W6-04</span><span style="font-size:10px;color:#475569;">Results screen renders annotated frame snapshots — the visual evidence cards shown to user</span></div>
           <div class="task-map-row"><span class="task-map-role role-consumes">Consumes (FE)</span><span class="tid tid-s1">S1-W7-02</span><span style="font-size:10px;color:#475569;">Wires real annotated_frame_url from pipeline into Results screen issue cards</span></div>
           <div class="task-map-row"><span class="task-map-role role-tests">Tests</span><span class="tid tid-tst">TST-W5-01</span><span style="font-size:10px;color:#475569;">MediaPipe T1 — indirectly validates keypoint quality that determines which frames get extracted</span></div>
@@ -1162,7 +1123,7 @@ h1 { font-size:20px; font-weight:700; color:#f8fafc; }
     </div>
   </div>
 
-  <div class="connector"><span>↓ annotated frame URLs + Nemotron output saved to DB</span></div>
+  <div class="connector"><span>↓ Haiku Call 1 output saved to DB · annotated_frame_url written by OpenCV Part 2</span></div>
 
   <!-- ═══ STEP 6: SAVE RECORD ═══ -->
   <div class="step backend storage">
@@ -1174,11 +1135,11 @@ h1 { font-size:20px; font-weight:700; color:#f8fafc; }
     <div class="step-body">
       <div class="sub-section">
         <div class="sub-label">What is Saved</div>
-        <div style="font-size:11px;color:#94a3b8;">Annotated frames written to S3. Full Nemotron output JSON stored. form_analysis_results record written to Structured DB.</div>
+        <div style="font-size:11px;color:#94a3b8;">Haiku Call 1 output (scores + coaching JSON) stored to form_analysis_results. annotated_frame_url written by OpenCV Part 2.</div>
       </div>
       <div class="sub-section">
-        <div class="sub-label">DB Write — <strong style="color:#f1f5f9;">form_analysis_results</strong> &nbsp;<span style="font-size:10px;font-weight:400;color:#f59e0b;background:#1c1309;border:1px solid #3b1f05;border-radius:4px;padding:2px 6px;">Phase 1 of 2 — written at Step 6 (Nemotron complete)</span></div>
-        <div style="font-size:11px;color:#64748b;margin-bottom:8px;">This INSERT creates the row. <code>coaching_output</code> and <code>progression_recommendation</code> are null at this point — they are filled in by the Claude step (Phase 2), which does an UPDATE on this same row.</div>
+        <div class="sub-label">DB Write — <strong style="color:#f1f5f9;">form_analysis_results</strong> &nbsp;<span style="font-size:10px;font-weight:400;color:#22c55e;background:#0a1f12;border:1px solid #14532d;border-radius:4px;padding:2px 6px;">Single write — when Haiku Call 1 completes</span></div>
+        <div style="font-size:11px;color:#64748b;margin-bottom:8px;">This INSERT creates the row with all scores and coaching output in one write. <code>progression_output</code> is written later by Haiku Call 2 (async). <span style="background:rgba(250,204,21,0.1);color:#fde68a;padding:1px 5px;border-radius:3px;font-size:10px;font-weight:700;">🆕 NEW COLUMNS</span> highlighted below.</div>
         <table class="db-table">
           <tr><th>Field</th><th>Type</th><th>Example</th></tr>
           <tr><td>analysis_id</td><td><span class="type">uuid (PK)</span></td><td><span class="example">550e8400-e29b-41d4...</span></td></tr>
@@ -1188,13 +1149,14 @@ h1 { font-size:20px; font-weight:700; color:#f8fafc; }
           <tr><td>weight_value</td><td><span class="type">float</span></td><td><span class="example">12.0</span></td></tr>
           <tr><td>weight_unit</td><td><span class="type">enum (kg / lb)</span></td><td><span class="example">kg</span></td></tr>
           <tr><td>weight_kg_normalised</td><td><span class="type">float</span></td><td><span class="example">12.0</span></td></tr>
-          <tr><td colspan="3" style="background:#0a0f1a;color:#475569;font-size:10px;padding:4px 10px;font-style:italic;">── Session-level scores (averaged across all reps) ──</td></tr>
+          <tr><td colspan="3" style="background:#0a0f1a;color:#475569;font-size:10px;padding:4px 10px;font-style:italic;">── Session-level scores — from Haiku Call 1 ──</td></tr>
           <tr><td>overall_form_score</td><td><span class="type">int</span></td><td><span class="example">72</span></td></tr>
-          <tr><td>movement_quality_score</td><td><span class="type">int</span></td><td><span class="example">68</span></td></tr>
-          <tr><td>stability_score</td><td><span class="type">int</span></td><td><span class="example">75</span></td></tr>
           <tr><td>posture_score</td><td><span class="type">int</span></td><td><span class="example">73</span></td></tr>
-          <tr><td colspan="3" style="background:#0a0f1a;color:#475569;font-size:10px;padding:4px 10px;font-style:italic;">── Rep-level scores (per-rep breakdown) ──</td></tr>
-          <tr><td>rep_scores</td><td><span class="type">jsonb array</span></td><td><span class="example">[{ "rep": 1, "form_score": 74, "movement_quality_score": 70, "stability_score": 78, "posture_score": 72 }, { "rep": 2, "form_score": 68, "movement_quality_score": 65, "stability_score": 72, "posture_score": 69 }]</span></td></tr>
+          <tr><td>stability_score</td><td><span class="type">int</span></td><td><span class="example">61</span></td></tr>
+          <tr><td>movement_quality_score</td><td><span class="type">int</span></td><td><span class="example">78</span></td></tr>
+          <tr><td style="color:#fde68a;">range_of_motion_score <span style="background:rgba(250,204,21,0.15);padding:1px 4px;border-radius:3px;font-size:9px;font-weight:700;">🆕 NEW</span></td><td><span class="type">int</span></td><td><span class="example">68</span></td></tr>
+          <tr><td colspan="3" style="background:#0a0f1a;color:#475569;font-size:10px;padding:4px 10px;font-style:italic;">── Rep-level scores — from Haiku Call 1 ──</td></tr>
+          <tr><td style="color:#fde68a;">rep_scores <span style="background:rgba(250,204,21,0.15);padding:1px 4px;border-radius:3px;font-size:9px;font-weight:700;">🆕 NEW</span></td><td><span class="type">jsonb array</span></td><td><span class="example">[{ "rep_number": 1, "overall": 82, "posture": 84, "stability": 75, "movement_quality": 85, "range_of_motion": 78 }, ...]</span></td></tr>
           <tr><td>rep_count</td><td><span class="type">int</span></td><td><span class="example">8</span></td></tr>
           <tr><td>issue_tags</td><td><span class="type">text[] + GIN index</span></td><td><span class="example">["knee_valgus", "ankle_dorsiflexion"]</span></td></tr>
           <tr><td colspan="3" style="background:#070a0f;color:#475569;font-size:10px;padding:5px 10px;line-height:1.6;">
@@ -1209,18 +1171,16 @@ h1 { font-size:20px; font-weight:700; color:#f8fafc; }
             <code style="color:#86efac;">WHERE issue_tags @&gt; ARRAY['knee_valgus','depth']</code>
           </td></tr>
           <tr><td>issues_json</td><td><span class="type">jsonb</span></td><td><span class="example">[ { "issue_id": "issue_001", "type": "knee_valgus", "severity": "moderate", "reps_affected": [3,4], "key_frames": [...] } ]</span></td></tr>
-          <tr><td>nemotron_output_url</td><td><span class="type">string (GCS URI)</span></td><td><span class="example">gs://kinetic-videos/videos/{user_id}/{analysis_id}/nemotron_out.json</span></td></tr>
-          <tr><td>annotated_frames_urls</td><td><span class="type">jsonb array (GCS URIs)</span></td><td><span class="example">["gs://kinetic-videos/…/frames/annotated/f_001.jpg"]</span></td></tr>
-          <tr><td>chain_of_thought</td><td><span class="type">text</span></td><td><span class="example">"Athlete shows good depth but..."</span></td></tr>
-          <tr><td>coaching_output</td><td><span class="type">jsonb</span></td><td><span class="example">null (set after Claude step)</span></td></tr>
-          <tr><td>progression_recommendation</td><td><span class="type">enum</span></td><td><span class="example">null (set after Claude step)</span></td></tr>
+          <tr><td>annotated_frame_url</td><td><span class="type">string (GCS URI)</span></td><td><span class="example">gs://kinetic-videos/analyses/{analysis_id}/worst_rep_frame.jpg</span></td></tr>
+          <tr><td>coaching_output</td><td><span class="type">jsonb</span></td><td><span class="example">Full Haiku Call 1 JSON (verdict, observations, recommendation, rep_trend)</span></td></tr>
+          <tr><td style="color:#fde68a;">progression_output <span style="background:rgba(250,204,21,0.15);padding:1px 4px;border-radius:3px;font-size:9px;font-weight:700;">🆕 NEW</span></td><td><span class="type">jsonb</span></td><td><span class="example">null until Haiku Call 2 async completes — Section 1 + Section 2 JSON for Tab 2</span></td></tr>
         </table>
       </div>
       <div class="sub-section">
         <div class="sub-label">Roadmap Task IDs</div>
         <div class="task-map">
           <div class="task-map-row"><span class="task-map-role role-defines">Defines</span><span class="tid tid-s2">S2-W5-06</span><span style="font-size:10px;color:#475569;">Defines form_analysis_results DB schema — all fields including coaching_output + progression_recommendation</span></div>
-          <div class="task-map-row"><span class="task-map-role role-implements">Implements write</span><span class="tid tid-s2">S2-W7-01</span><span style="font-size:10px;color:#475569;">Saves Nemotron output, annotated frames URLs, chain_of_thought — coaching_output/progression fields null at this point</span></div>
+          <div class="task-map-row"><span class="task-map-role role-implements">Implements write</span><span class="tid tid-s2">S2-W7-01</span><span style="font-size:10px;color:#475569;">Saves Haiku Call 1 output — all scores + coaching_output in single INSERT. progression_output null until Haiku Call 2 async completes.</span></div>
           <div class="task-map-row"><span class="task-map-role role-implements">Updates fields</span><span class="tid tid-s2">S2-W7-04</span><span style="font-size:10px;color:#475569;">After Claude step: sets coaching_output (jsonb) + progression_recommendation enum</span></div>
           <div class="task-map-row"><span class="task-map-role role-implements">Updates fields</span><span class="tid tid-s2">S2-W8-01</span><span style="font-size:10px;color:#475569;">Progression recommendation logic — determines hold/progress/drop, writes final recommendation</span></div>
         </div>
@@ -1228,46 +1188,29 @@ h1 { font-size:20px; font-weight:700; color:#f8fafc; }
     </div>
   </div>
 
-  <div class="connector"><span>↓ feeds into Claude Sonnet (alongside RAG + User Data below)</span></div>
+  <div class="connector"><span>↓ .md coaching files + user session data assembled → included in Haiku Call 1 prompt</span></div>
 
   <!-- ═══ MERGE: RAG + USER DATA ═══ -->
   <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:0;">
 
     <div class="side-step data">
-      <div class="side-title">🗄️ <span>RAG Retrieval — Vector DB</span></div>
-      <div class="sub-label" style="margin-bottom:6px;">SSE Events</div>
-      <div class="sse-row" style="margin-bottom:10px;">
-        <span class="sse-pill">rag_started → { analysis_id, session_id, user_id }</span>
-        <span class="sse-pill">rag_complete → { analysis_id, session_id, user_id, passages_retrieved: 8 }</span>
+      <div class="side-title">📄 <span>Coaching .md Files — Direct Retrieval</span></div>
+      <div style="font-size:11px;color:#64748b;margin-bottom:10px;line-height:1.6;padding:8px 10px;background:#070a0f;border:1px solid #1e2433;border-radius:6px;">
+        No vector DB. No embedding pipeline. Curated .md files are loaded server-side by Squad 2 and injected directly into the Haiku Call 1 system prompt. No separate SSE events — this is internal to the prompt assembly step.
       </div>
-      <div class="sub-label" style="margin-bottom:6px;">Query Sent to Vector DB</div>
+      <div class="sub-label" style="margin-bottom:6px;">How it works</div>
       <div class="json-block" style="font-size:9.5px;">
-<span class="jp">{</span>
-  <span class="jk">"exercise"</span><span class="jp">:</span> <span class="js">"goblet_squat"</span><span class="jp">,</span>
-  <span class="jk">"issues"</span><span class="jp">:</span> <span class="jp">[</span><span class="js">"knee_valgus"</span><span class="jp">,</span> <span class="js">"ankle_dorsiflexion"</span><span class="jp">],</span>
-  <span class="jk">"top_k"</span><span class="jp">:</span> <span class="jn">8</span>
-<span class="jp">}</span></div>
-      <div class="sub-label" style="margin-top:10px; margin-bottom:6px;">RAG Response</div>
-      <div class="json-block" style="font-size:9.5px;">
-<span class="jp">[{</span>
-  <span class="jk">"passage_id"</span><span class="jp">:</span> <span class="js">"p_042"</span><span class="jp">,</span>
-  <span class="jk">"source"</span><span class="jp">:</span> <span class="js">"biomechanics_paper_2024"</span><span class="jp">,</span>
-  <span class="jk">"exercise"</span><span class="jp">:</span> <span class="js">"goblet_squat"</span><span class="jp">,</span>
-  <span class="jk">"issue_tags"</span><span class="jp">:</span> <span class="jp">[</span><span class="js">"knee_valgus"</span><span class="jp">],</span>
-  <span class="jk">"text"</span><span class="jp">:</span> <span class="js">"Knee valgus during squat ascent is associated with weak hip abductors..."</span><span class="jp">,</span>
-  <span class="jk">"relevance_score"</span><span class="jp">:</span> <span class="jn">0.94</span>
-<span class="jp">}]</span></div>
+<span class="jc"># Squad 2 — before calling Haiku</span><br>
+coaching_content = load_md_files(exercise=<span class="js">"goblet_squat"</span>)<br>
+<span class="jc"># coaching_content injected into Haiku system prompt</span><br>
+<span class="jc"># covers: fault patterns, form cues, coaching language</span><br>
+<span class="jc"># no retrieval query, no endpoint, no vector search</span>
+      </div>
       <div style="margin-top:10px;">
         <div class="sub-label" style="margin-bottom:4px;">Roadmap Task IDs</div>
         <div class="task-map">
-          <div class="task-map-row"><span class="task-map-role role-defines">Defines schema</span><span class="tid tid-s3">S3-W5-02</span><span style="font-size:10px;color:#475569;">Vector DB schema — doc structure, metadata (exercise, source type, angle params), embedding strategy</span></div>
-          <div class="task-map-row"><span class="task-map-role role-implements">Ingests corpus</span><span class="tid tid-s3">S3-W6-01</span><span style="font-size:10px;color:#475569;">Ingest Goblet Squat corpus — chunk, embed, store with metadata</span></div>
-          <div class="task-map-row"><span class="task-map-role role-implements">Implements</span><span class="tid tid-s3">S3-W6-02</span><span style="font-size:10px;color:#475569;">Implement + test RAG retrieval — biomechanics query → top-k passages</span></div>
-          <div class="task-map-row"><span class="task-map-role role-implements">Exposes endpoint</span><span class="tid tid-s3">S3-W6-04</span><span style="font-size:10px;color:#475569;">RAG retrieval endpoint live for Squad 2 to call</span></div>
-          <div class="task-map-row"><span class="task-map-role role-consumes">Calls endpoint</span><span class="tid tid-s2">S2-W7-02</span><span style="font-size:10px;color:#475569;">Squad 2 calls RAG endpoint after Nemotron output received</span></div>
-          <div class="task-map-row"><span class="task-map-role role-tests">Tests</span><span class="tid tid-tst">TST-W6-02</span><span style="font-size:10px;color:#475569;">RAG T1 — first retrieval quality check (free-form)</span></div>
-          <div class="task-map-row"><span class="task-map-role role-tests">Tests</span><span class="tid tid-tst">TST-W7-03</span><span style="font-size:10px;color:#475569;">RAG T2 — enhanced corpus re-check (P/F)</span></div>
-          <div class="task-map-row"><span class="task-map-role role-tests">Tests</span><span class="tid tid-tst">TST-W8-02</span><span style="font-size:10px;color:#475569;">RAG T3 — full RAG → Claude coaching quality check (P/F)</span></div>
+          <div class="task-map-row"><span class="task-map-role role-implements">Curates</span><span class="tid tid-s3">S3-W7-03</span><span style="font-size:10px;color:#475569;">Organise coaching .md files — key fault patterns for Goblet Squat, well-structured for prompt injection</span></div>
+          <div class="task-map-row"><span class="task-map-role role-consumes">Loads files</span><span class="tid tid-s2">S2-W7-04</span><span style="font-size:10px;color:#475569;">Squad 2 loads .md files and injects into Haiku system prompt</span></div>
         </div>
       </div>
     </div>
@@ -1305,103 +1248,76 @@ h1 { font-size:20px; font-weight:700; color:#f8fafc; }
     </div>
   </div>
 
-  <div class="connector"><span>↓ all 3 inputs merged into Claude Sonnet</span></div>
+  <div class="connector"><span>↓ all inputs assembled → Haiku Call 1 (Step 5)</span></div>
 
-  <!-- ═══ STEP 7: CLAUDE SONNET ═══ -->
+  <!-- ═══ STEP 7: HAIKU CALL 2 ASYNC ═══ -->
   <div class="step backend ai">
     <div class="step-header">
       <div class="step-num">7</div>
-      <div class="step-icon">💡</div>
-      <div><div class="step-title">Claude Sonnet 4.6 — Reasoning &amp; Coaching</div><div class="step-squad">Squad 2 — Backend</div></div>
+      <div class="step-icon">📈</div>
+      <div><div class="step-title">Claude Haiku 4.5 — Longitudinal Coaching · Call 2 · async</div><div class="step-squad">Squad 2 — Backend · Runs async after Call 1 output saved to DB · Feeds Tab 2 only</div></div>
     </div>
     <div class="step-body">
       <div class="sub-section">
-        <div class="sub-label">3 Inputs</div>
+        <div class="sub-label">Inputs — read from DB after Haiku Call 1 is saved</div>
         <div class="io-row">
-          <span class="io-pill io-in">Nemotron output JSON</span>
-          <span class="io-pill io-in">RAG passages (top-k)</span>
-          <span class="io-pill io-in">User history + weight</span>
+          <span class="io-pill io-in">Current session: analysis_id, weight, overall_score, posture/stability/movement/range scores, rep_scores[], coaching_output</span>
+          <span class="io-pill io-in">Last 5 sessions for same exercise_id: weight + all scores + coaching_output per session (from form_analysis_results)</span>
         </div>
+        <div style="font-size:11px;color:#64748b;margin-top:8px;">No .md files — focused prompt on longitudinal comparison only. No vector DB.</div>
       </div>
       <div class="sub-section">
-        <div class="sub-label">Claude Sonnet Output JSON — Option C (Structured + Paragraph)</div>
+        <div class="sub-label">Haiku Call 2 Output JSON — Section 1 + Section 2</div>
         <div class="json-block">
 <span class="jp">{</span>
-  <span class="jk">"session_id"</span><span class="jp">:</span> <span class="js">"uuid"</span><span class="jp">,</span>
-  <span class="jk">"generated_at"</span><span class="jp">:</span> <span class="js">"2026-05-04T10:32:44Z"</span><span class="jp">,</span>
-
-  <span class="jk">"progression"</span><span class="jp">:</span> <span class="jp">{</span>
-    <span class="jk">"recommendation"</span><span class="jp">:</span> <span class="js">"hold"</span><span class="jp">,</span>            <span class="jc">// "progress" | "hold" | "drop_weight"</span>
-    <span class="jk">"recommendation_score"</span><span class="jp">:</span> <span class="jn">45</span><span class="jp">,</span>           <span class="jc">// 0–100 confidence in recommendation</span>
-    <span class="jk">"current_weight_kg"</span><span class="jp">:</span> <span class="jn">12</span><span class="jp">,</span>
-    <span class="jk">"suggested_weight_kg"</span><span class="jp">:</span> <span class="jn">12</span><span class="jp">,</span>             <span class="jc">// same = hold; higher = progress</span>
-    <span class="jk">"reasoning"</span><span class="jp">:</span> <span class="js">"Knee valgus in 6/8 reps. Increasing load will reinforce poor pattern."</span>
+  <span class="jc">// ── SECTION 1: Today vs Previous Session ───────────────────</span>
+  <span class="jk">"section_1"</span><span class="jp">:</span> <span class="jp">{</span>
+    <span class="jk">"today"</span><span class="jp">:</span> <span class="jp">{</span> <span class="jk">"date"</span><span class="jp">:</span> <span class="js">"2026-05-18"</span><span class="jp">,</span> <span class="jk">"weight_kg"</span><span class="jp">:</span> <span class="jn">12</span><span class="jp">,</span> <span class="jk">"overall_score"</span><span class="jp">:</span> <span class="jn">79</span> <span class="jp">},</span>
+    <span class="jk">"previous"</span><span class="jp">:</span> <span class="jp">{</span> <span class="jk">"date"</span><span class="jp">:</span> <span class="js">"2026-05-11"</span><span class="jp">,</span> <span class="jk">"weight_kg"</span><span class="jp">:</span> <span class="jn">12</span><span class="jp">,</span> <span class="jk">"overall_score"</span><span class="jp">:</span> <span class="jn">72</span> <span class="jp">},</span>
+    <span class="jk">"overall_variance"</span><span class="jp">:</span> <span class="jn">+7</span><span class="jp">,</span>
+    <span class="jk">"overall_verdict"</span><span class="jp">:</span> <span class="js">"Solid improvement this session — form is noticeably cleaner across the board."</span><span class="jp">,</span>
+    <span class="jk">"parameters"</span><span class="jp">:</span> <span class="jp">[</span>
+      <span class="jp">{</span> <span class="jk">"name"</span><span class="jp">:</span> <span class="js">"posture"</span><span class="jp">,</span> <span class="jk">"variance"</span><span class="jp">:</span> <span class="jn">+5</span><span class="jp">,</span> <span class="jk">"verdict"</span><span class="jp">:</span> <span class="js">"Torso lean improving — less compensation at the bottom."</span> <span class="jp">},</span>
+      <span class="jp">{</span> <span class="jk">"name"</span><span class="jp">:</span> <span class="js">"stability"</span><span class="jp">,</span> <span class="jk">"variance"</span><span class="jp">:</span> <span class="jn">+9</span><span class="jp">,</span> <span class="jk">"verdict"</span><span class="jp">:</span> <span class="js">"Knee valgus reduced — showing from rep 5 now vs rep 3 last time."</span> <span class="jp">},</span>
+      <span class="jp">{</span> <span class="jk">"name"</span><span class="jp">:</span> <span class="js">"movement_quality"</span><span class="jp">,</span> <span class="jk">"variance"</span><span class="jp">:</span> <span class="jn">+6</span><span class="jp">,</span> <span class="jk">"verdict"</span><span class="jp">:</span> <span class="js">"Tempo more controlled on the descent."</span> <span class="jp">},</span>
+      <span class="jp">{</span> <span class="jk">"name"</span><span class="jp">:</span> <span class="js">"range_of_motion"</span><span class="jp">,</span> <span class="jk">"variance"</span><span class="jp">:</span> <span class="jn">+3</span><span class="jp">,</span> <span class="jk">"verdict"</span><span class="jp">:</span> <span class="js">"Depth consistent — no regression."</span> <span class="jp">}</span>
+    <span class="jp">],</span>
+    <span class="jk">"weight_decision"</span><span class="jp">:</span> <span class="jp">{</span>
+      <span class="jk">"verdict"</span><span class="jp">:</span> <span class="js">"hold"</span><span class="jp">,</span>       <span class="jc">// hold | good_to_progress | drop_weight</span>
+      <span class="jk">"reasoning"</span><span class="jp">:</span> <span class="js">"Valgus still present in final 3 reps. One more clean session before moving to 14kg."</span>
+    <span class="jp">}</span>
   <span class="jp">},</span>
-
-  <span class="jk">"coaching"</span><span class="jp">:</span> <span class="jp">{</span>
-    <span class="jk">"summary_paragraph"</span><span class="jp">:</span> <span class="js">"Your Goblet Squat at 12kg shows solid depth and good hip hinge, but your left knee consistently collapses inward from rep 3. This has appeared across your last 2 sessions — the weight isn't the problem, the movement pattern needs attention first."</span><span class="jp">,</span>
-    <span class="jk">"positive_feedback"</span><span class="jp">:</span> <span class="js">"Squat depth is consistently at or below parallel — keep that."</span><span class="jp">,</span>
-    <span class="jk">"session_tags"</span><span class="jp">:</span> <span class="jp">[</span><span class="js">"knee_valgus"</span><span class="jp">,</span> <span class="js">"fatigue_pattern"</span><span class="jp">,</span> <span class="js">"hip_abductor_weakness"</span><span class="jp">],</span>
-    <span class="jk">"issues"</span><span class="jp">:</span> <span class="jp">[{</span>
-      <span class="jk">"issue_ref"</span><span class="jp">:</span> <span class="js">"issue_001"</span><span class="jp">,</span>
-      <span class="jk">"priority"</span><span class="jp">:</span> <span class="jn">1</span><span class="jp">,</span>
-      <span class="jk">"title"</span><span class="jp">:</span> <span class="js">"Knee Valgus — Left"</span><span class="jp">,</span>
-      <span class="jk">"cue"</span><span class="jp">:</span> <span class="js">"Push your left knee out in line with your pinky toe as you drive up"</span><span class="jp">,</span>
-      <span class="jk">"drill"</span><span class="jp">:</span> <span class="js">"Banded Goblet Squat — resistance band above knees to cue outward drive"</span><span class="jp">,</span>
-      <span class="jk">"context_from_history"</span><span class="jp">:</span> <span class="js">"First appeared 2 sessions ago at 10kg. Reps affected: 2→6 of 8."</span><span class="jp">,</span>
-      <span class="jk">"annotated_frame_url"</span><span class="jp">:</span> <span class="js">"gs://kinetic-videos/videos/{user_id}/{analysis_id}/frames/annotated/f_001.jpg"</span>
-    <span class="jp">}]</span>
-  <span class="jp">},</span>
-
-  <span class="jk">"history_context"</span><span class="jp">:</span> <span class="jp">{</span>
-    <span class="jk">"sessions_analysed"</span><span class="jp">:</span> <span class="jn">3</span><span class="jp">,</span>
-    <span class="jk">"trend"</span><span class="jp">:</span> <span class="js">"declining"</span><span class="jp">,</span>
-    <span class="jk">"trend_note"</span><span class="jp">:</span> <span class="js">"Score drops ~8pts per 2kg — consistent with stabiliser limitation"</span><span class="jp">,</span>
-    <span class="jk">"weight_progression"</span><span class="jp">:</span> <span class="jp">[</span>
-      <span class="jp">{</span> <span class="jk">"weight_kg"</span><span class="jp">:</span> <span class="jn">8</span><span class="jp">,</span>  <span class="jk">"avg_score"</span><span class="jp">:</span> <span class="jn">88</span><span class="jp">,</span> <span class="jk">"date"</span><span class="jp">:</span> <span class="js">"2026-04-14"</span> <span class="jp">},</span>
-      <span class="jp">{</span> <span class="jk">"weight_kg"</span><span class="jp">:</span> <span class="jn">10</span><span class="jp">,</span> <span class="jk">"avg_score"</span><span class="jp">:</span> <span class="jn">79</span><span class="jp">,</span> <span class="jk">"date"</span><span class="jp">:</span> <span class="js">"2026-04-21"</span> <span class="jp">},</span>
-      <span class="jp">{</span> <span class="jk">"weight_kg"</span><span class="jp">:</span> <span class="jn">12</span><span class="jp">,</span> <span class="jk">"avg_score"</span><span class="jp">:</span> <span class="jn">72</span><span class="jp">,</span> <span class="jk">"date"</span><span class="jp">:</span> <span class="js">"2026-05-04"</span> <span class="jp">}</span>
+  <span class="jc">// ── SECTION 2: Progression Timeline (last 5 sessions) ──────</span>
+  <span class="jk">"section_2"</span><span class="jp">:</span> <span class="jp">{</span>
+    <span class="jk">"insights"</span><span class="jp">:</span> <span class="jp">[</span>
+      <span class="js">"Score improved +15 points from your first session at 12kg (64 → 79) across 3 sessions."</span><span class="jp">,</span>
+      <span class="js">"Knee valgus has been present since 10kg — it's a persistent pattern, not load-specific."</span><span class="jp">,</span>
+      <span class="js">"You're 1 clean session away from being ready for 14kg based on your trend."</span>
     <span class="jp">]</span>
+    <span class="jc">// Rep-by-rep graph + 5-session graph rendered by frontend from DB data — not produced by Haiku</span>
   <span class="jp">}</span>
 <span class="jp">}</span></div>
       </div>
       <div class="sub-section">
         <div class="sub-label">SSE Events Fired</div>
         <div class="sse-row">
-          <span class="sse-pill">claude_started → { analysis_id, session_id, user_id }</span>
-          <span class="sse-pill">claude_complete → { analysis_id, session_id, user_id, recommendation: "hold" }</span>
-          <span class="sse-pill">analysis_complete → { analysis_id, session_id, user_id, full_result_url }</span>
+          <span class="sse-pill">progression_ready → { analysis_id, session_id, user_id } — Tab 2 unlocks · FE calls GET /analysis/{id}/progression</span>
         </div>
       </div>
       <div class="sub-section">
-        <div class="sub-label">DB Update — <strong style="color:#f1f5f9;">form_analysis_results</strong> &nbsp;<span style="font-size:10px;font-weight:400;color:#f59e0b;background:#1c1309;border:1px solid #3b1f05;border-radius:4px;padding:2px 6px;">Phase 2 of 2 — UPDATE on same row created at Step 6</span></div>
-        <div style="font-size:11px;color:#64748b;margin-bottom:8px;">UPDATE WHERE analysis_id = [current] — fills in the fields left null at Step 6.</div>
+        <div class="sub-label">DB Update — <strong style="color:#f1f5f9;">form_analysis_results</strong></div>
         <table class="db-table">
           <tr><th>Field Updated</th><th>Value</th></tr>
-          <tr><td>coaching_output</td><td><span class="example">Full Claude Sonnet JSON (jsonb)</span></td></tr>
-          <tr><td>progression_recommendation</td><td><span class="example">hold</span></td></tr>
-          <tr><td>session_tags</td><td><span class="example">["knee_valgus","fatigue_pattern"]</span></td></tr>
-        </table>
-      </div>
-      <div class="sub-section">
-        <div class="sub-label">DB Update — <strong style="color:#f1f5f9;">form_analyses</strong> &nbsp;<span style="font-size:10px;font-weight:400;color:#475569;background:#0a0f1a;border:1px solid #1e2433;border-radius:4px;padding:2px 6px;">separate table — written at same time as Phase 2</span></div>
-        <table class="db-table">
-          <tr><th>Field Updated</th><th>Value</th></tr>
+          <tr><td style="color:#fde68a;">progression_output <span style="background:rgba(250,204,21,0.15);padding:1px 4px;border-radius:3px;font-size:9px;font-weight:700;">🆕 NEW</span></td><td><span class="example">Full Haiku Call 2 JSON (Section 1 + Section 2)</span></td></tr>
           <tr><td>status</td><td><span class="example">complete</span></td></tr>
         </table>
       </div>
       <div class="sub-section">
         <div class="sub-label">Roadmap Task IDs</div>
         <div class="task-map">
-          <div class="task-map-row"><span class="task-map-role role-implements">Implements</span><span class="tid tid-s2">S2-W7-04</span><span style="font-size:10px;color:#475569;">Wires Claude Sonnet — Nemotron output + RAG + user history → coaching output</span></div>
-          <div class="task-map-row"><span class="task-map-role role-implements">Refines prompt</span><span class="tid tid-s2">S2-W8-05</span><span style="font-size:10px;color:#475569;">Claude Sonnet prompt engineering — specific, actionable coaching language</span></div>
-          <div class="task-map-row"><span class="task-map-role role-implements">Progression logic</span><span class="tid tid-s2">S2-W8-01</span><span style="font-size:10px;color:#475569;">Progression recommendation logic — hold/progress/drop based on form scores across weights</span></div>
-          <div class="task-map-row"><span class="task-map-role role-implements">Emits SSE</span><span class="tid tid-s2">S2-W6-06</span><span style="font-size:10px;color:#475569;">Emits claude_started, claude_complete, analysis_complete SSE events</span></div>
-          <div class="task-map-row"><span class="task-map-role role-consumes">Consumes (FE)</span><span class="tid tid-s1">S1-W7-02</span><span style="font-size:10px;color:#475569;">Results screen wired to real pipeline output — renders coaching.* and progression.* fields</span></div>
-          <div class="task-map-row"><span class="task-map-role role-consumes">Consumes (FE)</span><span class="tid tid-s1">S1-W8-02</span><span style="font-size:10px;color:#475569;">Display progression recommendation prominently on Results screen</span></div>
-          <div class="task-map-row"><span class="task-map-role role-tests">Tests</span><span class="tid tid-tst">TST-W7-04</span><span style="font-size:10px;color:#475569;">Claude T1 — first coaching output review (P/F)</span></div>
-          <div class="task-map-row"><span class="task-map-role role-tests">Tests</span><span class="tid tid-tst">TST-W8-03</span><span style="font-size:10px;color:#475569;">Claude T2 — progression recommendation review (P/F)</span></div>
-          <div class="task-map-row"><span class="task-map-role role-tests">Tests</span><span class="tid tid-tst">TST-W9-03</span><span style="font-size:10px;color:#475569;">Claude T3 — confidence thresholding validation (P/F)</span></div>
+          <div class="task-map-row"><span class="task-map-role role-implements">Implements</span><span class="tid tid-s2">S2-W7-03</span><span style="font-size:10px;color:#475569;">User session history query — last 5 sessions weight + scores + Haiku output</span></div>
+          <div class="task-map-row"><span class="task-map-role role-implements">Implements</span><span class="tid tid-s2">S2-W8-01</span><span style="font-size:10px;color:#475569;">Progression recommendation logic — weight decision based on cross-session comparison</span></div>
+          <div class="task-map-row"><span class="task-map-role role-consumes">Consumes (FE)</span><span class="tid tid-s1">S1-W7-02</span><span style="font-size:10px;color:#475569;">Tab 2 — User Progression screen renders Section 1 + Section 2</span></div>
         </div>
       </div>
     </div>
@@ -1418,8 +1334,12 @@ h1 { font-size:20px; font-weight:700; color:#f8fafc; }
     </div>
     <div class="step-body">
       <div class="sub-section">
-        <div class="sub-label">SSE Event Consumed</div>
-        <div class="sse-row"><span class="sse-pill">analysis_complete → full result rendered</span></div>
+        <div class="sub-label">SSE Events Consumed — Tab 1 loads progressively</div>
+        <div class="sse-row">
+          <span class="sse-pill">analysis_ready → coaching text + scores rendered immediately</span>
+          <span class="sse-pill">frame_ready → annotated image swaps in (~2–3s later)</span>
+          <span class="sse-pill">progression_ready → Tab 2 unlocks (async)</span>
+        </div>
       </div>
       <div class="sub-section">
         <div class="sub-label">What the User Sees — Screen Layout &amp; Data Fields</div>
@@ -1471,8 +1391,8 @@ h1 { font-size:20px; font-weight:700; color:#f8fafc; }
           </tr>
           <tr>
             <td>Form score /100</td>
-            <td>Nemotron</td>
-            <td><span class="example">summary.overall_form_score</span></td>
+            <td>Haiku Call 1</td>
+            <td><span class="example">overall_form_score</span></td>
             <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#0d1a2e;color:#60a5fa;border:1px solid #1e3a5f;">W6 dummy / W7 real</span></td>
           </tr>
 
@@ -1482,39 +1402,39 @@ h1 { font-size:20px; font-weight:700; color:#f8fafc; }
           </tr>
           <tr>
             <td>1–2 sentence summary combining form quality + weight lifted<br><span style="font-size:9px;color:#475569;">e.g. "At 12kg your posture holds well across all reps, but your ankle dorsiflexion limits your depth from rep 5 onwards."</span></td>
-            <td>Claude Sonnet</td>
+            <td>Haiku Call 1</td>
             <td><span class="example">coaching.summary_paragraph</span></td>
             <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#0d1a2e;color:#60a5fa;border:1px solid #1e3a5f;">W7</span></td>
           </tr>
 
           <!-- E: 4 Parameters -->
           <tr>
-            <td colspan="4" style="background:#0d1117;padding:6px 8px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:0.7px;color:#f59e0b;border-left:2px solid #f59e0b;">E — 4 Parameters · Posture · Stability · Movement Quality · Tempo</td>
+            <td colspan="4" style="background:#0d1117;padding:6px 8px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:0.7px;color:#f59e0b;border-left:2px solid #f59e0b;">E — 4 Parameters · Posture · Stability · Movement Quality · Range of Motion</td>
           </tr>
 
           <!-- Posture -->
           <tr><td colspan="4" style="padding:4px 8px;font-size:9px;font-weight:700;color:#475569;background:#08090f;">Posture</td></tr>
           <tr>
             <td>Score /100</td>
-            <td>Nemotron</td>
+            <td>Haiku Call 1</td>
             <td><span class="example">summary.posture_score</span></td>
             <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#0d1a2e;color:#60a5fa;border:1px solid #1e3a5f;">W7</span></td>
           </tr>
           <tr>
             <td>What they're doing well — sentence affirmation</td>
-            <td>Claude Sonnet</td>
+            <td>Haiku Call 1</td>
             <td><span class="example">coaching.parameters.posture.affirmation</span> <span style="font-size:9px;color:#f59e0b;">⚠ field to add</span></td>
             <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#1a1000;color:#fbbf24;border:1px solid #92400e;">iterate W7/8</span></td>
           </tr>
           <tr>
             <td>What's off — specific observation</td>
-            <td>Claude Sonnet</td>
+            <td>Haiku Call 1</td>
             <td><span class="example">coaching.parameters.posture.observation</span> <span style="font-size:9px;color:#f59e0b;">⚠ field to add</span></td>
             <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#1a1000;color:#fbbf24;border:1px solid #92400e;">iterate W7/8</span></td>
           </tr>
           <tr>
             <td>Action — 1 concrete correction</td>
-            <td>Claude Sonnet</td>
+            <td>Haiku Call 1</td>
             <td><span class="example">coaching.parameters.posture.correction</span> <span style="font-size:9px;color:#f59e0b;">⚠ field to add</span></td>
             <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#0d1a2e;color:#60a5fa;border:1px solid #1e3a5f;">W7</span></td>
           </tr>
@@ -1523,25 +1443,25 @@ h1 { font-size:20px; font-weight:700; color:#f8fafc; }
           <tr><td colspan="4" style="padding:4px 8px;font-size:9px;font-weight:700;color:#475569;background:#08090f;">Stability</td></tr>
           <tr>
             <td>Score /100</td>
-            <td>Nemotron</td>
+            <td>Haiku Call 1</td>
             <td><span class="example">summary.stability_score</span></td>
             <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#0d1a2e;color:#60a5fa;border:1px solid #1e3a5f;">W7</span></td>
           </tr>
           <tr>
             <td>What they're doing well — sentence affirmation</td>
-            <td>Claude Sonnet</td>
+            <td>Haiku Call 1</td>
             <td><span class="example">coaching.parameters.stability.affirmation</span> <span style="font-size:9px;color:#f59e0b;">⚠ field to add</span></td>
             <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#1a1000;color:#fbbf24;border:1px solid #92400e;">iterate W7/8</span></td>
           </tr>
           <tr>
             <td>What's off — specific observation</td>
-            <td>Claude Sonnet</td>
+            <td>Haiku Call 1</td>
             <td><span class="example">coaching.parameters.stability.observation</span> <span style="font-size:9px;color:#f59e0b;">⚠ field to add</span></td>
             <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#1a1000;color:#fbbf24;border:1px solid #92400e;">iterate W7/8</span></td>
           </tr>
           <tr>
             <td>Action — 1 concrete correction</td>
-            <td>Claude Sonnet</td>
+            <td>Haiku Call 1</td>
             <td><span class="example">coaching.parameters.stability.correction</span> <span style="font-size:9px;color:#f59e0b;">⚠ field to add</span></td>
             <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#0d1a2e;color:#60a5fa;border:1px solid #1e3a5f;">W7</span></td>
           </tr>
@@ -1550,52 +1470,52 @@ h1 { font-size:20px; font-weight:700; color:#f8fafc; }
           <tr><td colspan="4" style="padding:4px 8px;font-size:9px;font-weight:700;color:#475569;background:#08090f;">Movement Quality</td></tr>
           <tr>
             <td>Score /100</td>
-            <td>Nemotron</td>
+            <td>Haiku Call 1</td>
             <td><span class="example">summary.movement_quality_score</span></td>
             <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#0d1a2e;color:#60a5fa;border:1px solid #1e3a5f;">W7</span></td>
           </tr>
           <tr>
             <td>What they're doing well — sentence affirmation</td>
-            <td>Claude Sonnet</td>
+            <td>Haiku Call 1</td>
             <td><span class="example">coaching.parameters.movement_quality.affirmation</span> <span style="font-size:9px;color:#f59e0b;">⚠ field to add</span></td>
             <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#1a1000;color:#fbbf24;border:1px solid #92400e;">iterate W7/8</span></td>
           </tr>
           <tr>
             <td>What's off — specific observation</td>
-            <td>Claude Sonnet</td>
+            <td>Haiku Call 1</td>
             <td><span class="example">coaching.parameters.movement_quality.observation</span> <span style="font-size:9px;color:#f59e0b;">⚠ field to add</span></td>
             <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#1a1000;color:#fbbf24;border:1px solid #92400e;">iterate W7/8</span></td>
           </tr>
           <tr>
             <td>Action — 1 concrete correction</td>
-            <td>Claude Sonnet</td>
+            <td>Haiku Call 1</td>
             <td><span class="example">coaching.parameters.movement_quality.correction</span> <span style="font-size:9px;color:#f59e0b;">⚠ field to add</span></td>
             <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#0d1a2e;color:#60a5fa;border:1px solid #1e3a5f;">W7</span></td>
           </tr>
 
-          <!-- Tempo -->
+          <!-- Range of Motion -->
           <tr><td colspan="4" style="padding:4px 8px;font-size:9px;font-weight:700;color:#475569;background:#08090f;">Tempo</td></tr>
           <tr>
             <td>Score /100</td>
-            <td>Biomechanics script → Nemotron</td>
-            <td><span class="example">summary.tempo_score</span> <span style="font-size:9px;color:#f59e0b;">⚠ field to add to Nemotron schema — derived from biomechanics tempo_data</span></td>
+            <td>Haiku Call 1</td>
+            <td><span class="example">range_of_motion_score</span> <span style="font-size:9px;color:#f59e0b;">⚠ from Haiku Call 1 output</span></td>
             <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#0d1a2e;color:#60a5fa;border:1px solid #1e3a5f;">W7</span></td>
           </tr>
           <tr>
             <td>What they're doing well — sentence affirmation</td>
-            <td>Claude Sonnet</td>
+            <td>Haiku Call 1</td>
             <td><span class="example">coaching.parameters.tempo.affirmation</span> <span style="font-size:9px;color:#f59e0b;">⚠ field to add</span></td>
             <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#1a1000;color:#fbbf24;border:1px solid #92400e;">iterate W7/8</span></td>
           </tr>
           <tr>
             <td>What's off — specific observation</td>
-            <td>Claude Sonnet</td>
+            <td>Haiku Call 1</td>
             <td><span class="example">coaching.parameters.tempo.observation</span> <span style="font-size:9px;color:#f59e0b;">⚠ field to add</span></td>
             <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#1a1000;color:#fbbf24;border:1px solid #92400e;">iterate W7/8</span></td>
           </tr>
           <tr>
             <td>Action — 1 concrete correction</td>
-            <td>Claude Sonnet</td>
+            <td>Haiku Call 1</td>
             <td><span class="example">coaching.parameters.tempo.correction</span> <span style="font-size:9px;color:#f59e0b;">⚠ field to add</span></td>
             <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#0d1a2e;color:#60a5fa;border:1px solid #1e3a5f;">W7</span></td>
           </tr>
@@ -1606,13 +1526,13 @@ h1 { font-size:20px; font-weight:700; color:#f8fafc; }
           </tr>
           <tr>
             <td>Rep number (x-axis)</td>
-            <td>Nemotron</td>
+            <td>Haiku Call 1</td>
             <td><span class="example">reps[n].rep_number</span></td>
             <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#0d1a2e;color:#60a5fa;border:1px solid #1e3a5f;">W7</span></td>
           </tr>
           <tr>
             <td>Form score per rep (y-axis)</td>
-            <td>Nemotron</td>
+            <td>Haiku Call 1</td>
             <td><span class="example">reps[n].form_score</span></td>
             <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#0d1a2e;color:#60a5fa;border:1px solid #1e3a5f;">W7</span></td>
           </tr>
@@ -1621,9 +1541,9 @@ h1 { font-size:20px; font-weight:700; color:#f8fafc; }
 
         <div style="margin-top:10px;background:#141000;border:1px solid #92400e;border-radius:6px;padding:10px 12px;font-size:10px;color:#fcd34d;line-height:1.7;">
           <strong style="color:#fbbf24;">Schema additions needed before W7 build:</strong>
-          (1) Add <code style="background:#1a1000;padding:1px 4px;border-radius:3px;">summary.tempo_score</code> to Nemotron output — derived from biomechanics <code style="background:#1a1000;padding:1px 4px;border-radius:3px;">tempo_data</code>.
-          (2) Add <code style="background:#1a1000;padding:1px 4px;border-radius:3px;">coaching.parameters</code> block to Claude Sonnet output — keyed by posture / stability / movement_quality / tempo, each with affirmation, observation, correction fields. The affirmation and observation sub-fields are W7/8 iteration — correction is required at W7.
-          <code style="background:#1a1000;padding:1px 4px;border-radius:3px;">tempo_score</code> is now confirmed in Nemotron output schema (Step 5).
+          (1) Add <code style="background:#1a1000;padding:1px 4px;border-radius:3px;">range_of_motion_score</code> already present in Haiku Call 1 output — no change needed.
+          (2) Add <code style="background:#1a1000;padding:1px 4px;border-radius:3px;">coaching.parameters</code> block to Haiku Call 2 output — keyed by posture / stability / movement_quality / tempo, each with affirmation, observation, correction fields. The affirmation and observation sub-fields are W7/8 iteration — correction is required at W7.
+          range_of_motion_score is produced by Haiku Call 1 (Step 5). Confirmed in Haiku Call 1 output schema.
         </div>
       </div>
       <div class="sub-section">
@@ -1631,7 +1551,7 @@ h1 { font-size:20px; font-weight:700; color:#f8fafc; }
         <div class="task-map">
           <div class="task-map-row"><span class="task-map-role role-defines">Defines contract</span><span class="tid tid-s1">S1-W5-03</span><span style="font-size:10px;color:#475569;">Defines JSON schema for all FE responses — this UI component → field mapping is the source of truth</span></div>
           <div class="task-map-row"><span class="task-map-role role-implements">Implements (dummy)</span><span class="tid tid-s1">S1-W6-04</span><span style="font-size:10px;color:#475569;">Build Results screen using dummy data — score ring, corrections, coaching tips</span></div>
-          <div class="task-map-row"><span class="task-map-role role-implements">Wires real data</span><span class="tid tid-s1">S1-W7-02</span><span style="font-size:10px;color:#475569;">Replace all dummy data with real Nemotron + Claude Sonnet pipeline output</span></div>
+          <div class="task-map-row"><span class="task-map-role role-implements">Wires real data</span><span class="tid tid-s1">S1-W7-02</span><span style="font-size:10px;color:#475569;">Wire Tab 1 Results screen to real Haiku Call 1 output</span></div>
           <div class="task-map-row"><span class="task-map-role role-implements">Wires progression</span><span class="tid tid-s1">S1-W8-02</span><span style="font-size:10px;color:#475569;">Display weight-based progression recommendation chip prominently on Results</span></div>
           <div class="task-map-row"><span class="task-map-role role-consumes">SSE consumed</span><span class="tid tid-s1">S1-W6-03</span><span style="font-size:10px;color:#475569;">Wire SSE to real processing states — analysis_complete fires → full result rendered</span></div>
           <div class="task-map-row"><span class="task-map-role role-tests">Tests E2E</span><span class="tid tid-tst">TST-W7-05</span><span style="font-size:10px;color:#475569;">E2E T1 — upload video → results screen, pipeline completes without intervention</span></div>
@@ -1648,7 +1568,7 @@ h1 { font-size:20px; font-weight:700; color:#f8fafc; }
     <div class="step-header">
       <div class="step-num">8b</div>
       <div class="step-icon">🔀</div>
-      <div><div class="step-title">Frontend — Form Comparison</div><div class="step-squad">Squad 1 — Frontend</div></div>
+      <div><div class="step-title">Frontend — User Progression · Tab 2</div><div class="step-squad">Squad 1 — Frontend</div></div>
     </div>
     <div class="step-body">
 
@@ -1658,13 +1578,13 @@ h1 { font-size:20px; font-weight:700; color:#f8fafc; }
 
           <div style="display:flex;gap:10px;align-items:baseline;">
             <div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:0.5px;color:#475569;flex-shrink:0;width:72px;">Trigger</div>
-            <div style="font-size:11px;color:#94a3b8;line-height:1.6;">Async background task spawned immediately after Claude Sonnet completes the main coaching output (Step 7). Runs in parallel with <code style="color:#c4b5fd;background:#150d24;padding:1px 4px;border-radius:3px;">analysis_complete</code> — does not block 8a from loading. Only runs if a previous completed analysis exists for the same <code style="color:#c4b5fd;background:#150d24;padding:1px 4px;border-radius:3px;">exercise_id</code> + <code style="color:#c4b5fd;background:#150d24;padding:1px 4px;border-radius:3px;">user_id</code>.</div>
+            <div style="font-size:11px;color:#94a3b8;line-height:1.6;">Async task triggered after Haiku Call 1 output saved to DB. Tab 1 already showing. Fires <code style="color:#c4b5fd;background:#150d24;padding:1px 4px;border-radius:3px;">analysis_complete</code> — does not block 8a from loading. Only runs if a previous completed analysis exists for the same <code style="color:#c4b5fd;background:#150d24;padding:1px 4px;border-radius:3px;">exercise_id</code> + <code style="color:#c4b5fd;background:#150d24;padding:1px 4px;border-radius:3px;">user_id</code>.</div>
           </div>
 
           <div style="display:flex;gap:10px;align-items:baseline;">
             <div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:0.5px;color:#475569;flex-shrink:0;width:72px;">Claude Inputs</div>
             <div style="font-size:11px;color:#94a3b8;line-height:1.6;">
-              <strong style="color:#f1f5f9;">Current analysis:</strong> full Nemotron output JSON — overall score, per-parameter scores (posture / stability / movement_quality / tempo), rep-level form scores, issues.<br>
+              <strong style="color:#f1f5f9;">Current analysis:</strong> Haiku Call 1 output — overall_score, 4 param scores, rep_scores[], coaching JSON.<br>
               <strong style="color:#f1f5f9;">Previous analysis:</strong> stored form data from DB — overall score, per-parameter scores, rep-level scores, parameter verdicts.<br>
               <strong style="color:#f1f5f9;">User history context:</strong> same <code style="color:#c4b5fd;background:#150d24;padding:1px 4px;border-radius:3px;">history_context</code> passed to Claude in Step 7 — trends across sessions, weight progression.
             </div>
@@ -1740,8 +1660,8 @@ h1 { font-size:20px; font-weight:700; color:#f8fafc; }
           </tr>
           <tr>
             <td>Form Score /100</td>
-            <td>Nemotron output (current analysis_id)</td>
-            <td><span class="example">summary.overall_form_score</span></td>
+            <td>Haiku Call 1 output</td>
+            <td><span class="example">overall_form_score</span></td>
             <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#0d1a2e;color:#60a5fa;border:1px solid #1e3a5f;">W7</span></td>
           </tr>
 
@@ -1769,8 +1689,8 @@ h1 { font-size:20px; font-weight:700; color:#f8fafc; }
           </tr>
           <tr>
             <td>Form Score /100</td>
-            <td>Claude Sonnet output</td>
-            <td><span class="example">summary.overall_form_score</span> — echoed from previous analysis stored in DB; passed to Claude as input and returned in comparison_coaching</td>
+            <td>Haiku Call 2 output</td>
+            <td><span class="example">overall_form_score</span> — echoed from previous analysis stored in DB; passed to Claude as input and returned in comparison_coaching</td>
             <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#0d1a2e;color:#60a5fa;border:1px solid #1e3a5f;">W7</span></td>
           </tr>
 
@@ -1780,27 +1700,27 @@ h1 { font-size:20px; font-weight:700; color:#f8fafc; }
           </tr>
           <tr>
             <td>1–2 sentence comparison summary — what changed between sessions</td>
-            <td>Claude Sonnet</td>
+            <td>Haiku Call 1</td>
             <td><span class="example">comparison_coaching.summary_paragraph</span> <span style="font-size:9px;color:#f59e0b;">⚠ new Claude output field</span></td>
             <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#0d1a2e;color:#60a5fa;border:1px solid #1e3a5f;">W7</span></td>
           </tr>
 
           <!-- E: 4 Parameters -->
           <tr>
-            <td colspan="4" style="background:#0d1117;padding:6px 8px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:0.7px;color:#f59e0b;border-left:2px solid #f59e0b;">E — 4 Parameters · Posture · Stability · Movement Quality · Tempo</td>
+            <td colspan="4" style="background:#0d1117;padding:6px 8px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:0.7px;color:#f59e0b;border-left:2px solid #f59e0b;">E — 4 Parameters · Posture · Stability · Movement Quality · Range of Motion</td>
           </tr>
 
           <!-- Posture -->
           <tr><td colspan="4" style="padding:4px 8px;font-size:9px;font-weight:700;color:#475569;background:#08090f;">Posture</td></tr>
           <tr>
             <td>Score /100 — current analysis<br><span style="font-size:9px;color:#475569;">Variance vs previous shown inline e.g. 73 <span style="color:#4ade80;">+6</span></span></td>
-            <td>Nemotron output (current) · DB — form_analysis_results (previous)</td>
+            <td>Haiku Call 1 output (current) · form_analysis_results (previous)</td>
             <td><span class="example">summary.posture_score</span> (both analysis_ids)<br><span style="font-size:9px;color:#475569;">Variance: calculated frontend — current minus previous</span></td>
             <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#0d1a2e;color:#60a5fa;border:1px solid #1e3a5f;">W7</span></td>
           </tr>
           <tr>
             <td>1–2 sentence observation + action verdict</td>
-            <td>Claude Sonnet</td>
+            <td>Haiku Call 1</td>
             <td><span class="example">comparison_coaching.parameters.posture.observation_action</span> <span style="font-size:9px;color:#f59e0b;">⚠ new field</span></td>
             <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#0d1a2e;color:#60a5fa;border:1px solid #1e3a5f;">W7</span></td>
           </tr>
@@ -1809,13 +1729,13 @@ h1 { font-size:20px; font-weight:700; color:#f8fafc; }
           <tr><td colspan="4" style="padding:4px 8px;font-size:9px;font-weight:700;color:#475569;background:#08090f;">Stability</td></tr>
           <tr>
             <td>Score /100 — current analysis<br><span style="font-size:9px;color:#475569;">Variance vs previous shown inline</span></td>
-            <td>Nemotron output (current) · DB — form_analysis_results (previous)</td>
+            <td>Haiku Call 1 output (current) · form_analysis_results (previous)</td>
             <td><span class="example">summary.stability_score</span> (both analysis_ids)<br><span style="font-size:9px;color:#475569;">Variance: calculated frontend — current minus previous</span></td>
             <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#0d1a2e;color:#60a5fa;border:1px solid #1e3a5f;">W7</span></td>
           </tr>
           <tr>
             <td>1–2 sentence observation + action verdict</td>
-            <td>Claude Sonnet</td>
+            <td>Haiku Call 1</td>
             <td><span class="example">comparison_coaching.parameters.stability.observation_action</span> <span style="font-size:9px;color:#f59e0b;">⚠ new field</span></td>
             <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#0d1a2e;color:#60a5fa;border:1px solid #1e3a5f;">W7</span></td>
           </tr>
@@ -1824,28 +1744,28 @@ h1 { font-size:20px; font-weight:700; color:#f8fafc; }
           <tr><td colspan="4" style="padding:4px 8px;font-size:9px;font-weight:700;color:#475569;background:#08090f;">Movement Quality</td></tr>
           <tr>
             <td>Score /100 — current analysis<br><span style="font-size:9px;color:#475569;">Variance vs previous shown inline</span></td>
-            <td>Nemotron output (current) · DB — form_analysis_results (previous)</td>
+            <td>Haiku Call 1 output (current) · form_analysis_results (previous)</td>
             <td><span class="example">summary.movement_quality_score</span> (both analysis_ids)<br><span style="font-size:9px;color:#475569;">Variance: calculated frontend — current minus previous</span></td>
             <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#0d1a2e;color:#60a5fa;border:1px solid #1e3a5f;">W7</span></td>
           </tr>
           <tr>
             <td>1–2 sentence observation + action verdict</td>
-            <td>Claude Sonnet</td>
+            <td>Haiku Call 1</td>
             <td><span class="example">comparison_coaching.parameters.movement_quality.observation_action</span> <span style="font-size:9px;color:#f59e0b;">⚠ new field</span></td>
             <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#0d1a2e;color:#60a5fa;border:1px solid #1e3a5f;">W7</span></td>
           </tr>
 
-          <!-- Tempo -->
+          <!-- Range of Motion -->
           <tr><td colspan="4" style="padding:4px 8px;font-size:9px;font-weight:700;color:#475569;background:#08090f;">Tempo</td></tr>
           <tr>
             <td>Score /100 — current analysis<br><span style="font-size:9px;color:#475569;">Variance vs previous shown inline</span></td>
-            <td>Nemotron output (current) · DB — form_analysis_results (previous)</td>
-            <td><span class="example">summary.tempo_score</span> (both analysis_ids)<br><span style="font-size:9px;color:#475569;">Variance: calculated frontend — current minus previous</span></td>
+            <td>Haiku Call 1 output (current) · form_analysis_results (previous)</td>
+            <td><span class="example">range_of_motion_score</span> (both analysis_ids)<br><span style="font-size:9px;color:#475569;">Variance: calculated frontend — current minus previous</span></td>
             <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#0d1a2e;color:#60a5fa;border:1px solid #1e3a5f;">W7</span></td>
           </tr>
           <tr>
             <td>1–2 sentence observation + action verdict</td>
-            <td>Claude Sonnet</td>
+            <td>Haiku Call 1</td>
             <td><span class="example">comparison_coaching.parameters.tempo.observation_action</span> <span style="font-size:9px;color:#f59e0b;">⚠ new field</span></td>
             <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#0d1a2e;color:#60a5fa;border:1px solid #1e3a5f;">W7</span></td>
           </tr>
@@ -1880,8 +1800,8 @@ h1 { font-size:20px; font-weight:700; color:#f8fafc; }
 
         <div style="margin-top:10px;background:#141000;border:1px solid #92400e;border-radius:6px;padding:10px 12px;font-size:10px;color:#fcd34d;line-height:1.7;">
           <strong style="color:#fbbf24;">Schema additions needed before W7 build:</strong>
-          (1) <code style="background:#1a1000;padding:1px 4px;border-radius:3px;">comparison_coaching</code> is a new top-level block in the Claude Sonnet output — generated when Claude receives both current + previous Nemotron outputs. Requires a new or extended prompt. Fields: <code style="background:#1a1000;padding:1px 4px;border-radius:3px;">summary_paragraph</code> + <code style="background:#1a1000;padding:1px 4px;border-radius:3px;">parameters.[posture|stability|movement_quality|tempo].observation_action</code>.
-          (2) <code style="background:#1a1000;padding:1px 4px;border-radius:3px;">summary.tempo_score</code> must be added to Nemotron output (same requirement as 8a) — needed for both the current and previous analysis comparisons.
+          (1) <code style="background:#1a1000;padding:1px 4px;border-radius:3px;">comparison_coaching</code> is the Haiku Call 2 async output. Section 1: per-parameter variances + weight decision. Section 2: 5-session trend insights.
+          (2) <code style="background:#1a1000;padding:1px 4px;border-radius:3px;">range_of_motion_score</code> is in Haiku Call 1 output — available in both current and previous form_analysis_results rows.
         </div>
       </div>
 
@@ -1910,12 +1830,12 @@ h1 { font-size:20px; font-weight:700; color:#f8fafc; }
     </div>
     <div style="color:#334155;font-size:14px;padding:0 2px;">→</div>
     <div style="display:flex;flex-direction:column;align-items:center;gap:3px;padding:0 6px;">
-      <div class="sse-pill">nemotron_started</div>
+      <div class="sse-pill">haiku_started</div>
       <div style="font-size:8.5px;color:#475569;">Step 5</div>
     </div>
     <div style="color:#334155;font-size:14px;padding:0 2px;">→</div>
     <div style="display:flex;flex-direction:column;align-items:center;gap:3px;padding:0 6px;">
-      <div class="sse-pill">nemotron_complete</div>
+      <div class="sse-pill">haiku_started → analysis_ready</div>
       <div style="font-size:8.5px;color:#475569;">Step 5</div>
     </div>
     <div style="color:#334155;font-size:14px;padding:0 2px;">→</div>
@@ -1930,22 +1850,22 @@ h1 { font-size:20px; font-weight:700; color:#f8fafc; }
     </div>
     <div style="color:#334155;font-size:14px;padding:0 2px;">→</div>
     <div style="display:flex;flex-direction:column;align-items:center;gap:3px;padding:0 6px;">
-      <div class="sse-pill">rag_started</div>
+      <div class="sse-pill">md_files_loaded</div>
       <div style="font-size:8.5px;color:#475569;">RAG</div>
     </div>
     <div style="color:#334155;font-size:14px;padding:0 2px;">→</div>
     <div style="display:flex;flex-direction:column;align-items:center;gap:3px;padding:0 6px;">
-      <div class="sse-pill">rag_complete</div>
+      <div class="sse-pill">coaching_content_loaded</div>
       <div style="font-size:8.5px;color:#475569;">RAG</div>
     </div>
     <div style="color:#334155;font-size:14px;padding:0 2px;">→</div>
     <div style="display:flex;flex-direction:column;align-items:center;gap:3px;padding:0 6px;">
-      <div class="sse-pill">claude_started</div>
+      <div class="sse-pill">haiku_call_2_started</div>
       <div style="font-size:8.5px;color:#475569;">Step 7</div>
     </div>
     <div style="color:#334155;font-size:14px;padding:0 2px;">→</div>
     <div style="display:flex;flex-direction:column;align-items:center;gap:3px;padding:0 6px;">
-      <div class="sse-pill">claude_complete</div>
+      <div class="sse-pill">progression_ready</div>
       <div style="font-size:8.5px;color:#475569;">Step 7</div>
     </div>
     <div style="color:#334155;font-size:14px;padding:0 2px;">→</div>
@@ -2004,16 +1924,16 @@ h1 { font-size:20px; font-weight:700; color:#f8fafc; }
         <td style="padding:6px 10px;font-family:monospace;font-size:9.5px;color:#64748b;">{ analysis_id, session_id, user_id, rep_count, joints_computed, avg_confidence }</td>
       </tr>
       <tr style="border-bottom:1px solid #111827;">
-        <td style="padding:6px 10px;font-family:monospace;color:#c4b5fd;">nemotron_started</td>
-        <td style="padding:6px 10px;color:#4ade80;">FastAPI — before Nemotron API call</td>
+        <td style="padding:6px 10px;font-family:monospace;color:#c4b5fd;">haiku_started</td>
+        <td style="padding:6px 10px;color:#4ade80;">FastAPI — before Haiku Call 1 API call</td>
         <td style="padding:6px 10px;color:#94a3b8;">Cloud Run → NVIDIA API</td>
         <td style="padding:6px 10px;color:#93c5fd;">React SSE client</td>
         <td style="padding:6px 10px;color:#94a3b8;">5</td>
-        <td style="padding:6px 10px;font-family:monospace;font-size:9.5px;color:#64748b;">{ analysis_id, session_id, user_id, video_url* } <span style="color:#f59e0b;font-size:9px;">* only if video sent to Nemotron — pending S2-W6-05 test results</span></td>
+        <td style="padding:6px 10px;font-family:monospace;font-size:9.5px;color:#64748b;">{ analysis_id, session_id, user_id }</td>
       </tr>
       <tr style="border-bottom:1px solid #111827;background:#080d12;">
-        <td style="padding:6px 10px;font-family:monospace;color:#c4b5fd;">nemotron_complete</td>
-        <td style="padding:6px 10px;color:#4ade80;">FastAPI — on Nemotron response</td>
+        <td style="padding:6px 10px;font-family:monospace;color:#c4b5fd;">haiku_started → analysis_ready</td>
+        <td style="padding:6px 10px;color:#4ade80;">FastAPI — on Haiku Call 1 response</td>
         <td style="padding:6px 10px;color:#94a3b8;">Cloud Run</td>
         <td style="padding:6px 10px;color:#93c5fd;">React SSE client</td>
         <td style="padding:6px 10px;color:#94a3b8;">5</td>
@@ -2036,7 +1956,7 @@ h1 { font-size:20px; font-weight:700; color:#f8fafc; }
         <td style="padding:6px 10px;font-family:monospace;font-size:9.5px;color:#64748b;">{ analysis_id, session_id, user_id, frame_urls: [...] }</td>
       </tr>
       <tr style="border-bottom:1px solid #111827;">
-        <td style="padding:6px 10px;font-family:monospace;color:#c4b5fd;">rag_started</td>
+        <td style="padding:6px 10px;font-family:monospace;color:#c4b5fd;">md_files_loaded</td>
         <td style="padding:6px 10px;color:#4ade80;">FastAPI — before calling Squad 3 RAG endpoint</td>
         <td style="padding:6px 10px;color:#94a3b8;">Cloud Run → Squad 3 service</td>
         <td style="padding:6px 10px;color:#93c5fd;">React SSE client</td>
@@ -2044,7 +1964,7 @@ h1 { font-size:20px; font-weight:700; color:#f8fafc; }
         <td style="padding:6px 10px;font-family:monospace;font-size:9.5px;color:#64748b;">{ analysis_id, session_id, user_id }</td>
       </tr>
       <tr style="border-bottom:1px solid #111827;background:#080d12;">
-        <td style="padding:6px 10px;font-family:monospace;color:#c4b5fd;">rag_complete</td>
+        <td style="padding:6px 10px;font-family:monospace;color:#c4b5fd;">coaching_content_loaded</td>
         <td style="padding:6px 10px;color:#4ade80;">FastAPI — on RAG response received</td>
         <td style="padding:6px 10px;color:#94a3b8;">Cloud Run</td>
         <td style="padding:6px 10px;color:#93c5fd;">React SSE client</td>
@@ -2052,15 +1972,15 @@ h1 { font-size:20px; font-weight:700; color:#f8fafc; }
         <td style="padding:6px 10px;font-family:monospace;font-size:9.5px;color:#64748b;">{ analysis_id, session_id, user_id, passages_retrieved: 8 }</td>
       </tr>
       <tr style="border-bottom:1px solid #111827;">
-        <td style="padding:6px 10px;font-family:monospace;color:#c4b5fd;">claude_started</td>
-        <td style="padding:6px 10px;color:#4ade80;">FastAPI — before Claude Sonnet API call</td>
+        <td style="padding:6px 10px;font-family:monospace;color:#c4b5fd;">haiku_call_2_started</td>
+        <td style="padding:6px 10px;color:#4ade80;">FastAPI — before Haiku Call 2 async start</td>
         <td style="padding:6px 10px;color:#94a3b8;">Cloud Run → Anthropic API</td>
         <td style="padding:6px 10px;color:#93c5fd;">React SSE client</td>
         <td style="padding:6px 10px;color:#94a3b8;">7</td>
         <td style="padding:6px 10px;font-family:monospace;font-size:9.5px;color:#64748b;">{ analysis_id, session_id, user_id }</td>
       </tr>
       <tr style="border-bottom:1px solid #111827;background:#080d12;">
-        <td style="padding:6px 10px;font-family:monospace;color:#c4b5fd;">claude_complete</td>
+        <td style="padding:6px 10px;font-family:monospace;color:#c4b5fd;">progression_ready</td>
         <td style="padding:6px 10px;color:#4ade80;">FastAPI — on Claude response received</td>
         <td style="padding:6px 10px;color:#94a3b8;">Cloud Run</td>
         <td style="padding:6px 10px;color:#93c5fd;">React SSE client</td>
@@ -2112,25 +2032,25 @@ h1 { font-size:20px; font-weight:700; color:#f8fafc; }
         <td style="padding:8px 10px;color:#64748b;font-size:10px;">Silent event — % bar nudges only. Confirms script ran. Useful for developer debugging; invisible to user.</td>
       </tr>
       <tr style="border-bottom:1px solid #111827;">
-        <td style="padding:8px 10px;font-family:monospace;font-size:9.5px;color:#c4b5fd;">nemotron_started</td>
+        <td style="padding:8px 10px;font-family:monospace;font-size:9.5px;color:#c4b5fd;">haiku_started</td>
         <td style="padding:8px 10px;color:#f1f5f9;font-weight:600;">"Analysing your form frame by frame..."</td>
         <td style="padding:8px 10px;text-align:center;color:#94a3b8;">35%</td>
         <td style="padding:8px 10px;color:#64748b;font-size:10px;">Longest step — "frame by frame" implies precision without surfacing AI jargon</td>
       </tr>
       <tr style="border-bottom:1px solid #111827;">
-        <td style="padding:8px 10px;font-family:monospace;font-size:9.5px;color:#c4b5fd;">nemotron_complete<br><span style="color:#334155;">frames_extracting · frames_ready<br>rag_started · rag_complete</span></td>
+        <td style="padding:8px 10px;font-family:monospace;font-size:9.5px;color:#c4b5fd;">haiku_started → analysis_ready<br><span style="color:#334155;">frame_ready<br>md_files_loaded · coaching_content_loaded</span></td>
         <td style="padding:8px 10px;color:#f1f5f9;font-weight:600;">"Form patterns identified. Building your report..."</td>
         <td style="padding:8px 10px;text-align:center;color:#94a3b8;">65% → 85%</td>
         <td style="padding:8px 10px;color:#64748b;font-size:10px;">4 events share this message — internal steps (OpenCV, RAG) not surfaced to user</td>
       </tr>
       <tr style="border-bottom:1px solid #111827;background:#080d12;">
-        <td style="padding:8px 10px;font-family:monospace;font-size:9.5px;color:#c4b5fd;">claude_started<br><span style="color:#334155;">claude_complete</span></td>
+        <td style="padding:8px 10px;font-family:monospace;font-size:9.5px;color:#c4b5fd;">haiku_call_2_started<br><span style="color:#334155;">progression_ready</span></td>
         <td style="padding:8px 10px;color:#f1f5f9;font-weight:600;">"Writing your personalised coaching..."</td>
         <td style="padding:8px 10px;text-align:center;color:#94a3b8;">88% → 96%</td>
-        <td style="padding:8px 10px;color:#64748b;font-size:10px;">"Personalised" signals tailored output — % advances on claude_complete</td>
+        <td style="padding:8px 10px;color:#64748b;font-size:10px;">"Personalised" signals tailored output — % advances on progression_ready</td>
       </tr>
       <tr style="border-bottom:1px solid #111827;">
-        <td style="padding:8px 10px;font-family:monospace;font-size:9.5px;color:#c4b5fd;">claude_complete</td>
+        <td style="padding:8px 10px;font-family:monospace;font-size:9.5px;color:#c4b5fd;">progression_ready</td>
         <td style="padding:8px 10px;color:#f1f5f9;font-weight:600;">"Almost there. Finalising your results..."</td>
         <td style="padding:8px 10px;text-align:center;color:#94a3b8;">96%</td>
         <td style="padding:8px 10px;color:#64748b;font-size:10px;">Builds anticipation before Results screen reveal</td>
@@ -2184,7 +2104,7 @@ h1 { font-size:20px; font-weight:700; color:#f8fafc; }
       </tr>
       <tr style="background:#080d12;"><td style="padding:5px 10px;font-family:monospace;font-size:10px;color:#f87171;border:1px solid #1e2433;">analysis_id</td><td style="padding:5px 10px;color:#86efac;border:1px solid #1e2433;">string</td><td style="padding:5px 10px;color:#94a3b8;font-size:10px;border:1px solid #1e2433;">UUID v4 · same analysis_id that was issued at upload_received</td><td style="padding:5px 10px;font-family:monospace;font-size:9px;color:#64748b;border:1px solid #1e2433;">"550e8400-e29b-41d4-a716-446655440000"</td></tr>
       <tr><td style="padding:5px 10px;font-family:monospace;font-size:10px;color:#f87171;border:1px solid #1e2433;">error_code</td><td style="padding:5px 10px;color:#86efac;border:1px solid #1e2433;">string (enum)</td><td style="padding:5px 10px;color:#94a3b8;font-size:10px;border:1px solid #1e2433;">One of the error_code values in the taxonomy tables below · SCREAMING_SNAKE_CASE</td><td style="padding:5px 10px;font-family:monospace;font-size:9px;color:#64748b;border:1px solid #1e2433;">"KEYPOINTS_OCCLUDED"</td></tr>
-      <tr style="background:#080d12;"><td style="padding:5px 10px;font-family:monospace;font-size:10px;color:#f87171;border:1px solid #1e2433;">error_stage</td><td style="padding:5px 10px;color:#86efac;border:1px solid #1e2433;">string (enum)</td><td style="padding:5px 10px;color:#94a3b8;font-size:10px;border:1px solid #1e2433;"><span style="color:#fb923c;">"quality_gate"</span> <span style="font-size:9px;background:#1c1000;color:#fb923c;border:1px solid #78350f;padding:1px 5px;border-radius:3px;font-weight:700;">V2</span> | "biomechanics" | "nemotron" | "frame_extraction" | "rag" | "claude" | "pipeline"<br><em style="font-size:9px;color:#475569;">quality_gate = video rejected before any AI runs · biomechanics = computation on keypoints failed</em></td><td style="padding:5px 10px;font-family:monospace;font-size:9px;color:#64748b;border:1px solid #1e2433;">"quality_gate"</td></tr>
+      <tr style="background:#080d12;"><td style="padding:5px 10px;font-family:monospace;font-size:10px;color:#f87171;border:1px solid #1e2433;">error_stage</td><td style="padding:5px 10px;color:#86efac;border:1px solid #1e2433;">string (enum)</td><td style="padding:5px 10px;color:#94a3b8;font-size:10px;border:1px solid #1e2433;"><span style="color:#fb923c;">"quality_gate"</span> <span style="font-size:9px;background:#1c1000;color:#fb923c;border:1px solid #78350f;padding:1px 5px;border-radius:3px;font-weight:700;">V2</span> | "biomechanics" | "haiku_call_1" | "opencv_part_2" | "haiku_call_2" | "pipeline"<br><em style="font-size:9px;color:#475569;">quality_gate = video rejected before any AI runs · biomechanics = computation on keypoints failed</em></td><td style="padding:5px 10px;font-family:monospace;font-size:9px;color:#64748b;border:1px solid #1e2433;">"quality_gate"</td></tr>
       <tr><td style="padding:5px 10px;font-family:monospace;font-size:10px;color:#f87171;border:1px solid #1e2433;">retryable</td><td style="padding:5px 10px;color:#86efac;border:1px solid #1e2433;">string (enum)</td><td style="padding:5px 10px;color:#94a3b8;font-size:10px;border:1px solid #1e2433;"><span style="color:#4ade80;">"true"</span> · infra failure, same video ok — show "Try again" CTA<br><span style="color:#f87171;">"false"</span> · video itself must change — show "Re-film and upload" CTA<br><span style="color:#fbbf24;">"partial"</span> · pipeline degraded but continues — show inline warning, no blocking CTA<br><em style="font-size:9px;color:#475569;">Note: tri-state enum, not boolean — use string comparison not truthiness check</em></td><td style="padding:5px 10px;font-family:monospace;font-size:9px;color:#64748b;border:1px solid #1e2433;">"false"</td></tr>
       <tr style="background:#080d12;"><td style="padding:5px 10px;font-family:monospace;font-size:10px;color:#f87171;border:1px solid #1e2433;">message</td><td style="padding:5px 10px;color:#86efac;border:1px solid #1e2433;">string</td><td style="padding:5px 10px;color:#94a3b8;font-size:10px;border:1px solid #1e2433;">Internal log message — not shown to user. Frontend derives user-facing copy from error_code.</td><td style="padding:5px 10px;font-family:monospace;font-size:9px;color:#64748b;border:1px solid #1e2433;">"MediaPipe confidence below threshold: 0.31"</td></tr>
     </table>
@@ -2297,8 +2217,8 @@ h1 { font-size:20px; font-weight:700; color:#f8fafc; }
       <tr><td style="padding:6px 10px;font-family:monospace;font-size:10px;color:#f87171;border:1px solid #1e2433;">BIOMECHANICS_COMPUTE_ERROR</td><td style="padding:6px 10px;font-size:10px;color:#94a3b8;border:1px solid #1e2433;">Unhandled exception in Python script — e.g. division by zero in angle calculation, missing keypoint index</td><td style="padding:6px 10px;font-size:10px;color:#f1f5f9;border:1px solid #1e2433;">"Something went wrong reading your movement data. Try re-uploading."</td><td style="padding:6px 10px;text-align:center;border:1px solid #1e2433;color:#4ade80;">true</td></tr>
     </table>
 
-    <!-- Nemotron errors -->
-    <div style="font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#a78bfa;margin:10px 0 6px;">Nemotron Stage — error_stage: "nemotron"</div>
+    <!-- Haiku Call 1 errors -->
+    <div style="font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#a78bfa;margin:10px 0 6px;">Haiku Call 1 Stage — error_stage: "haiku_call_1"</div>
     <table style="width:100%;border-collapse:collapse;font-size:11px;margin-bottom:14px;">
       <tr style="background:#1e293b;">
         <th style="padding:6px 10px;text-align:left;color:#64748b;font-size:10px;font-weight:700;border:1px solid #1e2433;">error_code</th>
@@ -2320,7 +2240,7 @@ h1 { font-size:20px; font-weight:700; color:#f8fafc; }
         <th style="padding:6px 10px;text-align:left;color:#64748b;font-size:10px;font-weight:700;border:1px solid #1e2433;">User-facing message</th>
         <th style="padding:6px 10px;text-align:center;color:#64748b;font-size:10px;font-weight:700;border:1px solid #1e2433;">retryable</th>
       </tr>
-      <tr style="background:#080d12;"><td style="padding:6px 10px;font-family:monospace;font-size:10px;color:#f87171;border:1px solid #1e2433;">FRAME_EXTRACTION_FAILED</td><td style="padding:6px 10px;font-size:10px;color:#94a3b8;border:1px solid #1e2433;">OpenCV can't seek to Nemotron timestamp</td><td style="padding:6px 10px;font-size:10px;color:#f1f5f9;border:1px solid #1e2433;">"We identified form issues but couldn't extract the frames to show you. Your text coaching is still available below."</td><td style="padding:6px 10px;text-align:center;border:1px solid #1e2433;color:#fbbf24;">partial</td></tr>
+      <tr style="background:#080d12;"><td style="padding:6px 10px;font-family:monospace;font-size:10px;color:#f87171;border:1px solid #1e2433;">FRAME_EXTRACTION_FAILED</td><td style="padding:6px 10px;font-size:10px;color:#94a3b8;border:1px solid #1e2433;">OpenCV can't seek to bottom_timestamp_ms from biomechanics JSON</td><td style="padding:6px 10px;font-size:10px;color:#f1f5f9;border:1px solid #1e2433;">"We identified form issues but couldn't extract the frames to show you. Your text coaching is still available below."</td><td style="padding:6px 10px;text-align:center;border:1px solid #1e2433;color:#fbbf24;">partial</td></tr>
     </table>
 
     <!-- RAG errors -->
