@@ -685,7 +685,7 @@ h1 { font-size: 22px; font-weight: 800; color: #f8fafc; letter-spacing: -0.5px; 
           <div class="pipe-text">
             <div class="pipe-name">OpenCV Part 1 — 8-frame composite grid</div>
             <div class="pipe-io">Extracts 8 evenly-spaced frames · draws skeleton lines · arranges in 4×2 grid · saves composite JPEG to GCS · sent to Haiku as visual input, NOT shown to user</div>
-            <div class="pipe-sse">frames_extracted (+ composite_grid_url)</div>
+            <div class="pipe-sse">frames_extracted — Step 5 completes internally, no SSE event</div>
           </div>
           <div class="pipe-visual">
             <div class="pv-header">Output — overlay video</div>
@@ -1033,7 +1033,7 @@ def process_video(<br>
 &nbsp;&nbsp;<span class="jc"># On success returns:</span><br>
 &nbsp;&nbsp;return {<br>
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="jk">"status"</span>: <span class="js">"success"</span>,<br>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="jk">"composite_grid_url"</span>: <span class="js">"gs://..."</span>,      <span class="jc"># Step 5 output — sent to Haiku Call 1</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="jk">"composite_grid_b64"</span>: <span class="js">"&lt;base64_string&gt;"</span>,  <span class="jc"># Step 5 output — in memory only, no GCS</span><br>
 &nbsp;&nbsp;&nbsp;&nbsp;<span class="jk">"biomechanics_json"</span>: { ... },            <span class="jc"># Step 6 output — stored in DB</span><br>
 &nbsp;&nbsp;}<br>
 &nbsp;&nbsp;<span class="jc"># On quality gate failure returns:</span><br>
@@ -1048,7 +1048,7 @@ def process_video(<br>
   <div style="margin-top:10px;">
     <div class="sub-label" style="margin-bottom:8px;">What Squad 2 does with the return value</div>
     <div style="display:flex;flex-direction:column;gap:5px;font-size:11px;color:#94a3b8;">
-      <div><strong style="color:#4ade80;">On success:</strong> stores biomechanics_json to DB · emits biomechanics_complete SSE · calls Haiku Call 1 with composite_grid_url + biomechanics_json</div>
+      <div><strong style="color:#4ade80;">On success:</strong> stores biomechanics_json to DB · emits biomechanics_complete SSE · calls Haiku Call 1 with composite_grid_b64 (base64) + biomechanics_json</div>
       <div><strong style="color:#f87171;">On failure:</strong> updates <code>form_analyses</code> status to "failed" · emits full error SSE event: { analysis_id, session_id, user_id, error_code, error_stage, retryable, message } — see <code>FE_SSE_and_Errors.md</code> for required shape and retryable values per error_code</div>
     </div>
   </div>
@@ -1168,14 +1168,13 @@ def process_video(<br>
   <div class="step-body">
     <div class="io-block">
       <div class="io-row"><div class="io-label io-in">IN</div><div class="io-val">Raw video frames · MediaPipe landmark coordinates per frame from Step 3</div></div>
-      <div class="io-row"><div class="io-label io-out">OUT</div><div class="io-val">Single composite JPEG — 8 evenly-spaced frames in a 4×2 grid with skeleton lines drawn. Saved to GCS at <code>analyses/{analysis_id}/composite_grid.jpg</code>. Returns <code>composite_grid_url</code> to the pipeline.</div></div>
-      <div class="io-row"><div class="io-label io-sse">SSE</div><div class="io-val"><code>frames_extracted</code> → { analysis_id, session_id, user_id, composite_grid_url }</div></div>
+      <div class="io-row"><div class="io-label io-out">OUT</div><div class="io-val">8-frame composite JPEG — returned as <strong>base64 bytes in memory</strong>. Not saved to GCS — transient input to Haiku only, never read again after Step 7.</div></div>
     </div>
     <div class="req-block">
       <div class="req-label">What Squad 2 receives from this step</div>
       <div class="req-list">
-        <div class="req-item"><code>composite_grid_url</code> — GCS path of the 8-frame composite image. Squad 2 passes this to Haiku Call 1 (Step 7) as the visual input alongside the biomechanics JSON.</div>
-        <div class="req-item">Not shown to the user — LLM visual input only. Single JPEG (~200–400KB) is significantly faster to process than the previous full overlay video.</div>
+        <div class="req-item"><code>composite_grid_b64</code> — base64-encoded JPEG string (~200–400KB). Squad 2 passes this directly into the Haiku API call (Step 7) as an image content block. No GCS upload, no URL.</div>
+        <div class="req-item">Not shown to the user. No SSE event emitted for this step — it completes internally within <code>process_video()</code> before returning to Squad 2.</div>
       </div>
     </div>
   </div>
@@ -1203,33 +1202,33 @@ def process_video(<br>
       <div class="io-row"><div class="io-label io-sse">SSE</div><div class="io-val"><code>biomechanics_complete</code> → { analysis_id, session_id, user_id, rep_count, joints_computed, avg_confidence }</div></div>
     </div>
     <div class="gap-block">
-      <div class="gap-label">Schema changes required — 2 additions to every rep object + 1 to consolidated</div>
-      <div class="gap-text">Two fields must be added per rep for OpenCV Part 2 to seek the correct frame. One field added to consolidated for session-level valgus detection.</div>
+      <div class="gap-label">🆕 Schema changes required — 2 new fields per rep + 1 new field in consolidated</div>
+      <div class="gap-text">These fields must be added to the biomechanics script output. Without <code>bottom_frame</code> and <code>bottom_timestamp_ms</code>, OpenCV Part 2 cannot seek the correct frame. Without <code>session_valgus_fault</code>, valgus detection stays inside the LLM prompt.</div>
     </div>
     <div class="code-block" style="margin-top:0;">
-<span class="jc"># Per-rep additions</span><br>
+<span class="jc"># Per-rep object — new fields highlighted</span><br>
 {<br>
 &nbsp;&nbsp;<span class="jk">"rep_number"</span>: <span class="jn">3</span>,<br>
-&nbsp;&nbsp;<span class="added"><span class="jk">"bottom_frame"</span>: <span class="jn">342</span>,</span>           <span class="jc"># ADD — frame index at squat bottom position</span><br>
-&nbsp;&nbsp;<span class="added"><span class="jk">"bottom_timestamp_ms"</span>: <span class="jn">5700.0</span>,</span>  <span class="jc"># ADD — (bottom_frame / fps) × 1000. OpenCV seeks here.</span><br>
+&nbsp;&nbsp;<span class="added"><span class="jk">"bottom_frame"</span>: <span class="jn">342</span>,</span>           <span class="jc"># 🆕 NEW — frame index at squat bottom position</span><br>
+&nbsp;&nbsp;<span class="added"><span class="jk">"bottom_timestamp_ms"</span>: <span class="jn">5700.0</span>,</span>  <span class="jc"># 🆕 NEW — (bottom_frame / fps) × 1000. OpenCV Part 2 seeks here.</span><br>
 &nbsp;&nbsp;<span class="jk">"depth_data"</span>: { <span class="jk">"knee_angle_at_bottom"</span>: <span class="jn">88.2</span>, ... },<br>
-&nbsp;&nbsp;<span class="jp">...</span><br>
+&nbsp;&nbsp;<span class="jp">... (existing fields unchanged)</span><br>
 }<br>
 <br>
-<span class="jc"># Consolidated additions</span><br>
+<span class="jc"># Consolidated section — new field in stability object</span><br>
 {<br>
 &nbsp;&nbsp;<span class="jk">"stability"</span>: {<br>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="added"><span class="jk">"session_valgus_fault"</span>: <span class="jn">true</span>,</span>  <span class="jc"># ADD — true if ≥50% valid reps have knee_valgus_distance &lt; 0.22</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;<span class="jp">...</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="added"><span class="jk">"session_valgus_fault"</span>: <span class="jn">true</span>,</span>  <span class="jc"># 🆕 NEW — true if ≥50% valid reps have knee_valgus_distance &lt; 0.22</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="jp">... (existing fields unchanged)</span><br>
 &nbsp;&nbsp;}<br>
 }
     </div>
     <div class="req-block" style="margin-top:0;">
       <div class="req-label">What Squad 2 receives from process_video() — the full return dict</div>
       <div class="req-list">
-        <div class="req-item"><code>composite_grid_url</code> — passed to Haiku Call 1 (Step 7) as visual input</div>
-        <div class="req-item"><code>biomechanics_json</code> — stored to DB in <code>form_analysis_results</code>. Step 8 looks up <code>bottom_timestamp_ms</code> for the rep identified as worst by Haiku.</div>
-        <div class="req-item"><strong>Note:</strong> worst_rep_number is NOT computed by the biomechanics script. Haiku Call 1 outputs per-rep scores — Step 8 finds the lowest-scoring rep from Haiku's output, then looks up its timestamp here.</div>
+        <div class="req-item"><code>composite_grid_b64</code> — base64 JPEG bytes · passed directly into Haiku API call (Step 7) · not saved to GCS</div>
+        <div class="req-item"><code>biomechanics_json</code> — stored to DB in <code>form_analysis_results</code>. Step 8 looks up <code>bottom_timestamp_ms</code> for the rep Haiku identifies as worst.</div>
+        <div class="req-item"><strong>Note:</strong> worst_rep_number is NOT computed here. Haiku Call 1 outputs <code>rep_scores[]</code> — Step 8 finds the lowest-scoring rep from that array, then looks up its <code>bottom_timestamp_ms</code> from this JSON.</div>
       </div>
     </div>
   </div>
@@ -1245,7 +1244,7 @@ def process_video(<br>
     <span class="handoff-badge">Handoff C</span>
     <span class="handoff-title">Squad 3 → Squad 2 &nbsp;·&nbsp; <span class="chip-decided">Pattern agreed — function returns dict</span></span>
   </div>
-  <div class="handoff-desc">Squad 3's <code>process_video()</code> returns its result dict to Squad 2. Squad 2 then: (1) stores biomechanics_json to DB, (2) emits biomechanics_complete SSE, (3) calls Haiku Call 1 with composite_grid_url + biomechanics_json. OpenCV Part 2 runs after Haiku — it needs Haiku's per-rep scores to identify the worst rep.</div>
+  <div class="handoff-desc">Squad 3's <code>process_video()</code> returns its result dict to Squad 2. Squad 2 then: (1) stores biomechanics_json to DB, (2) emits biomechanics_complete SSE, (3) calls Haiku Call 1 with composite_grid_b64 (base64) + biomechanics_json. OpenCV Part 2 runs after Haiku — it needs Haiku's per-rep scores to identify the worst rep.</div>
   <div class="code-block">
 <span class="jc"># Squad 2 — after process_video() returns</span><br>
 result = await process_video(gcs_path, analysis_id)<br>
@@ -1261,9 +1260,9 @@ sse.emit(<span class="js">"biomechanics_complete"</span>, { analysis_id, rep_cou
 <br>
 <span class="jc"># Step 7 — call Haiku with composite grid + biomechanics JSON</span><br>
 haiku_input = {<br>
-&nbsp;&nbsp;<span class="jk">"composite_grid_url"</span>: result[<span class="js">"composite_grid_url"</span>],<br>
+&nbsp;&nbsp;<span class="jk">"composite_grid_b64"</span>: result[<span class="js">"composite_grid_b64"</span>],  <span class="jc"># base64 bytes — no GCS URL</span><br>
 &nbsp;&nbsp;<span class="jk">"biomechanics_json"</span>: result[<span class="js">"biomechanics_json"</span>],<br>
-&nbsp;&nbsp;<span class="jc"># + weight, exercise, gold standard, session history, .md files</span><br>
+&nbsp;&nbsp;<span class="jc"># + weight, exercise from form_analyses, gold standard, last 3 sessions, .md files</span><br>
 }
   </div>
 </div>
@@ -1286,7 +1285,7 @@ haiku_input = {<br>
   <div class="step-body">
     <div class="io-block">
       <div class="io-row"><div class="io-label io-in">IN</div><div class="io-val">
-        <code>composite_grid_url</code> (8-frame image from Step 5) ·
+        <code>composite_grid_b64</code> (base64 JPEG from Step 5 — in memory, no GCS URL) ·
         <code>biomechanics_json</code> (from Step 6) ·
         <code>form_analyses</code> fields: user_id, analysis_id, weight_value, weight_unit, exercise_id, exercise_name ·
         gold standard JSON (from Supabase) ·
@@ -1296,9 +1295,22 @@ haiku_input = {<br>
       <div class="io-row"><div class="io-label io-out">OUT</div><div class="io-val">
         Structured JSON — two sections in one call:<br>
         <strong>Analysis:</strong> faults_detected · confidence · fault_detail (rep count, which reps, severity, trend) · causal_chain · trends<br>
-        <strong>Coaching:</strong> overall_score · posture_score · stability_score · movement_quality_score · range_of_motion_score · rep_scores[] (per-rep across 4 params) · verdict · positive_observations · critical_observations · recommendation · rep_trend
+        <strong>Coaching:</strong>
+        overall_score ·
+        <span style="background:rgba(250,204,21,0.15);color:#fde68a;padding:1px 5px;border-radius:3px;font-size:10px;font-weight:700;">🆕 NEW</span> posture_score ·
+        <span style="background:rgba(250,204,21,0.15);color:#fde68a;padding:1px 5px;border-radius:3px;font-size:10px;font-weight:700;">🆕 NEW</span> stability_score ·
+        <span style="background:rgba(250,204,21,0.15);color:#fde68a;padding:1px 5px;border-radius:3px;font-size:10px;font-weight:700;">🆕 NEW</span> movement_quality_score ·
+        <span style="background:rgba(250,204,21,0.15);color:#fde68a;padding:1px 5px;border-radius:3px;font-size:10px;font-weight:700;">🆕 NEW</span> range_of_motion_score ·
+        <span style="background:rgba(250,204,21,0.15);color:#fde68a;padding:1px 5px;border-radius:3px;font-size:10px;font-weight:700;">🆕 NEW</span> rep_scores[] (per-rep score array) ·
+        verdict · positive_observations · critical_observations · recommendation · rep_trend
       </div></div>
-      <div class="io-row"><div class="io-label io-db">DB</div><div class="io-val">Stores full Haiku output to <code>form_analysis_results</code>: all scores + coaching JSON. Status → "analysis_complete".</div></div>
+      <div class="io-row"><div class="io-label io-db">DB</div><div class="io-val">
+        Stores to <code>form_analysis_results</code>:<br>
+        overall_score · coaching_output (full JSON) — <em>existing columns</em><br>
+        <span style="background:rgba(250,204,21,0.15);color:#fde68a;padding:1px 5px;border-radius:3px;font-size:10px;font-weight:700;">🆕 NEW COLUMNS</span>
+        posture_score · stability_score · movement_quality_score · range_of_motion_score · rep_scores (JSON array)<br>
+        Status → "analysis_complete"
+      </div></div>
       <div class="io-row"><div class="io-label io-sse">SSE</div><div class="io-val"><code>haiku_started</code> → { analysis_id, session_id, user_id } &nbsp;·&nbsp; <code>analysis_ready</code> → { analysis_id, session_id, user_id, overall_score } — Tab 1 unlocks, user reads coaching while frame loads</div></div>
     </div>
     <div class="req-block">
@@ -1391,7 +1403,7 @@ haiku_input = {<br>
         <strong>Section 1 (today vs previous):</strong> date + weight both sessions · overall score + variance · 1-line verdict · 4× parameter variance + 1-sentence verdict each · weight decision (hold / good to progress / drop weight)<br>
         <strong>Section 2 (progression timeline):</strong> 3-point insight summary on trend across last 5 sessions
       </div></div>
-      <div class="io-row"><div class="io-label io-db">DB</div><div class="io-val">Stores progression output to <code>form_analysis_results</code>: <code>progression_output</code> JSON · status → "complete"</div></div>
+      <div class="io-row"><div class="io-label io-db">DB</div><div class="io-val">Stores to <code>form_analysis_results</code>: <span style="background:rgba(250,204,21,0.15);color:#fde68a;padding:1px 5px;border-radius:3px;font-size:10px;font-weight:700;">🆕 NEW COLUMN</span> <code>progression_output</code> (JSON) · status → "complete"</div></div>
       <div class="io-row"><div class="io-label io-sse">SSE</div><div class="io-val"><code>progression_ready</code> → { analysis_id, session_id, user_id } — Tab 2 unlocks · frontend calls <code>GET /analysis/{analysis_id}/progression</code> to fetch Section 1 + Section 2 JSON</div></div>
     </div>
     <div class="req-block">
@@ -1507,9 +1519,8 @@ haiku_input = {<br>
       <div class="pipe-content">
         <div class="pipe-io">
           <div class="io-row"><div class="io-dir io-in">IN</div><div class="io-val">raw video (from GCS) · MediaPipe landmarks per frame</div></div>
-          <div class="io-row"><div class="io-dir io-out">OUT</div><div class="io-val">composite_grid_url — 8-frame 4×2 composite JPEG with skeleton lines · saved to GCS</div></div>
-          <div class="io-row"><div class="io-dir io-sse">SSE</div><div class="io-val">frames_extracted → { analysis_id, session_id, user_id, composite_grid_url }</div></div>
-          <div class="io-note" style="margin-left:52px;font-size:10px;">Composite image goes to Haiku as visual input — NOT shown to the user</div>
+          <div class="io-row"><div class="io-dir io-out">OUT</div><div class="io-val">composite_grid_b64 — 8-frame 4×2 composite JPEG as base64 bytes · in memory only · not saved to GCS</div></div>
+          <div class="io-note" style="margin-left:52px;font-size:10px;">Passed directly into Haiku API call — no GCS upload, no SSE event</div>
         </div>
       </div>
     </div>
@@ -1540,7 +1551,7 @@ haiku_input = {<br>
       </div>
       <div class="pipe-content">
         <div class="pipe-io">
-          <div class="io-row"><div class="io-dir io-in">IN</div><div class="io-val">composite_grid_url · biomechanics JSON · weight + exercise from form_analyses · gold standard JSON · last 3 sessions · .md coaching files</div></div>
+          <div class="io-row"><div class="io-dir io-in">IN</div><div class="io-val">composite_grid_b64 (base64, in memory) · biomechanics JSON · weight + exercise from form_analyses · gold standard JSON · last 3 sessions · .md coaching files</div></div>
           <div class="io-row"><div class="io-dir io-out">OUT</div><div class="io-val">overall_score · posture/stability/movement/range_of_motion scores · rep_scores[] · faults · coaching JSON · Tab 1 unlocks</div></div>
           <div class="io-row"><div class="io-dir io-sse">SSE</div><div class="io-val">haiku_started · analysis_ready → { analysis_id, session_id, user_id, overall_score }</div></div>
         </div>
