@@ -1158,23 +1158,112 @@ h1 { font-size:20px; font-weight:700; color:#f8fafc; }
           <tr><td colspan="3" style="background:#0a0f1a;color:#475569;font-size:10px;padding:4px 10px;font-style:italic;">── Rep-level scores — from Haiku Call 1 ──</td></tr>
           <tr><td style="color:#fde68a;">rep_scores <span style="background:rgba(250,204,21,0.15);padding:1px 4px;border-radius:3px;font-size:9px;font-weight:700;">🆕 NEW</span></td><td><span class="type">jsonb array</span></td><td><span class="example">[{ "rep_number": 1, "overall": 82, "posture": 84, "stability": 75, "movement_quality": 85, "range_of_motion": 78 }, ...]</span></td></tr>
           <tr><td>rep_count</td><td><span class="type">int</span></td><td><span class="example">8</span></td></tr>
-          <tr><td>issue_tags</td><td><span class="type">text[] + GIN index</span></td><td><span class="example">["knee_valgus", "ankle_dorsiflexion"]</span></td></tr>
+          <tr><td>issue_tags</td><td><span class="type">text[] + GIN index</span></td><td><span class="example">["knee_valgus"]</span></td></tr>
           <tr><td colspan="3" style="background:#070a0f;color:#475569;font-size:10px;padding:5px 10px;line-height:1.6;">
-            <strong style="color:#cbd5e1;">Queryable tag vocabulary (fixed set):</strong>&nbsp;
+            <strong style="color:#cbd5e1;">Vocabulary (fixed set):</strong>&nbsp;
+            <code style="color:#fb923c;">insufficient_depth</code> &nbsp;·&nbsp;
             <code style="color:#fb923c;">knee_valgus</code> &nbsp;·&nbsp;
-            <code style="color:#fb923c;">ankle_dorsiflexion</code> &nbsp;·&nbsp;
-            <code style="color:#fb923c;">depth</code> &nbsp;·&nbsp;
-            <code style="color:#fb923c;">torso_lean</code> &nbsp;·&nbsp;
-            <code style="color:#fb923c;">hip_hinge</code><br>
-            Extracted from <code>issues_json[].type</code> at write time and stored flat for fast filtering.
+            <code style="color:#fb923c;">excessive_forward_lean</code><br>
+            Extracted from <code>faults_detected</code> where value = true. Stored flat for fast GIN querying across sessions in progression logic.<br>
             GIN index enables: <code style="color:#86efac;">WHERE 'knee_valgus' = ANY(issue_tags)</code> &nbsp;·&nbsp;
-            <code style="color:#86efac;">WHERE issue_tags @&gt; ARRAY['knee_valgus','depth']</code>
+            <code style="color:#86efac;">WHERE issue_tags @&gt; ARRAY['knee_valgus','insufficient_depth']</code>
           </td></tr>
-          <tr><td>issues_json</td><td><span class="type">jsonb</span></td><td><span class="example">[ { "issue_id": "issue_001", "type": "knee_valgus", "severity": "moderate", "reps_affected": [3,4], "key_frames": [...] } ]</span></td></tr>
-          <tr><td>annotated_frame_url</td><td><span class="type">string (GCS URI)</span></td><td><span class="example">gs://kinetic-videos/analyses/{analysis_id}/worst_rep_frame.jpg</span></td></tr>
-          <tr><td>coaching_output</td><td><span class="type">jsonb</span></td><td><span class="example">Full Haiku Call 1 JSON (verdict, observations, recommendation, rep_trend)</span></td></tr>
-          <tr><td style="color:#fde68a;">progression_output <span style="background:rgba(250,204,21,0.15);padding:1px 4px;border-radius:3px;font-size:9px;font-weight:700;">🆕 NEW</span></td><td><span class="type">jsonb</span></td><td><span class="example">null until Haiku Call 2 async completes — Section 1 + Section 2 JSON for Tab 2</span></td></tr>
+          <tr><td colspan="3" style="background:#0a0f1a;color:#475569;font-size:10px;padding:4px 10px;font-style:italic;">── Analysis outputs — flat columns from Haiku Call 1 · stored separately for progression queries ──</td></tr>
+          <tr><td style="color:#fde68a;">faults_detected <span style="background:rgba(250,204,21,0.15);padding:1px 4px;border-radius:3px;font-size:9px;font-weight:700;">🆕 NEW</span></td><td><span class="type">jsonb</span></td><td><span class="example">{ "insufficient_depth": false, "knee_valgus": true, "excessive_forward_lean": false }</span></td></tr>
+          <tr><td style="color:#fde68a;">confidence <span style="background:rgba(250,204,21,0.15);padding:1px 4px;border-radius:3px;font-size:9px;font-weight:700;">🆕 NEW</span></td><td><span class="type">jsonb</span></td><td><span class="example">{ "insufficient_depth": 0.90, "knee_valgus": 0.85, "excessive_forward_lean": 0.92 }</span></td></tr>
+          <tr><td style="color:#fde68a;">causal_chain <span style="background:rgba(250,204,21,0.15);padding:1px 4px;border-radius:3px;font-size:9px;font-weight:700;">🆕 NEW</span></td><td><span class="type">jsonb</span></td><td><span class="example">{ "root_cause": "ankle_restriction", "chain": "ankle restriction → forward lean → depth deficit", "explanation": "string" }</span></td></tr>
+          <tr><td style="color:#fde68a;">fault_detail <span style="background:rgba(250,204,21,0.15);padding:1px 4px;border-radius:3px;font-size:9px;font-weight:700;">🆕 NEW</span></td><td><span class="type">jsonb</span></td><td><span class="example">Per-fault: reps_affected, which_reps, severity, trend, source — see full structure below</span></td></tr>
+          <tr><td style="color:#fde68a;">trends <span style="background:rgba(250,204,21,0.15);padding:1px 4px;border-radius:3px;font-size:9px;font-weight:700;">🆕 NEW</span></td><td><span class="type">jsonb</span></td><td><span class="example">{ "worsening": ["knee_valgus — +0.02/rep"], "improving": [], "stable": ["depth", "posture"] }</span></td></tr>
+          <tr><td colspan="3" style="background:#0a0f1a;color:#475569;font-size:10px;padding:4px 10px;font-style:italic;">── Final output fields ──</td></tr>
+          <tr><td>annotated_frame_url</td><td><span class="type">string (GCS URI)</span></td><td><span class="example">gs://kinetic-videos/analyses/{analysis_id}/worst_rep_frame.jpg — NULL until OpenCV Part 2 completes</span></td></tr>
+          <tr><td>coaching_output</td><td><span class="type">jsonb</span></td><td><span class="example">Full Haiku Call 1 JSON — coaching section: verdict, positive_observations, critical_observations, recommendation, rep_trend</span></td></tr>
+          <tr><td style="color:#fde68a;">progression_output <span style="background:rgba(250,204,21,0.15);padding:1px 4px;border-radius:3px;font-size:9px;font-weight:700;">🆕 NEW</span></td><td><span class="type">jsonb</span></td><td><span class="example">NULL until Haiku Call 2 async completes — Section 1 + Section 2 JSON for Tab 2</span></td></tr>
         </table>
+
+        <!-- ── Full JSON structures for new analysis columns ── -->
+        <div style="margin-top:16px;display:flex;flex-direction:column;gap:14px;">
+
+          <div>
+            <div class="sub-label" style="margin-bottom:6px;">faults_detected — boolean per fault · used to populate issue_tags</div>
+            <div class="json-block">
+<span class="jp">{</span><br>
+&nbsp;&nbsp;<span class="jk">"insufficient_depth"</span><span class="jp">:</span> <span class="jb">false</span><span class="jp">,</span>     <span class="jc">// hip crease did not reach below knee on most reps</span><br>
+&nbsp;&nbsp;<span class="jk">"knee_valgus"</span><span class="jp">:</span> <span class="jb">true</span><span class="jp">,</span>           <span class="jc">// knee collapsed inward on ascent in majority of reps</span><br>
+&nbsp;&nbsp;<span class="jk">"excessive_forward_lean"</span><span class="jp">:</span> <span class="jb">false</span>  <span class="jc">// torso lean within acceptable range</span><br>
+<span class="jp">}</span>
+            </div>
+          </div>
+
+          <div>
+            <div class="sub-label" style="margin-bottom:6px;">confidence — Haiku's certainty per fault · used for thresholding low-quality outputs</div>
+            <div class="json-block">
+<span class="jp">{</span><br>
+&nbsp;&nbsp;<span class="jk">"insufficient_depth"</span><span class="jp">:</span>      <span class="jn">0.90</span><span class="jp">,</span>  <span class="jc">// high confidence — angle data clear</span><br>
+&nbsp;&nbsp;<span class="jk">"knee_valgus"</span><span class="jp">:</span>              <span class="jn">0.85</span><span class="jp">,</span>  <span class="jc">// slightly lower — side view limits valgus precision</span><br>
+&nbsp;&nbsp;<span class="jk">"excessive_forward_lean"</span><span class="jp">:</span>    <span class="jn">0.92</span>   <span class="jc">// high confidence — back angle well captured</span><br>
+<span class="jp">}</span>
+            </div>
+          </div>
+
+          <div>
+            <div class="sub-label" style="margin-bottom:6px;">causal_chain — root cause reasoning · used in coaching display + Haiku Call 2 longitudinal context</div>
+            <div class="json-block">
+<span class="jp">{</span><br>
+&nbsp;&nbsp;<span class="jk">"root_cause"</span><span class="jp">:</span>  <span class="js">"ankle_restriction"</span><span class="jp">,</span>           <span class="jc">// primary driver of the fault chain</span><br>
+&nbsp;&nbsp;<span class="jk">"chain"</span><span class="jp">:</span>       <span class="js">"ankle restriction → forward lean → depth deficit"</span><span class="jp">,</span><br>
+&nbsp;&nbsp;<span class="jk">"explanation"</span><span class="jp">:</span> <span class="js">"Limited dorsiflexion forces the torso forward to maintain balance, which then prevents full hip depth."</span><br>
+<span class="jp">}</span><br>
+<br>
+<span class="jc">// null if no causal relationship identified between faults</span>
+            </div>
+          </div>
+
+          <div>
+            <div class="sub-label" style="margin-bottom:6px;">fault_detail — per-fault detail · KEY field for longitudinal progression logic · read by Haiku Call 2 across last 5 sessions</div>
+            <div class="json-block">
+<span class="jp">{</span><br>
+&nbsp;&nbsp;<span class="jk">"insufficient_depth"</span><span class="jp">:</span> <span class="jp">{</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="jk">"present"</span><span class="jp">:</span>        <span class="jb">false</span><span class="jp">,</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="jk">"reps_affected"</span><span class="jp">:</span>  <span class="js">"0 of 8"</span><span class="jp">,</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="jk">"which_reps"</span><span class="jp">:</span>     <span class="jp">[]</span><span class="jp">,</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="jk">"severity"</span><span class="jp">:</span>       <span class="js">"knee_angle_min 88° — within range"</span><span class="jp">,</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="jk">"trend"</span><span class="jp">:</span>          <span class="js">"stable"</span><span class="jp">,</span>        <span class="jc">// stable | improving | worsening +X/rep</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="jk">"source"</span><span class="jp">:</span>         <span class="js">"json"</span>           <span class="jc">// json | visual | both</span><br>
+&nbsp;&nbsp;<span class="jp">},</span><br>
+&nbsp;&nbsp;<span class="jk">"knee_valgus"</span><span class="jp">:</span> <span class="jp">{</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="jk">"present"</span><span class="jp">:</span>        <span class="jb">true</span><span class="jp">,</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="jk">"reps_affected"</span><span class="jp">:</span>  <span class="js">"6 of 8"</span><span class="jp">,</span>         <span class="jc">// used by Haiku Call 2: "now showing on 6 reps, was 4 last session"</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="jk">"which_reps"</span><span class="jp">:</span>     <span class="jp">[</span><span class="jn">3</span><span class="jp">,</span><span class="jn">4</span><span class="jp">,</span><span class="jn">5</span><span class="jp">,</span><span class="jn">6</span><span class="jp">,</span><span class="jn">7</span><span class="jp">,</span><span class="jn">8</span><span class="jp">],</span>   <span class="jc">// used to track whether fault appears earlier each session</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="jk">"severity"</span><span class="jp">:</span>       <span class="js">"knee_valgus_distance 0.18–0.22"</span><span class="jp">,</span>  <span class="jc">// actual measured values</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="jk">"valgus_phase"</span><span class="jp">:</span>   <span class="js">"LATE"</span><span class="jp">,</span>          <span class="jc">// EARLY | MID | LATE — when in the rep it occurs</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="jk">"trend"</span><span class="jp">:</span>          <span class="js">"worsening +0.02/rep"</span><span class="jp">,</span>  <span class="jc">// KEY signal — fault is getting worse within this session</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="jk">"source"</span><span class="jp">:</span>         <span class="js">"both"</span>           <span class="jc">// confirmed by both visual frames and biomechanics JSON</span><br>
+&nbsp;&nbsp;<span class="jp">},</span><br>
+&nbsp;&nbsp;<span class="jk">"excessive_forward_lean"</span><span class="jp">:</span> <span class="jp">{</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="jk">"present"</span><span class="jp">:</span>           <span class="jb">false</span><span class="jp">,</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="jk">"reps_affected"</span><span class="jp">:</span>     <span class="js">"0 of 8"</span><span class="jp">,</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="jk">"which_reps"</span><span class="jp">:</span>        <span class="jp">[]</span><span class="jp">,</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="jk">"severity"</span><span class="jp">:</span>          <span class="js">"back_angle_max 38° — within acceptable range"</span><span class="jp">,</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="jk">"breakdown_timing"</span><span class="jp">:</span>  <span class="jb">null</span><span class="jp">,</span>           <span class="jc">// when in descent lean begins — null if not present</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="jk">"trend"</span><span class="jp">:</span>             <span class="js">"stable"</span><span class="jp">,</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="jk">"source"</span><span class="jp">:</span>            <span class="js">"json"</span><br>
+&nbsp;&nbsp;<span class="jp">}</span><br>
+<span class="jp">}</span>
+            </div>
+          </div>
+
+          <div>
+            <div class="sub-label" style="margin-bottom:6px;">trends — session-level direction summary · quick signal passed to Haiku Call 2</div>
+            <div class="json-block">
+<span class="jp">{</span><br>
+&nbsp;&nbsp;<span class="jk">"worsening"</span><span class="jp">:</span> <span class="jp">[</span><span class="js">"knee_valgus — appearing on 6 of 8 reps, worsening from rep 3"</span><span class="jp">],</span><br>
+&nbsp;&nbsp;<span class="jk">"improving"</span><span class="jp">:</span> <span class="jp">[]</span><span class="jp">,</span><br>
+&nbsp;&nbsp;<span class="jk">"stable"</span><span class="jp">:</span>   <span class="jp">[</span><span class="js">"depth"</span><span class="jp">,</span> <span class="js">"posture"</span><span class="jp">]</span><br>
+<span class="jp">}</span>
+            </div>
+          </div>
+
+        </div>
       </div>
       <div class="sub-section">
         <div class="sub-label">Roadmap Task IDs</div>
