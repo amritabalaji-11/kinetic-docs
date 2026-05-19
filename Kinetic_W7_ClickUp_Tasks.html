@@ -192,8 +192,37 @@ td ul{padding-left:16px;} td li{margin-bottom:3px;}
 </ul></div>
 </div></div>
 
+<div class="task"><div class="task-hdr" onclick="tog(this)">
+  <span class="tid">S1-W7-06</span>
+  <div class="tname-wrap"><div class="tname">Update Upload → Form Analysis Results — Figma Component Changes</div>
+  <div class="tbadges"><span class="badge b-todo">To Do</span><span class="badge b-hi">High</span><span class="badge b-s1">Squad 1</span></div></div>
+  <span class="chev">▼</span>
+</div><div class="tbody"><div class="divider"></div>
+<div class="sec"><div class="slbl">Description</div><div class="desc">
+<p>Review and implement the updated Figma designs for the Upload → Form Analysis Results flow. Component changes have been made to the designs — dev must align the built screens with the latest Figma before wiring real Haiku output.</p>
+<p>Covers the end-to-end journey:</p>
+<ul>
+  <li><strong>Upload screen</strong> — exercise selector, weight input, video upload, filming tips</li>
+  <li><strong>Processing / SSE states</strong> — loading indicators for each pipeline stage</li>
+  <li><strong>Form Analysis Results (Tab 1)</strong> — verdict, 4 parameters (score + affirmation + observation + feedback), annotated image, rep trend, recommendation</li>
+</ul>
+<p>Check Figma for specific component changes before updating code. Confirm with PM if any design decisions are unclear.</p>
+</div></div>
+<div class="sec"><div class="slbl ac">Acceptance Criteria</div><ul class="ac-list">
+  <li>All screens in the Upload → Results flow match latest Figma exactly — no divergence from updated components</li>
+  <li>4-parameter section renders: score, affirmation, observation, feedback per parameter</li>
+  <li>Annotated image placeholder + real image swap (<code>frame_ready</code> event) working correctly</li>
+  <li>Processing states (upload → analysing → complete) aligned with new Figma states</li>
+  <li>Reviewed and signed off by PM/designer before Thursday merge</li>
+</ul></div>
+<div class="sec"><div class="slbl dep">Blocked by</div><div class="dep-row">
+  <span class="dp dp-dep">S1-W7-01 — Results screen wired to real Haiku output</span>
+  <span class="dp dp-dep">Updated Figma files shared by designer</span>
+</div></div>
+</div></div>
+
 </div>
-<div class="merge-bar">⊕ <strong>Thu merge:</strong> Results screen live with real Haiku output · Home + Login screen committed · Design handoffs (S1-W7-04) delivered</div>
+<div class="merge-bar">⊕ <strong>Thu merge:</strong> Results screen live with real Haiku output · Home + Login screen committed · Design handoffs (S1-W7-04) delivered · Figma component updates applied (S1-W7-06)</div>
 
 <!-- SQUAD 2 -->
 <div class="squad-header">
