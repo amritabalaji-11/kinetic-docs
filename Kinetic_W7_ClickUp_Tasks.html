@@ -301,12 +301,37 @@ td ul{padding-left:16px;} td li{margin-bottom:3px;}
   <li>Last 3 sessions: weight + MediaPipe JSON + coaching output (S2-W7-03)</li>
   <li>Coaching language from .md files (S2-W7-04)</li>
 </ul>
-<p><strong>Expected output:</strong> verdict, total_score, positive_observations, critical_observations, recommendation, rep_trend</p>
+<p><strong>Required Haiku output schema — all fields must be present and saved to DB:</strong></p>
+<div style="background:#070a0f;border:1px solid #1e2433;border-radius:8px;padding:12px 14px;font-family:'SF Mono',monospace;font-size:10px;line-height:1.8;margin-top:8px;">
+<span style="color:#475569;">// ── Scores (saved as flat DB columns) ──────────────────</span><br>
+<span style="color:#93c5fd;">"overall_form_score"</span>: <span style="color:#fdba74;">72</span>,<br>
+<span style="color:#93c5fd;">"posture_score"</span>: <span style="color:#fdba74;">73</span>, &nbsp;<span style="color:#93c5fd;">"stability_score"</span>: <span style="color:#fdba74;">61</span>, &nbsp;<span style="color:#93c5fd;">"movement_quality_score"</span>: <span style="color:#fdba74;">78</span>, &nbsp;<span style="color:#93c5fd;">"range_of_motion_score"</span>: <span style="color:#fdba74;">68</span>,<br>
+<span style="color:#93c5fd;">"rep_count"</span>: <span style="color:#fdba74;">8</span>,<br>
+<span style="color:#93c5fd;">"rep_scores"</span>: [{ <span style="color:#93c5fd;">"rep_number"</span>: <span style="color:#fdba74;">1</span>, <span style="color:#93c5fd;">"overall"</span>: <span style="color:#fdba74;">82</span>, <span style="color:#93c5fd;">"posture"</span>: <span style="color:#fdba74;">84</span>, <span style="color:#93c5fd;">"stability"</span>: <span style="color:#fdba74;">75</span>, <span style="color:#93c5fd;">"movement_quality"</span>: <span style="color:#fdba74;">85</span>, <span style="color:#93c5fd;">"range_of_motion"</span>: <span style="color:#fdba74;">78</span> }, ...],<br>
+<br>
+<span style="color:#475569;">// ── Analysis (saved as flat DB columns) ────────────────</span><br>
+<span style="color:#93c5fd;">"faults_detected"</span>: { <span style="color:#93c5fd;">"insufficient_depth"</span>: <span style="color:#f9a8d4;">false</span>, <span style="color:#93c5fd;">"knee_valgus"</span>: <span style="color:#f9a8d4;">true</span>, <span style="color:#93c5fd;">"excessive_forward_lean"</span>: <span style="color:#f9a8d4;">false</span> },<br>
+<span style="color:#93c5fd;">"confidence"</span>: { <span style="color:#93c5fd;">"insufficient_depth"</span>: <span style="color:#fdba74;">0.90</span>, <span style="color:#93c5fd;">"knee_valgus"</span>: <span style="color:#fdba74;">0.85</span>, <span style="color:#93c5fd;">"excessive_forward_lean"</span>: <span style="color:#fdba74;">0.92</span> },<br>
+<span style="color:#93c5fd;">"causal_chain"</span>: { <span style="color:#93c5fd;">"root_cause"</span>: <span style="color:#86efac;">"ankle_restriction"</span>, <span style="color:#93c5fd;">"chain"</span>: <span style="color:#86efac;">"ankle restriction → forward lean → depth deficit"</span>, <span style="color:#93c5fd;">"explanation"</span>: <span style="color:#86efac;">"string"</span> },<br>
+<span style="color:#93c5fd;">"fault_detail"</span>: { <span style="color:#93c5fd;">"knee_valgus"</span>: { <span style="color:#93c5fd;">"present"</span>: <span style="color:#f9a8d4;">true</span>, <span style="color:#93c5fd;">"reps_affected"</span>: <span style="color:#86efac;">"6 of 8"</span>, <span style="color:#93c5fd;">"which_reps"</span>: [<span style="color:#fdba74;">3</span>,<span style="color:#fdba74;">4</span>,<span style="color:#fdba74;">5</span>,<span style="color:#fdba74;">6</span>,<span style="color:#fdba74;">7</span>,<span style="color:#fdba74;">8</span>], <span style="color:#93c5fd;">"severity"</span>: <span style="color:#86efac;">"..."</span>, <span style="color:#93c5fd;">"valgus_phase"</span>: <span style="color:#86efac;">"LATE"</span>, <span style="color:#93c5fd;">"trend"</span>: <span style="color:#86efac;">"worsening"</span>, <span style="color:#93c5fd;">"source"</span>: <span style="color:#86efac;">"both"</span> }, ... },<br>
+<span style="color:#93c5fd;">"trends"</span>: { <span style="color:#93c5fd;">"worsening"</span>: [<span style="color:#86efac;">"knee_valgus — +0.02/rep"</span>], <span style="color:#93c5fd;">"improving"</span>: [], <span style="color:#93c5fd;">"stable"</span>: [<span style="color:#86efac;">"depth"</span>] },<br>
+<br>
+<span style="color:#475569;">// ── Coaching — saved in coaching_output JSONB ──────────</span><br>
+<span style="color:#93c5fd;">"verdict"</span>: <span style="color:#86efac;">"2–4 sentence overall assessment"</span>,<br>
+<span style="color:#93c5fd;">"posture_affirmation"</span>: <span style="color:#86efac;">"string"</span>, &nbsp;<span style="color:#93c5fd;">"posture_observation"</span>: <span style="color:#86efac;">"string"</span>, &nbsp;<span style="color:#93c5fd;">"posture_feedback"</span>: <span style="color:#86efac;">"string"</span>,<br>
+<span style="color:#93c5fd;">"stability_affirmation"</span>: <span style="color:#86efac;">"string"</span>, &nbsp;<span style="color:#93c5fd;">"stability_observation"</span>: <span style="color:#86efac;">"string"</span>, &nbsp;<span style="color:#93c5fd;">"stability_feedback"</span>: <span style="color:#86efac;">"string"</span>,<br>
+<span style="color:#93c5fd;">"movement_quality_affirmation"</span>: <span style="color:#86efac;">"string"</span>, &nbsp;<span style="color:#93c5fd;">"movement_quality_observation"</span>: <span style="color:#86efac;">"string"</span>, &nbsp;<span style="color:#93c5fd;">"movement_quality_feedback"</span>: <span style="color:#86efac;">"string"</span>,<br>
+<span style="color:#93c5fd;">"range_of_motion_affirmation"</span>: <span style="color:#86efac;">"string"</span>, &nbsp;<span style="color:#93c5fd;">"range_of_motion_observation"</span>: <span style="color:#86efac;">"string"</span>, &nbsp;<span style="color:#93c5fd;">"range_of_motion_feedback"</span>: <span style="color:#86efac;">"string"</span>,<br>
+<span style="color:#93c5fd;">"recommendation"</span>: <span style="color:#86efac;">"string — what to do next session"</span>,<br>
+<span style="color:#93c5fd;">"rep_trend"</span>: { <span style="color:#93c5fd;">"observation"</span>: <span style="color:#86efac;">"string"</span>, <span style="color:#93c5fd;">"recommendation"</span>: <span style="color:#86efac;">"string"</span> }
+</div>
 </div></div>
 <div class="sec"><div class="slbl ac">Acceptance Criteria</div><ul class="ac-list">
-  <li>All 6 input sources assembled into a single Haiku prompt without errors</li>
-  <li>Haiku returns valid JSON matching the output schema</li>
-  <li>All 6 output fields present (or graceful null for optional fields)</li>
+  <li>All input sources assembled into a single Haiku prompt without errors</li>
+  <li>Haiku returns valid JSON with ALL fields in the schema above — no missing keys</li>
+  <li>Score fields (overall, posture, stability, movement_quality, range_of_motion) are integers 0–100</li>
+  <li>All 4 parameter sets have affirmation + observation + feedback populated</li>
+  <li>fault_detail covers all 3 faults (even if present=false)</li>
   <li>End-to-end test: upload real video → pipeline fires → Haiku returns coaching JSON</li>
   <li>Total pipeline latency under 60s</li>
 </ul></div>
@@ -361,8 +386,26 @@ td ul{padding-left:16px;} td li{margin-bottom:3px;}
 
   <div style="display:flex;flex-direction:column;gap:10px;">
     <div style="background:#0d0720;border:1px solid #4c1d95;border-radius:8px;padding:10px 14px;">
-      <div style="font-size:11px;font-weight:700;color:#c4b5fd;margin-bottom:4px;">[PATCH-S2-W7-A] DB schema — add new columns to <code style="background:#150d24;padding:1px 4px;border-radius:3px;">form_analysis_results</code></div>
-      <div style="font-size:11px;color:#94a3b8;line-height:1.6;">Add: <code style="background:#0d1117;padding:1px 4px;border-radius:3px;color:#fde68a;">range_of_motion_score</code> (int) · <code style="background:#0d1117;padding:1px 4px;border-radius:3px;color:#fde68a;">rep_scores</code> (jsonb) · <code style="background:#0d1117;padding:1px 4px;border-radius:3px;color:#fde68a;">progression_output</code> (jsonb) · <code style="background:#0d1117;padding:1px 4px;border-radius:3px;color:#fde68a;">annotated_frame_url</code> (single GCS URI — replaces array). Remove: <code style="background:#0d1117;padding:1px 4px;border-radius:3px;color:#f87171;">nemotron_output_url</code> · <code style="background:#0d1117;padding:1px 4px;border-radius:3px;color:#f87171;">chain_of_thought</code> · <code style="background:#0d1117;padding:1px 4px;border-radius:3px;color:#f87171;">annotated_frames_urls</code>.</div>
+      <div style="font-size:11px;font-weight:700;color:#c4b5fd;margin-bottom:8px;">[PATCH-S2-W7-A] DB schema migration — <code style="background:#150d24;padding:1px 4px;border-radius:3px;">form_analysis_results</code></div>
+      <div style="font-size:11px;color:#94a3b8;line-height:1.8;">
+        <strong style="color:#4ade80;">ADD columns:</strong><br>
+        &nbsp;· <code style="background:#0d1117;padding:1px 4px;border-radius:3px;color:#fde68a;">range_of_motion_score</code> int — 4th parameter score from Haiku Call 1<br>
+        &nbsp;· <code style="background:#0d1117;padding:1px 4px;border-radius:3px;color:#fde68a;">rep_scores</code> jsonb — per-rep array: rep_number, overall, posture, stability, movement_quality, range_of_motion<br>
+        &nbsp;· <code style="background:#0d1117;padding:1px 4px;border-radius:3px;color:#fde68a;">faults_detected</code> jsonb — { insufficient_depth: bool, knee_valgus: bool, excessive_forward_lean: bool }<br>
+        &nbsp;· <code style="background:#0d1117;padding:1px 4px;border-radius:3px;color:#fde68a;">confidence</code> jsonb — Haiku certainty per fault (0.0–1.0) — used for thresholding<br>
+        &nbsp;· <code style="background:#0d1117;padding:1px 4px;border-radius:3px;color:#fde68a;">causal_chain</code> jsonb — { root_cause, chain, explanation } — null if no causal link<br>
+        &nbsp;· <code style="background:#0d1117;padding:1px 4px;border-radius:3px;color:#fde68a;">fault_detail</code> jsonb — per-fault: present, reps_affected, which_reps, severity, valgus_phase, trend, source — key field for longitudinal progression<br>
+        &nbsp;· <code style="background:#0d1117;padding:1px 4px;border-radius:3px;color:#fde68a;">trends</code> jsonb — { worsening: [], improving: [], stable: [] } session-level direction summary<br>
+        &nbsp;· <code style="background:#0d1117;padding:1px 4px;border-radius:3px;color:#fde68a;">annotated_frame_url</code> string (GCS URI, nullable) — single worst-rep annotated image, written by OpenCV Part 2<br>
+        &nbsp;· <code style="background:#0d1117;padding:1px 4px;border-radius:3px;color:#fde68a;">progression_output</code> jsonb (nullable) — Haiku Call 2 output: Section 1 + Section 2 for Tab 2<br>
+        <br>
+        <strong style="color:#f87171;">REMOVE columns:</strong><br>
+        &nbsp;· <code style="background:#0d1117;padding:1px 4px;border-radius:3px;color:#f87171;">nemotron_output_url</code> — Haiku output stored directly in coaching_output JSONB, no GCS file needed<br>
+        &nbsp;· <code style="background:#0d1117;padding:1px 4px;border-radius:3px;color:#f87171;">chain_of_thought</code> — causal reasoning now in causal_chain column + coaching_output.causal_chain<br>
+        &nbsp;· <code style="background:#0d1117;padding:1px 4px;border-radius:3px;color:#f87171;">annotated_frames_urls</code> (array) — replaced by annotated_frame_url (single URL)<br>
+        &nbsp;· <code style="background:#0d1117;padding:1px 4px;border-radius:3px;color:#f87171;">issues_json</code> — replaced by fault_detail (Haiku format, replaces old Nemotron structure)<br>
+        &nbsp;· <code style="background:#0d1117;padding:1px 4px;border-radius:3px;color:#f87171;">progression_recommendation</code> (enum) — belongs in progression_output (Tab 2 only), not form analysis
+      </div>
     </div>
 
     <div style="background:#0d0720;border:1px solid #4c1d95;border-radius:8px;padding:10px 14px;">

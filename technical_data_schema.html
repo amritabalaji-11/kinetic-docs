@@ -1176,7 +1176,17 @@ h1 { font-size:20px; font-weight:700; color:#f8fafc; }
           <tr><td style="color:#fde68a;">trends <span style="background:rgba(250,204,21,0.15);padding:1px 4px;border-radius:3px;font-size:9px;font-weight:700;">🆕 NEW</span></td><td><span class="type">jsonb</span></td><td><span class="example">{ "worsening": ["knee_valgus — +0.02/rep"], "improving": [], "stable": ["depth", "posture"] }</span></td></tr>
           <tr><td colspan="3" style="background:#0a0f1a;color:#475569;font-size:10px;padding:4px 10px;font-style:italic;">── Final output fields ──</td></tr>
           <tr><td>annotated_frame_url</td><td><span class="type">string (GCS URI)</span></td><td><span class="example">gs://kinetic-videos/analyses/{analysis_id}/worst_rep_frame.jpg — NULL until OpenCV Part 2 completes</span></td></tr>
-          <tr><td>coaching_output</td><td><span class="type">jsonb</span></td><td><span class="example">Full Haiku Call 1 JSON — coaching section: verdict, positive_observations, critical_observations, recommendation, rep_trend</span></td></tr>
+          <tr><td>coaching_output</td><td><span class="type">jsonb</span></td><td><span class="example">Full Haiku Call 1 JSON — see structure below</span></td></tr>
+          <tr style="background:#080c12;">
+            <td style="padding:3px 8px 3px 20px;font-size:10px;color:#64748b;">↳ .verdict</td>
+            <td style="font-size:10px;color:#475569;">string</td>
+            <td><span class="example" style="font-size:10px;">2–4 sentence overall assessment of their form this session</span></td>
+          </tr>
+          <tr style="background:#080c12;">
+            <td style="padding:3px 8px 3px 20px;font-size:10px;color:#64748b;">↳ .recommendation</td>
+            <td style="font-size:10px;color:#475569;">string</td>
+            <td><span class="example" style="font-size:10px;">What to do in the next session — specific drill or focus</span></td>
+          </tr>
           <tr><td style="color:#fde68a;">progression_output <span style="background:rgba(250,204,21,0.15);padding:1px 4px;border-radius:3px;font-size:9px;font-weight:700;">🆕 NEW</span></td><td><span class="type">jsonb</span></td><td><span class="example">NULL until Haiku Call 2 async completes — Section 1 + Section 2 JSON for Tab 2</span></td></tr>
         </table>
 
@@ -1263,15 +1273,49 @@ h1 { font-size:20px; font-weight:700; color:#f8fafc; }
             </div>
           </div>
 
+          <div>
+            <div class="sub-label" style="margin-bottom:6px;">coaching_output — full Haiku Call 1 JSON · read by frontend for Tab 1 · category field used to filter per parameter</div>
+            <div class="json-block">
+<span class="jp">{</span><br>
+&nbsp;&nbsp;<span class="jk">"verdict"</span><span class="jp">:</span> <span class="js">"Your depth is solid across all 8 reps. Knee valgus is developing from rep 3 on the ascent and getting worse as you fatigue."</span><span class="jp">,</span><br>
+<br>
+&nbsp;&nbsp;<span class="jc">// ── Per-parameter fields — flat, no filtering needed ─────────────────────────</span><br>
+&nbsp;&nbsp;<span class="jk">"posture_affirmation"</span><span class="jp">:</span>             <span class="js">"Torso upright and controlled on reps 1–4."</span><span class="jp">,</span><br>
+&nbsp;&nbsp;<span class="jk">"posture_observation"</span><span class="jp">:</span>             <span class="js">"Forward lean increasing from rep 5 — torso angle past 45° at depth."</span><span class="jp">,</span><br>
+&nbsp;&nbsp;<span class="jk">"posture_feedback"</span><span class="jp">:</span>                <span class="js">"Brace your core before each descent and keep your chest tall approaching depth."</span><span class="jp">,</span><br>
+<br>
+&nbsp;&nbsp;<span class="jk">"stability_affirmation"</span><span class="jp">:</span>           <span class="js">"Foot turnout symmetrical — no left/right imbalance."</span><span class="jp">,</span><br>
+&nbsp;&nbsp;<span class="jk">"stability_observation"</span><span class="jp">:</span>           <span class="js">"Knee valgus on ascent — reps 3–8 (6 of 8). Distance dropping 0.28 → 0.18."</span><span class="jp">,</span><br>
+&nbsp;&nbsp;<span class="jk">"stability_feedback"</span><span class="jp">:</span>              <span class="js">"Drive your knees outward in line with your pinky toe as you rise."</span><span class="jp">,</span><br>
+<br>
+&nbsp;&nbsp;<span class="jk">"movement_quality_affirmation"</span><span class="jp">:</span>    <span class="js">"Descent controlled on reps 1–4 — good eccentric timing early in the set."</span><span class="jp">,</span><br>
+&nbsp;&nbsp;<span class="jk">"movement_quality_observation"</span><span class="jp">:</span>    <span class="js">"Descent too fast from rep 5 — eccentric dropping below 0.5s threshold."</span><span class="jp">,</span><br>
+&nbsp;&nbsp;<span class="jk">"movement_quality_feedback"</span><span class="jp">:</span>       <span class="js">"Aim for at least 1.5s on the lowering phase — count it out. Slow lower, fast drive."</span><span class="jp">,</span><br>
+<br>
+&nbsp;&nbsp;<span class="jk">"range_of_motion_affirmation"</span><span class="jp">:</span>    <span class="js">"Depth consistent on reps 1–5 — hip crease at or below knee."</span><span class="jp">,</span><br>
+&nbsp;&nbsp;<span class="jk">"range_of_motion_observation"</span><span class="jp">:</span>    <span class="js">"Ankle dorsiflexion limiting depth on reps 6–8 — heel beginning to lift."</span><span class="jp">,</span><br>
+&nbsp;&nbsp;<span class="jk">"range_of_motion_feedback"</span><span class="jp">:</span>       <span class="js">"Try heel-elevated squats to work around ankle restriction while you build mobility."</span><span class="jp">,</span><br>
+<br>
+&nbsp;&nbsp;<span class="jc">// ── Overall coaching ─────────────────────────────────────────────────────────</span><br>
+&nbsp;&nbsp;<span class="jk">"recommendation"</span><span class="jp">:</span> <span class="js">"Work hip abductor activation before your next session — clamshells (3×15) and banded walks (2×20 steps)."</span><span class="jp">,</span><br>
+<br>
+&nbsp;&nbsp;<span class="jk">"rep_trend"</span><span class="jp">:</span> <span class="jp">{</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="jk">"observation"</span><span class="jp">:</span>     <span class="js">"Form holds well for reps 1–2 then valgus intensifies from rep 3 — fatigue-driven pattern."</span><span class="jp">,</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="jk">"recommendation"</span><span class="jp">:</span>  <span class="js">"Stop at rep 6 next session to keep form clean while building strength."</span><br>
+&nbsp;&nbsp;<span class="jp">}</span><br>
+<span class="jp">}</span>
+            </div>
+          </div>
+
         </div>
       </div>
       <div class="sub-section">
         <div class="sub-label">Roadmap Task IDs</div>
         <div class="task-map">
-          <div class="task-map-row"><span class="task-map-role role-defines">Defines</span><span class="tid tid-s2">S2-W5-06</span><span style="font-size:10px;color:#475569;">Defines form_analysis_results DB schema — all fields including coaching_output + progression_recommendation</span></div>
-          <div class="task-map-row"><span class="task-map-role role-implements">Implements write</span><span class="tid tid-s2">S2-W7-01</span><span style="font-size:10px;color:#475569;">Saves Haiku Call 1 output — all scores + coaching_output in single INSERT. progression_output null until Haiku Call 2 async completes.</span></div>
-          <div class="task-map-row"><span class="task-map-role role-implements">Updates fields</span><span class="tid tid-s2">S2-W7-04</span><span style="font-size:10px;color:#475569;">After Claude step: sets coaching_output (jsonb) + progression_recommendation enum</span></div>
-          <div class="task-map-row"><span class="task-map-role role-implements">Updates fields</span><span class="tid tid-s2">S2-W8-01</span><span style="font-size:10px;color:#475569;">Progression recommendation logic — determines hold/progress/drop, writes final recommendation</span></div>
+          <div class="task-map-row"><span class="task-map-role role-defines">Defines</span><span class="tid tid-s2">S2-W5-06</span><span style="font-size:10px;color:#475569;">Defines form_analysis_results DB schema — all fields</span></div>
+          <div class="task-map-row"><span class="task-map-role role-implements">Implements write</span><span class="tid tid-s2">S2-W7-01</span><span style="font-size:10px;color:#475569;">Saves Haiku Call 1 output — all scores + coaching_output in single INSERT</span></div>
+          <div class="task-map-row"><span class="task-map-role role-implements">DB migration</span><span class="tid tid-s2">PATCH-S2-W7-A</span><span style="font-size:10px;color:#475569;">Add new columns, remove old Nemotron columns — see W7 ClickUp patch tasks</span></div>
+          <div class="task-map-row"><span class="task-map-role role-implements">Async write</span><span class="tid tid-s2">S2-W7-C</span><span style="font-size:10px;color:#475569;">Haiku Call 2 — writes progression_output after async longitudinal call completes</span></div>
         </div>
       </div>
     </div>
@@ -1462,6 +1506,12 @@ coaching_content = load_md_files(exercise=<span class="js">"goblet_squat"</span>
             <td><span class="example">weight_value + weight_unit</span></td>
             <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#0a1f12;color:#4ade80;border:1px solid #14532d;">W6</span></td>
           </tr>
+          <tr>
+            <td>Total reps</td>
+            <td>form_analysis_results</td>
+            <td><span class="example">rep_count</span></td>
+            <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#0d1a2e;color:#60a5fa;border:1px solid #1e3a5f;">W7</span></td>
+          </tr>
 
           <!-- B: Visual Proof -->
           <tr>
@@ -1487,12 +1537,18 @@ coaching_content = load_md_files(exercise=<span class="js">"goblet_squat"</span>
 
           <!-- D: Personalised Summary -->
           <tr>
-            <td colspan="4" style="background:#0d1117;padding:6px 8px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:0.7px;color:#f97316;border-left:2px solid #f97316;">D — Personalised Summary</td>
+            <td colspan="4" style="background:#0d1117;padding:6px 8px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:0.7px;color:#f97316;border-left:2px solid #f97316;">D — Verdict</td>
           </tr>
           <tr>
-            <td>1–2 sentence summary combining form quality + weight lifted<br><span style="font-size:9px;color:#475569;">e.g. "At 12kg your posture holds well across all reps, but your ankle dorsiflexion limits your depth from rep 5 onwards."</span></td>
-            <td>Haiku Call 1</td>
-            <td><span class="example">coaching.summary_paragraph</span></td>
+            <td>2–4 sentence overall assessment of their form this session. Leads with the most important finding.</td>
+            <td>coaching_output (DB)</td>
+            <td><span class="example">coaching_output.verdict</span></td>
+            <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#0d1a2e;color:#60a5fa;border:1px solid #1e3a5f;">W7</span></td>
+          </tr>
+          <tr>
+            <td>Overall recommendation — what to do in the next session</td>
+            <td>coaching_output (DB)</td>
+            <td><span class="example">coaching_output.recommendation</span></td>
             <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#0d1a2e;color:#60a5fa;border:1px solid #1e3a5f;">W7</span></td>
           </tr>
 
@@ -1500,31 +1556,38 @@ coaching_content = load_md_files(exercise=<span class="js">"goblet_squat"</span>
           <tr>
             <td colspan="4" style="background:#0d1117;padding:6px 8px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:0.7px;color:#f59e0b;border-left:2px solid #f59e0b;">E — 4 Parameters · Posture · Stability · Movement Quality · Range of Motion</td>
           </tr>
+          <tr>
+            <td colspan="4" style="padding:6px 10px;font-size:10px;color:#64748b;background:#080c12;line-height:1.7;">
+              Each parameter has a score (from flat DB column) + coaching content (from <code style="background:#0d1117;padding:1px 4px;border-radius:3px;color:#c4b5fd;">coaching_output</code> JSONB).<br>
+              <strong style="color:#94a3b8;">What's working</strong> → filter <code style="background:#0d1117;padding:1px 4px;border-radius:3px;">coaching_output.positive_observations</code> where <code style="background:#0d1117;padding:1px 4px;border-radius:3px;">category = "Posture"</code> (or Stability / Movement Quality / Range of Motion)<br>
+              <strong style="color:#94a3b8;">What's off</strong> → filter <code style="background:#0d1117;padding:1px 4px;border-radius:3px;">coaching_output.critical_observations</code> where <code style="background:#0d1117;padding:1px 4px;border-radius:3px;">category = "Posture"</code>
+            </td>
+          </tr>
 
           <!-- Posture -->
           <tr><td colspan="4" style="padding:4px 8px;font-size:9px;font-weight:700;color:#475569;background:#08090f;">Posture</td></tr>
           <tr>
             <td>Score /100</td>
-            <td>Haiku Call 1</td>
-            <td><span class="example">summary.posture_score</span></td>
+            <td>form_analysis_results (flat column)</td>
+            <td><span class="example">posture_score</span></td>
             <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#0d1a2e;color:#60a5fa;border:1px solid #1e3a5f;">W7</span></td>
           </tr>
           <tr>
-            <td>What they're doing well — sentence affirmation</td>
-            <td>Haiku Call 1</td>
-            <td><span class="example">coaching.parameters.posture.affirmation</span> <span style="font-size:9px;color:#f59e0b;">⚠ field to add</span></td>
-            <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#1a1000;color:#fbbf24;border:1px solid #92400e;">iterate W7/8</span></td>
+            <td>Affirmation</td>
+            <td>coaching_output (DB)</td>
+            <td><span class="example">coaching_output.posture_affirmation</span></td>
+            <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#0d1a2e;color:#60a5fa;border:1px solid #1e3a5f;">W7</span></td>
           </tr>
           <tr>
-            <td>What's off — specific observation</td>
-            <td>Haiku Call 1</td>
-            <td><span class="example">coaching.parameters.posture.observation</span> <span style="font-size:9px;color:#f59e0b;">⚠ field to add</span></td>
-            <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#1a1000;color:#fbbf24;border:1px solid #92400e;">iterate W7/8</span></td>
+            <td>Observation</td>
+            <td>coaching_output (DB)</td>
+            <td><span class="example">coaching_output.posture_observation</span></td>
+            <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#0d1a2e;color:#60a5fa;border:1px solid #1e3a5f;">W7</span></td>
           </tr>
           <tr>
-            <td>Action — 1 concrete correction</td>
-            <td>Haiku Call 1</td>
-            <td><span class="example">coaching.parameters.posture.correction</span> <span style="font-size:9px;color:#f59e0b;">⚠ field to add</span></td>
+            <td>Feedback</td>
+            <td>coaching_output (DB)</td>
+            <td><span class="example">coaching_output.posture_feedback</span></td>
             <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#0d1a2e;color:#60a5fa;border:1px solid #1e3a5f;">W7</span></td>
           </tr>
 
@@ -1532,26 +1595,26 @@ coaching_content = load_md_files(exercise=<span class="js">"goblet_squat"</span>
           <tr><td colspan="4" style="padding:4px 8px;font-size:9px;font-weight:700;color:#475569;background:#08090f;">Stability</td></tr>
           <tr>
             <td>Score /100</td>
-            <td>Haiku Call 1</td>
-            <td><span class="example">summary.stability_score</span></td>
+            <td>form_analysis_results (flat column)</td>
+            <td><span class="example">stability_score</span></td>
             <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#0d1a2e;color:#60a5fa;border:1px solid #1e3a5f;">W7</span></td>
           </tr>
           <tr>
-            <td>What they're doing well — sentence affirmation</td>
-            <td>Haiku Call 1</td>
-            <td><span class="example">coaching.parameters.stability.affirmation</span> <span style="font-size:9px;color:#f59e0b;">⚠ field to add</span></td>
-            <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#1a1000;color:#fbbf24;border:1px solid #92400e;">iterate W7/8</span></td>
+            <td>Affirmation</td>
+            <td>coaching_output (DB)</td>
+            <td><span class="example">coaching_output.stability_affirmation</span></td>
+            <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#0d1a2e;color:#60a5fa;border:1px solid #1e3a5f;">W7</span></td>
           </tr>
           <tr>
-            <td>What's off — specific observation</td>
-            <td>Haiku Call 1</td>
-            <td><span class="example">coaching.parameters.stability.observation</span> <span style="font-size:9px;color:#f59e0b;">⚠ field to add</span></td>
-            <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#1a1000;color:#fbbf24;border:1px solid #92400e;">iterate W7/8</span></td>
+            <td>Observation</td>
+            <td>coaching_output (DB)</td>
+            <td><span class="example">coaching_output.stability_observation</span></td>
+            <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#0d1a2e;color:#60a5fa;border:1px solid #1e3a5f;">W7</span></td>
           </tr>
           <tr>
-            <td>Action — 1 concrete correction</td>
-            <td>Haiku Call 1</td>
-            <td><span class="example">coaching.parameters.stability.correction</span> <span style="font-size:9px;color:#f59e0b;">⚠ field to add</span></td>
+            <td>Feedback</td>
+            <td>coaching_output (DB)</td>
+            <td><span class="example">coaching_output.stability_feedback</span></td>
             <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#0d1a2e;color:#60a5fa;border:1px solid #1e3a5f;">W7</span></td>
           </tr>
 
@@ -1559,53 +1622,53 @@ coaching_content = load_md_files(exercise=<span class="js">"goblet_squat"</span>
           <tr><td colspan="4" style="padding:4px 8px;font-size:9px;font-weight:700;color:#475569;background:#08090f;">Movement Quality</td></tr>
           <tr>
             <td>Score /100</td>
-            <td>Haiku Call 1</td>
-            <td><span class="example">summary.movement_quality_score</span></td>
+            <td>form_analysis_results (flat column)</td>
+            <td><span class="example">movement_quality_score</span></td>
             <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#0d1a2e;color:#60a5fa;border:1px solid #1e3a5f;">W7</span></td>
           </tr>
           <tr>
-            <td>What they're doing well — sentence affirmation</td>
-            <td>Haiku Call 1</td>
-            <td><span class="example">coaching.parameters.movement_quality.affirmation</span> <span style="font-size:9px;color:#f59e0b;">⚠ field to add</span></td>
-            <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#1a1000;color:#fbbf24;border:1px solid #92400e;">iterate W7/8</span></td>
+            <td>Affirmation</td>
+            <td>coaching_output (DB)</td>
+            <td><span class="example">coaching_output.movement_quality_affirmation</span></td>
+            <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#0d1a2e;color:#60a5fa;border:1px solid #1e3a5f;">W7</span></td>
           </tr>
           <tr>
-            <td>What's off — specific observation</td>
-            <td>Haiku Call 1</td>
-            <td><span class="example">coaching.parameters.movement_quality.observation</span> <span style="font-size:9px;color:#f59e0b;">⚠ field to add</span></td>
-            <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#1a1000;color:#fbbf24;border:1px solid #92400e;">iterate W7/8</span></td>
+            <td>Observation</td>
+            <td>coaching_output (DB)</td>
+            <td><span class="example">coaching_output.movement_quality_observation</span></td>
+            <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#0d1a2e;color:#60a5fa;border:1px solid #1e3a5f;">W7</span></td>
           </tr>
           <tr>
-            <td>Action — 1 concrete correction</td>
-            <td>Haiku Call 1</td>
-            <td><span class="example">coaching.parameters.movement_quality.correction</span> <span style="font-size:9px;color:#f59e0b;">⚠ field to add</span></td>
+            <td>Feedback</td>
+            <td>coaching_output (DB)</td>
+            <td><span class="example">coaching_output.movement_quality_feedback</span></td>
             <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#0d1a2e;color:#60a5fa;border:1px solid #1e3a5f;">W7</span></td>
           </tr>
 
           <!-- Range of Motion -->
-          <tr><td colspan="4" style="padding:4px 8px;font-size:9px;font-weight:700;color:#475569;background:#08090f;">Tempo</td></tr>
+          <tr><td colspan="4" style="padding:4px 8px;font-size:9px;font-weight:700;color:#475569;background:#08090f;">Range of Motion</td></tr>
           <tr>
             <td>Score /100</td>
-            <td>Haiku Call 1</td>
-            <td><span class="example">range_of_motion_score</span> <span style="font-size:9px;color:#f59e0b;">⚠ from Haiku Call 1 output</span></td>
+            <td>form_analysis_results (flat column)</td>
+            <td><span class="example">range_of_motion_score</span></td>
             <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#0d1a2e;color:#60a5fa;border:1px solid #1e3a5f;">W7</span></td>
           </tr>
           <tr>
-            <td>What they're doing well — sentence affirmation</td>
-            <td>Haiku Call 1</td>
-            <td><span class="example">coaching.parameters.tempo.affirmation</span> <span style="font-size:9px;color:#f59e0b;">⚠ field to add</span></td>
-            <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#1a1000;color:#fbbf24;border:1px solid #92400e;">iterate W7/8</span></td>
+            <td>Affirmation</td>
+            <td>coaching_output (DB)</td>
+            <td><span class="example">coaching_output.range_of_motion_affirmation</span></td>
+            <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#0d1a2e;color:#60a5fa;border:1px solid #1e3a5f;">W7</span></td>
           </tr>
           <tr>
-            <td>What's off — specific observation</td>
-            <td>Haiku Call 1</td>
-            <td><span class="example">coaching.parameters.tempo.observation</span> <span style="font-size:9px;color:#f59e0b;">⚠ field to add</span></td>
-            <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#1a1000;color:#fbbf24;border:1px solid #92400e;">iterate W7/8</span></td>
+            <td>Observation</td>
+            <td>coaching_output (DB)</td>
+            <td><span class="example">coaching_output.range_of_motion_observation</span></td>
+            <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#0d1a2e;color:#60a5fa;border:1px solid #1e3a5f;">W7</span></td>
           </tr>
           <tr>
-            <td>Action — 1 concrete correction</td>
-            <td>Haiku Call 1</td>
-            <td><span class="example">coaching.parameters.tempo.correction</span> <span style="font-size:9px;color:#f59e0b;">⚠ field to add</span></td>
+            <td>Feedback</td>
+            <td>coaching_output (DB)</td>
+            <td><span class="example">coaching_output.range_of_motion_feedback</span></td>
             <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#0d1a2e;color:#60a5fa;border:1px solid #1e3a5f;">W7</span></td>
           </tr>
 

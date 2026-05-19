@@ -160,7 +160,9 @@
 **Thursday merge:** Full pipeline live (video → OpenCV + MediaPipe → Haiku prompt → coaching output via SSE) · Demo users queryable
 
 #### Schema + Contract Patches (W7 — must complete before pipeline wiring)
-- [ ] **[PATCH-S2-W7-A] DB schema — add new columns to `form_analysis_results`** — add `range_of_motion_score` (int), `rep_scores` (jsonb), `progression_output` (jsonb). Update `annotated_frames_urls` → `annotated_frame_url` (single GCS URI). Remove `nemotron_output_url`, `chain_of_thought`.
+- [ ] **[PATCH-S2-W7-A] DB schema migration — `form_analysis_results`**
+  - **ADD:** `range_of_motion_score` (int) · `rep_scores` (jsonb) · `faults_detected` (jsonb) · `confidence` (jsonb) · `causal_chain` (jsonb) · `fault_detail` (jsonb — key field for longitudinal progression) · `trends` (jsonb) · `annotated_frame_url` (string, nullable) · `progression_output` (jsonb, nullable)
+  - **REMOVE:** `nemotron_output_url` · `chain_of_thought` · `annotated_frames_urls` (array) · `issues_json` · `progression_recommendation` (enum)
 - [ ] **[PATCH-S2-W7-B] SSE event contract update** — retire: `nemotron_started/complete`, `overlay_complete`, `frames_extracting/ready`, `rag_started/complete`, `claude_started/complete`, `analysis_complete`. Add: `haiku_started`, `analysis_ready`, `frame_ready`, `progression_ready`. Update `FE_SSE_and_Errors.md` + `FE_Response_Schemas.md` to match.
 - [ ] **[PATCH-S2-W7-C] Haiku Call 2 async endpoint** — implement `GET /analysis/{id}/progression` endpoint; returns `progression_output` JSON (Section 1 + Section 2) from `form_analysis_results`.
 
