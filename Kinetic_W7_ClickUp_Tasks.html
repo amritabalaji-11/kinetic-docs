@@ -349,17 +349,38 @@ td ul{padding-left:16px;} td li{margin-bottom:3px;}
   <span class="chev">▼</span>
 </div><div class="tbody"><div class="divider"></div>
 <div class="sec"><div class="slbl">Description</div><div class="desc">
-<p>Stream the Haiku response to the frontend via SSE. Update processing states to reflect the new multi-step pipeline. Coordinate event names with Squad 1.</p>
-<p><strong>States to emit:</strong> uploading → extracting_frames → analysing → generating_coaching → complete / error</p>
+<p>Implement the complete SSE event sequence for the new Haiku pipeline. Stream events to S1 in the correct order. Coordinate exact event names and payloads with Squad 1 — reference <code>FE_SSE_and_Errors.md</code> as the contract.</p>
+<p><strong>Events to emit in order:</strong></p>
+<div style="background:#070a0f;border:1px solid #1e2433;border-radius:8px;padding:10px 14px;font-family:'SF Mono',monospace;font-size:10px;line-height:2;margin-top:8px;">
+<span style="color:#475569;">// Already implemented (Steps 1–4)</span><br>
+<span style="color:#c4b5fd;">upload_received</span> → { analysis_id, session_id, user_id, filename, size_mb, created_at }<br>
+<span style="color:#c4b5fd;">mediapipe_started</span> → { analysis_id, session_id, user_id, video_url }<br>
+<span style="color:#c4b5fd;">mediapipe_complete</span> → { analysis_id, session_id, user_id, rep_count, fps, keypoints_detected, frames_processed }<br>
+<span style="color:#c4b5fd;">biomechanics_complete</span> → { analysis_id, session_id, user_id, rep_count, joints_computed, avg_confidence } <span style="color:#475569;">// silent — % bar only</span><br>
+<br>
+<span style="color:#475569;">// New this week (Steps 5, 5b, 7 async)</span><br>
+<span style="color:#fde68a;">haiku_started</span> → { analysis_id, session_id, user_id }<br>
+<span style="color:#fde68a;">analysis_ready</span> → { analysis_id, session_id, user_id, overall_score: 72 } <span style="color:#475569;">// Tab 1 unlocks — S1 calls GET /analysis/{id}/result</span><br>
+<span style="color:#fde68a;">frame_ready</span> → { analysis_id, session_id, user_id, annotated_frame_url: "https://..." } <span style="color:#475569;">// ~2–3s after analysis_ready</span><br>
+<span style="color:#fde68a;">progression_ready</span> → { analysis_id, session_id, user_id } <span style="color:#475569;">// async — Tab 2 unlocks — S1 calls GET /analysis/{id}/progression</span><br>
+<br>
+<span style="color:#475569;">// Error (any step)</span><br>
+<span style="color:#f87171;">error</span> → { analysis_id, session_id, user_id, error_code, error_stage, retryable, message }
+</div>
+<p style="margin-top:10px;font-size:11px;color:#94a3b8;"><strong style="color:#f1f5f9;">error_stage enum:</strong> <code>quality_gate</code> · <code>biomechanics</code> · <code>haiku_call_1</code> · <code>opencv_part_2</code> · <code>haiku_call_2</code> · <code>pipeline</code></p>
+<p style="font-size:11px;color:#94a3b8;"><strong style="color:#f1f5f9;">retryable:</strong> <code>"true"</code> (infra failure, retry) · <code>"false"</code> (video must change) · <code>"partial"</code> (degraded but Tab 1 still loads)</p>
 </div></div>
 <div class="sec"><div class="slbl ac">Acceptance Criteria</div><ul class="ac-list">
-  <li>SSE events fire in correct order for a real video upload</li>
-  <li>Frontend receives complete coaching JSON on the complete event</li>
-  <li>Error state fires with a descriptive message if any step fails</li>
-  <li>Tested with Squad 1 — frontend renders each processing state correctly</li>
+  <li><code>haiku_started</code> fires before Anthropic API call · <code>analysis_ready</code> fires after Haiku Call 1 output written to DB</li>
+  <li><code>frame_ready</code> fires after OpenCV Part 2 writes <code>annotated_frame_url</code> — independently of <code>analysis_ready</code></li>
+  <li><code>progression_ready</code> fires after Haiku Call 2 writes <code>progression_output</code> to DB — async, does not block <code>analysis_ready</code></li>
+  <li><code>analysis_ready</code> payload includes <code>overall_score</code> (integer) · <code>frame_ready</code> payload includes <code>annotated_frame_url</code> (public HTTPS URL, not GCS URI)</li>
+  <li>Error event fires with correct <code>error_stage</code> and <code>error_code</code> per error taxonomy in <code>FE_SSE_and_Errors.md</code></li>
+  <li>Tested with Squad 1 — <code>analysis_ready</code> triggers Tab 1 render · <code>frame_ready</code> swaps image · <code>progression_ready</code> unlocks Tab 2</li>
 </ul></div>
 <div class="sec"><div class="slbl dep">Blocked by</div><div class="dep-row">
-  <span class="dp dp-dep">S2-W7-05 — Haiku returning valid response</span>
+  <span class="dp dp-dep">S2-W7-05 — Haiku Call 1 returning valid response</span>
+  <span class="dp dp-dep">PATCH-S2-W7-B — SSE contract agreed with Squad 1</span>
 </div></div>
 </div></div>
 
