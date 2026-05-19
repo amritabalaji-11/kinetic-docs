@@ -414,6 +414,63 @@ td ul{padding-left:16px;} td li{margin-bottom:3px;}
 </div></div>
 
 <div class="task"><div class="task-hdr" onclick="tog(this)">
+  <span class="tid">S2-W7-08</span>
+  <div class="tname-wrap"><div class="tname">Haiku Prompt Engineering — Analysis + Coaching (Two-Section Structure)</div>
+  <div class="tbadges"><span class="badge b-todo">To Do</span><span class="badge b-hi">High</span><span class="badge b-s2">Squad 2</span></div></div>
+  <span class="chev">▼</span>
+</div><div class="tbody"><div class="divider"></div>
+<div class="sec"><div class="slbl">Description</div><div class="desc">
+<p>Write and iterate the Haiku Call 1 prompt. This is distinct from the technical assembly (S2-W7-05) — this task is about the <strong>content and structure</strong> of what Haiku is asked to do and how each data input is used. The goal is a prompt that reliably returns the full output schema with accurate, specific, and actionable coaching.</p>
+
+<p><strong>Recommended prompt structure:</strong></p>
+<div style="background:#070a0f;border:1px solid #1e2433;border-radius:8px;padding:12px 14px;margin-top:8px;font-size:11px;color:#94a3b8;line-height:1.8;">
+  <strong style="color:#f1f5f9;">System prompt</strong> — role + rules + output schema<br>
+  <div style="margin-left:16px;color:#64748b;">
+    • Role: "You are a biomechanics analyst and sports coach specialising in Goblet Squat technique."<br>
+    • Part 1 rules: fault detection thresholds, how to use gold standard for comparison, what constitutes valgus/depth/lean fault, walk-in/walk-out exclusion logic<br>
+    • Part 2 rules: coaching tone (second person, specific — reference actual rep numbers and measured values), causal chain logic, how to use session history for longitudinal context<br>
+    • Output schema: exact JSON with all required fields and type constraints<br>
+    • Failure mode reminders: faults_detected must be object not array, all 4 parameter fields must be present even if no fault, do not invent positives
+  </div>
+  <br>
+  <strong style="color:#f1f5f9;">User message</strong> — all data inputs, clearly labelled<br>
+  <div style="margin-left:16px;color:#64748b;">
+    • [IMAGE] 8-frame composite grid (composite_grid_b64)<br>
+    • [CURRENT SESSION] exercise_name, weight_value, weight_unit + biomechanics JSON<br>
+    • [GOLD STANDARD] elite trainer reference JSON from Supabase — same schema as current session. Use for direct angle comparison per rep<br>
+    • [SESSION HISTORY] last 3 sessions: weight + biomechanics JSON + past Haiku coaching output. Use to detect persistent faults, improvement trends, and progression readiness<br>
+    • [COACHING CONTEXT] curated .md file content — coaching language, Goblet Squat form cues, fault-specific drills. Use for feedback and recommendation wording<br>
+    • [TASK] "Analyse this Goblet Squat session. Part 1: identify faults with evidence. Part 2: write coaching for each parameter."
+  </div>
+</div>
+
+<p style="margin-top:12px;"><strong>Key prompt engineering rules:</strong></p>
+<ul>
+  <li><strong>Specificity over generics</strong> — every observation must reference actual rep numbers and measured values from the biomechanics JSON. "Knee valgus on reps 3–8" not "knee valgus present"</li>
+  <li><strong>Causal chain</strong> — if multiple faults co-exist, identify root cause and chain them. e.g. ankle restriction → forward lean → depth deficit</li>
+  <li><strong>Gold standard comparison</strong> — for each fault, compare user's actual angles to gold standard ranges. "Your knee angle at bottom: 142° / Gold standard: 88–95°"</li>
+  <li><strong>Session history use</strong> — if valgus appeared in previous sessions too, Haiku should say so. "This has appeared across your last 2 sessions at this weight."</li>
+  <li><strong>Walk-in/walk-out</strong> — if first or last rep duration ≥ 3× median, exclude from analysis but include in rep_count</li>
+  <li><strong>Affirmation must be earned</strong> — do not invent positives if none are present. If a parameter has no clear strength, skip affirmation or note consistency</li>
+</ul>
+</div></div>
+<div class="sec"><div class="slbl ac">Acceptance Criteria</div><ul class="ac-list">
+  <li>System prompt clearly separates Part 1 (analysis rules) from Part 2 (coaching rules) and output schema</li>
+  <li>All 6 data inputs are clearly labelled in the user message so Haiku knows what each block is for</li>
+  <li>Test on 3 videos with known faults — Haiku correctly identifies: (1) knee valgus session, (2) insufficient depth session, (3) excessive forward lean session</li>
+  <li>Coaching observations reference actual rep numbers and measured values — not generic advice</li>
+  <li>All 4 parameter fields populated (affirmation, observation, feedback) even when parameter has no fault</li>
+  <li>causal_chain populated correctly when multiple faults co-exist</li>
+  <li>PM reviews 3 outputs and confirms coaching language is specific and actionable</li>
+</ul></div>
+<div class="sec"><div class="slbl dep">Blocked by</div><div class="dep-row">
+  <span class="dp dp-dep">S2-W7-02 — Gold standard JSON queryable from Supabase</span>
+  <span class="dp dp-dep">S2-W7-03 — Session history query working</span>
+  <span class="dp dp-dep">S3-W7-03 — Coaching .md files curated and ready</span>
+</div></div>
+</div></div>
+
+<div class="task"><div class="task-hdr" onclick="tog(this)">
   <span class="tid">S2-W7-07</span>
   <div class="tname-wrap"><div class="tname">Demo User Setup — 3 Hardcoded User IDs</div>
   <div class="tbadges"><span class="badge b-todo">To Do</span><span class="badge b-hi">High</span><span class="badge b-s2">Squad 2</span></div></div>
