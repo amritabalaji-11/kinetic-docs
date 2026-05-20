@@ -2124,7 +2124,7 @@ coaching_content = load_md_files(exercise=<span class="js">"goblet_squat"</span>
         <td style="padding:8px 10px;font-family:monospace;font-size:9.5px;color:#c4b5fd;">mediapipe_started<br><span style="color:#334155;">mediapipe_complete</span></td>
         <td style="padding:8px 10px;color:#f1f5f9;font-weight:600;">"Reading your movement patterns..."</td>
         <td style="padding:8px 10px;text-align:center;color:#94a3b8;">10% → 30%</td>
-        <td style="padding:8px 10px;color:#64748b;font-size:10px;">Message stays on mediapipe_complete — % bar advances only</td>
+        <td style="padding:8px 10px;color:#64748b;font-size:10px;">Message holds from mediapipe_started. mediapipe_complete is silent — no message change, no % bar.</td>
       </tr>
       <tr style="border-bottom:1px solid #111827;background:#080d12;">
         <td style="padding:8px 10px;font-family:monospace;font-size:9.5px;color:#c4b5fd;">biomechanics_complete</td>
@@ -2140,7 +2140,7 @@ coaching_content = load_md_files(exercise=<span class="js">"goblet_squat"</span>
       </tr>
       <tr style="border-bottom:1px solid #111827;background:#080d12;">
         <td style="padding:8px 10px;font-family:monospace;font-size:9.5px;color:#86efac;">analysis_ready</td>
-        <td style="padding:8px 10px;color:#f1f5f9;font-weight:600;">Tab 1 renders — coaching text, scores, all 4 parameters visible</td>
+        <td style="padding:8px 10px;color:#f1f5f9;font-weight:600;">&quot;Your analysis is ready.&quot; — shown briefly (~0.5–1s), then auto-navigate to Analysis screen</td>
         <td style="padding:8px 10px;text-align:center;color:#94a3b8;">100%</td>
         <td style="padding:8px 10px;color:#64748b;font-size:10px;">Processing bar completes. User starts reading coaching while image still loads.</td>
       </tr>
@@ -2148,13 +2148,13 @@ coaching_content = load_md_files(exercise=<span class="js">"goblet_squat"</span>
         <td style="padding:8px 10px;font-family:monospace;font-size:9.5px;color:#86efac;">frame_ready</td>
         <td style="padding:8px 10px;color:#f1f5f9;font-weight:600;">Annotated image swaps into Tab 1</td>
         <td style="padding:8px 10px;text-align:center;color:#94a3b8;">— (~2–3s after)</td>
-        <td style="padding:8px 10px;color:#64748b;font-size:10px;">No % bar change — image placeholder silently swaps to annotated frame</td>
+        <td style="padding:8px 10px;color:#64748b;font-size:10px;">No message on Processing screen — user already on Analysis screen. Handled there.</td>
       </tr>
       <tr style="border-bottom:1px solid #111827;background:#080d12;">
         <td style="padding:8px 10px;font-family:monospace;font-size:9.5px;color:#86efac;">progression_ready</td>
         <td style="padding:8px 10px;color:#f1f5f9;font-weight:600;">Tab 2 unlocks — user can tap to view progression</td>
         <td style="padding:8px 10px;text-align:center;color:#94a3b8;">— (async)</td>
-        <td style="padding:8px 10px;color:#64748b;font-size:10px;">Tab 2 shows loading state until this fires. No % bar — separate async path.</td>
+        <td style="padding:8px 10px;color:#64748b;font-size:10px;">No message on Processing screen — user already on Analysis screen. Tab 2 unlocks there.</td>
       </tr>
       <tr style="border-bottom:1px solid #111827;">
         <td style="padding:8px 10px;font-family:monospace;font-size:9.5px;color:#c4b5fd;">progression_ready</td>

@@ -52,7 +52,7 @@ Frontend (S1)                     Backend (S2)                    Data/CV (S3)
    |<-- Section 1 + Section 2 ------- |                               |
 ```
 
-> The stream stays open after `analysis_ready` to receive `frame_ready` and `progression_ready`. It may be closed after `progression_ready` fires or after a timeout.
+> **Stream lifecycle:** S1 closes the SSE stream on navigation at `analysis_ready`. `frame_ready` and `progression_ready` are handled by a fresh listener opened on the Analysis screen — they do not need the Processing screen stream to stay open.
 
 ---
 
@@ -165,7 +165,7 @@ Fires when S3 returns MediaPipe keypoints to S2.
 | `keypoints_detected` | integer | No | Internal. Not required to display. |
 | `frames_processed` | integer | No | Internal. Not required to display. |
 
-**Suggested UI copy:** "Movement detected — {rep_count} reps found"
+**Suggested UI copy:** No message change — message holds from `mediapipe_started` ("Reading your movement patterns..."). `rep_count` is not displayed on the Processing screen.
 
 ---
 
@@ -230,7 +230,7 @@ Fires when S2 begins the Haiku Call 1 API request (form analysis + coaching in o
 |---|---|---|---|
 | `overall_score` | integer | No | Overall form score 0–100. Can preview on processing screen as it transitions to results. |
 
-**Frontend action on receipt:** Navigate to Results screen (Tab 1). Call `GET /analysis/{id}/result` to load full coaching data.
+**Frontend action on receipt:** Show message **"Your analysis is ready."** briefly (~0.5–1s), then auto-navigate to Analysis screen. Call `GET /analysis/{id}/result` to load full coaching data. Close the SSE stream on navigation — `frame_ready` and `progression_ready` are handled on the Analysis screen with a fresh listener.
 
 ---
 
@@ -412,7 +412,26 @@ Async — Tab 1 is already fully visible. Failure only affects Tab 2. Use `retry
 
 ---
 
-## 4. HTTP Error Codes
+## 4. User-Facing Messages — Processing Screen Summary
+
+**3 text messages + 1 message before navigation.** Single message line updates in place. No % bar. No checklist.
+
+| # | SSE Event | User-facing message (exact copy) | User sees? | Note |
+|---|---|---|---|---|
+| 1 | `upload_received` | "Video received. Preparing your session..." | ✅ Yes | First feedback — show immediately |
+| 2 | `mediapipe_started` | "Reading your movement patterns..." | ✅ Yes | Holds through `mediapipe_complete` |
+| 3 | `mediapipe_complete` | *(no change)* | ❌ Silent | Message holds from step 2 |
+| 4 | `biomechanics_complete` | *(no change)* | ❌ Silent | Message holds from step 2 |
+| 5 | `haiku_started` | "Analysing your form frame by frame..." | ✅ Yes | Longest step — holds until `analysis_ready` |
+| 6 | `analysis_ready` | "Your analysis is ready." | ✅ Yes | Show briefly (~0.5–1s), then auto-navigate to Analysis screen |
+| 7 | `frame_ready` | *(no message — user on Analysis screen)* | ❌ N/A | Handled on Analysis screen |
+| 8 | `progression_ready` | *(no message — user on Analysis screen)* | ❌ N/A | Handled on Analysis screen |
+
+> **Note for S1:** The checklist items in the Processing screen design handoff are placeholder copy. Use the exact strings in this table.
+
+---
+
+## 5. HTTP Error Codes
 
 ### `POST /upload` — S1 sends · S2 receives · S2 returns HTTP status
 
@@ -464,4 +483,5 @@ Async — Tab 1 is already fully visible. Failure only affects Tab 2. Use `retry
   - Error codes: `NEMOTRON_*` → `HAIKU_*` · `CLAUDE_*` → `HAIKU_CALL_2_*` · RAG errors removed
   - HTTP endpoint: `/analysis/{id}/comparison` → `/analysis/{id}/progression`
   - Stream lifecycle: closes after `progression_ready` (not `analysis_complete`)
+- May 20, 2026: Processing screen message updates — `analysis_ready` now shows "Your analysis is ready." before navigating. `frame_ready` and `progression_ready` have no FE message on Processing screen (user already on Analysis screen). `mediapipe_complete` message updated — holds from `mediapipe_started`, does not show rep_count. Stream lifecycle updated — closes at `analysis_ready`, reopens on Analysis screen. Added Section 4 user-facing messages summary table.
 - May 12, 2026: Initial definition — all SSE events, error taxonomy, HTTP codes, frontend UI copy, CTA logic, squad ownership
