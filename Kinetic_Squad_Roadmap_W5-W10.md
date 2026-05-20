@@ -41,6 +41,7 @@
 | Full pipeline (Haiku 4.5 analysis + coaching output) | Squad 2 + 3 | Squad 1 (results screen goes real) | Thu W7 | — |
 | Progression recommendation endpoint | Squad 2 | Squad 1 (weight recommendation UI) | Thu W8 | — |
 | Accuracy validation results (20–30 videos) | Squad 3 | Squad 2 (prompt refinement) | Thu W9 | — |
+| `GET /exercises` endpoint + populated exercises table | Squad 2 (S2-W9-05) | Squad 1 (S1-W9-05 — replace hardcoded exercise data) | Thu W9 | — |
 
 ---
 
@@ -233,8 +234,9 @@
 - [ ] Final mobile responsiveness pass across all screens
 - [ ] Bug fixes from internal testing
 - [ ] If capacity: implement **"Record" option** on Upload screen (alongside "Upload from file")
+- [ ] **[S1-W9-05]** *(depends on S2-W9-05)* Replace hardcoded exercise data with live `GET /exercises` API — exercise list (Zones 2 & 3), muscle selector filter map (Zone 2), tips content including form image + camera tips + form cues (Zone 4). Remove all hardcoded exercise arrays and static tip strings from frontend. `exercise_id` in POST body must now come from the API response.
 
-**Thursday merge:** Filming tips live · SSE UX polished · Mobile responsive · Record option if complete
+**Thursday merge:** Filming tips live · SSE UX polished · Mobile responsive · GET /exercises wired (if S2-W9-05 complete) · Record option if complete
 
 ---
 
@@ -243,8 +245,9 @@
 - [ ] Refine **Haiku prompt engineering** based on accuracy validation findings from Squad 3
 - [ ] Implement **confidence thresholding**: flag low-certainty outputs ("we couldn't confidently analyse this video — try these filming tips") rather than returning unreliable results
 - [ ] Load test API endpoints; fix any stability issues
+- [ ] **[S2-W9-05]** Define and build `GET /exercises` endpoint — returns all active exercises with: `exercise_id`, `display_name`, `muscle_groups` (jsonb array), `form_image_url` (pre-signed public URL — not raw GCS URI), `camera_angle_tips` (jsonb array), `form_tips` (jsonb array), `is_active`. Support optional `?muscle_group=` query param for filtering. Populate `exercises` DB table with all demo exercises and their tip content before handoff to S1.
 
-**Thursday merge:** Latency <30s validated · Confidence thresholding live · Load test results documented
+**Thursday merge:** Latency <30s validated · Confidence thresholding live · GET /exercises endpoint live + exercises table populated · Load test results documented
 
 ---
 

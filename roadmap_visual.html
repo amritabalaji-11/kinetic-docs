@@ -402,6 +402,7 @@
     <div class="task task-sq1"><span class="task-id">S1-W9-02</span>Polish SSE experience: smooth progress indicators, clear state messaging</div>
     <div class="task task-sq1"><span class="task-id">S1-W9-03</span>Final mobile responsiveness pass across all screens</div>
     <div class="task task-sq1"><span class="task-id">S1-W9-04</span>Bug fixes from internal testing</div>
+    <div class="task task-sq1 task-dep"><span class="task-id">S1-W9-05</span><div class="dep-tag">RECEIVES ←</div> Replace hardcoded exercise data with live GET /exercises — exercise list, muscle selector filter, tips content (form image + camera tips + form cues). Remove all hardcoded exercise arrays. exercise_id in POST body now from API response.</div>
   </div>
 
   <div class="cell sq1">
@@ -479,6 +480,7 @@
     <div class="task task-sq2 task-dep"><span class="task-id">S2-W9-02</span><div class="dep-tag">RECEIVES ←</div> Refine Claude system prompt + MD coaching files based on Squad 3 accuracy validation findings</div>
     <div class="task task-sq2"><span class="task-id">S2-W9-03</span>Confidence thresholding: flag low-certainty outputs instead of returning unreliable results</div>
     <div class="task task-sq2"><span class="task-id">S2-W9-04</span>Load test API endpoints; fix stability issues</div>
+    <div class="task task-sq2 task-dep"><span class="task-id">S2-W9-05</span><div class="dep-tag">OUTPUTS →</div> Define and build GET /exercises endpoint — returns exercise_id, display_name, muscle_groups, form_image_url (pre-signed URL), camera_angle_tips, form_tips, is_active. Optional ?muscle_group= filter. Populate exercises DB table before S1 handoff.</div>
   </div>
 
   <div class="cell sq2">
