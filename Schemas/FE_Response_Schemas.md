@@ -109,7 +109,7 @@ Who owns what, and what passes between squads at each handoff.
         "observation": null,
         "correction": "Try elevating heels slightly if ankle tightness limits depth in later reps."
       },
-      "tempo": {
+      "movement_quality": {
         "score": 55,
         "affirmation": null,
         "observation": null,
@@ -185,7 +185,7 @@ Who owns what, and what passes between squads at each handoff.
       "posture":          68,
       "stability":        80,
       "movement_quality": 85,
-      "tempo":            55
+      "movement_quality":            55
     }
   },
 
@@ -202,7 +202,7 @@ Who owns what, and what passes between squads at each handoff.
       "posture":          60,
       "stability":        75,
       "movement_quality": 80,
-      "tempo":            48
+      "movement_quality":            48
     }
   },
 
@@ -212,7 +212,7 @@ Who owns what, and what passes between squads at each handoff.
       "posture":          { "observation_action": "Back angle is more controlled at 20kg — keep bracing before each descent as weight increases." },
       "stability":        { "observation_action": "Knee stability has improved but watch for cave on the ascent at heavier loads." },
       "movement_quality": { "observation_action": "Depth is consistent at heavier weight — ankle mobility holding well." },
-      "tempo":            { "observation_action": "Still dropping on the descent — controlling this will be critical at your next weight step." }
+      "movement_quality":            { "observation_action": "Still dropping on the descent — controlling this will be critical at your next weight step." }
     }
   }
 }

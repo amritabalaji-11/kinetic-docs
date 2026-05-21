@@ -1420,7 +1420,7 @@ coaching_content = load_md_files(exercise=<span class="js">"goblet_squat"</span>
     <span class="jk">"parameters"</span><span class="jp">:</span> <span class="jp">[</span>
       <span class="jp">{</span> <span class="jk">"name"</span><span class="jp">:</span> <span class="js">"posture"</span><span class="jp">,</span> <span class="jk">"variance"</span><span class="jp">:</span> <span class="jn">+5</span><span class="jp">,</span> <span class="jk">"verdict"</span><span class="jp">:</span> <span class="js">"Torso lean improving — less compensation at the bottom."</span> <span class="jp">},</span>
       <span class="jp">{</span> <span class="jk">"name"</span><span class="jp">:</span> <span class="js">"stability"</span><span class="jp">,</span> <span class="jk">"variance"</span><span class="jp">:</span> <span class="jn">+9</span><span class="jp">,</span> <span class="jk">"verdict"</span><span class="jp">:</span> <span class="js">"Knee valgus reduced — showing from rep 5 now vs rep 3 last time."</span> <span class="jp">},</span>
-      <span class="jp">{</span> <span class="jk">"name"</span><span class="jp">:</span> <span class="js">"movement_quality"</span><span class="jp">,</span> <span class="jk">"variance"</span><span class="jp">:</span> <span class="jn">+6</span><span class="jp">,</span> <span class="jk">"verdict"</span><span class="jp">:</span> <span class="js">"Tempo more controlled on the descent."</span> <span class="jp">},</span>
+      <span class="jp">{</span> <span class="jk">"name"</span><span class="jp">:</span> <span class="js">"movement_quality"</span><span class="jp">,</span> <span class="jk">"variance"</span><span class="jp">:</span> <span class="jn">+6</span><span class="jp">,</span> <span class="jk">"verdict"</span><span class="jp">:</span> <span class="js">"Movement quality is controlled on the descent."</span> <span class="jp">},</span>
       <span class="jp">{</span> <span class="jk">"name"</span><span class="jp">:</span> <span class="js">"range_of_motion"</span><span class="jp">,</span> <span class="jk">"variance"</span><span class="jp">:</span> <span class="jn">+3</span><span class="jp">,</span> <span class="jk">"verdict"</span><span class="jp">:</span> <span class="js">"Depth consistent — no regression."</span> <span class="jp">}</span>
     <span class="jp">],</span>
     <span class="jk">"weight_decision"</span><span class="jp">:</span> <span class="jp">{</span>
@@ -1719,7 +1719,7 @@ coaching_content = load_md_files(exercise=<span class="js">"goblet_squat"</span>
         <div style="margin-top:10px;background:#141000;border:1px solid #92400e;border-radius:6px;padding:10px 12px;font-size:10px;color:#fcd34d;line-height:1.7;">
           <strong style="color:#fbbf24;">Schema additions needed before W7 build:</strong>
           (1) Add <code style="background:#1a1000;padding:1px 4px;border-radius:3px;">range_of_motion_score</code> already present in Haiku Call 1 output — no change needed.
-          (2) Add <code style="background:#1a1000;padding:1px 4px;border-radius:3px;">coaching.parameters</code> block to Haiku Call 2 output — keyed by posture / stability / movement_quality / tempo, each with affirmation, observation, correction fields. The affirmation and observation sub-fields are W7/8 iteration — correction is required at W7.
+          (2) Add <code style="background:#1a1000;padding:1px 4px;border-radius:3px;">coaching.parameters</code> block to Haiku Call 2 output — keyed by posture / stability / movement_quality / range_of_motion, each with affirmation, observation, correction fields. The affirmation and observation sub-fields are W7/8 iteration — correction is required at W7.
           range_of_motion_score is produced by Haiku Call 1 (Step 5). Confirmed in Haiku Call 1 output schema.
         </div>
       </div>
@@ -1769,7 +1769,7 @@ coaching_content = load_md_files(exercise=<span class="js">"goblet_squat"</span>
 
           <div style="display:flex;gap:10px;align-items:baseline;">
             <div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:0.5px;color:#475569;flex-shrink:0;width:72px;">Claude Output</div>
-            <div style="font-size:11px;color:#94a3b8;line-height:1.6;"><code style="color:#c4b5fd;background:#150d24;padding:1px 4px;border-radius:3px;">comparison_coaching</code> block — <code style="color:#c4b5fd;background:#150d24;padding:1px 4px;border-radius:3px;">summary_paragraph</code> + <code style="color:#c4b5fd;background:#150d24;padding:1px 4px;border-radius:3px;">parameters.[posture|stability|movement_quality|tempo].observation_action</code></div>
+            <div style="font-size:11px;color:#94a3b8;line-height:1.6;"><code style="color:#c4b5fd;background:#150d24;padding:1px 4px;border-radius:3px;">comparison_coaching</code> block — <code style="color:#c4b5fd;background:#150d24;padding:1px 4px;border-radius:3px;">summary_paragraph</code> + <code style="color:#c4b5fd;background:#150d24;padding:1px 4px;border-radius:3px;">parameters.[posture|stability|movement_quality|range_of_motion].observation_action</code></div>
           </div>
 
           <div style="display:flex;gap:10px;align-items:baseline;">
@@ -1933,7 +1933,7 @@ coaching_content = load_md_files(exercise=<span class="js">"goblet_squat"</span>
           </tr>
 
           <!-- Range of Motion -->
-          <tr><td colspan="4" style="padding:4px 8px;font-size:9px;font-weight:700;color:#475569;background:#08090f;">Tempo</td></tr>
+          <tr><td colspan="4" style="padding:4px 8px;font-size:9px;font-weight:700;color:#475569;background:#08090f;">Movement Quality</td></tr>
           <tr>
             <td>Score /100 — current analysis<br><span style="font-size:9px;color:#475569;">Variance vs previous shown inline</span></td>
             <td>Haiku Call 1 output (current) · form_analysis_results (previous)</td>
@@ -1943,7 +1943,7 @@ coaching_content = load_md_files(exercise=<span class="js">"goblet_squat"</span>
           <tr>
             <td>1–2 sentence observation + action verdict</td>
             <td>Haiku Call 1</td>
-            <td><span class="example">comparison_coaching.parameters.tempo.observation_action</span> <span style="font-size:9px;color:#f59e0b;">⚠ new field</span></td>
+            <td><span class="example">comparison_coaching.parameters.movement_quality.observation_action</span> <span style="font-size:9px;color:#f59e0b;">⚠ new field</span></td>
             <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#0d1a2e;color:#60a5fa;border:1px solid #1e3a5f;">W7</span></td>
           </tr>
 
