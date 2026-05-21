@@ -154,12 +154,14 @@ Source: Haiku Call 1 output. Stored flat so Haiku Call 2 can query fault history
 
 | Field | Type | Nullable | Format | Written by | Step |
 |---|---|---|---|---|---|
-| `issue_tags` | text[] + GIN index | No | `["knee_valgus"]` | S2 — extracted from `faults_detected` where value = true. *Vocabulary updated May 19* | Step 5 INSERT |
-| `faults_detected` | jsonb | No | See format below | S2 — from Haiku Call 1. *🆕 Added May 19* | Step 5 INSERT |
-| `confidence` | jsonb | No | See format below | S2 — Haiku certainty per fault (0.0–1.0). *🆕 Added May 19* | Step 5 INSERT |
-| `causal_chain` | jsonb | No | See format below | S2 — root cause + chain. Null if no causal link. *🆕 Added May 19* | Step 5 INSERT |
-| `fault_detail` | jsonb | No | See format below | S2 — per-fault detail. **Key field for longitudinal progression.** *🆕 Added May 19* | Step 5 INSERT |
-| `trends` | jsonb | No | `{ "worsening": [...], "improving": [...], "stable": [...] }` | S2 — session-level direction summary. *🆕 Added May 19* | Step 5 INSERT |
+| `issue_tags` | text[] + GIN index | No | `["knee_valgus"]` | S2 — extracted from `faults_detected` where value = true. | Step 5 INSERT |
+| `faults_detected` | jsonb | No | See format below | S2 — from Haiku Call 1 (`db_output.faults_detected`). | Step 5 INSERT |
+| `fault_confidence` | jsonb | No | See format below | S2 — Haiku certainty per fault EXISTS (0.0–1.0). *🆕 Renamed May 21 from `confidence`* | Step 5 INSERT |
+| `causal_chains` | jsonb array | No | See format below | S2 — array of root cause objects. Supports multiple independent root causes. *🆕 Renamed + type changed May 21 from `causal_chain` object* | Step 5 INSERT |
+| `camera_angle` | enum | No | `"side" \| "front"` | S2 — echoed from `biomechanics_json.camera_angle`. Required by OpenCV Part 2 for gold standard matching. *🆕 Added May 21* | Step 5 INSERT |
+| `fault_detail` | jsonb | No | See format below | S2 — per-fault detail. **Key field for longitudinal progression.** | Step 5 INSERT |
+| `trends` | jsonb | No | `{ "worsening": [...], "improving": [...], "stable": [...] }` | S2 — session-level direction summary. | Step 5 INSERT |
+| `reasoning` | string | No | Max 200 words | S2 — Haiku chain-of-thought from `db_output.reasoning`. Stored for debugging and model improvement. *🆕 Added May 21* | Step 5 INSERT |
 
 **Issue tag vocabulary (fixed set):** `insufficient_depth` · `knee_valgus` · `excessive_forward_lean`
 
@@ -178,7 +180,7 @@ WHERE issue_tags @> ARRAY['knee_valgus','insufficient_depth']
 }
 ```
 
-**`confidence` format:**
+**`fault_confidence` format** *(renamed from `confidence` May 21 — certainty that each fault EXISTS):*
 ```json
 {
   "insufficient_depth": 0.90,
@@ -187,14 +189,21 @@ WHERE issue_tags @> ARRAY['knee_valgus','insufficient_depth']
 }
 ```
 
-**`causal_chain` format:**
+**`causal_chains` format** *(renamed + type changed May 21 — now a JSONB array supporting multiple independent root causes):*
 ```json
-{
-  "root_cause": "ankle_restriction",
-  "chain": "ankle restriction → forward lean → depth deficit",
-  "explanation": "Limited dorsiflexion forces the torso forward, preventing full hip depth."
-}
+[
+  {
+    "root_cause": "ankle_restriction",
+    "chain": "ankle restriction → forward lean → depth deficit",
+    "explanation": "Limited dorsiflexion forces the torso forward, preventing full hip depth.",
+    "causal_confidence": 0.75,
+    "confidence_note": "Valgus could be independent glute weakness — distinguishing signal: valgus present from rep 1",
+    "affected_parameters": ["range_of_motion", "posture"]
+  }
+]
 ```
+
+> `causal_confidence` = certainty of the root cause **attribution** (distinct from `fault_confidence` which measures whether the fault exists). Multiple entries when two independent root causes are identified.
 
 **`fault_detail` format (one object per fault — key field for progression):**
 ```json
@@ -261,13 +270,22 @@ WHERE issue_tags @> ARRAY['knee_valgus','insufficient_depth']
   "range_of_motion_observation":  "What's off for range of motion",
   "range_of_motion_feedback":     "What to do",
 
-  "recommendation": "What to focus on in the next session — named drill, reps, sets.",
+  "next_session_focus": [
+    "Actionable point 1 — drill name, rep/set target",
+    "Actionable point 2",
+    "Actionable point 3 (omit if only 2 genuinely matter)"
+  ],
 
   "rep_trend": {
     "observation":    "How form evolved from rep 1 to last rep",
     "recommendation": "Single most important focus based on this trend"
   }
 }
+```
+
+> `recommendation` field removed May 21 — replaced by `next_session_focus` array (2–3 specific actionable points rendered as a checklist on the Results screen).
+
+```json
 ```
 
 > **FE mapping:** Each parameter's 3 fields are read directly by field name — no array filtering needed. e.g. `coaching_output.posture_affirmation`, `coaching_output.posture_observation`, `coaching_output.posture_feedback`.
@@ -411,6 +429,13 @@ LIMIT 5;
 ---
 
 ## Changelog
+- May 21, 2026: Haiku output schema updates.
+  - `confidence` renamed → `fault_confidence` (fault detection certainty)
+  - `causal_chain` (object) renamed → `causal_chains` (jsonb array — supports multiple independent root causes)
+  - Added to each `causal_chains` entry: `causal_confidence`, `confidence_note`, `affected_parameters`
+  - `recommendation` removed from `coaching_output` → replaced by `next_session_focus` array
+  - Added `camera_angle` flat column — echoed from biomechanics JSON, required for OpenCV gold standard matching
+  - Added `reasoning` column — Haiku chain-of-thought stored for debugging
 - May 19, 2026: Full architecture update — Nemotron → Haiku 4.5.
   - Write pattern: Phase 1/2 Nemotron/Claude → single INSERT on Haiku Call 1
   - Removed: `nemotron_output_url`, `chain_of_thought`, `annotated_frames_urls`, `issues_json`, `progression_recommendation`, `session_tags`, `comparison_coaching_output`
