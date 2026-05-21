@@ -2,7 +2,7 @@
 **Author:** Amrita
 **Date:** May 8, 2026
 **Status:** Draft v1.0
-**Pipeline stage:** MediaPipe output → Nemotron (structured analysis) → Claude Sonnet (coaching language)
+**Pipeline stage:** MediaPipe output → ~~Nemotron~~ → **Haiku 4.5** (structured analysis) → ~~Claude Sonnet~~ → **Claude Haiku 4.5 — Call 2** *(W6 A/B test)* (coaching language)
 
 ---
 

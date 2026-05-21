@@ -389,7 +389,7 @@
               <span class="phase-row-label label-confirmed">✓ Confirmed ship — all required for demo</span>
               <div class="phase-pills">
                 <span class="story-pill">Results screen — real pipeline output <span class="story-tag tag-new">Success Criterion 02</span></span>
-                <span class="story-pill">Claude Sonnet Coaching <span class="story-tag" style="background:rgba(167,139,250,0.15);color:#a78bfa;">Full AI</span></span>
+                <span class="story-pill"><span style="text-decoration:line-through;color:#94a3b8;opacity:0.7;">Claude Sonnet</span> <span style="color:#a78bfa;font-weight:700;">→ Claude Haiku 4.5 — Call 2 (async)</span> <span style="font-size:10px;color:#64748b;font-style:italic;">(W6 A/B test)</span> Coaching <span class="story-tag" style="background:rgba(167,139,250,0.15);color:#a78bfa;">Full AI</span></span>
                 <span class="story-pill">Weight-specific advice from DB history <span class="story-tag tag-new">Success Criterion 04</span></span>
                 <span class="story-pill">MD files → system prompt <span class="story-tag tag-updated">Simplified RAG</span></span>
                 <span class="story-pill">Visual joint overlay — worst-rep annotated frame <span class="story-tag tag-updated">W7</span></span>
@@ -398,7 +398,7 @@
             </div>
             <div class="v2-changed" style="margin-top:10px;">
               <div class="v2-changed-label">Changed from v1</div>
-              <div style="font-size:12px;color:var(--text-muted);"><span class="v2-strike">RAG + Claude Sonnet Coaching (vector DB retrieval)</span></div>
+              <div style="font-size:12px;color:var(--text-muted);"><span class="v2-strike">RAG + <span style="text-decoration:line-through;color:#94a3b8;opacity:0.7;">Claude Sonnet</span> <span style="color:#a78bfa;font-weight:700;">→ Claude Haiku 4.5 — Call 2 (async)</span> <span style="font-size:10px;color:#64748b;font-style:italic;">(W6 A/B test)</span> Coaching (vector DB retrieval)</span></div>
               <div class="v2-why mod">→ RAG now means 5–10 MD coaching docs injected directly into Claude's system prompt. No retrieval endpoint. No embeddings.</div>
             </div>
           </div>
@@ -524,7 +524,7 @@
             <div class="us-statement">As a user with a form concern, I want to see exactly which joint angle is causing the issue and receive coaching tied to the weight I was lifting, so that I know what to fix at this specific load — not just that something is wrong.</div>
             <div class="v2-changed">
               <div class="v2-changed-label">Updated from v1 — weight-specific coaching added</div>
-              <div style="font-size:12px;color:var(--text-dim);">Claude Sonnet now receives user workout history (past weights + form scores from DB) alongside Nemotron output. Coaching is specific to the weight used. e.g. <em>"At 12kg your tempo is consistent, but your back angle degrades after rep 5 — this is typical as load approaches your stability limit."</em> Progression recommendation (ready / hold / drop) is grounded in session history, not just the current video.</div>
+              <div style="font-size:12px;color:var(--text-dim);"><span style="text-decoration:line-through;color:#94a3b8;opacity:0.7;">Claude Sonnet</span> <span style="color:#a78bfa;font-weight:700;">→ Claude Haiku 4.5 — Call 2 (async)</span> <span style="font-size:10px;color:#64748b;font-style:italic;">(W6 A/B test)</span> now receives user workout history (past weights + form scores from DB) alongside Nemotron output. Coaching is specific to the weight used. e.g. <em>"At 12kg your tempo is consistent, but your back angle degrades after rep 5 — this is typical as load approaches your stability limit."</em> Progression recommendation (ready / hold / drop) is grounded in session history, not just the current video.</div>
               <div class="v2-why mod">→ Weight history → Claude (not Nemotron). Nemotron analyses this session's form. Claude synthesises the coaching using historical context.</div>
             </div>
             <div class="us-ac-label">Acceptance Criteria</div>
@@ -551,7 +551,7 @@
               <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px;">
                 <div style="background:rgba(52,211,153,0.06);border-left:2px solid #34d399;border-radius:0 4px 4px 0;padding:6px 10px;font-size:12px;color:var(--text-dim);">
                   <strong style="color:#34d399;font-size:10px;text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:2px;">Purpose 1 — LLM angle reference</strong>
-                  Gold standard biomechanics data is passed to Claude Sonnet as reference data for angle comparison — not for coaching language style. Claude uses it to compare the user's measured angles against what good form actually looks like at each joint. e.g. knowing that a gold standard Goblet Squat produces a knee angle of 88° at the bottom, Claude can accurately assess whether 92° is a meaningful deviation or within normal range.
+                  Gold standard biomechanics data is passed to <span style="text-decoration:line-through;color:#94a3b8;opacity:0.7;">Claude Sonnet</span> <span style="color:#a78bfa;font-weight:700;">→ Claude Haiku 4.5 — Call 2 (async)</span> <span style="font-size:10px;color:#64748b;font-style:italic;">(W6 A/B test)</span> as reference data for angle comparison — not for coaching language style. Claude uses it to compare the user's measured angles against what good form actually looks like at each joint. e.g. knowing that a gold standard Goblet Squat produces a knee angle of 88° at the bottom, Claude can accurately assess whether 92° is a meaningful deviation or within normal range.
                 </div>
                 <div style="background:rgba(52,211,153,0.06);border-left:2px solid #34d399;border-radius:0 4px 4px 0;padding:6px 10px;font-size:12px;color:var(--text-dim);">
                   <strong style="color:#34d399;font-size:10px;text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:2px;">Purpose 2 — Visual overlay (OpenCV Part 2)</strong>
@@ -601,7 +601,7 @@
             <div class="us-statement">As a user who has logged multiple sessions, I want to compare my current form against my last session and get a weight progression recommendation, so that I can see whether I'm improving and whether to go heavier.</div>
             <div class="v2-changed">
               <div class="v2-changed-label">Architecture change — weight history routing</div>
-              <div style="font-size:12px;color:var(--text-dim);">Weight history (past sessions, weights used, form scores) is retrieved from <code style="background:var(--surface-2);padding:1px 5px;border-radius:3px;font-size:11px;">workout_logs</code> DB table and passed to <strong>Claude Sonnet</strong> — not Nemotron. Nemotron analyses the current video only. Claude synthesises the progression recommendation using both Nemotron's output and the historical context.</div>
+              <div style="font-size:12px;color:var(--text-dim);">Weight history (past sessions, weights used, form scores) is retrieved from <code style="background:var(--surface-2);padding:1px 5px;border-radius:3px;font-size:11px;">workout_logs</code> DB table and passed to <strong><span style="text-decoration:line-through;color:#94a3b8;opacity:0.7;">Claude Sonnet</span> <span style="color:#a78bfa;font-weight:700;">→ Claude Haiku 4.5 — Call 2 (async)</span> <span style="font-size:10px;color:#64748b;font-style:italic;">(W6 A/B test)</span></strong> — not Nemotron. Nemotron analyses the current video only. Claude synthesises the progression recommendation using both Nemotron's output and the historical context.</div>
               <div class="v2-why mod">→ Nemotron = form analysis for this session. Claude = coaching + progression using history. Cleaner separation of responsibilities.</div>
             </div>
             <div class="us-ac-label">Acceptance Criteria</div>
@@ -956,7 +956,7 @@
             <span class="story-pill e4" style="background:var(--e4-soft);color:var(--e4);border:1px solid var(--e4-border);font-size:12px;padding:4px 10px;border-radius:16px;">E4 shell</span>
           </div>
           <div class="week-ship">
-            <strong>Ship:</strong> Full pipeline live — Nemotron analysis + MD coaching docs (system prompt) + Claude Sonnet coaching output. Weight history from DB feeds Claude. Worst-rep annotated frame on Results screen. History screen shell.<br/>
+            <strong>Ship:</strong> Full pipeline live — Nemotron analysis + MD coaching docs (system prompt) + <span style="text-decoration:line-through;color:#94a3b8;opacity:0.7;">Claude Sonnet</span> <span style="color:#a78bfa;font-weight:700;">→ Claude Haiku 4.5 — Call 2 (async)</span> <span style="font-size:10px;color:#64748b;font-style:italic;">(W6 A/B test)</span> coaching output. Weight history from DB feeds Claude. Worst-rep annotated frame on Results screen. History screen shell.<br/>
             <div class="v2-changed" style="margin-top:8px;">
               <div class="v2-changed-label">Changed from v1</div>
               <div style="font-size:11px;color:var(--text-muted);"><span class="v2-strike">v1: Auth live — sessions persist to real accounts</span></div>
@@ -1057,7 +1057,7 @@
           <div class="decision-title">Vector DB dropped — MD files in Claude system prompt</div>
         </div>
         <div class="decision-right">
-          <div class="decision-what">5–10 curated coaching documents (PT language, form cues, Goblet Squat references) converted to MD files and injected directly into Claude Sonnet's system prompt at Step 9 of the pipeline. No retrieval endpoint, no embeddings, no ingestion pipeline.</div>
+          <div class="decision-what">5–10 curated coaching documents (PT language, form cues, Goblet Squat references) converted to MD files and injected directly into <span style="text-decoration:line-through;color:#94a3b8;opacity:0.7;">Claude Sonnet</span> <span style="color:#a78bfa;font-weight:700;">→ Claude Haiku 4.5 — Call 2 (async)</span> <span style="font-size:10px;color:#64748b;font-style:italic;">(W6 A/B test)</span>'s system prompt at Step 9 of the pipeline. No retrieval endpoint, no embeddings, no ingestion pipeline.</div>
           <div class="decision-why"><strong>Why:</strong> 1 exercise + &lt;10 documents = system prompt injection is sufficient. RAG's purpose here is grounding Claude's coaching language, not biomechanics analysis. Vector DB adds significant Squad 3 infrastructure build with no meaningful quality gain at this scale.</div>
         </div>
       </div>

@@ -835,7 +835,7 @@ h3:first-child { margin-top: 0; }
         <div class="flow-line"><div class="flow-num">3</div><div class="flow-connector"></div></div>
         <div class="flow-content">
           <h4>Kinetic processes video</h4>
-          <p>MediaPipe extracts joint keypoints · RAG retrieves biomechanics context · Nemotron 3 Nano Omni generates structured JSON · Claude Sonnet produces coaching output</p>
+          <p>MediaPipe extracts joint keypoints · RAG retrieves biomechanics context · <span style="text-decoration:line-through;color:#94a3b8;opacity:0.7;">Nemotron 3 Nano Omni</span> <span style="color:#a78bfa;font-weight:700;">→ Claude Haiku 4.5 — Call 1</span> <span style="font-size:10px;color:#64748b;font-style:italic;">(W6 A/B test)</span> generates structured JSON · <span style="text-decoration:line-through;color:#94a3b8;opacity:0.7;">Claude Sonnet</span> <span style="color:#a78bfa;font-weight:700;">→ Claude Haiku 4.5 — Call 2 (async)</span> <span style="font-size:10px;color:#64748b;font-style:italic;">(W6 A/B test)</span> produces coaching output</p>
         </div>
       </div>
       <div class="flow-step">
@@ -883,7 +883,7 @@ h3:first-child { margin-top: 0; }
           <div class="feature-header">
             <div class="feature-title">2 · AI Form Analysis Output</div>
           </div>
-          <div class="feature-body">RAG-enhanced Nemotron 3 Nano Omni + Claude Sonnet generates a structured report: form score, joint-angle corrections, Movement Quality / Stability / Posture ratings, rep count, rep time, and specific coaching tips.</div>
+          <div class="feature-body">RAG-enhanced <span style="text-decoration:line-through;color:#94a3b8;opacity:0.7;">Nemotron 3 Nano Omni</span> <span style="color:#a78bfa;font-weight:700;">→ Claude Haiku 4.5 — Call 1</span> <span style="font-size:10px;color:#64748b;font-style:italic;">(W6 A/B test)</span> + <span style="text-decoration:line-through;color:#94a3b8;opacity:0.7;">Claude Sonnet</span> <span style="color:#a78bfa;font-weight:700;">→ Claude Haiku 4.5 — Call 2 (async)</span> <span style="font-size:10px;color:#64748b;font-style:italic;">(W6 A/B test)</span> generates a structured report: form score, joint-angle corrections, Movement Quality / Stability / Posture ratings, rep count, rep time, and specific coaching tips.</div>
           <div class="feature-ac">
             <div class="feature-ac-label">Acceptance Criteria</div>
             <p>Output includes overall score · Minimum 2 specific joint corrections · At least 1 actionable coaching tip · ≥80% expert agreement in validation testing (Week 9)</p>
@@ -972,7 +972,7 @@ h3:first-child { margin-top: 0; }
       </div>
       <div class="oos-item">
         <div class="oos-label">Real-time live camera analysis</div>
-        <div class="oos-reason">Pipeline latency (MediaPipe + Nemotron + Claude Sonnet) makes real-time infeasible. "Record" in-browser is async, not live.</div>
+        <div class="oos-reason">Pipeline latency (MediaPipe + Nemotron + <span style="text-decoration:line-through;color:#94a3b8;opacity:0.7;">Claude Sonnet</span> <span style="color:#a78bfa;font-weight:700;">→ Claude Haiku 4.5 — Call 2 (async)</span> <span style="font-size:10px;color:#64748b;font-style:italic;">(W6 A/B test)</span>) makes real-time infeasible. "Record" in-browser is async, not live.</div>
       </div>
       <div class="oos-item">
         <div class="oos-label">Mobile native app</div>
@@ -1069,12 +1069,12 @@ h3:first-child { margin-top: 0; }
       </div>
       <div class="tech-card">
         <div class="tech-layer">Stage 1 AI — Video Analysis</div>
-        <div class="tech-name">Nemotron 3 Nano Omni</div>
+        <div class="tech-name"><span style="text-decoration:line-through;color:#94a3b8;opacity:0.7;">Nemotron 3 Nano Omni</span> <span style="color:#a78bfa;font-weight:700;">→ Claude Haiku 4.5 — Call 1</span> <span style="font-size:10px;color:#64748b;font-style:italic;">(W6 A/B test)</span></div>
         <div class="tech-desc">Receives raw video AND MediaPipe biomechanics JSON as dual inputs. Cross-references visual context against computed joint data for grounded analysis.</div>
       </div>
       <div class="tech-card">
         <div class="tech-layer">Stage 2 AI — Coaching</div>
-        <div class="tech-name">Claude Sonnet 4.6</div>
+        <div class="tech-name"><span style="text-decoration:line-through;color:#94a3b8;opacity:0.7;"><span style="text-decoration:line-through;color:#94a3b8;opacity:0.7;">Claude Sonnet</span> <span style="color:#a78bfa;font-weight:700;">→ Claude Haiku 4.5 — Call 2 (async)</span> <span style="font-size:10px;color:#64748b;font-style:italic;">(W6 A/B test)</span> 4.6</span> <span style="color:#a78bfa;font-weight:700;">→ Claude Haiku 4.5 — Call 2 (async)</span> <span style="font-size:10px;color:#64748b;font-style:italic;">(W6 A/B test)</span></div>
         <div class="tech-desc">Receives Nemotron output + RAG context + user weight history. Produces coaching output and weight progression recommendation.</div>
       </div>
       <div class="tech-card">
@@ -1163,7 +1163,7 @@ h3:first-child { margin-top: 0; }
     </div>
 
     <!-- Nemotron tests -->
-    <h3>Stage 1 — Nemotron 3 Nano Omni · Progressive Input Tests</h3>
+    <h3>Stage 1 — <span style="text-decoration:line-through;color:#94a3b8;opacity:0.7;">Nemotron 3 Nano Omni</span> <span style="color:#a78bfa;font-weight:700;">→ Claude Haiku 4.5 — Call 1</span> <span style="font-size:10px;color:#64748b;font-style:italic;">(W6 A/B test)</span> · Progressive Input Tests</h3>
     <p style="font-size:12px;color:var(--muted);margin-bottom:12px;">Owner: Squad 2 (Nicole/Valentin run · Liwei/Amrita review)</p>
     <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:24px;">
       <div style="background:var(--surface);border:1px solid var(--border);border-left:3px solid #f59e0b;border-radius:8px;padding:12px 16px;">
@@ -1229,14 +1229,14 @@ h3:first-child { margin-top: 0; }
           <span style="font-family:monospace;font-size:10px;color:var(--dim);">TST-W8-02</span>
           <span style="font-size:9px;background:#062020;color:#5eead4;padding:1px 7px;border-radius:4px;font-weight:700;">WEEK 8 · P/F</span>
         </div>
-        <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;">RAG T3 — Full RAG → Claude Sonnet flow</div>
+        <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;">RAG T3 — Full RAG → <span style="text-decoration:line-through;color:#94a3b8;opacity:0.7;">Claude Sonnet</span> <span style="color:#a78bfa;font-weight:700;">→ Claude Haiku 4.5 — Call 2 (async)</span> <span style="font-size:10px;color:#64748b;font-style:italic;">(W6 A/B test)</span> flow</div>
         <div style="font-size:12px;color:var(--muted);margin-bottom:6px;">Does retrieval context demonstrably improve coaching specificity vs. a no-RAG baseline run?</div>
         <div style="font-size:11px;background:var(--surface2);border-radius:6px;padding:8px 12px;color:var(--dim);"><strong style="color:var(--green-light);">Pass:</strong> Coaching output contains specific, sourced corrections &nbsp;·&nbsp; <strong style="color:var(--red-light);">Fail:</strong> Coaching is generic and no better than no-RAG</div>
       </div>
     </div>
 
-    <!-- Claude Sonnet tests -->
-    <h3>Stage 3 — Claude Sonnet Coaching Output Tests</h3>
+    <!-- <span style="text-decoration:line-through;color:#94a3b8;opacity:0.7;">Claude Sonnet</span> <span style="color:#a78bfa;font-weight:700;">→ Claude Haiku 4.5 — Call 2 (async)</span> <span style="font-size:10px;color:#64748b;font-style:italic;">(W6 A/B test)</span> tests -->
+    <h3>Stage 3 — <span style="text-decoration:line-through;color:#94a3b8;opacity:0.7;">Claude Sonnet</span> <span style="color:#a78bfa;font-weight:700;">→ Claude Haiku 4.5 — Call 2 (async)</span> <span style="font-size:10px;color:#64748b;font-style:italic;">(W6 A/B test)</span> Coaching Output Tests</h3>
     <p style="font-size:12px;color:var(--muted);margin-bottom:12px;">Owner: Squad 2 (Liwei/Amrita review)</p>
     <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:24px;">
       <div style="background:var(--surface);border:1px solid var(--border);border-left:3px solid #a855f7;border-radius:8px;padding:12px 16px;">
@@ -1245,7 +1245,7 @@ h3:first-child { margin-top: 0; }
           <span style="font-size:9px;background:#062020;color:#5eead4;padding:1px 7px;border-radius:4px;font-weight:700;">WEEK 7 · P/F</span>
         </div>
         <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;">Claude T1 — First coaching output review</div>
-        <div style="font-size:12px;color:var(--muted);margin-bottom:6px;">First full pipeline run (Nemotron → RAG → Claude Sonnet). Is the coaching paragraph actionable and the progression recommendation defensible?</div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:6px;">First full pipeline run (Nemotron → RAG → <span style="text-decoration:line-through;color:#94a3b8;opacity:0.7;">Claude Sonnet</span> <span style="color:#a78bfa;font-weight:700;">→ Claude Haiku 4.5 — Call 2 (async)</span> <span style="font-size:10px;color:#64748b;font-style:italic;">(W6 A/B test)</span>). Is the coaching paragraph actionable and the progression recommendation defensible?</div>
         <div style="font-size:11px;background:var(--surface2);border-radius:6px;padding:8px 12px;color:var(--dim);"><strong style="color:var(--green-light);">Pass:</strong> Coaching is specific + actionable; recommendation matches expert expectation &nbsp;·&nbsp; <strong style="color:var(--red-light);">Fail:</strong> Vague advice, wrong recommendation, or hallucinated cues</div>
       </div>
       <div style="background:var(--surface);border:1px solid var(--border);border-left:3px solid #a855f7;border-radius:8px;padding:12px 16px;">
@@ -1540,7 +1540,7 @@ h3:first-child { margin-top: 0; }
     <div style="margin-top:32px;padding-top:24px;border-top:1px solid var(--border);font-size:11px;color:var(--dim);">
       <strong style="color:var(--muted);">Changelog</strong><br>
       May 4, 2026: Initial draft — created from founder interviews and project roadmap<br>
-      May 4, 2026: Added stretched goals (Record option, Shoulder Press, Design enhancements); updated Out of Scope; fixed AI pipeline references (Nemotron + Claude Sonnet)
+      May 4, 2026: Added stretched goals (Record option, Shoulder Press, Design enhancements); updated Out of Scope; fixed AI pipeline references (Nemotron + <span style="text-decoration:line-through;color:#94a3b8;opacity:0.7;">Claude Sonnet</span> <span style="color:#a78bfa;font-weight:700;">→ Claude Haiku 4.5 — Call 2 (async)</span> <span style="font-size:10px;color:#64748b;font-style:italic;">(W6 A/B test)</span>)
     </div>
   </section>
 

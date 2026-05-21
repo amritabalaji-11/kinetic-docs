@@ -3,7 +3,7 @@
 **Owner:** Squad 3  
 **Date:** May 8, 2026  
 **Consumes:** Frame payload from S3-W5-06 (selected frames with world/screen landmarks)  
-**Outputs:** `Kinetic_Biomechanics_Output_Schema.json` — per-rep + consolidated JSON passed to Nemotron
+**Outputs:** `Kinetic_Biomechanics_Output_Schema.json` — per-rep + consolidated JSON passed to ~~Nemotron~~ → **Haiku 4.5**
 
 ---
 

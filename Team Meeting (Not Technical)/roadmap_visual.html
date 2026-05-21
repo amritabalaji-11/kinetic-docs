@@ -461,7 +461,7 @@
     <div class="task task-sq2"><span class="task-id">S2-W7-01</span>Complete Nemotron integration: full JSON output + word-level timestamps + chain-of-thought. <strong>Error handling:</strong> NEMOTRON_TIMEOUT (retryable: true), NEMOTRON_NO_OUTPUT (retryable: true), NEMOTRON_CONTEXT_OVERFLOW (retryable: false) — emit full SSE error shape per FE_SSE_and_Errors.md</div>
     <div class="task task-sq2 task-dep task-updated"><span class="task-id">S2-W7-02</span><div class="updated-tag">UPDATED</div><div class="dep-tag">RECEIVES ←</div> On Nemotron output: inject MD coaching files into Claude system prompt. <strong>Error handling:</strong> RAG_UNAVAILABLE + RAG_NO_RESULTS (both retryable: "partial" — pipeline continues to Claude without coaching context, results still load)</div>
     <div class="task task-sq2"><span class="task-id">S2-W7-03</span>Query structured DB: retrieve user weight history + past form sessions</div>
-    <div class="task task-sq2"><span class="task-id">S2-W7-04</span>Pass Nemotron output + MD coaching files + user history → Claude Sonnet → coaching output. <strong>Error handling:</strong> CLAUDE_TIMEOUT (retryable: true), CLAUDE_ERROR (retryable: true) — emit full SSE error shape per FE_SSE_and_Errors.md</div>
+    <div class="task task-sq2"><span class="task-id">S2-W7-04</span>Pass Nemotron output + MD coaching files + user history → <span style="text-decoration:line-through;color:#94a3b8;opacity:0.7;">Claude Sonnet</span> <span style="color:#a78bfa;font-weight:700;">→ Claude Haiku 4.5 — Call 2 (async)</span> <span style="font-size:10px;color:#64748b;font-style:italic;">(W6 A/B test)</span> → coaching output. <strong>Error handling:</strong> CLAUDE_TIMEOUT (retryable: true), CLAUDE_ERROR (retryable: true) — emit full SSE error shape per FE_SSE_and_Errors.md</div>
     <div class="task task-sq2 task-dep task-cut"><span class="task-id">S2-W7-05</span><div class="cut-tag">AUTH DROPPED</div><div class="dep-tag">OUTPUTS →</div> Auth endpoints: POST /auth/signup, POST /auth/login — removed for demo. Using hardcoded user IDs.</div>
     <div class="task task-sq2 task-dep task-cut"><span class="task-id">S2-W7-06</span><div class="cut-tag">AUTH DROPPED</div><div class="dep-tag">OUTPUTS →</div> Onboarding endpoint: POST /users/profile — removed. No auth = no onboarding flow. Profile is frontend shell only.</div>
   </div>
@@ -471,7 +471,7 @@
     <div class="task task-sq2 task-dep task-cut"><span class="task-id">S2-W8-02</span><div class="cut-tag">FE ONLY</div><div class="dep-tag">OUTPUTS →</div> Workout Builder endpoints — removed. Workout Builder is frontend only for demo, no backend integration.</div>
     <div class="task task-sq2 task-dep task-cut"><span class="task-id">S2-W8-03</span><div class="cut-tag">FE ONLY</div><div class="dep-tag">OUTPUTS →</div> Track Workout endpoints — removed. Workout Tracker is frontend only for demo.</div>
     <div class="task task-sq2"><span class="task-id">S2-W8-04</span>User history query endpoint: all past form sessions per exercise with weights + scores</div>
-    <div class="task task-sq2"><span class="task-id">S2-W8-05</span>Refine Claude Sonnet prompt engineering: specific, actionable coaching language</div>
+    <div class="task task-sq2"><span class="task-id">S2-W8-05</span>Refine <span style="text-decoration:line-through;color:#94a3b8;opacity:0.7;">Claude Sonnet</span> <span style="color:#a78bfa;font-weight:700;">→ Claude Haiku 4.5 — Call 2 (async)</span> <span style="font-size:10px;color:#64748b;font-style:italic;">(W6 A/B test)</span> prompt engineering: specific, actionable coaching language</div>
     <div class="task task-sq2"><span class="task-id">S2-W8-06</span>Comprehensive error handling audit — verify all pipeline stages emit correct SSE error shape with right error_stage + retryable value. Stages: quality_gate (M1-M6) · biomechanics (4 codes) · nemotron (3 codes) · frame_extraction (1 partial) · rag (2 partial) · claude (2 codes) · pipeline (2 codes). Reference: FE_SSE_and_Errors.md full taxonomy.</div>
   </div>
 
@@ -538,7 +538,7 @@
     <div class="task task-sq3 task-updated"><span class="task-id">S3-W8-01</span><div class="updated-tag">UPDATED</div>Finalise test video set: gold standard (3–5 good-form) + known-fault videos (3–5 bad-form scenarios). Labels confirmed with PT expert before W9 validation run.</div>
     <div class="task task-sq3"><span class="task-id">S3-W8-02</span>Label ground truth for each video: expected form scores, joint corrections</div>
     <div class="task task-sq3 task-cut"><span class="task-id">S3-W8-03</span><div class="cut-tag">SCOPE REDUCED</div>Refine ingestion if retrieval gaps — no ingestion pipeline. MD files updated directly if coaching quality gaps found.</div>
-    <div class="task task-sq3 task-updated"><span class="task-id">S3-W8-04</span><div class="updated-tag">UPDATED</div>Test MD files → Claude Sonnet coaching quality: do coaching reference files meaningfully improve specificity vs no context? Adjust MD content if gaps found.</div>
+    <div class="task task-sq3 task-updated"><span class="task-id">S3-W8-04</span><div class="updated-tag">UPDATED</div>Test MD files → <span style="text-decoration:line-through;color:#94a3b8;opacity:0.7;">Claude Sonnet</span> <span style="color:#a78bfa;font-weight:700;">→ Claude Haiku 4.5 — Call 2 (async)</span> <span style="font-size:10px;color:#64748b;font-style:italic;">(W6 A/B test)</span> coaching quality: do coaching reference files meaningfully improve specificity vs no context? Adjust MD content if gaps found.</div>
   </div>
 
   <div class="cell sq3">
@@ -571,7 +571,7 @@
   </div>
 
   <div class="cell-friday">
-    <div class="task task-friday"><span class="task-id" style="color:#67e8f9;">FRI-W7-01</span><div class="friday-tag">POST-MERGE</div> Test full AI pipeline: video → Nemotron → MD files → Claude Sonnet coaching → results + visual proof on screen. Weight-specific advice references DB history. Verify demo user selector loads correct session data.</div>
+    <div class="task task-friday"><span class="task-id" style="color:#67e8f9;">FRI-W7-01</span><div class="friday-tag">POST-MERGE</div> Test full AI pipeline: video → Nemotron → MD files → <span style="text-decoration:line-through;color:#94a3b8;opacity:0.7;">Claude Sonnet</span> <span style="color:#a78bfa;font-weight:700;">→ Claude Haiku 4.5 — Call 2 (async)</span> <span style="font-size:10px;color:#64748b;font-style:italic;">(W6 A/B test)</span> coaching → results + visual proof on screen. Weight-specific advice references DB history. Verify demo user selector loads correct session data.</div>
   </div>
 
   <div class="cell-friday">
@@ -656,7 +656,7 @@
   <!-- MERGE ROW -->
   <div class="merge-row">
     <div class="merge-label">⬡ Thursday Merges</div>
-    <div class="merge-note">W5: Scaffolds + contracts &nbsp;·&nbsp; W6: First thin E2E slice (video → MediaPipe → results on screen) &nbsp;·&nbsp; W7: Full pipeline live (Nemotron → MD files → Claude Sonnet) &nbsp;·&nbsp; W8: Progression rec + lifecycle screens (FE only) &nbsp;·&nbsp; W9: Accuracy validated + latency &lt;30s &nbsp;·&nbsp; W10: Release candidate</div>
+    <div class="merge-note">W5: Scaffolds + contracts &nbsp;·&nbsp; W6: First thin E2E slice (video → MediaPipe → results on screen) &nbsp;·&nbsp; W7: Full pipeline live (Nemotron → MD files → <span style="text-decoration:line-through;color:#94a3b8;opacity:0.7;">Claude Sonnet</span> <span style="color:#a78bfa;font-weight:700;">→ Claude Haiku 4.5 — Call 2 (async)</span> <span style="font-size:10px;color:#64748b;font-style:italic;">(W6 A/B test)</span>) &nbsp;·&nbsp; W8: Progression rec + lifecycle screens (FE only) &nbsp;·&nbsp; W9: Accuracy validated + latency &lt;30s &nbsp;·&nbsp; W10: Release candidate</div>
   </div>
 
 </div>

@@ -128,8 +128,8 @@ Kinetic is a web app where users log their workouts (exercise, sets, reps, weigh
 3. Kinetic processes video:
    MediaPipe extracts joint keypoints & angles per rep
    RAG retrieves relevant biomechanics context
-   Nemotron 3 Nano Omni generates structured JSON + chain-of-thought
-   Claude Sonnet produces coaching output
+   ~~Nemotron 3 Nano Omni~~ → **Claude Haiku 4.5 — Call 1** *(W6 A/B test)* generates structured JSON + chain-of-thought
+   ~~Claude Sonnet~~ → **Claude Haiku 4.5 — Call 2** *(W6 A/B test)* produces coaching output
    ↓
 4. User sees results:
    → Form score (overall)
@@ -210,7 +210,7 @@ Kinetic is a web app where users log their workouts (exercise, sets, reps, weigh
 
 **What we're NOT building (and why):**
 1. **Multiple exercises beyond Goblet Squat** — Reason: Accuracy must be validated deeply on 1 exercise first; Shoulder Press is a stretched goal only if Goblet Squat hits ≥80% accuracy by Week 9
-2. **Real-time live camera analysis** — Reason: Pipeline latency (MediaPipe + Nemotron + Claude Sonnet) makes real-time infeasible; "Record" in-browser is a stretched goal but still uses the same async pipeline
+2. **Real-time live camera analysis** — Reason: Pipeline latency (MediaPipe + ~~Nemotron~~ → **Haiku 4.5** + ~~Claude Sonnet~~ → **Claude Haiku 4.5 — Call 2** *(W6 A/B test)*) makes real-time infeasible; "Record" in-browser is a stretched goal but still uses the same async pipeline
 3. **Mobile native app** — Reason: Web-first (responsive) for POC; mobile post-validation
 4. **Nutrition or general fitness tracking** — Reason: Outside core value prop; competitive and crowded space
 5. **B2B creator portal** — Reason: Phase 2 initiative; requires validated B2C user base first
@@ -246,15 +246,15 @@ Kinetic is a web app where users log their workouts (exercise, sets, reps, weigh
 ### Technical Approach
 - **MVP Delivery:** Responsive web application (React + Tailwind) — web-first to validate the full pipeline end-to-end as a POC before native mobile investment
 - **Pose Detection:** MediaPipe (Python) extracts joint keypoints per rep, computes structured biomechanics output: joint angles (knee, hip, torso), stability, posture, rep count, rep time
-- **Video Analysis Model:** NVIDIA Nemotron 3 Nano Omni receives **both** the raw video and MediaPipe's structured biomechanics output as dual inputs — the model cross-references visual context against computed joint data to generate accurate, grounded form analysis
-- **RAG Pipeline:** Biomechanics corpus (research papers, YouTube transcripts, exercise tutorials, muscle anatomy images) indexed for retrieval; Nemotron 3 Nano Omni generates coaching output grounded in this corpus
+- **Video Analysis Model:** ~~NVIDIA ~~Nemotron 3 Nano Omni~~ → **Claude Haiku 4.5 — Call 1** *(W6 A/B test)*~~ → **Claude Haiku 4.5 — Call 1** *(W6 A/B test)* receives **both** the raw video and MediaPipe's structured biomechanics output as dual inputs — the model cross-references visual context against computed joint data to generate accurate, grounded form analysis
+- **RAG Pipeline:** Biomechanics corpus (research papers, YouTube transcripts, exercise tutorials, muscle anatomy images) indexed for retrieval; ~~Nemotron 3 Nano Omni~~ → **Claude Haiku 4.5 — Call 1** *(W6 A/B test)* generates coaching output grounded in this corpus
 - **Progression Logic:** Weight-tagged session history queried to contextualise current form against past sessions at same/lower weights
 - **Backend:** Python API on GCP, API Gateway
 - **Frontend:** React + Tailwind (responsive web app), hosted on Vercel — auto-deploy on push to dev, per-branch preview URLs
 - **Storage:** GCP / S3 for video files; database for exercise logs, form scores, angles, rep data, user history
 
 ### Dependencies
-- **Backend:** MediaPipe Python library, Nemotron 3 Nano Omni (NVIDIA), GCP (Cloud Storage, API Gateway)
+- **Backend:** MediaPipe Python library, ~~Nemotron 3 Nano Omni~~ → **Claude Haiku 4.5 — Call 1** *(W6 A/B test)* (NVIDIA), GCP (Cloud Storage, API Gateway)
 - **Frontend hosting:** Vercel (confirmed W5)
 - **Frontend:** React, Tailwind
 - **Data:** 20–30 curated sources per exercise (research papers, YouTube, Kaggle, Instagram tutorials, biomechanics references) for RAG corpus
@@ -273,7 +273,7 @@ Kinetic is a web app where users log their workouts (exercise, sets, reps, weigh
    - Mitigation: Define filming guidelines (Week 4); validate on 20–30 diverse sample videos; provide in-app tips before upload
 
 2. **Model hallucination on form advice** — Incorrect advice could cause injury (highest-severity risk)
-   - Mitigation: Dual-input to Nemotron 3 Nano Omni (raw video + MediaPipe biomechanics) reduces reliance on visual interpretation alone; all outputs grounded in RAG corpus; expert validation pass before launch; confidence threshold to flag low-certainty outputs rather than fabricate
+   - Mitigation: Dual-input to ~~Nemotron 3 Nano Omni~~ → **Claude Haiku 4.5 — Call 1** *(W6 A/B test)* (raw video + MediaPipe biomechanics) reduces reliance on visual interpretation alone; all outputs grounded in RAG corpus; expert validation pass before launch; confidence threshold to flag low-certainty outputs rather than fabricate
 
 3. **End-to-end latency >35s** — Video processing + RAG + LLM generation chain may degrade UX
    - Mitigation: Async processing with SSE progress narration (presenter talks through pipeline stages during demo); target <35s by Week 9; mock pipeline instance built as demo-day backup if target not met
@@ -380,12 +380,12 @@ Full user stories have been documented separately — 15 stories across 7 epics 
 - [Biomechanics research corpus (Goblet Squat) — Week 5]
 - [Sample videos for testing (20–30) — Week 7]
 - [MediaPipe documentation]
-- [Nemotron 3 Nano Omni documentation (NVIDIA)]
+- [~~Nemotron 3 Nano Omni~~ → **Claude Haiku 4.5 — Call 1** *(W6 A/B test)* documentation (NVIDIA)]
 
 ---
 
 **Changelog:**
 - May 4, 2026: Initial draft — created from founder interviews and project roadmap
-- May 4, 2026: Added stretched goals (Record option, Shoulder Press, Design enhancements); updated Out of Scope to reflect; fixed AI pipeline references (Nemotron + Claude Sonnet)
+- May 4, 2026: Added stretched goals (Record option, Shoulder Press, Design enhancements); updated Out of Scope to reflect; fixed AI pipeline references (~~Nemotron~~ → **Haiku 4.5** + ~~Claude Sonnet~~ → **Claude Haiku 4.5 — Call 2** *(W6 A/B test)*)
 
 ---

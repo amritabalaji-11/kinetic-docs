@@ -268,7 +268,7 @@
             </div>
             <div class="phase-pills">
               <span class="story-pill">Full Results screen — real pipeline output</span>
-              <span class="story-pill">Claude Sonnet coaching — weight-specific</span>
+              <span class="story-pill"><span style="text-decoration:line-through;color:#94a3b8;opacity:0.7;">Claude Sonnet</span> <span style="color:#a78bfa;font-weight:700;">→ Claude Haiku 4.5 — Call 2 (async)</span> <span style="font-size:10px;color:#64748b;font-style:italic;">(W6 A/B test)</span> coaching — weight-specific</span>
               <span class="story-pill">MD files → Claude system prompt</span>
               <span class="story-pill">Weight history from DB → Claude</span>
               <span class="story-pill">Visual proof of form — image with angles</span>
@@ -427,7 +427,7 @@
           </summary>
           <div class="us-body">
             <div class="us-statement">As a user who has logged multiple sessions, I want to compare my current form against my previous session on the same 4 parameters, and receive a weight progression recommendation, so I can see whether I'm improving and whether to go heavier.</div>
-            <div class="us-note">Weight history (past sessions, weights used, form scores) is retrieved from the DB and passed to Claude Sonnet — not Nemotron. Nemotron analyses the current video. Claude synthesises coaching and the progression recommendation using historical context.</div>
+            <div class="us-note">Weight history (past sessions, weights used, form scores) is retrieved from the DB and passed to <span style="text-decoration:line-through;color:#94a3b8;opacity:0.7;">Claude Sonnet</span> <span style="color:#a78bfa;font-weight:700;">→ Claude Haiku 4.5 — Call 2 (async)</span> <span style="font-size:10px;color:#64748b;font-style:italic;">(W6 A/B test)</span> — not Nemotron. Nemotron analyses the current video. Claude synthesises coaching and the progression recommendation using historical context.</div>
             <div class="us-ac-label">Acceptance Criteria</div>
             <ul class="us-ac-list">
               <li class="us-ac-item">Given I'm on the Results screen, I see a <strong>Form Comparison</strong> view alongside my current results</li>
@@ -716,7 +716,7 @@
             <span class="story-pill e4" style="background:var(--e4-soft);color:var(--e4);border:1px solid var(--e4-border);font-size:12px;padding:4px 10px;border-radius:16px;">E4 shell</span>
           </div>
           <div class="week-ship">
-            <strong>Ship:</strong> Demo user selection screen live. Full Results screen with real pipeline output — Claude Sonnet coaching (MD files → system prompt), weight-specific advice from DB history, visual proof of form. History screen shell. PT-01 Phase 2 threshold refinement.
+            <strong>Ship:</strong> Demo user selection screen live. Full Results screen with real pipeline output — <span style="text-decoration:line-through;color:#94a3b8;opacity:0.7;">Claude Sonnet</span> <span style="color:#a78bfa;font-weight:700;">→ Claude Haiku 4.5 — Call 2 (async)</span> <span style="font-size:10px;color:#64748b;font-style:italic;">(W6 A/B test)</span> coaching (MD files → system prompt), weight-specific advice from DB history, visual proof of form. History screen shell. PT-01 Phase 2 threshold refinement.
           </div>
           <div class="week-test"><span>Test:</span> Upload → real coaching output with weight-specific advice → visual proof of form on Results screen</div>
         </div>
@@ -804,7 +804,7 @@
           <div class="decision-title">Vector DB dropped — MD files in Claude system prompt</div>
         </div>
         <div class="decision-right">
-          <div class="decision-what">5–10 curated coaching documents converted to MD files and injected directly into Claude Sonnet's system prompt. No retrieval endpoint, no embeddings, no ingestion pipeline.</div>
+          <div class="decision-what">5–10 curated coaching documents converted to MD files and injected directly into <span style="text-decoration:line-through;color:#94a3b8;opacity:0.7;">Claude Sonnet</span> <span style="color:#a78bfa;font-weight:700;">→ Claude Haiku 4.5 — Call 2 (async)</span> <span style="font-size:10px;color:#64748b;font-style:italic;">(W6 A/B test)</span>'s system prompt. No retrieval endpoint, no embeddings, no ingestion pipeline.</div>
           <div class="decision-why"><strong>Why:</strong> 1 exercise + &lt;10 documents = system prompt injection is sufficient. Vector DB adds significant Squad 3 infrastructure with no meaningful quality gain at this scale.</div>
         </div>
       </div>

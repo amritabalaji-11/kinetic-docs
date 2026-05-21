@@ -10,7 +10,7 @@
 
 Kinetic is an AI-powered form coaching app. Users upload a video of themselves doing an exercise, and Kinetic analyses their technique rep-by-rep using computer vision + AI, then delivers personalised coaching and a weight progression recommendation.
 
-**Core pipeline:** User uploads video → MediaPipe (joint detection) → Biomechanics script → OpenCV (skeleton overlay) → Nemotron (form scoring) → Claude Sonnet (coaching) → Results screen
+**Core pipeline:** User uploads video → MediaPipe (joint detection) → Biomechanics script → OpenCV (skeleton overlay) → ~~Nemotron~~ → **Haiku 4.5** (form scoring) → ~~Claude Sonnet~~ → **Claude Haiku 4.5 — Call 2** *(W6 A/B test)* (coaching) → Results screen
 
 **What makes it different:** Per-rep scoring across a full set, longitudinal tracking across sessions, weight-specific coaching, and a worst-rep annotated frame showing the user their own body position with joint angles overlaid.
 
@@ -69,7 +69,7 @@ Kinetic is an AI-powered form coaching app. Users upload a video of themselves d
 
 **Key changes from v1:**
 - RAG vector DB → replaced by MD files in Claude system prompt
-- Squad 2 owns /upload, SSE, Nemotron, Claude. Squad 3 owns MediaPipe, OpenCV, Biomechanics.
+- Squad 2 owns /upload, SSE, ~~Nemotron~~ → **Haiku 4.5**, Claude. Squad 3 owns MediaPipe, OpenCV, Biomechanics.
 - Gold Standard data prep added (PT-02) — 3–5 reference videos → DB, used by OpenCV overlay + Claude prompt
 
 ---
@@ -127,7 +127,7 @@ Kinetic is an AI-powered form coaching app. Users upload a video of themselves d
 - Single annotated image — worst-rep bottom-position frame with skeleton lines, joint markers (colour-coded), and actual angles vs gold standard overlaid. `annotated_frame_url` from OpenCV → DB.
 
 **Overall score:**
-- Form score /100 — `summary.overall_form_score` from Nemotron
+- Form score /100 — `summary.overall_form_score` from ~~Nemotron~~ → **Haiku 4.5**
 
 **Personalised summary:**
 - 1–2 sentence summary combining form quality + weight lifted — `coaching.summary_paragraph` from Claude
@@ -135,14 +135,14 @@ Kinetic is an AI-powered form coaching app. Users upload a video of themselves d
 
 **4 Parameters — Posture · Stability · Movement Quality · Tempo:**
 Each parameter shows:
-- Score /100 — from Nemotron (`summary.posture_score`, `summary.stability_score`, `summary.movement_quality_score`, `summary.tempo_score`)
+- Score /100 — from ~~Nemotron~~ → **Haiku 4.5** (`summary.posture_score`, `summary.stability_score`, `summary.movement_quality_score`, `summary.tempo_score`)
 - What they're doing well — affirmation sentence from Claude (`coaching.parameters.[x].affirmation`) — **W7/8 iteration, null in W6**
 - What's off — specific observation from Claude (`coaching.parameters.[x].observation`) — **W7/8 iteration, null in W6**
 - Action to work on — 1 concrete correction from Claude (`coaching.parameters.[x].correction`)
 
 **Rep-by-rep score chart:**
 - x-axis: rep number · y-axis: form score /100
-- Data: `reps[n].rep_number` + `reps[n].form_score` from Nemotron
+- Data: `reps[n].rep_number` + `reps[n].form_score` from ~~Nemotron~~ → **Haiku 4.5**
 - Performance Over Reps %: calculated frontend — `(score of highest rep − score of last rep) ÷ score of highest rep`
 
 **Acceptance Criteria:**
@@ -203,7 +203,7 @@ Each parameter shows:
 **Outcome:** I can see if I'm improving — and whether I'm ready to go heavier  
 **Week:** W8
 
-**Architecture change:** Weight history (past sessions, weights, form scores) retrieved from `workout_logs` DB and passed to Claude Sonnet — not Nemotron. Nemotron analyses the current video only. Claude synthesises the progression recommendation using Nemotron's output + historical context. Cleaner separation: Nemotron = form analysis this session, Claude = coaching + progression using history.
+**Architecture change:** Weight history (past sessions, weights, form scores) retrieved from `workout_logs` DB and passed to ~~Claude Sonnet~~ → **Claude Haiku 4.5 — Call 2** *(W6 A/B test)* — not ~~Nemotron~~ → **Haiku 4.5**. ~~Nemotron~~ → **Haiku 4.5** analyses the current video only. Claude synthesises the progression recommendation using ~~Nemotron~~ → **Haiku 4.5**'s output + historical context. Cleaner separation: ~~Nemotron~~ → **Haiku 4.5** = form analysis this session, Claude = coaching + progression using history.
 
 ---
 
@@ -219,7 +219,7 @@ Each parameter shows:
 **b) Left side — Current Analysis:**
 - Date (`created_at`) · Weight (`weight_value` + `weight_unit`) — from DB
 - Visual Proof — `annotated_frame_url` of current analysis (OpenCV → DB)
-- Form Score /100 — `summary.overall_form_score` from Nemotron output
+- Form Score /100 — `summary.overall_form_score` from ~~Nemotron~~ → **Haiku 4.5** output
 
 **c) Right side — Previous Analysis** (most recent completed analysis for same `exercise_id` + `user_id`, resolved by backend):
 - Date (`created_at`) · Weight (`weight_value` + `weight_unit`) — from DB
@@ -257,7 +257,7 @@ Each parameter shows:
 PM + Physical Trainer define the exact ruleset for "Ready to progress" / "Hold" / "Drop weight" before Squad 2 builds the logic in W8.
 
 **4-Phase Delivery:**
-- Phase 1 (W5 — done): Biomechanics parameters defined + Nemotron output schema agreed
+- Phase 1 (W5 — done): Biomechanics parameters defined + ~~Nemotron~~ → **Haiku 4.5** output schema agreed
 - Phase 2 (W7): Refine thresholds against first real pipeline output
 - Phase 3 (Mon W8): Final spec to Squad 2 — exact thresholds, edge cases, three recommendation strings
 - Phase 4 (W9): PT expert validation on 3–5 test videos including gold standard videos
@@ -393,7 +393,7 @@ Dropped — auth removed → no onboarding flow. Can be added post-demo when aut
 - **Thursday merge:** Real video → GCS → MediaPipe → biomechanics JSON → SSE fires → Results screen shows real data
 
 ### Week 7 — Full Pipeline
-**Theme:** Full pipeline live — Nemotron + MD coaching docs (system prompt) + Claude Sonnet coaching. Worst-rep annotated frame on Results screen.
+**Theme:** Full pipeline live — ~~Nemotron~~ → **Haiku 4.5** + MD coaching docs (system prompt) + ~~Claude Sonnet~~ → **Claude Haiku 4.5 — Call 2** *(W6 A/B test)* coaching. Worst-rep annotated frame on Results screen.
 
 - **Thursday test:** Upload → get real coaching output with weight-specific advice → worst-rep annotated frame on Results screen
 
@@ -422,7 +422,7 @@ Dropped — auth removed → no onboarding flow. Can be added post-demo when aut
 2–3 user IDs seeded in DB (`user_001`, `user_002`, `user_003`). Frontend Upload screen has a dropdown to select demo user. No JWT, no login screen, no session management. Enables switching between users to show different progression stories on dashboard.
 
 **Vector DB dropped — MD files in Claude system prompt**
-5–10 curated coaching documents (PT language, form cues, Goblet Squat references) converted to MD files and injected directly into Claude Sonnet's system prompt. No retrieval endpoint, no embeddings, no ingestion pipeline. Saves Squad 3's full RAG pipeline build.
+5–10 curated coaching documents (PT language, form cues, Goblet Squat references) converted to MD files and injected directly into ~~Claude Sonnet~~ → **Claude Haiku 4.5 — Call 2** *(W6 A/B test)*'s system prompt. No retrieval endpoint, no embeddings, no ingestion pipeline. Saves Squad 3's full RAG pipeline build.
 
 **Profile screen — frontend shell only**
 No backend profile endpoints. Screen exists, looks complete, displays dummy data. Auth onboarding removed — personalisation wired to AI coaching is post-demo.
@@ -435,11 +435,11 @@ No backend profile endpoints. Screen exists, looks complete, displays dummy data
 **Goblet Squat only for MVP**
 One exercise enables deep, accurate biomechanics tuning. Generalising to multiple exercises is a post-demo milestone.
 
-**Nemotron over GPT-4V for video analysis**
-NVIDIA Nemotron 3 Nano Omni confirmed as the video model. Per-rep scoring with chain-of-thought reasoning. Test C (overlay video + biomechanics JSON input) confirmed as the optimal input combination.
+**~~Nemotron~~ → **Haiku 4.5** over GPT-4V for video analysis**
+~~NVIDIA ~~Nemotron 3 Nano Omni~~ → **Claude Haiku 4.5 — Call 1** *(W6 A/B test)*~~ → **Claude Haiku 4.5 — Call 1** *(W6 A/B test)* confirmed as the video model. Per-rep scoring with chain-of-thought reasoning. Test C (overlay video + biomechanics JSON input) confirmed as the optimal input combination.
 
-**OpenCV overlay video → Nemotron input**
-The full video with green skeleton lines drawn on every frame is what Nemotron receives — confirmed more accurate than raw video. This overlay is NOT shown to the user; it is the AI input only.
+**OpenCV overlay video → ~~Nemotron~~ → **Haiku 4.5** input**
+The full video with green skeleton lines drawn on every frame is what ~~Nemotron~~ → **Haiku 4.5** receives — confirmed more accurate than raw video. This overlay is NOT shown to the user; it is the AI input only.
 
 **OpenCV Part 2 — worst-rep frame extraction (Option 3)**
 Extract a single frame at the bottom position of the worst rep. Draw skeleton lines + joint markers (colour-coded) + actual angle text + gold standard reference range. The annotated frame is what the user sees on the Results screen.
