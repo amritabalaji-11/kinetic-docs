@@ -416,18 +416,31 @@ Async — Tab 1 is already fully visible. Failure only affects Tab 2. Use `retry
 
 **3 text messages + 1 message before navigation.** Single message line updates in place. No % bar. No checklist.
 
-| # | SSE Event | User-facing message (exact copy) | User sees? | Note |
-|---|---|---|---|---|
-| 1 | `upload_received` | "Video received. Preparing your session..." | ✅ Yes | First feedback — show immediately |
-| 2 | `mediapipe_started` | "Reading your movement patterns..." | ✅ Yes | Holds through `mediapipe_complete` |
-| 3 | `mediapipe_complete` | *(no change)* | ❌ Silent | Message holds from step 2 |
-| 4 | `biomechanics_complete` | *(no change)* | ❌ Silent | Message holds from step 2 |
-| 5 | `haiku_started` | "Analysing your form frame by frame..." | ✅ Yes | Longest step — holds until `analysis_ready` |
-| 6 | `analysis_ready` | "Your analysis is ready." | ✅ Yes | Show briefly (~0.5–1s), then auto-navigate to Analysis screen |
-| 7 | `frame_ready` | *(no message — user on Analysis screen)* | ❌ N/A | Handled on Analysis screen |
-| 8 | `progression_ready` | *(no message — user on Analysis screen)* | ❌ N/A | Handled on Analysis screen |
+| # | SSE Event | User-facing message (exact copy) | % bar | User sees? | Note |
+|---|---|---|---|---|---|
+| — | *(screen mount)* | *(pulsing dots — no text)* | 0% | Spinner | Before first SSE event |
+| 1 | `upload_received` | "Video received. Preparing your session..." | 5% | ✅ Both | First feedback |
+| 2 | `mediapipe_started` | "Reading your movement patterns..." | 10% | ✅ Both | Message + % update |
+| 3 | `mediapipe_complete` | *(no change — holds from step 2)* | 30% | % only | % advances, message holds |
+| 4 | `biomechanics_complete` | *(no change)* | 33% | % only | Silent nudge — % only |
+| 5 | `haiku_started` | "Analysing your form frame by frame..." | 35% | ✅ Both | Longest step (~10–15s) — bar stays at 35% |
+| 6 | `analysis_ready` | "Your analysis is ready." | 100% | ✅ Both | Snap bar to 100%. Show message ~0.5–1s. Navigate. |
+| 7 | `frame_ready` | *(no message — user on Analysis screen)* | N/A | ❌ N/A | Handled on Analysis screen |
+| 8 | `progression_ready` | *(no message — user on Analysis screen)* | N/A | ❌ N/A | Handled on Analysis screen |
 
-> **Note for S1:** The checklist items in the Processing screen design handoff are placeholder copy. Use the exact strings in this table.
+**% values to hardcode in frontend:**
+```js
+const SSE_PROGRESS = {
+  upload_received:       5,
+  mediapipe_started:    10,
+  mediapipe_complete:   30,
+  biomechanics_complete: 33,
+  haiku_started:        35,
+  analysis_ready:      100,
+};
+```
+
+> **Note for S1:** The checklist items in the Processing screen design handoff are placeholder copy. Use the exact strings in this table. Snap % bar to target value on event arrival — do not animate smoothly between steps.
 
 ---
 
