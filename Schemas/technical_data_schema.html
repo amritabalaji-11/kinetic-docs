@@ -1552,9 +1552,9 @@ coaching_content = load_md_files(exercise=<span class="js">"goblet_squat"</span>
             <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#0d1a2e;color:#60a5fa;border:1px solid #1e3a5f;">W7</span></td>
           </tr>
           <tr>
-            <td>Overall recommendation — what to do in the next session</td>
+            <td>Next session focus — 2–3 specific actionable points rendered as checklist</td>
             <td>coaching_output (DB)</td>
-            <td><span class="example">coaching_output.recommendation</span></td>
+            <td><span class="example">coaching_output.next_session_focus</span></td>
             <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#0d1a2e;color:#60a5fa;border:1px solid #1e3a5f;">W7</span></td>
           </tr>
 
@@ -1678,7 +1678,24 @@ coaching_content = load_md_files(exercise=<span class="js">"goblet_squat"</span>
             <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#0d1a2e;color:#60a5fa;border:1px solid #1e3a5f;">W7</span></td>
           </tr>
 
-          <!-- F: Rep-by-rep chart -->
+          <!-- rep_trend: observation + recommendation — rendered below rep chart -->
+          <tr>
+            <td colspan="4" style="background:#0d1117;padding:6px 8px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:0.05em;color:#64748b;">Rep Trend (below chart)</td>
+          </tr>
+          <tr>
+            <td>Rep trend observation — how form evolved rep 1 → last rep</td>
+            <td>coaching_output (DB)</td>
+            <td><span class="example">coaching_output.rep_trend.observation</span></td>
+            <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#0d1a2e;color:#60a5fa;border:1px solid #1e3a5f;">W7</span></td>
+          </tr>
+          <tr>
+            <td>Rep trend recommendation — one focus based on the trend</td>
+            <td>coaching_output (DB)</td>
+            <td><span class="example">coaching_output.rep_trend.recommendation</span></td>
+            <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#0d1a2e;color:#60a5fa;border:1px solid #1e3a5f;">W7</span></td>
+          </tr>
+
+                    <!-- F: Rep-by-rep chart -->
           <tr>
             <td colspan="4" style="background:#0d1117;padding:6px 8px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:0.7px;color:#ec4899;border-left:2px solid #ec4899;">F — Rep-by-Rep Score Chart (x: rep number · y: form score /100)</td>
           </tr>
@@ -1928,7 +1945,24 @@ coaching_content = load_md_files(exercise=<span class="js">"goblet_squat"</span>
             <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#0d1a2e;color:#60a5fa;border:1px solid #1e3a5f;">W7</span></td>
           </tr>
 
-          <!-- F: Rep-by-rep chart -->
+          <!-- rep_trend: observation + recommendation — rendered below rep chart -->
+          <tr>
+            <td colspan="4" style="background:#0d1117;padding:6px 8px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:0.05em;color:#64748b;">Rep Trend (below chart)</td>
+          </tr>
+          <tr>
+            <td>Rep trend observation — how form evolved rep 1 → last rep</td>
+            <td>coaching_output (DB)</td>
+            <td><span class="example">coaching_output.rep_trend.observation</span></td>
+            <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#0d1a2e;color:#60a5fa;border:1px solid #1e3a5f;">W7</span></td>
+          </tr>
+          <tr>
+            <td>Rep trend recommendation — one focus based on the trend</td>
+            <td>coaching_output (DB)</td>
+            <td><span class="example">coaching_output.rep_trend.recommendation</span></td>
+            <td><span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;background:#0d1a2e;color:#60a5fa;border:1px solid #1e3a5f;">W7</span></td>
+          </tr>
+
+                    <!-- F: Rep-by-rep chart -->
           <tr>
             <td colspan="4" style="background:#0d1117;padding:6px 8px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:0.7px;color:#ec4899;border-left:2px solid #ec4899;">F — Rep-by-Rep Score Chart · Current vs Previous overlaid (x: rep number · y: form score /100)</td>
           </tr>
