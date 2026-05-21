@@ -296,7 +296,7 @@ h1 { font-size: 20px; font-weight: 700; color: #f8fafc; margin-bottom: 4px; }
 <body>
 
 <h1>Kinetic — Tech Design Flow &amp; Scope Reduction</h1>
-<p class="page-sub">Scope Reduction (original vs revised) · Option A (Grouped Architecture Layers) · Option B (Pipeline Layer Colors) · Based on mentor review May 10, 2026</p>
+<p class="page-sub">Scope Reduction (original vs revised) · Option A (Grouped Architecture Layers) · Option B (Pipeline Layer Colors) · Updated May 21, 2026 — Nemotron → Haiku 4.5, OpenCV full annotation overlay</p>
 
 <div style="display:flex;flex-direction:column;">
 
@@ -352,20 +352,20 @@ h1 { font-size: 20px; font-weight: 700; color: #f8fafc; margin-bottom: 4px; }
     <div class="arrow">→</div>
     <div class="node b-ai">
       <div class="node-icon">🤖</div>
-      <div class="node-title">Nemotron 3 Nano Omni</div>
-      <div class="node-sub">Raw video +<br>biomechanics → JSON</div>
+      <div class="node-title">Claude Haiku 4.5 — Call 1</div>
+      <div class="node-sub">Biomechanics JSON + 8-frame composite → form analysis + coaching</div>
     </div>
     <div class="arrow">→</div>
     <div class="node b-proc">
       <div class="node-icon">🎞️</div>
-      <div class="node-title">OpenCV Frame Extraction</div>
-      <div class="node-sub">Timestamps → annotated<br>frames → GCS</div>
+      <div class="node-title">OpenCV Part 2 — Annotation</div>
+      <div class="node-sub">Worst rep · side/front angle · skeleton overlay · fault panel → GCS</div>
     </div>
     <div class="arrow">→</div>
     <div class="node b-ai">
       <div class="node-icon">💡</div>
-      <div class="node-title">Claude Sonnet 4.6</div>
-      <div class="node-sub">Reasoning &<br>coaching output</div>
+      <div class="node-title">Claude Haiku 4.5 — Call 2</div>
+      <div class="node-sub">Longitudinal coaching<br>(async · Tab 2)</div>
     </div>
     <div class="arrow">→</div>
     <div class="node b-out">
@@ -381,16 +381,16 @@ h1 { font-size: 20px; font-weight: 700; color: #f8fafc; margin-bottom: 4px; }
       <span style="color:#fcd34d; font-weight:600;">MD files (system prompt)</span>
       &nbsp;+&nbsp;
       <span style="color:#bef264; font-weight:600;">User data (Structured DB)</span>
-      &nbsp;also feed into Claude Sonnet
+      &nbsp;also feed into Haiku Call 1 + Call 2
     </div>
   </div>
 
   <div style="display:flex; align-items:center; gap:8px; margin-top:10px; margin-left:692px;">
-    <div style="font-size:10px; color:#334155;">↓ also saved after Nemotron + OpenCV</div>
+    <div style="font-size:10px; color:#334155;">↓ also saved after Haiku Call 1 + OpenCV Part 2</div>
     <div class="node b-infra" style="min-width:180px; max-width:220px;">
       <div class="node-icon">💾</div>
       <div class="node-title">Save Record</div>
-      <div class="node-sub">S3 video ref · MediaPipe output · Nemotron analysis · annotated frames (GCS)</div>
+      <div class="node-sub">S3 video ref · MediaPipe output · Haiku Call 1 coaching output · annotated frame (GCS) · Haiku Call 2 progression output</div>
     </div>
   </div>
 </div>
@@ -418,8 +418,8 @@ h1 { font-size: 20px; font-weight: 700; color: #f8fafc; margin-bottom: 4px; }
 <div class="data-layers">
   <div class="data-box b-data-ai">
     <div class="data-box-title">AI Models Used</div>
-    <div class="data-item"><div class="data-dot"></div>Nemotron 3 Nano Omni — overlay video + biomechanics → structured JSON</div>
-    <div class="data-item"><div class="data-dot"></div>Claude Sonnet 4.6 — reasoning + coaching (MD files in system prompt)</div>
+    <div class="data-item"><div class="data-dot"></div>Claude Haiku 4.5 Call 1 — biomechanics JSON + 8-frame composite + gold standard + session history → form analysis + coaching (single call)</div>
+    <div class="data-item"><div class="data-dot"></div>Claude Haiku 4.5 Call 2 (async) — current session + last 5 sessions → longitudinal progression coaching (Tab 2)</div>
   </div>
   <div class="data-box b-data-db">
     <div class="data-box-title">Structured DB — User Data</div>
@@ -435,7 +435,7 @@ h1 { font-size: 20px; font-weight: 700; color: #f8fafc; margin-bottom: 4px; }
 <div class="question-box" style="margin-top: 16px;">
   <div class="question-title">Scope decisions — May 2026 mentor review</div>
   <div class="question-item"><span class="q-num">✓</span> RAG simplified — Vector DB dropped. 5–10 MD files injected into Claude system prompt directly.</div>
-  <div class="question-item"><span class="q-num">✓</span> Nemotron receives overlay video (green skeleton) + biomechanics JSON — confirmed more accurate than raw video.</div>
+  <div class="question-item"><span class="q-num">✓</span> Nemotron removed — replaced by Claude Haiku 4.5 which handles full form analysis + coaching in a single call. A/B test (W6) confirmed Haiku matches Nemotron accuracy with simpler pipeline.</div>
   <div class="question-item"><span class="q-num">✓</span> Auth dropped — JWT + Supabase Auth removed. 2–3 hardcoded user IDs cover form comparison + session history for demo.</div>
   <div class="question-item"><span class="q-num">✓</span> Gold standard added — 3–5 good-form reference videos → gold_standard_biomechanics table → used by OpenCV overlay + Claude prompt.</div>
 </div>
@@ -691,8 +691,8 @@ h1 { font-size: 20px; font-weight: 700; color: #f8fafc; margin-bottom: 4px; }
       <div class="arrow">→</div>
       <div class="node cn-proc" style="min-width:140px;max-width:160px;">
         <div class="node-icon">🎞️</div>
-        <div class="node-title">Frame Extraction</div>
-        <div class="node-sub">OpenCV · worst-rep<br>bottom frame → annotated<br>overlay → GCS</div>
+        <div class="node-title">OpenCV Part 2</div>
+        <div class="node-sub">Worst rep · camera angle detection · side/front fault annotation · skeleton overlay · fault panel → GCS</div>
       </div>
     </div>
   </div>
@@ -728,14 +728,14 @@ h1 { font-size: 20px; font-weight: 700; color: #f8fafc; margin-bottom: 4px; }
     <div class="c-nodes">
       <div class="node cn-ai" style="min-width:160px;max-width:180px;">
         <div class="node-icon">🤖</div>
-        <div class="node-title">Nemotron 3 Nano Omni</div>
-        <div class="node-sub">Biomechanics JSON<br>+ video → structured<br>form analysis JSON</div>
+        <div class="node-title">Claude Haiku 4.5 — Call 1</div>
+        <div class="node-sub">Biomechanics JSON + 8-frame composite + gold standard + session history → form analysis + coaching JSON</div>
       </div>
       <div class="arrow">→</div>
       <div class="node cn-ai" style="min-width:160px;max-width:180px;">
         <div class="node-icon">💡</div>
-        <div class="node-title">Claude Sonnet 4.6</div>
-        <div class="node-sub">Analysis + RAG context<br>+ user history →<br>coaching + progression</div>
+        <div class="node-title">Claude Haiku 4.5 — Call 2</div>
+        <div class="node-sub">Current session + last 5 sessions → longitudinal progression coaching (async · Tab 2)</div>
       </div>
     </div>
   </div>
@@ -946,20 +946,20 @@ h1 { font-size: 20px; font-weight: 700; color: #f8fafc; margin-bottom: 4px; }
       <div class="layer-label">AI Pipeline</div>
       <div class="comp-cell cell-original">
         <div class="comp-row">
-          <span class="chip chip-keep">Nemotron 3 Nano Omni</span>
-          <span class="chip chip-keep">Per-rep scoring</span>
-          <span class="chip chip-keep">Claude Sonnet</span>
-          <span class="chip chip-keep">Coaching output</span>
+          <span class="chip chip-revised">Claude Haiku 4.5 — Call 1</span>
+          <span class="chip chip-revised">Form analysis + coaching (single call)</span>
+          <span class="chip chip-revised">Claude Haiku 4.5 — Call 2 (async)</span>
+          <span class="chip chip-revised">Longitudinal progression · Tab 2</span>
           <span class="chip chip-keep">Progression recommendation</span>
         </div>
       </div>
       <div class="arrow-cell">→</div>
       <div class="comp-cell cell-revised">
         <div class="comp-row">
-          <span class="chip chip-keep">Nemotron 3 Nano Omni</span>
-          <span class="chip chip-keep">Per-rep scoring</span>
-          <span class="chip chip-keep">Claude Sonnet</span>
-          <span class="chip chip-keep">Coaching output</span>
+          <span class="chip chip-revised">Claude Haiku 4.5 — Call 1</span>
+          <span class="chip chip-revised">Form analysis + coaching (single call)</span>
+          <span class="chip chip-revised">Claude Haiku 4.5 — Call 2 (async)</span>
+          <span class="chip chip-revised">Longitudinal progression · Tab 2</span>
           <span class="chip chip-keep">Progression recommendation</span>
         </div>
         <div style="font-size:10px;color:#475569;margin-top:4px;">No changes — core AI pipeline unchanged</div>
@@ -1059,30 +1059,30 @@ h1 { font-size: 20px; font-weight: 700; color: #f8fafc; margin-bottom: 4px; }
           <td><span class="feat-name">OpenCV Part 1 — overlay video</span><span class="feat-sub">Full video with green skeleton lines</span></td>
           <td><span class="status-keep">Kept</span></td>
           <td>Already built. Full video with skeleton overlay saved to GCS as overlay_video_url.</td>
-          <td>This is what goes into Nemotron. Confirmed more accurate than raw video.</td>
+          <td>Biomechanics JSON + 8-frame composite grid sent to Haiku Call 1. Nemotron removed after W6 A/B test.</td>
         </tr>
         <tr>
           <td><span class="feat-name">Biomechanics script</span><span class="feat-sub">Knee, hip, ankle angles · tempo · stability</span></td>
           <td><span class="status-keep">Kept</span></td>
           <td>Unchanged. Requires adding bottom_frame + bottom_timestamp_ms per rep (data gap fix).</td>
-          <td>Structured input for Nemotron. Also used for gold standard comparison and frame extraction.</td>
+          <td>Structured input for Haiku Call 1. Also used for gold standard comparison and OpenCV Part 2 annotation.</td>
         </tr>
         <tr>
-          <td><span class="feat-name">Nemotron 3 Nano Omni</span><span class="feat-sub">Overlay video + biomechanics JSON → per-rep scoring</span></td>
+          <td><span class="feat-name">Claude Haiku 4.5 — Call 1</span><span class="feat-sub">Biomechanics JSON + 8-frame composite → form analysis + coaching (single call — Nemotron removed after W6 A/B test)</span></td>
           <td><span class="status-keep">Kept</span></td>
           <td>Unchanged. Receives overlay_video_url + biomechanics JSON. Returns per-rep scores, issues, chain-of-thought.</td>
           <td>Core AI layer. Differentiator vs single-rep competitors.</td>
         </tr>
         <tr>
-          <td><span class="feat-name">OpenCV Part 2 — frame extraction</span><span class="feat-sub">Worst-rep still image with angle overlay</span></td>
+          <td><span class="feat-name">OpenCV Part 2 — annotated overlay</span><span class="feat-sub">Worst rep · camera angle detection (side/front) · skeleton + fault panel · gold standard reference lines</span></td>
           <td><span class="status-keep">Kept — Option 3</span></td>
           <td>Skeleton lines + joint markers + actual angles + gold standard text. ~70% already built from Part 1. Estimated 3–4 days remaining.</td>
           <td>Key Results screen visual. Shows user exactly what went wrong on their worst rep.</td>
         </tr>
         <tr>
-          <td><span class="feat-name">Claude Sonnet — coaching output</span><span class="feat-sub">Nemotron output + grounding → coaching + progression</span></td>
+          <td><span class="feat-name">Claude Haiku 4.5 — Call 2 (async)</span><span class="feat-sub">Current session + 5-session history → longitudinal progression coaching for Tab 2</span></td>
           <td><span class="status-keep">Kept</span></td>
-          <td>Unchanged. Receives Nemotron output + MD file context via system prompt. Returns coaching paragraphs + weight recommendation.</td>
+          <td>Haiku Call 2 receives current session (from DB) + last 5 sessions + coaching output. Returns longitudinal progression coaching for Tab 2. + weight recommendation.</td>
           <td>User-facing output. The "coach" experience. Cannot be cut.</td>
         </tr>
 
