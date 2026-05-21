@@ -1,0 +1,970 @@
+{
+  "metadata": {
+    "exercise": "goblet_squat",
+    "total_reps": 3,
+    "processing_timestamp": "2026-05-08T11:40:22.521453Z",
+    "schema_version": "1.0"
+  },
+  "set_summary": {
+    "reps_analysed": 3,
+    "avg_form_score": 83,
+    "rep_timing": {
+      "total_reps": 3,
+      "avg_duration_s": 2.7,
+      "fastest_rep_s": 2.7,
+      "slowest_rep_s": 2.7,
+      "set_start_ms": 1000,
+      "set_end_ms": 11700
+    },
+    "set_integrity": {
+      "fatigue_detected": false,
+      "fatigue_onset_rep": null,
+      "degrading_metrics": [
+        "torso_lean"
+      ],
+      "trend_direction": "worsening"
+    },
+    "trends": {
+      "form_score": {
+        "values": [
+          83,
+          83,
+          83
+        ],
+        "slope": 0.0
+      },
+      "knee_depth": {
+        "values": [
+          174.2,
+          174.2,
+          174.1
+        ],
+        "slope": -0.05
+      },
+      "torso_lean": {
+        "values": [
+          8.1,
+          9.1,
+          10.2
+        ],
+        "slope": 1.05
+      },
+      "valgus_max": {
+        "values": [
+          9.7,
+          9.8,
+          9.8
+        ],
+        "slope": 0.05
+      },
+      "lr_symmetry": {
+        "values": [
+          7.73,
+          7.81,
+          7.9
+        ],
+        "slope": 0.085
+      }
+    },
+    "rep_scores": {
+      "form_score": [
+        83,
+        83,
+        83
+      ],
+      "posture": [
+        75,
+        75,
+        75
+      ],
+      "stability": [
+        53,
+        53,
+        53
+      ],
+      "movement_quality": [
+        100,
+        100,
+        100
+      ],
+      "tempo": [
+        57,
+        57,
+        57
+      ],
+      "rep_indices": [
+        1,
+        2,
+        3
+      ],
+      "rep_counts": [
+        1,
+        2,
+        3
+      ],
+      "rep_durations_s": [
+        2.7,
+        2.7,
+        2.7
+      ]
+    },
+    "set_level_cue": "Torso lean worsening each rep \u2014 reset posture cue before next set"
+  },
+  "reps": [
+    {
+      "rep_index": 1,
+      "rep_count": 1,
+      "rep_time": {
+        "start_ms": 1000,
+        "end_ms": 3700,
+        "duration_ms": 2700,
+        "duration_s": 2.7
+      },
+      "form_score": 83,
+      "keyframe_indices": {
+        "top_of_rep": 10,
+        "mid_descent": 11,
+        "bottom": 12,
+        "mid_ascent": 14,
+        "error_peak_frames": []
+      },
+      "scorecard": {
+        "knee_depth": {
+          "value_deg": 174.2,
+          "target": "\u226590\u00b0",
+          "metric_score": 1.0,
+          "weight": 3,
+          "status": "pass",
+          "flag": null
+        },
+        "torso_lean": {
+          "value_deg": 8.1,
+          "target": "<15\u00b0",
+          "metric_score": 1.0,
+          "weight": 3,
+          "status": "pass",
+          "flag": null
+        },
+        "hip_flexion": {
+          "value_deg": 172.6,
+          "target": "\u226580\u00b0",
+          "metric_score": 1.0,
+          "weight": 3,
+          "status": "pass",
+          "flag": null
+        },
+        "valgus_max": {
+          "value_deg": 9.7,
+          "target": "<5\u00b0",
+          "metric_score": 0.75,
+          "weight": 2,
+          "status": "warn",
+          "flag": "minor"
+        },
+        "shin_angle": {
+          "value_deg": 7.7,
+          "target": "\u226545\u00b0",
+          "metric_score": 0.1,
+          "weight": 2,
+          "status": "flag",
+          "flag": "significant"
+        },
+        "lr_symmetry": {
+          "delta_deg": 7.73,
+          "target": "<5\u00b0",
+          "metric_score": 0.75,
+          "weight": 2,
+          "status": "warn",
+          "flag": "minor"
+        },
+        "hip_drop": {
+          "value_deg": 0.0,
+          "target": "<5\u00b0",
+          "metric_score": 1.0,
+          "weight": 1,
+          "status": "pass",
+          "flag": null
+        },
+        "foot_angle": {
+          "value_deg": 34.4,
+          "target": "15\u201335\u00b0",
+          "metric_score": 1.0,
+          "weight": 1,
+          "status": "pass",
+          "flag": null
+        },
+        "hip_shoulder_align": {
+          "value_deg": 5.1,
+          "target": "<5\u00b0",
+          "metric_score": 0.75,
+          "weight": 1,
+          "status": "warn",
+          "flag": "minor"
+        }
+      },
+      "phases": {
+        "descent": {
+          "frame_count": 2,
+          "weighted_angles": {
+            "knee_flexion_left": 168.6,
+            "knee_flexion_right": 176.46,
+            "hip_flexion_left": 171.21,
+            "hip_flexion_right": 171.92,
+            "torso_lean": 6.58,
+            "valgus_left": 11.03,
+            "valgus_right": 1.91,
+            "shin_angle_left": 9.46,
+            "shin_angle_right": 6.02,
+            "hip_drop": 0.0,
+            "foot_angle_left": 36.87,
+            "foot_angle_right": 32.01,
+            "hip_shoulder_align": 1.27
+          },
+          "anomaly_frames": []
+        },
+        "bottom": {
+          "frame_count": 1,
+          "weighted_angles": {
+            "knee_flexion_left": 170.32,
+            "knee_flexion_right": 178.05,
+            "hip_flexion_left": 176.46,
+            "hip_flexion_right": 168.71,
+            "torso_lean": 8.1,
+            "valgus_left": 9.72,
+            "valgus_right": 1.91,
+            "shin_angle_left": 9.46,
+            "shin_angle_right": 6.02,
+            "hip_drop": 0.0,
+            "foot_angle_left": 36.87,
+            "foot_angle_right": 32.01,
+            "hip_shoulder_align": 5.08
+          },
+          "anomaly_frames": []
+        },
+        "ascent": {
+          "frame_count": 2,
+          "weighted_angles": {
+            "knee_flexion_left": 168.6,
+            "knee_flexion_right": 176.46,
+            "hip_flexion_left": 171.21,
+            "hip_flexion_right": 171.92,
+            "torso_lean": 6.58,
+            "valgus_left": 11.03,
+            "valgus_right": 1.91,
+            "shin_angle_left": 9.46,
+            "shin_angle_right": 6.02,
+            "hip_drop": 0.0,
+            "foot_angle_left": 36.87,
+            "foot_angle_right": 32.01,
+            "hip_shoulder_align": 1.27
+          },
+          "anomaly_frames": []
+        }
+      },
+      "symmetry": {
+        "knee_flexion": {
+          "left_deg": 170.32,
+          "right_deg": 178.05,
+          "delta_deg": 7.73,
+          "severity": "minor"
+        },
+        "hip_flexion": {
+          "left_deg": 176.46,
+          "right_deg": 168.71,
+          "delta_deg": 7.75,
+          "severity": "minor"
+        },
+        "valgus": {
+          "left_deg": 9.72,
+          "right_deg": 1.91,
+          "delta_deg": 7.81,
+          "severity": "minor"
+        },
+        "shin_angle": {
+          "left_deg": 9.46,
+          "right_deg": 6.02,
+          "delta_deg": 3.44,
+          "severity": "pass"
+        },
+        "foot_angle": {
+          "left_deg": 36.87,
+          "right_deg": 32.01,
+          "delta_deg": 4.86,
+          "severity": "pass"
+        }
+      },
+      "error_onset": {
+        "valgus_max": {
+          "values_by_phase": {
+            "descent": 11.0,
+            "bottom": 9.7,
+            "ascent": 11.0
+          },
+          "first_flagged_phase": null,
+          "peak_phase": "descent"
+        }
+      },
+      "coaching_dimensions": {
+        "posture": {
+          "score": 75,
+          "color": "amber",
+          "positive": "Good hip position maintained throughout",
+          "critical": null,
+          "raw": {
+            "torso_lean_peak_deg": 8.1,
+            "hip_drop_deg": 0.0,
+            "hip_shoulder_delta_deg": 5.1
+          }
+        },
+        "stability": {
+          "score": 53,
+          "color": "red",
+          "positive": null,
+          "critical": "Left-right load imbalance \u2014 7.73\u00b0 knee symmetry delta",
+          "raw": {
+            "valgus_max_deg": 9.7,
+            "knee_lr_delta_deg": 7.73,
+            "shin_angle_avg_deg": 7.7
+          }
+        },
+        "movement_quality": {
+          "score": 100,
+          "color": "green",
+          "positive": "Smooth, consistent movement trajectory",
+          "critical": null,
+          "raw": {
+            "anomaly_frame_count": 0,
+            "total_rep_frames": 5,
+            "anomaly_ratio": 0.0,
+            "error_onset_phase": null
+          }
+        },
+        "tempo": {
+          "score": 57,
+          "color": "red",
+          "label": "Descent too fast \u2014 losing eccentric control",
+          "positive": null,
+          "critical": "Descent too fast \u2014 losing eccentric control",
+          "cue": "Take 2\u20133 seconds on the way down",
+          "raw": {
+            "descent_ms": 1400,
+            "bottom_hold_ms": 0,
+            "ascent_ms": 1300,
+            "ratio": 1.08,
+            "ideal_ratio_range": [
+              1.5,
+              2.5
+            ]
+          }
+        }
+      },
+      "llm_context": {
+        "form_score": 83,
+        "top_errors": [
+          {
+            "metric": "shin_angle",
+            "flag": "significant",
+            "onset_phase": null,
+            "peak_value_deg": 7.7
+          }
+        ],
+        "caution_items": [
+          {
+            "metric": "valgus_max",
+            "flag": "minor",
+            "value_deg": 9.7
+          },
+          {
+            "metric": "lr_symmetry",
+            "flag": "minor",
+            "value_deg": 7.73
+          },
+          {
+            "metric": "hip_shoulder_align",
+            "flag": "minor",
+            "value_deg": 5.1
+          }
+        ],
+        "strengths": [
+          "knee_depth",
+          "torso_lean",
+          "hip_flexion",
+          "hip_drop",
+          "foot_angle"
+        ],
+        "priority_cue": "Work on ankle mobility \u2014 try elevating heels slightly",
+        "persona": "SET_BY_CALLER"
+      }
+    },
+    {
+      "rep_index": 2,
+      "rep_count": 2,
+      "rep_time": {
+        "start_ms": 5000,
+        "end_ms": 7700,
+        "duration_ms": 2700,
+        "duration_s": 2.7
+      },
+      "form_score": 83,
+      "keyframe_indices": {
+        "top_of_rep": 20,
+        "mid_descent": 21,
+        "bottom": 22,
+        "mid_ascent": 24,
+        "error_peak_frames": []
+      },
+      "scorecard": {
+        "knee_depth": {
+          "value_deg": 174.2,
+          "target": "\u226590\u00b0",
+          "metric_score": 1.0,
+          "weight": 3,
+          "status": "pass",
+          "flag": null
+        },
+        "torso_lean": {
+          "value_deg": 9.1,
+          "target": "<15\u00b0",
+          "metric_score": 1.0,
+          "weight": 3,
+          "status": "pass",
+          "flag": null
+        },
+        "hip_flexion": {
+          "value_deg": 172.6,
+          "target": "\u226580\u00b0",
+          "metric_score": 1.0,
+          "weight": 3,
+          "status": "pass",
+          "flag": null
+        },
+        "valgus_max": {
+          "value_deg": 9.8,
+          "target": "<5\u00b0",
+          "metric_score": 0.75,
+          "weight": 2,
+          "status": "warn",
+          "flag": "minor"
+        },
+        "shin_angle": {
+          "value_deg": 7.7,
+          "target": "\u226545\u00b0",
+          "metric_score": 0.1,
+          "weight": 2,
+          "status": "flag",
+          "flag": "significant"
+        },
+        "lr_symmetry": {
+          "delta_deg": 7.81,
+          "target": "<5\u00b0",
+          "metric_score": 0.75,
+          "weight": 2,
+          "status": "warn",
+          "flag": "minor"
+        },
+        "hip_drop": {
+          "value_deg": 0.0,
+          "target": "<5\u00b0",
+          "metric_score": 1.0,
+          "weight": 1,
+          "status": "pass",
+          "flag": null
+        },
+        "foot_angle": {
+          "value_deg": 34.4,
+          "target": "15\u201335\u00b0",
+          "metric_score": 1.0,
+          "weight": 1,
+          "status": "pass",
+          "flag": null
+        },
+        "hip_shoulder_align": {
+          "value_deg": 6.6,
+          "target": "<5\u00b0",
+          "metric_score": 0.75,
+          "weight": 1,
+          "status": "warn",
+          "flag": "minor"
+        }
+      },
+      "phases": {
+        "descent": {
+          "frame_count": 2,
+          "weighted_angles": {
+            "knee_flexion_left": 168.58,
+            "knee_flexion_right": 176.43,
+            "hip_flexion_left": 171.56,
+            "hip_flexion_right": 171.55,
+            "torso_lean": 6.74,
+            "valgus_left": 11.06,
+            "valgus_right": 1.91,
+            "shin_angle_left": 9.46,
+            "shin_angle_right": 6.02,
+            "hip_drop": 0.0,
+            "foot_angle_left": 36.87,
+            "foot_angle_right": 32.01,
+            "hip_shoulder_align": 1.65
+          },
+          "anomaly_frames": []
+        },
+        "bottom": {
+          "frame_count": 1,
+          "weighted_angles": {
+            "knee_flexion_left": 170.27,
+            "knee_flexion_right": 178.08,
+            "hip_flexion_left": 177.88,
+            "hip_flexion_right": 167.27,
+            "torso_lean": 9.11,
+            "valgus_left": 9.77,
+            "valgus_right": 1.91,
+            "shin_angle_left": 9.46,
+            "shin_angle_right": 6.02,
+            "hip_drop": 0.0,
+            "foot_angle_left": 36.87,
+            "foot_angle_right": 32.01,
+            "hip_shoulder_align": 6.59
+          },
+          "anomaly_frames": []
+        },
+        "ascent": {
+          "frame_count": 2,
+          "weighted_angles": {
+            "knee_flexion_left": 168.58,
+            "knee_flexion_right": 176.43,
+            "hip_flexion_left": 171.56,
+            "hip_flexion_right": 171.55,
+            "torso_lean": 6.74,
+            "valgus_left": 11.06,
+            "valgus_right": 1.91,
+            "shin_angle_left": 9.46,
+            "shin_angle_right": 6.02,
+            "hip_drop": 0.0,
+            "foot_angle_left": 36.87,
+            "foot_angle_right": 32.01,
+            "hip_shoulder_align": 1.65
+          },
+          "anomaly_frames": []
+        }
+      },
+      "symmetry": {
+        "knee_flexion": {
+          "left_deg": 170.27,
+          "right_deg": 178.08,
+          "delta_deg": 7.81,
+          "severity": "minor"
+        },
+        "hip_flexion": {
+          "left_deg": 177.88,
+          "right_deg": 167.27,
+          "delta_deg": 10.61,
+          "severity": "moderate"
+        },
+        "valgus": {
+          "left_deg": 9.77,
+          "right_deg": 1.91,
+          "delta_deg": 7.86,
+          "severity": "minor"
+        },
+        "shin_angle": {
+          "left_deg": 9.46,
+          "right_deg": 6.02,
+          "delta_deg": 3.44,
+          "severity": "pass"
+        },
+        "foot_angle": {
+          "left_deg": 36.87,
+          "right_deg": 32.01,
+          "delta_deg": 4.86,
+          "severity": "pass"
+        }
+      },
+      "error_onset": {
+        "valgus_max": {
+          "values_by_phase": {
+            "descent": 11.1,
+            "bottom": 9.8,
+            "ascent": 11.1
+          },
+          "first_flagged_phase": null,
+          "peak_phase": "descent"
+        }
+      },
+      "coaching_dimensions": {
+        "posture": {
+          "score": 75,
+          "color": "amber",
+          "positive": "Good hip position maintained throughout",
+          "critical": null,
+          "raw": {
+            "torso_lean_peak_deg": 9.1,
+            "hip_drop_deg": 0.0,
+            "hip_shoulder_delta_deg": 6.6
+          }
+        },
+        "stability": {
+          "score": 53,
+          "color": "red",
+          "positive": null,
+          "critical": "Left-right load imbalance \u2014 7.81\u00b0 knee symmetry delta",
+          "raw": {
+            "valgus_max_deg": 9.8,
+            "knee_lr_delta_deg": 7.81,
+            "shin_angle_avg_deg": 7.7
+          }
+        },
+        "movement_quality": {
+          "score": 100,
+          "color": "green",
+          "positive": "Smooth, consistent movement trajectory",
+          "critical": null,
+          "raw": {
+            "anomaly_frame_count": 0,
+            "total_rep_frames": 5,
+            "anomaly_ratio": 0.0,
+            "error_onset_phase": null
+          }
+        },
+        "tempo": {
+          "score": 57,
+          "color": "red",
+          "label": "Descent too fast \u2014 losing eccentric control",
+          "positive": null,
+          "critical": "Descent too fast \u2014 losing eccentric control",
+          "cue": "Take 2\u20133 seconds on the way down",
+          "raw": {
+            "descent_ms": 1400,
+            "bottom_hold_ms": 0,
+            "ascent_ms": 1300,
+            "ratio": 1.08,
+            "ideal_ratio_range": [
+              1.5,
+              2.5
+            ]
+          }
+        }
+      },
+      "llm_context": {
+        "form_score": 83,
+        "top_errors": [
+          {
+            "metric": "shin_angle",
+            "flag": "significant",
+            "onset_phase": null,
+            "peak_value_deg": 7.7
+          }
+        ],
+        "caution_items": [
+          {
+            "metric": "valgus_max",
+            "flag": "minor",
+            "value_deg": 9.8
+          },
+          {
+            "metric": "lr_symmetry",
+            "flag": "minor",
+            "value_deg": 7.81
+          },
+          {
+            "metric": "hip_shoulder_align",
+            "flag": "minor",
+            "value_deg": 6.6
+          }
+        ],
+        "strengths": [
+          "knee_depth",
+          "torso_lean",
+          "hip_flexion",
+          "hip_drop",
+          "foot_angle"
+        ],
+        "priority_cue": "Work on ankle mobility \u2014 try elevating heels slightly",
+        "persona": "SET_BY_CALLER"
+      }
+    },
+    {
+      "rep_index": 3,
+      "rep_count": 3,
+      "rep_time": {
+        "start_ms": 9000,
+        "end_ms": 11700,
+        "duration_ms": 2700,
+        "duration_s": 2.7
+      },
+      "form_score": 83,
+      "keyframe_indices": {
+        "top_of_rep": 30,
+        "mid_descent": 31,
+        "bottom": 32,
+        "mid_ascent": 34,
+        "error_peak_frames": []
+      },
+      "scorecard": {
+        "knee_depth": {
+          "value_deg": 174.1,
+          "target": "\u226590\u00b0",
+          "metric_score": 1.0,
+          "weight": 3,
+          "status": "pass",
+          "flag": null
+        },
+        "torso_lean": {
+          "value_deg": 10.2,
+          "target": "<15\u00b0",
+          "metric_score": 1.0,
+          "weight": 3,
+          "status": "pass",
+          "flag": null
+        },
+        "hip_flexion": {
+          "value_deg": 172.5,
+          "target": "\u226580\u00b0",
+          "metric_score": 1.0,
+          "weight": 3,
+          "status": "pass",
+          "flag": null
+        },
+        "valgus_max": {
+          "value_deg": 9.8,
+          "target": "<5\u00b0",
+          "metric_score": 0.75,
+          "weight": 2,
+          "status": "warn",
+          "flag": "minor"
+        },
+        "shin_angle": {
+          "value_deg": 7.7,
+          "target": "\u226545\u00b0",
+          "metric_score": 0.1,
+          "weight": 2,
+          "status": "flag",
+          "flag": "significant"
+        },
+        "lr_symmetry": {
+          "delta_deg": 7.9,
+          "target": "<5\u00b0",
+          "metric_score": 0.75,
+          "weight": 2,
+          "status": "warn",
+          "flag": "minor"
+        },
+        "hip_drop": {
+          "value_deg": 0.0,
+          "target": "<5\u00b0",
+          "metric_score": 1.0,
+          "weight": 1,
+          "status": "pass",
+          "flag": null
+        },
+        "foot_angle": {
+          "value_deg": 34.4,
+          "target": "15\u201335\u00b0",
+          "metric_score": 1.0,
+          "weight": 1,
+          "status": "pass",
+          "flag": null
+        },
+        "hip_shoulder_align": {
+          "value_deg": 8.1,
+          "target": "<5\u00b0",
+          "metric_score": 0.75,
+          "weight": 1,
+          "status": "warn",
+          "flag": "minor"
+        }
+      },
+      "phases": {
+        "descent": {
+          "frame_count": 2,
+          "weighted_angles": {
+            "knee_flexion_left": 168.53,
+            "knee_flexion_right": 176.38,
+            "hip_flexion_left": 171.89,
+            "hip_flexion_right": 171.18,
+            "torso_lean": 6.93,
+            "valgus_left": 11.09,
+            "valgus_right": 1.91,
+            "shin_angle_left": 9.46,
+            "shin_angle_right": 6.02,
+            "hip_drop": 0.0,
+            "foot_angle_left": 36.87,
+            "foot_angle_right": 32.01,
+            "hip_shoulder_align": 2.03
+          },
+          "anomaly_frames": []
+        },
+        "bottom": {
+          "frame_count": 1,
+          "weighted_angles": {
+            "knee_flexion_left": 170.2,
+            "knee_flexion_right": 178.1,
+            "hip_flexion_left": 179.13,
+            "hip_flexion_right": 165.85,
+            "torso_lean": 10.23,
+            "valgus_left": 9.85,
+            "valgus_right": 1.91,
+            "shin_angle_left": 9.46,
+            "shin_angle_right": 6.02,
+            "hip_drop": 0.0,
+            "foot_angle_left": 36.87,
+            "foot_angle_right": 32.01,
+            "hip_shoulder_align": 8.09
+          },
+          "anomaly_frames": []
+        },
+        "ascent": {
+          "frame_count": 2,
+          "weighted_angles": {
+            "knee_flexion_left": 168.53,
+            "knee_flexion_right": 176.38,
+            "hip_flexion_left": 171.89,
+            "hip_flexion_right": 171.18,
+            "torso_lean": 6.93,
+            "valgus_left": 11.09,
+            "valgus_right": 1.91,
+            "shin_angle_left": 9.46,
+            "shin_angle_right": 6.02,
+            "hip_drop": 0.0,
+            "foot_angle_left": 36.87,
+            "foot_angle_right": 32.01,
+            "hip_shoulder_align": 2.03
+          },
+          "anomaly_frames": []
+        }
+      },
+      "symmetry": {
+        "knee_flexion": {
+          "left_deg": 170.2,
+          "right_deg": 178.1,
+          "delta_deg": 7.9,
+          "severity": "minor"
+        },
+        "hip_flexion": {
+          "left_deg": 179.13,
+          "right_deg": 165.85,
+          "delta_deg": 13.28,
+          "severity": "moderate"
+        },
+        "valgus": {
+          "left_deg": 9.85,
+          "right_deg": 1.91,
+          "delta_deg": 7.94,
+          "severity": "minor"
+        },
+        "shin_angle": {
+          "left_deg": 9.46,
+          "right_deg": 6.02,
+          "delta_deg": 3.44,
+          "severity": "pass"
+        },
+        "foot_angle": {
+          "left_deg": 36.87,
+          "right_deg": 32.01,
+          "delta_deg": 4.86,
+          "severity": "pass"
+        }
+      },
+      "error_onset": {
+        "valgus_max": {
+          "values_by_phase": {
+            "descent": 11.1,
+            "bottom": 9.8,
+            "ascent": 11.1
+          },
+          "first_flagged_phase": null,
+          "peak_phase": "descent"
+        }
+      },
+      "coaching_dimensions": {
+        "posture": {
+          "score": 75,
+          "color": "amber",
+          "positive": "Good hip position maintained throughout",
+          "critical": null,
+          "raw": {
+            "torso_lean_peak_deg": 10.2,
+            "hip_drop_deg": 0.0,
+            "hip_shoulder_delta_deg": 8.1
+          }
+        },
+        "stability": {
+          "score": 53,
+          "color": "red",
+          "positive": null,
+          "critical": "Left-right load imbalance \u2014 7.9\u00b0 knee symmetry delta",
+          "raw": {
+            "valgus_max_deg": 9.8,
+            "knee_lr_delta_deg": 7.9,
+            "shin_angle_avg_deg": 7.7
+          }
+        },
+        "movement_quality": {
+          "score": 100,
+          "color": "green",
+          "positive": "Smooth, consistent movement trajectory",
+          "critical": null,
+          "raw": {
+            "anomaly_frame_count": 0,
+            "total_rep_frames": 5,
+            "anomaly_ratio": 0.0,
+            "error_onset_phase": null
+          }
+        },
+        "tempo": {
+          "score": 57,
+          "color": "red",
+          "label": "Descent too fast \u2014 losing eccentric control",
+          "positive": null,
+          "critical": "Descent too fast \u2014 losing eccentric control",
+          "cue": "Take 2\u20133 seconds on the way down",
+          "raw": {
+            "descent_ms": 1400,
+            "bottom_hold_ms": 0,
+            "ascent_ms": 1300,
+            "ratio": 1.08,
+            "ideal_ratio_range": [
+              1.5,
+              2.5
+            ]
+          }
+        }
+      },
+      "llm_context": {
+        "form_score": 83,
+        "top_errors": [
+          {
+            "metric": "shin_angle",
+            "flag": "significant",
+            "onset_phase": null,
+            "peak_value_deg": 7.7
+          }
+        ],
+        "caution_items": [
+          {
+            "metric": "valgus_max",
+            "flag": "minor",
+            "value_deg": 9.8
+          },
+          {
+            "metric": "lr_symmetry",
+            "flag": "minor",
+            "value_deg": 7.9
+          },
+          {
+            "metric": "hip_shoulder_align",
+            "flag": "minor",
+            "value_deg": 8.1
+          }
+        ],
+        "strengths": [
+          "knee_depth",
+          "torso_lean",
+          "hip_flexion",
+          "hip_drop",
+          "foot_angle"
+        ],
+        "priority_cue": "Work on ankle mobility \u2014 try elevating heels slightly",
+        "persona": "SET_BY_CALLER"
+      }
+    }
+  ]
+}

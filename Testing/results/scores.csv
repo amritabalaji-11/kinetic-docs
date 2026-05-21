@@ -1,0 +1,61 @@
+Video,Variant,Model,Fault Tested,Ground Truth,Model Output,Correct,Confidence,Evidence Source,Latency (ms),Posture /5,Stability /5,Movement Quality /5,Range of Motion /5,Notes
+V1,Control,meta/llama-3.1-70b-instruct,insufficient_depth,True,True,✅,1.0,json,441936.6,,,,,
+V2,Control,meta/llama-3.1-70b-instruct,insufficient_depth,False,False,✅,0.0,json,164090.5,,,,,
+V3,Control,meta/llama-3.1-70b-instruct,knee_valgus,True,True,✅,0.9,json,302008.4,,,,,
+V4,Control,meta/llama-3.1-70b-instruct,knee_valgus,False,True,❌,0.8,json,261129.1,,,,,
+V5,Control,meta/llama-3.1-70b-instruct,,False,False,❌,,,0.0,,,,,Error code: 504
+V6,Control,meta/llama-3.1-70b-instruct,,False,False,❌,,,0.0,,,,,Error code: 504
+V1,Variant A,meta/llama-3.2-90b-vision-instruct,,False,False,❌,,,0.0,,,,,"Error code: 400 - {'object': 'error', 'message': 'At most 1 image(s) may be provided in one request. You can set `--limit-mm-per-prompt` to increase this limit if the model supports it.', 'type': 'BadRequestError', 'param': None, 'code': 400}"
+V2,Variant A,meta/llama-3.2-90b-vision-instruct,,False,False,❌,,,0.0,,,,,"Error code: 400 - {'object': 'error', 'message': 'At most 1 image(s) may be provided in one request. You can set `--limit-mm-per-prompt` to increase this limit if the model supports it.', 'type': 'BadRequestError', 'param': None, 'code': 400}"
+V3,Variant A,meta/llama-3.2-90b-vision-instruct,,False,False,❌,,,0.0,,,,,"Error code: 400 - {'object': 'error', 'message': 'At most 1 image(s) may be provided in one request. You can set `--limit-mm-per-prompt` to increase this limit if the model supports it.', 'type': 'BadRequestError', 'param': None, 'code': 400}"
+V4,Variant A,meta/llama-3.2-90b-vision-instruct,,False,False,❌,,,0.0,,,,,"Error code: 400 - {'object': 'error', 'message': 'At most 1 image(s) may be provided in one request. You can set `--limit-mm-per-prompt` to increase this limit if the model supports it.', 'type': 'BadRequestError', 'param': None, 'code': 400}"
+V5,Variant A,meta/llama-3.2-90b-vision-instruct,,False,False,❌,,,0.0,,,,,"Error code: 400 - {'object': 'error', 'message': 'At most 1 image(s) may be provided in one request. You can set `--limit-mm-per-prompt` to increase this limit if the model supports it.', 'type': 'BadRequestError', 'param': None, 'code': 400}"
+V6,Variant A,meta/llama-3.2-90b-vision-instruct,,False,False,❌,,,0.0,,,,,"Error code: 400 - {'object': 'error', 'message': 'At most 1 image(s) may be provided in one request. You can set `--limit-mm-per-prompt` to increase this limit if the model supports it.', 'type': 'BadRequestError', 'param': None, 'code': 400}"
+V1,Variant B,gemini-2.5-flash,insufficient_depth,True,True,✅,1.0,json,19564.8,,,,,
+V2,Variant B,gemini-2.5-flash,insufficient_depth,False,False,✅,1.0,json,21959.2,,,,,
+V3,Variant B,gemini-2.5-flash,knee_valgus,True,True,✅,1.0,json,27023.2,,,,,
+V4,Variant B,gemini-2.5-flash,knee_valgus,False,False,✅,1.0,both,15437.2,,,,,
+V5,Variant B,gemini-2.5-flash,excessive_forward_lean,True,True,✅,1.0,json,37656.8,,,,,
+V6,Variant B,gemini-2.5-flash,excessive_forward_lean,False,True,❌,1.0,both,23200.7,,,,,
+V1,Variant D,gemini-2.5-flash,insufficient_depth,True,True,✅,1.0,both,38224.3,,,,,
+V2,Variant D,gemini-2.5-flash,insufficient_depth,False,False,✅,1.0,both,19746.1,,,,,
+V3,Variant D,gemini-2.5-flash,knee_valgus,True,True,✅,1.0,both,23846.8,,,,,
+V4,Variant D,gemini-2.5-flash,knee_valgus,False,False,✅,1.0,both,14412.3,,,,,
+V5,Variant D,gemini-2.5-flash,excessive_forward_lean,True,True,✅,1.0,both,22655.2,,,,,
+V6,Variant D,gemini-2.5-flash,excessive_forward_lean,False,False,✅,0.8,json,24777.6,,,,,
+V1,Variant E,meta/llama-3.2-90b-vision-instruct,insufficient_depth,True,True,✅,0.9,json,117544.1,,,,,
+V2,Variant E,meta/llama-3.2-90b-vision-instruct,,False,False,❌,,,0.0,,,,,Error code: 504
+V3,Variant E,meta/llama-3.2-90b-vision-instruct,,False,False,❌,,,0.0,,,,,Error code: 504
+V4,Variant E,meta/llama-3.2-90b-vision-instruct,knee_valgus,False,True,❌,0.6,json,793459.5,,,,,
+V5,Variant E,meta/llama-3.2-90b-vision-instruct,excessive_forward_lean,True,False,❌,0.7,json,148713.8,,,,,
+V6,Variant E,meta/llama-3.2-90b-vision-instruct,excessive_forward_lean,False,False,✅,0.1,json,111375.4,,,,,
+V1,Variant F,gpt-4o-mini,insufficient_depth,True,True,✅,0.95,json,12080.9,,,,,
+V2,Variant F,gpt-4o-mini,insufficient_depth,False,False,✅,1.0,json,12211.7,,,,,
+V3,Variant F,gpt-4o-mini,knee_valgus,True,True,✅,0.86,json,10869.7,,,,,
+V4,Variant F,gpt-4o-mini,knee_valgus,False,True,❌,0.8,json,13822.7,,,,,
+V5,Variant F,gpt-4o-mini,excessive_forward_lean,True,True,✅,0.9,json,13118.0,,,,,
+V6,Variant F,gpt-4o-mini,excessive_forward_lean,False,False,✅,1.0,json,11409.1,,,,,
+V1,Variant G,gpt-4o-mini,insufficient_depth,True,True,✅,0.95,json,11866.9,,,,,
+V2,Variant G,gpt-4o-mini,insufficient_depth,False,False,✅,1.0,json,11185.2,,,,,
+V3,Variant G,gpt-4o-mini,knee_valgus,True,True,✅,0.86,json,10094.7,,,,,
+V4,Variant G,gpt-4o-mini,knee_valgus,False,True,❌,0.8,json,10355.4,,,,,
+V5,Variant G,gpt-4o-mini,excessive_forward_lean,True,True,✅,0.9,json,11004.2,,,,,
+V6,Variant G,gpt-4o-mini,excessive_forward_lean,False,False,✅,1.0,json,10573.3,,,,,
+V1,Variant H,claude-haiku-4-5-20251001,insufficient_depth,True,True,✅,0.99,both,16006.9,,,,,
+V2,Variant H,claude-haiku-4-5-20251001,insufficient_depth,False,False,✅,0.98,json,11450.3,,,,,
+V3,Variant H,claude-haiku-4-5-20251001,knee_valgus,True,True,✅,0.92,both,11625.6,,,,,
+V4,Variant H,claude-haiku-4-5-20251001,knee_valgus,False,False,✅,0.72,json,10393.8,,,,,
+V5,Variant H,claude-haiku-4-5-20251001,excessive_forward_lean,True,True,✅,0.98,both,13608.4,,,,,
+V6,Variant H,claude-haiku-4-5-20251001,excessive_forward_lean,False,False,✅,0.95,json,11391.3,,,,,
+V1,Variant I,claude-haiku-4-5-20251001,,False,False,❌,,,0.0,,,,,Expecting value: line 1 column 1 (char 0)
+V2,Variant I,claude-haiku-4-5-20251001,insufficient_depth,False,False,✅,0.98,json,11913.9,,,,,
+V3,Variant I,claude-haiku-4-5-20251001,knee_valgus,True,True,✅,0.82,both,12474.9,,,,,
+V4,Variant I,claude-haiku-4-5-20251001,knee_valgus,False,False,✅,0.85,json,11117.6,,,,,
+V5,Variant I,claude-haiku-4-5-20251001,excessive_forward_lean,True,True,✅,0.92,both,13938.6,,,,,
+V6,Variant I,claude-haiku-4-5-20251001,excessive_forward_lean,False,False,✅,0.05,json,12255.2,,,,,
+V1,Variant J,claude-sonnet-4-6,insufficient_depth,True,True,✅,0.95,both,31346.7,,,,,
+V2,Variant J,claude-sonnet-4-6,insufficient_depth,False,False,✅,0.92,both,29267.8,,,,,
+V3,Variant J,claude-sonnet-4-6,knee_valgus,True,True,✅,0.88,both,31724.0,,,,,
+V4,Variant J,claude-sonnet-4-6,knee_valgus,False,False,✅,0.35,both,30367.8,,,,,
+V5,Variant J,claude-sonnet-4-6,excessive_forward_lean,True,True,✅,0.93,both,28203.8,,,,,
+V6,Variant J,claude-sonnet-4-6,excessive_forward_lean,False,False,✅,0.80,both,27160.0,,,,,

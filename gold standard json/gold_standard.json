@@ -1,0 +1,418 @@
+{
+  "exercise": "goblet_squat",
+  "version": "1.0",
+  "created_at": "2026-05-18",
+  "metric_validity_by_angle": {
+    "side_left": [
+      "knee_angle_at_bottom",
+      "hip_angle_at_bottom",
+      "back_angle_max",
+      "ankle_dorsiflexion",
+      "knee_valgus_left",
+      "eccentric_s",
+      "concentric_s"
+    ],
+    "side_right": [
+      "knee_angle_at_bottom",
+      "hip_angle_at_bottom",
+      "back_angle_max",
+      "ankle_dorsiflexion",
+      "knee_valgus_right",
+      "eccentric_s",
+      "concentric_s"
+    ],
+    "angled": [
+      "knee_angle_at_bottom",
+      "back_angle_max",
+      "knee_valgus_left",
+      "knee_valgus_right",
+      "eccentric_s",
+      "concentric_s"
+    ],
+    "front": [
+      "knee_valgus_left",
+      "knee_valgus_right"
+    ]
+  },
+  "angle_fallback": {
+    "side_left": "angled",
+    "side_right": "angled",
+    "angled": "side_left",
+    "front": "angled",
+    "unknown": "side_left"
+  },
+  "camera_angles": {
+    "angled": {
+      "meta": {
+        "source": "trainer_recording",
+        "rep_count": 2,
+        "weight_kg": 20.0,
+        "performer": "trained_coach",
+        "notes": "auto-extracted from scott_herman_front_angle.mp4"
+      },
+      "ideal_ranges": {
+        "concentric_s": {
+          "mean": 0.65,
+          "std": 0.25,
+          "ideal_lower": 0.4,
+          "ideal_upper": 0.9,
+          "min_observed": 0.4,
+          "max_observed": 0.9,
+          "unit": "seconds",
+          "position": "ascent",
+          "reliable": true
+        },
+        "hip_angle_at_bottom": {
+          "reliable": false,
+          "note": "unreliable from angled view — depth estimation inaccurate"
+        },
+        "knee_valgus_right": {
+          "unit": "normalised_x_distance",
+          "position": "bottom",
+          "reliable": true,
+          "note": "higher = knees further apart = better tracking"
+        },
+        "ankle_dorsiflexion": {
+          "reliable": false,
+          "note": "unreliable from angled view — depth estimation inaccurate"
+        },
+        "pause_s": {
+          "mean": 2.6,
+          "std": 0.4,
+          "ideal_lower": 2.2,
+          "ideal_upper": 3.0,
+          "min_observed": 2.2,
+          "max_observed": 3.0,
+          "unit": "seconds",
+          "position": "bottom",
+          "reliable": true
+        },
+        "eccentric_s": {
+          "mean": 0.45,
+          "std": 0.05,
+          "ideal_lower": 0.4,
+          "ideal_upper": 0.5,
+          "min_observed": 0.4,
+          "max_observed": 0.5,
+          "unit": "seconds",
+          "position": "descent",
+          "reliable": true
+        },
+        "knee_valgus_left": {
+          "unit": "normalised_x_distance",
+          "position": "bottom",
+          "reliable": true,
+          "note": "higher = knees further apart = better tracking"
+        },
+        "knee_angle_at_bottom": {
+          "mean": 1.325,
+          "std": 0.715,
+          "ideal_lower": 0.61,
+          "ideal_upper": 2.04,
+          "min_observed": 0.61,
+          "max_observed": 2.04,
+          "unit": "degrees",
+          "position": "bottom",
+          "reliable": true
+        },
+        "back_angle_max": {
+          "mean": 175.29,
+          "std": 0.05,
+          "ideal_lower": 175.24,
+          "ideal_upper": 175.34,
+          "min_observed": 175.24,
+          "max_observed": 175.34,
+          "unit": "degrees",
+          "position": "throughout",
+          "reliable": true
+        }
+      },
+      "squat_classification": {
+        "squat_type": "deep",
+        "depth_achieved": false,
+        "hip_below_knee": false
+      },
+      "per_rep_raw": [
+        {
+          "rep_number": 1,
+          "knee_angle_at_bottom": 0.61,
+          "hip_angle_at_bottom": 17.51,
+          "back_angle_max": 175.34,
+          "ankle_dorsiflexion": 21.0184668445914,
+          "eccentric_s": 0.4,
+          "concentric_s": 0.4,
+          "pause_s": 3.0,
+          "squat_type": "deep"
+        },
+        {
+          "rep_number": 2,
+          "knee_angle_at_bottom": 2.04,
+          "hip_angle_at_bottom": 18.83,
+          "back_angle_max": 175.24,
+          "ankle_dorsiflexion": 21.401771499479537,
+          "eccentric_s": 0.5,
+          "concentric_s": 0.9,
+          "pause_s": 2.2,
+          "squat_type": "deep"
+        }
+      ]
+    },
+    "side_left": {
+      "meta": {
+        "source": "trainer_recording",
+        "rep_count": 2,
+        "weight_kg": 20.0,
+        "performer": "trained_coach",
+        "notes": "auto-extracted from scott_herman_left_45_angle.mp4"
+      },
+      "ideal_ranges": {
+        "concentric_s": {
+          "mean": 0.8,
+          "std": 0.2,
+          "ideal_lower": 0.6,
+          "ideal_upper": 1.0,
+          "min_observed": 0.6,
+          "max_observed": 1.0,
+          "unit": "seconds",
+          "position": "ascent",
+          "reliable": true
+        },
+        "hip_angle_at_bottom": {
+          "mean": 17.71,
+          "std": 7.74,
+          "ideal_lower": 9.97,
+          "ideal_upper": 25.45,
+          "min_observed": 9.97,
+          "max_observed": 25.45,
+          "unit": "degrees",
+          "position": "bottom",
+          "reliable": true
+        },
+        "knee_valgus_right": {
+          "unit": "normalised_x_distance",
+          "position": "bottom",
+          "reliable": true,
+          "note": "higher = knees further apart = better tracking"
+        },
+        "ankle_dorsiflexion": {
+          "mean": 8.2291,
+          "std": 0.0,
+          "ideal_lower": 8.2291,
+          "ideal_upper": 8.2291,
+          "min_observed": 8.2291,
+          "max_observed": 8.2291,
+          "unit": "degrees",
+          "position": "bottom",
+          "reliable": true
+        },
+        "pause_s": {
+          "mean": 2.1,
+          "std": 0.0,
+          "ideal_lower": 2.1,
+          "ideal_upper": 2.1,
+          "min_observed": 2.1,
+          "max_observed": 2.1,
+          "unit": "seconds",
+          "position": "bottom",
+          "reliable": true
+        },
+        "eccentric_s": {
+          "mean": 0.4,
+          "std": 0.0,
+          "ideal_lower": 0.4,
+          "ideal_upper": 0.4,
+          "min_observed": 0.4,
+          "max_observed": 0.4,
+          "unit": "seconds",
+          "position": "descent",
+          "reliable": true
+        },
+        "knee_valgus_left": {
+          "unit": "normalised_x_distance",
+          "position": "bottom",
+          "reliable": true,
+          "note": "higher = knees further apart = better tracking"
+        },
+        "knee_angle_at_bottom": {
+          "mean": 1.27,
+          "std": 0.2,
+          "ideal_lower": 1.07,
+          "ideal_upper": 1.47,
+          "min_observed": 1.07,
+          "max_observed": 1.47,
+          "unit": "degrees",
+          "position": "bottom",
+          "reliable": true
+        },
+        "back_angle_max": {
+          "mean": 177.975,
+          "std": 0.355,
+          "ideal_lower": 177.62,
+          "ideal_upper": 178.33,
+          "min_observed": 177.62,
+          "max_observed": 178.33,
+          "unit": "degrees",
+          "position": "throughout",
+          "reliable": true
+        }
+      },
+      "squat_classification": {
+        "squat_type": "deep",
+        "depth_achieved": false,
+        "hip_below_knee": false
+      },
+      "per_rep_raw": [
+        {
+          "rep_number": 1,
+          "knee_angle_at_bottom": 1.47,
+          "hip_angle_at_bottom": 25.45,
+          "back_angle_max": 178.33,
+          "eccentric_s": 0.4,
+          "concentric_s": 0.6,
+          "pause_s": 2.1,
+          "squat_type": "deep"
+        },
+        {
+          "rep_number": 2,
+          "knee_angle_at_bottom": 1.07,
+          "hip_angle_at_bottom": 9.97,
+          "back_angle_max": 177.62,
+          "ankle_dorsiflexion": 8.229103161854185,
+          "eccentric_s": 0.4,
+          "concentric_s": 1.0,
+          "pause_s": 2.1,
+          "squat_type": "deep"
+        }
+      ]
+    },
+    "side_right": {
+      "meta": {
+        "source": "trainer_recording",
+        "rep_count": 2,
+        "weight_kg": 20.0,
+        "performer": "trained_coach",
+        "notes": "auto-extracted from scott_herman_right_side_angle.mp4"
+      },
+      "ideal_ranges": {
+        "concentric_s": {
+          "mean": 2.0,
+          "std": 0.0,
+          "ideal_lower": 2.0,
+          "ideal_upper": 2.0,
+          "min_observed": 2.0,
+          "max_observed": 2.0,
+          "unit": "seconds",
+          "position": "ascent",
+          "reliable": true
+        },
+        "hip_angle_at_bottom": {
+          "mean": 25.98,
+          "std": 3.87,
+          "ideal_lower": 22.11,
+          "ideal_upper": 29.85,
+          "min_observed": 22.11,
+          "max_observed": 29.85,
+          "unit": "degrees",
+          "position": "bottom",
+          "reliable": true
+        },
+        "knee_valgus_right": {
+          "unit": "normalised_x_distance",
+          "position": "bottom",
+          "reliable": true,
+          "note": "higher = knees further apart = better tracking"
+        },
+        "ankle_dorsiflexion": {
+          "mean": 167.8871,
+          "std": 3.7582,
+          "ideal_lower": 164.129,
+          "ideal_upper": 171.6453,
+          "min_observed": 164.129,
+          "max_observed": 171.6453,
+          "unit": "degrees",
+          "position": "bottom",
+          "reliable": true
+        },
+        "pause_s": {
+          "mean": 0.5,
+          "std": 0.1,
+          "ideal_lower": 0.4,
+          "ideal_upper": 0.6,
+          "min_observed": 0.4,
+          "max_observed": 0.6,
+          "unit": "seconds",
+          "position": "bottom",
+          "reliable": true
+        },
+        "eccentric_s": {
+          "mean": 0.4,
+          "std": 0.0,
+          "ideal_lower": 0.4,
+          "ideal_upper": 0.4,
+          "min_observed": 0.4,
+          "max_observed": 0.4,
+          "unit": "seconds",
+          "position": "descent",
+          "reliable": true
+        },
+        "knee_valgus_left": {
+          "unit": "normalised_x_distance",
+          "position": "bottom",
+          "reliable": true,
+          "note": "higher = knees further apart = better tracking"
+        },
+        "knee_angle_at_bottom": {
+          "mean": 19.47,
+          "std": 18.19,
+          "ideal_lower": 1.28,
+          "ideal_upper": 37.66,
+          "min_observed": 1.28,
+          "max_observed": 37.66,
+          "unit": "degrees",
+          "position": "bottom",
+          "reliable": true
+        },
+        "back_angle_max": {
+          "mean": 116.54,
+          "std": 60.49,
+          "ideal_lower": 56.05,
+          "ideal_upper": 177.03,
+          "min_observed": 56.05,
+          "max_observed": 177.03,
+          "unit": "degrees",
+          "position": "throughout",
+          "reliable": true
+        }
+      },
+      "squat_classification": {
+        "squat_type": "deep",
+        "depth_achieved": false,
+        "hip_below_knee": false
+      },
+      "per_rep_raw": [
+        {
+          "rep_number": 1,
+          "knee_angle_at_bottom": 37.66,
+          "hip_angle_at_bottom": 29.85,
+          "back_angle_max": 56.05,
+          "ankle_dorsiflexion": 164.1289654102788,
+          "eccentric_s": 0.4,
+          "concentric_s": 2.0,
+          "pause_s": 0.4,
+          "squat_type": "deep"
+        },
+        {
+          "rep_number": 2,
+          "knee_angle_at_bottom": 1.28,
+          "hip_angle_at_bottom": 22.11,
+          "back_angle_max": 177.03,
+          "ankle_dorsiflexion": 171.64530985845497,
+          "eccentric_s": 0.4,
+          "concentric_s": 2.0,
+          "pause_s": 0.6,
+          "squat_type": "deep"
+        }
+      ]
+    }
+  }
+}

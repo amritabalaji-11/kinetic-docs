@@ -1,0 +1,2222 @@
+[
+  {
+    "video_id": "V1",
+    "variant": "Control",
+    "model": "meta/llama-3.1-70b-instruct",
+    "rep_count": -1,
+    "fault_key": "insufficient_depth",
+    "ground_truth": false,
+    "model_prediction": false,
+    "correct": true,
+    "confidence": 1.0,
+    "evidence": "depth_classification: insufficient for all reps",
+    "evidence_source": "json",
+    "latency_ms": 441936.6,
+    "verdict": "To improve your goblet squat form, focus on increasing your depth by lowering your body until your hip crease is at or below knee level. Additionally, work on maintaining a more upright posture throughout the movement. Fixing your depth will also help improve your overall movement quality.",
+    "source_conflicts": [],
+    "feedback_posture": {
+      "doing_well": "You maintained a relatively consistent back angle throughout the movement.",
+      "critical_observations": "However, your back angle at the bottom of the squat was slightly excessive, indicating a forward lean.",
+      "recommendation": "Focus on keeping your chest tall and your back straight throughout the movement."
+    },
+    "feedback_stability": {
+      "doing_well": "Your base of support was solid, with no noticeable lateral wobble or heel lift.",
+      "critical_observations": null,
+      "recommendation": "Continue to maintain a stable base of support throughout the movement."
+    },
+    "feedback_movement": {
+      "doing_well": "Your movement was relatively smooth and controlled, with no noticeable lurching or jerking.",
+      "critical_observations": "However, your depth was inconsistent, which affected your overall movement quality.",
+      "recommendation": "Work on increasing your depth and maintaining a consistent movement pattern."
+    },
+    "feedback_rom": {
+      "doing_well": "You demonstrated sufficient ankle dorsiflexion throughout the movement.",
+      "critical_observations": "However, your depth was insufficient, indicating a limited range of motion.",
+      "recommendation": "Focus on increasing your depth by lowering your body until your hip crease is at or below knee level."
+    },
+    "error": ""
+  },
+  {
+    "video_id": "V1",
+    "variant": "Variant A",
+    "model": "meta/llama-3.2-90b-vision-instruct",
+    "rep_count": -1,
+    "fault_key": null,
+    "ground_truth": false,
+    "model_prediction": false,
+    "correct": false,
+    "confidence": -1,
+    "evidence": "",
+    "evidence_source": "",
+    "latency_ms": 0.0,
+    "verdict": "",
+    "source_conflicts": [],
+    "feedback_posture": {
+      "doing_well": "",
+      "critical_observations": null,
+      "recommendation": ""
+    },
+    "feedback_stability": {
+      "doing_well": "",
+      "critical_observations": null,
+      "recommendation": ""
+    },
+    "feedback_movement": {
+      "doing_well": "",
+      "critical_observations": null,
+      "recommendation": ""
+    },
+    "feedback_rom": {
+      "doing_well": "",
+      "critical_observations": null,
+      "recommendation": ""
+    },
+    "error": "Error code: 400 - {'object': 'error', 'message': 'At most 1 image(s) may be provided in one request. You can set `--limit-mm-per-prompt` to increase this limit if the model supports it.', 'type': 'BadRequestError', 'param': None, 'code': 400}"
+  },
+  {
+    "video_id": "V1",
+    "variant": "Variant B",
+    "model": "gemini-2.5-flash",
+    "rep_count": -1,
+    "fault_key": "insufficient_depth",
+    "ground_truth": false,
+    "model_prediction": false,
+    "correct": true,
+    "confidence": 1.0,
+    "evidence": "All 5 reps classified as 'insufficient' depth, with a mean minimum knee angle of 117.57 degrees.",
+    "evidence_source": "json",
+    "latency_ms": 19564.8,
+    "verdict": "Your primary focus should be on achieving sufficient depth in your goblet squats, as all reps were shallow. Actively work on improving your ankle mobility and driving your knees further forward to allow your hips to drop lower. Addressing your depth will likely also help you maintain a more upright torso, reducing the excessive forward lean observed in most reps.",
+    "source_conflicts": [],
+    "feedback_posture": {
+      "doing_well": "Despite the forward lean, your spine appears to maintain a relatively neutral position throughout the movement.",
+      "critical_observations": "The mean back angle at the bottom of the squat was 38.98 degrees from vertical, and 4 out of 5 reps were flagged with a 'WARNING' for excessive forward lean.",
+      "recommendation": "Focus on keeping your chest up and actively driving your knees forward more to maintain a more upright torso throughout the squat."
+    },
+    "feedback_stability": {
+      "doing_well": "No knee valgus was observed from the side view, suggesting good knee tracking in the frontal plane.",
+      "critical_observations": null,
+      "recommendation": "Continue to maintain stable knee tracking and keep your feet firmly grounded throughout the movement."
+    },
+    "feedback_movement": {
+      "doing_well": "The tempo appears relatively controlled, with a consistent eccentric and concentric phase across most reps.",
+      "critical_observations": "There is a slight positive trend in both back angle (0.93 degrees) and depth (1.73 degrees) over the set, suggesting some consistency issues or fatigue affecting form.",
+      "recommendation": "Prioritize maintaining a consistent, upright torso and full depth on every rep, even if it means reducing the weight or rep count."
+    },
+    "feedback_rom": {
+      "doing_well": null,
+      "critical_observations": "All 5 reps were classified as insufficient depth, with a mean minimum knee angle of 117.57 degrees. Ankle dorsiflexion was also consistently restricted at the bottom of the squat.",
+      "recommendation": "Work on improving ankle mobility and actively pushing your knees further forward to achieve the required depth where your hip crease is at or below knee level."
+    },
+    "error": ""
+  },
+  {
+    "video_id": "V1",
+    "variant": "Variant D",
+    "model": "gemini-2.5-flash",
+    "rep_count": -1,
+    "fault_key": "insufficient_depth",
+    "ground_truth": false,
+    "model_prediction": false,
+    "correct": true,
+    "confidence": 1.0,
+    "evidence": "JSON reports 'depth_insufficient_flag': true for all 5 reps with a mean minimum knee angle of 117.568 degrees. Visually, the hip crease does not consistently reach or pass knee level.",
+    "evidence_source": "both",
+    "latency_ms": 38224.3,
+    "verdict": "To improve your goblet squat, prioritize achieving sufficient depth by actively pushing your knees forward and working on ankle mobility. Addressing your restricted ankle dorsiflexion will biomechanically help you maintain a more upright torso, reducing the excessive forward lean observed in your reps. Focus on maintaining a consistent, deep squat on every repetition.",
+    "source_conflicts": [],
+    "feedback_posture": {
+      "doing_well": "The athlete maintains a relatively stable back angle throughout the movement, avoiding excessive rounding or arching.",
+      "critical_observations": "There is a consistent and excessive forward lean of the torso, with the mean maximum back angle reaching over 42 degrees, indicating a deviation from the desired upright posture for a goblet squat.",
+      "recommendation": "Focus on keeping your chest up and driving your knees forward more to maintain a more upright torso throughout the squat."
+    },
+    "feedback_stability": {
+      "doing_well": "Your knees appear to track well over your toes, and there is no visible knee valgus or lateral instability during the squat.",
+      "critical_observations": null,
+      "recommendation": "Continue to maintain a strong and stable base by keeping your feet firmly grounded and driving your knees out slightly."
+    },
+    "feedback_movement": {
+      "doing_well": "The tempo of your reps is generally controlled, with a consistent eccentric and concentric phase across most repetitions.",
+      "critical_observations": "There is a slight trend towards decreasing depth over the set, and the overall movement could benefit from more consistent depth achievement.",
+      "recommendation": "Strive for consistent depth on every rep, ensuring a smooth transition at the bottom without rushing the eccentric phase."
+    },
+    "feedback_rom": {
+      "doing_well": null,
+      "critical_observations": "All reps show insufficient depth, with the hip crease not consistently reaching or passing knee level. Additionally, restricted ankle dorsiflexion is noted, which may contribute to the forward lean and limited depth.",
+      "recommendation": "Work on improving ankle mobility and actively push your knees further forward to allow your hips to drop deeper into the squat."
+    },
+    "error": ""
+  },
+  {
+    "video_id": "V1",
+    "variant": "Variant E",
+    "model": "meta/llama-3.2-90b-vision-instruct",
+    "rep_count": -1,
+    "fault_key": "insufficient_depth",
+    "ground_truth": false,
+    "model_prediction": false,
+    "correct": true,
+    "confidence": 0.9,
+    "evidence": "knee_angle_at_bottom values across reps are consistently above 110\u00b0, indicating insufficient depth.",
+    "evidence_source": "json",
+    "latency_ms": 117544.1,
+    "verdict": "To improve your goblet squat form, focus on maintaining a more upright torso and increasing your depth by lowering your hips further. Ensure your knees track over your toes and avoid excessive forward lean.",
+    "source_conflicts": [],
+    "feedback_posture": {
+      "doing_well": "You are maintaining a relatively upright torso throughout the movement.",
+      "critical_observations": "However, there is room for improvement in maintaining a more consistent upright posture, especially during the descent phase.",
+      "recommendation": "Focus on keeping your chest tall and shoulders down to maintain a more upright torso."
+    },
+    "feedback_stability": {
+      "doing_well": "Your knees are tracking over your toes, indicating good stability in the frontal plane.",
+      "critical_observations": null,
+      "recommendation": "Continue to focus on maintaining this stability by keeping your knees in line with your toes."
+    },
+    "feedback_movement": {
+      "doing_well": "Your movement is generally smooth and controlled, with a consistent tempo across reps.",
+      "critical_observations": "However, there is some variation in the depth of your squats, which may indicate a need for more consistent hip flexion.",
+      "recommendation": "Focus on maintaining a consistent depth by lowering your hips further and keeping your back straight."
+    },
+    "feedback_rom": {
+      "doing_well": "You are achieving a good range of motion in your hips and knees, but there is room for improvement in your ankle dorsiflexion.",
+      "critical_observations": "Your ankle dorsiflexion is restricted, which may be limiting your depth and overall range of motion.",
+      "recommendation": "Focus on increasing your ankle dorsiflexion by stretching your calf muscles and Achilles tendons."
+    },
+    "error": ""
+  },
+  {
+    "video_id": "V1",
+    "variant": "Variant F",
+    "model": "gpt-4o-mini",
+    "rep_count": -1,
+    "fault_key": "insufficient_depth",
+    "ground_truth": false,
+    "model_prediction": false,
+    "correct": true,
+    "confidence": 0.95,
+    "evidence": "All knee angles at bottom were above the threshold for sufficient depth.",
+    "evidence_source": "json",
+    "latency_ms": 12080.9,
+    "verdict": "You need to focus on achieving sufficient depth in your squats, as all reps were classified as insufficient. Additionally, work on maintaining a more upright torso to improve your posture and stability during the movement.",
+    "source_conflicts": [],
+    "feedback_posture": {
+      "doing_well": "Your back angle is relatively consistent, which is good for maintaining posture.",
+      "critical_observations": "However, the average back angle at the bottom indicates excessive forward lean.",
+      "recommendation": "Focus on keeping your chest tall and your torso more upright throughout the squat."
+    },
+    "feedback_stability": {
+      "doing_well": "Your feet appear grounded, which is essential for stability.",
+      "critical_observations": "There are no signs of knee valgus, which is positive.",
+      "recommendation": "Ensure your knees track over your toes to maintain stability as you descend."
+    },
+    "feedback_movement": {
+      "doing_well": "Your tempo is consistent across reps, indicating a controlled movement.",
+      "critical_observations": "However, the transition at the bottom lacks fluidity due to insufficient depth.",
+      "recommendation": "Aim for a smoother descent by focusing on achieving deeper squats."
+    },
+    "feedback_rom": {
+      "doing_well": "You are consistent in your range of motion across all reps.",
+      "critical_observations": "Unfortunately, all reps were classified as insufficient in depth.",
+      "recommendation": "Work on lowering your hips below your knees to achieve the required depth."
+    },
+    "error": ""
+  },
+  {
+    "video_id": "V1",
+    "variant": "Variant G",
+    "model": "gpt-4o-mini",
+    "rep_count": -1,
+    "fault_key": "insufficient_depth",
+    "ground_truth": false,
+    "model_prediction": false,
+    "correct": true,
+    "confidence": 0.95,
+    "evidence": "All knee angles at bottom were above 110\u00b0 indicating insufficient depth.",
+    "evidence_source": "json",
+    "latency_ms": 11866.9,
+    "verdict": "You need to focus on achieving sufficient depth in your squats, as all reps were classified as insufficient. Additionally, work on maintaining a more upright torso to improve your posture and stability. Addressing these issues will enhance your overall squat performance.",
+    "source_conflicts": [],
+    "feedback_posture": {
+      "doing_well": "Your back angle is relatively consistent, but there is excessive forward lean.",
+      "critical_observations": "The back angle at the bottom averaged 38.978\u00b0, which is not optimal.",
+      "recommendation": "Focus on keeping your chest up and torso more upright throughout the squat."
+    },
+    "feedback_stability": {
+      "doing_well": "Your feet are grounded, and there is no lateral wobble observed.",
+      "critical_observations": "Knees are tracking well over toes, indicating good stability.",
+      "recommendation": "Continue to ensure knees track over toes while working on depth."
+    },
+    "feedback_movement": {
+      "doing_well": "Your movement is generally controlled, but depth consistency is lacking.",
+      "critical_observations": "All reps were classified as insufficient in depth.",
+      "recommendation": "Aim to lower your hips further to achieve hip crease below knee level."
+    },
+    "feedback_rom": {
+      "doing_well": "You are maintaining a consistent range of motion in terms of knee flexion.",
+      "critical_observations": "All knee angles at the bottom indicate insufficient depth.",
+      "recommendation": "Work on ankle mobility to allow for deeper squats without compromising form."
+    },
+    "error": ""
+  },
+  {
+    "video_id": "V1",
+    "variant": "Variant H",
+    "model": "claude-haiku-4-5-20251001",
+    "rep_count": -1,
+    "fault_key": "insufficient_depth",
+    "ground_truth": false,
+    "model_prediction": false,
+    "correct": true,
+    "confidence": 0.99,
+    "evidence": "All 5 reps show knee_angle_at_bottom 110.18\u2013121.59\u00b0 (mean 117.57\u00b0). Proper goblet squat depth requires hip crease \u2264 knee level, equivalent to knee angle \u2264 90\u00b0. Visual inspection confirms knees remain well above hip level in all frames. Dorsiflexion restricted in all reps, blocking deeper descent.",
+    "evidence_source": "both",
+    "latency_ms": 16006.9,
+    "verdict": "Your squat depth is consistently insufficient across all 5 reps\u2014knee angles bottom out at 110\u2013122\u00b0 when proper goblet squat depth requires closer to 90\u00b0 or lower (hip crease at or below knee level). Combined with restricted ankle dorsiflexion and progressive forward lean (especially reps 2\u20135), this suggests ankle mobility and/or motor control limitations are preventing you from achieving full range. Prioritize ankle mobility drills and practice bodyweight goblet squats with a focus on sitting deeper; once ankle mobility improves, your torso will naturally stay more upright.",
+    "source_conflicts": [],
+    "feedback_posture": {
+      "doing_well": "Your initial position (rep 1) shows a neutral spine with back angle ~37\u00b0, which is solid for a goblet squat. Chest stays relatively tall and arms maintain good goblet hold throughout.",
+      "critical_observations": "From rep 2 onward, your back angle increases to 42\u201344\u00b0 at depth, indicating progressive forward lean as fatigue accumulates or compensation for ankle/hip mobility constraints. This lean is not extreme but signals you are fighting mobility limits rather than controlling the descent.",
+      "recommendation": "Focus on driving your knees forward and out over your toes in the descent\u2014this cue will encourage ankle dorsiflexion and reduce your reliance on forward lean to reach depth."
+    },
+    "feedback_stability": {
+      "doing_well": "Feet remain grounded and planted throughout all reps; no visible heel lift or lateral sway. Goblet hold is stable and centered at chest.",
+      "critical_observations": "Knees appear to track slightly inward (mild valgus) but this is a secondary effect of the forward lean and restricted ankle mobility, not a primary knee stability problem. As you deepen your squat and improve dorsiflexion, knee tracking should normalize.",
+      "recommendation": "Maintain external cue\u2014think 'knees over toes'\u2014but do not force external rotation; once ankle mobility improves, neutral knee alignment will follow naturally."
+    },
+    "feedback_movement": {
+      "doing_well": "Descent is controlled and not rushed; tempo is consistent across reps (eccentric 0.5\u20131.1 s, total rep duration 1.7\u20132.6 s). No sudden lurching or bouncing at the bottom.",
+      "critical_observations": "Rep 1 is notably faster (1.7 s total, minimal pause) compared to reps 2\u20135 (2.5\u20132.6 s), suggesting you are learning or adjusting strategy mid-set. Concentric phase is slowest in rep 5 (1.6 s), indicating fatigue. Movement is deliberate but shallow throughout.",
+      "recommendation": "Establish a consistent tempo before adding weight\u2014aim for 1\u20131\u20131 (eccentric\u2013pause\u2013concentric) at bodyweight, then practice sitting into a 2-second pause at the bottom to reinforce full range awareness."
+    },
+    "feedback_rom": {
+      "doing_well": "Hip crease initiates flexion from a neutral standing posture; no asymmetry or lateral weight shift observed across reps.",
+      "critical_observations": "Ankle dorsiflexion is restricted in all reps, preventing the shin angle from reaching vertical alignment at depth. This is the primary mechanical blocker: your ankles cannot achieve the 20\u201330\u00b0 dorsiflexion needed for a full-depth squat, forcing your torso to lean forward and your depth to plateau at 110\u2013122\u00b0 knee angle instead of 85\u201395\u00b0. Insufficient depth is directly caused by restricted dorsiflexion.",
+      "recommendation": "Perform daily ankle mobility work (couch stretch, wall ankle mobilizations, banded dorsiflexion holds for 2 min each leg) before squats; then re-test depth in 1\u20132 weeks\u2014you will likely gain 15\u201325\u00b0 of additional knee flexion once dorsiflexion improves."
+    },
+    "error": ""
+  },
+  {
+    "video_id": "V1",
+    "variant": "Variant I",
+    "model": "claude-haiku-4-5-20251001",
+    "rep_count": -1,
+    "fault_key": null,
+    "ground_truth": false,
+    "model_prediction": false,
+    "correct": false,
+    "confidence": -1,
+    "evidence": "",
+    "evidence_source": "",
+    "latency_ms": 0.0,
+    "verdict": "",
+    "source_conflicts": [],
+    "feedback_posture": {
+      "doing_well": "",
+      "critical_observations": null,
+      "recommendation": ""
+    },
+    "feedback_stability": {
+      "doing_well": "",
+      "critical_observations": null,
+      "recommendation": ""
+    },
+    "feedback_movement": {
+      "doing_well": "",
+      "critical_observations": null,
+      "recommendation": ""
+    },
+    "feedback_rom": {
+      "doing_well": "",
+      "critical_observations": null,
+      "recommendation": ""
+    },
+    "error": ""
+  },
+  {
+    "video_id": "V1",
+    "variant": "Variant J",
+    "model": "claude-sonnet-4-6",
+    "rep_count": 5,
+    "fault_key": "insufficient_depth",
+    "ground_truth": true,
+    "model_prediction": true,
+    "correct": true,
+    "confidence": 0.95,
+    "evidence": "JSON: knee_angle_min_mean = 117.57\u00b0 (MediaPipe interior angle), indicating ~62\u00b0 of knee flexion on average \u2014 hip crease visually remains above knee level in all 8 frames; depth_classification = 'insufficient' in all 5 reps; depth_trend = +1.734 shows depth did not improve across the set.",
+    "evidence_source": "both",
+    "latency_ms": 31346.7,
+    "verdict": "Your primary limiters are ankle dorsiflexion restriction and insufficient squat depth \u2014 address both together, as unlocking your ankles will directly allow your hips to drop lower without your torso compensating forward. Add heel-elevated goblet squats and ankle mobility drills before each session; once depth improves, actively brace your torso tall throughout the descent to reduce the forward lean that emerged in reps 2\u20135.",
+    "feedback_posture": {
+      "doing_well": "Rep 1 maintained the most upright torso of the set (back_angle_at_bottom = 37.07\u00b0, status: ACCEPTABLE), showing you have the body awareness to keep your chest tall when conditions allow.",
+      "critical_observations": "From rep 2 onward your torso lean increased progressively (back_angle_trend = +0.927\u00b0/rep), peaking at 46.08\u00b0 in rep 2 \u2014 well above the ~30\u201335\u00b0 threshold for a goblet squat. This is biomechanically linked to restricted ankle dorsiflexion: as your heels want to rise, your torso tips forward to maintain balance.",
+      "recommendation": "On every rep, cue yourself to 'push your chest into the weight' at the bottom \u2014 this actively contracts your upper back to fight the forward collapse and keeps the goblet load acting as a counterbalance."
+    },
+    "feedback_stability": {
+      "doing_well": "Foot contact appears consistent across all frames with no visible heel rise, and you maintained a stable bilateral stance width throughout the session.",
+      "critical_observations": null,
+      "recommendation": "Ensure your knees are actively tracking in line with your second toe throughout the descent \u2014 place two fingers on your outer knees as a tactile cue during warm-up sets."
+    },
+    "feedback_movement": {
+      "doing_well": "Reps 2\u20135 settled into a consistent 2.5-second total duration with a recognisable 1-1-1 tempo, indicating you found a rhythm and controlled the movement rather than rushing.",
+      "critical_observations": "Rep 1 was notably short at 1.7 seconds total (eccentric only 0.4 s), suggesting it functioned as a rush-in rep with insufficient time under tension on the way down \u2014 it should be treated as a walk-in rep and is excluded from quality scoring.",
+      "recommendation": "Count '2-1-1' aloud on each rep \u2014 a deliberate 2-second eccentric will give your joints more time to settle into depth and reduce the abrupt transition at the bottom."
+    },
+    "feedback_rom": {
+      "doing_well": "You showed a small positive depth trend across valid reps (depth_trend = +1.734), meaning the knee angle at bottom was increasing slightly \u2014 your body was attempting to go deeper as the set progressed.",
+      "critical_observations": "Ankle dorsiflexion was rated 'restricted' in all 5 reps, and knee_angle_min never dropped below 110.18\u00b0 (MediaPipe), corresponding to roughly 70\u00b0 of knee flexion maximum \u2014 the hip crease remained above knee level in every rep, failing the goblet squat depth standard across the full session.",
+      "recommendation": "Place a 1\u20132 cm heel wedge or weight plate under both heels for your next session to temporarily compensate for restricted dorsiflexion \u2014 this single change should allow your hips to drop below your knees and give you the depth pattern to reinforce."
+    },
+    "source_conflicts": [],
+    "error": ""
+  },
+  {
+    "video_id": "V2",
+    "variant": "Control",
+    "model": "meta/llama-3.1-70b-instruct",
+    "rep_count": -1,
+    "fault_key": "insufficient_depth",
+    "ground_truth": false,
+    "model_prediction": false,
+    "correct": true,
+    "confidence": -1.0,
+    "evidence": "depth_classification: deep",
+    "evidence_source": "json",
+    "latency_ms": 164090.5,
+    "verdict": "You're doing a great job maintaining a consistent tempo and depth throughout your reps. To further improve, focus on keeping your back angle more consistent and avoid excessive forward lean. This will help you maintain a more neutral spine and reduce the risk of injury.",
+    "source_conflicts": [],
+    "feedback_posture": {
+      "doing_well": "You're maintaining a consistent back angle throughout your reps.",
+      "critical_observations": "However, you're showing a slight excessive forward lean, which may put unnecessary strain on your lower back.",
+      "recommendation": "Focus on keeping your chest tall and your back angle more consistent to reduce the risk of injury."
+    },
+    "feedback_stability": {
+      "doing_well": "Your knees are tracking over your toes, and your feet are grounded throughout the movement.",
+      "critical_observations": null,
+      "recommendation": "Continue to focus on maintaining a stable base throughout the movement."
+    },
+    "feedback_movement": {
+      "doing_well": "You're showing a consistent tempo and depth throughout your reps.",
+      "critical_observations": null,
+      "recommendation": "Continue to focus on maintaining a smooth and controlled movement throughout the exercise."
+    },
+    "feedback_rom": {
+      "doing_well": "You're achieving a deep range of motion throughout your reps.",
+      "critical_observations": null,
+      "recommendation": "Continue to focus on maintaining a full range of motion throughout the exercise."
+    },
+    "error": ""
+  },
+  {
+    "video_id": "V2",
+    "variant": "Variant A",
+    "model": "meta/llama-3.2-90b-vision-instruct",
+    "rep_count": -1,
+    "fault_key": null,
+    "ground_truth": false,
+    "model_prediction": false,
+    "correct": false,
+    "confidence": -1,
+    "evidence": "",
+    "evidence_source": "",
+    "latency_ms": 0.0,
+    "verdict": "",
+    "source_conflicts": [],
+    "feedback_posture": {
+      "doing_well": "",
+      "critical_observations": null,
+      "recommendation": ""
+    },
+    "feedback_stability": {
+      "doing_well": "",
+      "critical_observations": null,
+      "recommendation": ""
+    },
+    "feedback_movement": {
+      "doing_well": "",
+      "critical_observations": null,
+      "recommendation": ""
+    },
+    "feedback_rom": {
+      "doing_well": "",
+      "critical_observations": null,
+      "recommendation": ""
+    },
+    "error": "Error code: 400 - {'object': 'error', 'message': 'At most 1 image(s) may be provided in one request. You can set `--limit-mm-per-prompt` to increase this limit if the model supports it.', 'type': 'BadRequestError', 'param': None, 'code': 400}"
+  },
+  {
+    "video_id": "V2",
+    "variant": "Variant B",
+    "model": "gemini-2.5-flash",
+    "rep_count": -1,
+    "fault_key": "insufficient_depth",
+    "ground_truth": false,
+    "model_prediction": false,
+    "correct": true,
+    "confidence": 1.0,
+    "evidence": "All reps classified as 'deep' with depth_insufficient_flag: false.",
+    "evidence_source": "json",
+    "latency_ms": 21959.2,
+    "verdict": "You consistently achieve excellent depth and maintain a controlled tempo throughout your goblet squats. However, you exhibit an excessive forward lean, likely influenced by restricted ankle dorsiflexion. To improve your form, focus on actively driving your knees forward and keeping your chest up, while also incorporating ankle mobility exercises to allow for a more upright torso.",
+    "source_conflicts": [],
+    "feedback_posture": {
+      "doing_well": "You maintain a relatively consistent back angle across most reps, with 5 out of 6 reps classified as 'ACCEPTABLE' for back angle duration.",
+      "critical_observations": "You exhibit a significant forward lean, with your mean maximum back angle reaching 38.55 degrees. Rep 3 specifically showed a warning for excessive lean, indicating your torso is not as upright as ideal for a goblet squat.",
+      "recommendation": "Focus on keeping your chest up and actively driving your knees forward more to maintain a more vertical torso throughout the squat."
+    },
+    "feedback_stability": {
+      "doing_well": "No issues with knee valgus or foot stability were detected from the available data and camera angle.",
+      "critical_observations": null,
+      "recommendation": "Maintain a strong, stable base by keeping your entire foot grounded and driving your knees out slightly to track over your toes."
+    },
+    "feedback_movement": {
+      "doing_well": "You demonstrate good control and a consistent tempo, particularly during the eccentric and pause phases, with a mode tempo notation of 1-2-1.",
+      "critical_observations": null,
+      "recommendation": "Continue to focus on maintaining this controlled and consistent movement pattern throughout your sets."
+    },
+    "feedback_rom": {
+      "doing_well": "You consistently achieve excellent depth in all your squats, with every rep classified as 'deep' and a strong mean minimum knee angle of 91.65 degrees.",
+      "critical_observations": "Your ankle dorsiflexion is consistently restricted at the bottom of the squat, which can limit your ability to maintain an upright torso.",
+      "recommendation": "Incorporate targeted ankle mobility drills, such as calf stretches and ankle rotations, into your warm-up to improve dorsiflexion and support a more upright posture."
+    },
+    "error": ""
+  },
+  {
+    "video_id": "V2",
+    "variant": "Variant D",
+    "model": "gemini-2.5-flash",
+    "rep_count": -1,
+    "fault_key": "insufficient_depth",
+    "ground_truth": false,
+    "model_prediction": false,
+    "correct": true,
+    "confidence": 1.0,
+    "evidence": "All reps classified as 'deep' with `depth_insufficient_flag` false, and visually confirmed that the hip crease reached or exceeded knee level.",
+    "evidence_source": "both",
+    "latency_ms": 19746.1,
+    "verdict": "You demonstrate excellent depth and consistent tempo throughout your goblet squats. To further enhance your form, focus on actively improving your ankle dorsiflexion through dedicated mobility work. This will biomechanically support a more upright torso, helping you reduce the consistent forward lean observed in your reps and maintain optimal posture.",
+    "source_conflicts": [],
+    "feedback_posture": {
+      "doing_well": "You generally maintain good control over your torso position, with most reps falling within acceptable back angle ranges.",
+      "critical_observations": "While mostly acceptable, you exhibit a consistent tendency towards a significant forward lean, with one rep exceeding the warning threshold for back angle.",
+      "recommendation": "Focus on keeping your chest up and actively driving your knees forward to maintain a more upright torso throughout the squat."
+    },
+    "feedback_stability": {
+      "doing_well": "From the side view, your feet appear grounded, and there are no visible signs of lateral instability or heel lift.",
+      "critical_observations": null,
+      "recommendation": "Consider filming from a frontal view in your next session to assess knee tracking and ensure optimal stability."
+    },
+    "feedback_movement": {
+      "doing_well": "You demonstrate good consistency in achieving full depth and maintaining a controlled tempo across your repetitions.",
+      "critical_observations": "While generally fluid, the consistent forward lean, particularly in Rep 3, suggests a slight compromise in maintaining optimal posture throughout the movement.",
+      "recommendation": "Actively engage your core and lats to maintain a more rigid and upright torso, especially during the eccentric phase, to prevent excessive forward lean."
+    },
+    "feedback_rom": {
+      "doing_well": "You consistently achieve excellent squat depth, with all reps classified as 'deep' and your hip crease clearly reaching or exceeding knee level.",
+      "critical_observations": "Your ankle dorsiflexion is consistently restricted at the bottom of the squat, which may be contributing to your forward lean.",
+      "recommendation": "Incorporate ankle mobility drills into your warm-up to improve dorsiflexion, which will help you maintain a more upright torso and deeper squat without compensation."
+    },
+    "error": ""
+  },
+  {
+    "video_id": "V2",
+    "variant": "Variant E",
+    "model": "meta/llama-3.2-90b-vision-instruct",
+    "rep_count": -1,
+    "fault_key": null,
+    "ground_truth": false,
+    "model_prediction": false,
+    "correct": false,
+    "confidence": -1,
+    "evidence": "",
+    "evidence_source": "",
+    "latency_ms": 0.0,
+    "verdict": "",
+    "source_conflicts": [],
+    "feedback_posture": {
+      "doing_well": "",
+      "critical_observations": null,
+      "recommendation": ""
+    },
+    "feedback_stability": {
+      "doing_well": "",
+      "critical_observations": null,
+      "recommendation": ""
+    },
+    "feedback_movement": {
+      "doing_well": "",
+      "critical_observations": null,
+      "recommendation": ""
+    },
+    "feedback_rom": {
+      "doing_well": "",
+      "critical_observations": null,
+      "recommendation": ""
+    },
+    "error": "Error code: 504"
+  },
+  {
+    "video_id": "V2",
+    "variant": "Variant F",
+    "model": "gpt-4o-mini",
+    "rep_count": -1,
+    "fault_key": "insufficient_depth",
+    "ground_truth": false,
+    "model_prediction": false,
+    "correct": true,
+    "confidence": 1.0,
+    "evidence": "knee_angle_min_mean: 91.6467",
+    "evidence_source": "json",
+    "latency_ms": 12211.7,
+    "verdict": "Focus on maintaining a more upright torso throughout the squat to improve your posture. Additionally, ensure your knees are tracking over your toes to enhance stability. Addressing these issues will help improve your overall squat form.",
+    "source_conflicts": [],
+    "feedback_posture": {
+      "doing_well": "Your back angle is generally acceptable, indicating a decent posture. However, there is some excessive forward lean.",
+      "critical_observations": "The back angle at the bottom averages 37.2933 degrees, which suggests a need for improvement.",
+      "recommendation": "Focus on keeping your chest tall and your torso more upright during the squat."
+    },
+    "feedback_stability": {
+      "doing_well": "Your knees are generally tracking well, but there are instances of knee valgus.",
+      "critical_observations": "Knee valgus was observed in 4 out of 6 reps, indicating instability.",
+      "recommendation": "Ensure your knees are tracking over your toes throughout the squat."
+    },
+    "feedback_movement": {
+      "doing_well": "Your movement is generally fluid with consistent depth across reps.",
+      "critical_observations": "There is some variability in the smoothness of the descent.",
+      "recommendation": "Aim for a controlled descent to enhance the fluidity of your movement."
+    },
+    "feedback_rom": {
+      "doing_well": "You are achieving sufficient depth with your hip crease below the knee.",
+      "critical_observations": "No issues with depth were noted.",
+      "recommendation": "Continue to maintain this depth in future sessions."
+    },
+    "error": ""
+  },
+  {
+    "video_id": "V2",
+    "variant": "Variant G",
+    "model": "gpt-4o-mini",
+    "rep_count": -1,
+    "fault_key": "insufficient_depth",
+    "ground_truth": false,
+    "model_prediction": false,
+    "correct": true,
+    "confidence": 1.0,
+    "evidence": "knee_angle_min_mean: 91.6467",
+    "evidence_source": "json",
+    "latency_ms": 11185.2,
+    "verdict": "Focus on maintaining a more upright torso throughout the squat to improve your posture. Additionally, ensure your knees track over your toes to enhance stability. Addressing these issues will help improve your overall squat technique.",
+    "source_conflicts": [],
+    "feedback_posture": {
+      "doing_well": "Your back angle is generally acceptable, indicating a decent posture during the squat.",
+      "critical_observations": "However, there is a tendency for excessive forward lean, especially in the later reps.",
+      "recommendation": "Focus on keeping your chest up and maintaining a more vertical torso throughout the movement."
+    },
+    "feedback_stability": {
+      "doing_well": "Your knees are tracking well for the most part, but there are instances of knee valgus.",
+      "critical_observations": "Knee valgus was observed in 4 out of 6 reps, indicating a potential stability issue.",
+      "recommendation": "Ensure your knees stay aligned with your toes throughout the squat to prevent valgus collapse."
+    },
+    "feedback_movement": {
+      "doing_well": "The movement appears fluid and controlled during the descent.",
+      "critical_observations": "However, there is some inconsistency in the depth and transition at the bottom.",
+      "recommendation": "Aim for a smoother transition at the bottom by controlling your descent speed."
+    },
+    "feedback_rom": {
+      "doing_well": "You achieved sufficient depth in all reps, with the hip crease below the knee.",
+      "critical_observations": "Ankle dorsiflexion is restricted, which may affect your squat depth and stability.",
+      "recommendation": "Work on improving ankle mobility to enhance your squat performance."
+    },
+    "error": ""
+  },
+  {
+    "video_id": "V2",
+    "variant": "Variant H",
+    "model": "claude-haiku-4-5-20251001",
+    "rep_count": -1,
+    "fault_key": "insufficient_depth",
+    "ground_truth": false,
+    "model_prediction": false,
+    "correct": true,
+    "confidence": 0.98,
+    "evidence": "All six reps classified as 'deep'; knee angles at bottom range 87.82\u00b0\u201394.35\u00b0 (mean 91.65\u00b0), well below threshold for insufficient depth. Hip crease clearly below knee level across all reps.",
+    "evidence_source": "json",
+    "latency_ms": 11450.3,
+    "verdict": "Your goblet squat form is strong overall\u2014you're achieving consistent deep depth with a controlled, upright torso across all six reps. Focus on improving ankle dorsiflexion mobility, as restricted dorsiflexion is flagged across every rep and may be compensated by subtle postural adjustments; add calf stretches and dorsiflexion drills to your warm-up to unlock fuller ankle range without altering your squat mechanics.",
+    "source_conflicts": [],
+    "feedback_posture": {
+      "doing_well": "Your torso remains upright and stable throughout the movement, with back angles at bottom consistently between 35\u00b0\u201340\u00b0, which is excellent for a goblet squat. Chest stays tall and shoulders remain packed, indicating good postural control.",
+      "critical_observations": null,
+      "recommendation": "Maintain this upright chest position as a priority in every rep; it is your biggest strength and should be preserved as you increase load."
+    },
+    "feedback_stability": {
+      "doing_well": "Knees track cleanly over your toes with no inward collapse or lateral sway visible across any frame. Your base remains grounded and controlled, demonstrating solid ankle and hip stability throughout.",
+      "critical_observations": "Dorsiflexion is restricted at bottom across all six reps, which may indicate ankle mobility limitation or calf tightness compensated by postural micro-adjustments.",
+      "recommendation": "Add 90/90 hip stretch and gastrocnemius wall stretches to your warm-up, holding each 30\u201345 seconds, to improve ankle dorsiflexion and reduce reliance on compensatory movement patterns."
+    },
+    "feedback_movement": {
+      "doing_well": "Your descent is controlled and smooth, with consistent tempo across all reps (mean eccentric 0.77s, mean pause 1.58s, mean concentric 0.72s). Rep-to-rep form is highly consistent, showing no fatigue-driven form breakdown.",
+      "critical_observations": null,
+      "recommendation": "Continue to move with the same deliberate, controlled cadence\u2014your tempo consistency is a hallmark of quality movement and should be maintained as weight increases."
+    },
+    "feedback_rom": {
+      "doing_well": "You achieve deep squat depth on every single rep, with knee angles ranging from 87.82\u00b0\u201394.35\u00b0 and hip crease consistently below knee level. Depth does not degrade from rep 1 to rep 6, proving strong mobility and endurance.",
+      "critical_observations": "Restricted dorsiflexion at bottom is persistent across all reps, indicating the ankle is likely the limiting factor in your end-range mobility rather than hip or knee restriction.",
+      "recommendation": "Perform 2\u20133 minutes of active dorsiflexion drills (seated or standing with band resistance) 3\u00d7 per week to progressively unlock ankle range; this will support deeper, more comfortable squats in future sessions."
+    },
+    "error": ""
+  },
+  {
+    "video_id": "V2",
+    "variant": "Variant I",
+    "model": "claude-haiku-4-5-20251001",
+    "rep_count": -1,
+    "fault_key": "insufficient_depth",
+    "ground_truth": false,
+    "model_prediction": false,
+    "correct": true,
+    "confidence": 0.98,
+    "evidence": "All 6 reps classified as 'deep'; knee angle at bottom ranges 87.82\u00b0\u201394.35\u00b0 (mean 91.65\u00b0), well beyond the ~90\u00b0 threshold. No depth_insufficient_flag triggered on any rep.",
+    "evidence_source": "json",
+    "latency_ms": 11913.9,
+    "verdict": "Your goblet squat form is solid overall with consistent deep depth and upright posture across all reps. Focus on ankle mobility work to eliminate the persistent dorsiflexion restriction, which is limiting your ability to maintain an even weight distribution through your foot\u2014addressing this will also reduce unnecessary forward lean and improve hip positioning at the bottom.",
+    "source_conflicts": [],
+    "feedback_posture": {
+      "doing_well": "Your back angle is consistently controlled, averaging 37.3\u00b0 at the bottom across all reps with minimal variation (range 35.1\u00b0\u201339.52\u00b0). Chest remains tall and torso positioning supports the goblet hold well.",
+      "critical_observations": null,
+      "recommendation": "Maintain neutral spine through the descent by thinking 'proud chest' at the start of each rep; this will help lock in the upright position you're already achieving."
+    },
+    "feedback_stability": {
+      "doing_well": "Knees track cleanly over toes throughout all reps with no visible valgus collapse or lateral deviation. Foot placement remains stable and grounded without heel lift.",
+      "critical_observations": "Restricted dorsiflexion at the bottom (flagged across all 6 reps) suggests limited ankle mobility, which may be forcing subtle compensations in your foot position and distributing load unevenly across your foot.",
+      "recommendation": "Add 2\u20133 minutes of 90/90 hip stretch or standing ankle flexion drills 3\u00d7 per week to improve dorsiflexion range; this will enable better heel-to-toe pressure distribution and reduce reliance on forward lean."
+    },
+    "feedback_movement": {
+      "doing_well": "Descent is controlled and smooth across all reps with no jerking or instability. Tempo is consistent (eccentric 0.77 s \u00b1 0.13 s, total rep 3.07 s \u00b1 0.22 s), showing good rep-to-rep repeatability.",
+      "critical_observations": "Rep 3 triggered a posture warning due to excessive pause duration (1.6 s at 40.28\u00b0 back angle), though the absolute angle remained acceptable; consider whether fatigue began limiting your bottom-position control.",
+      "recommendation": "Stick to the 1\u20132 second pause window you're hitting on reps 1, 2, 4, 5, and 6 to maintain consistency and avoid bottom-position creep as fatigue accumulates."
+    },
+    "feedback_rom": {
+      "doing_well": "All 6 reps achieve deep depth (87.82\u00b0\u201394.35\u00b0 knee angle at bottom), exceeding the hip-crease-at-or-below-knee standard. Depth is consistent across the session with minimal variance (std dev ~2.3\u00b0).",
+      "critical_observations": "Persistent restricted dorsiflexion across all reps indicates your ankles are limiting end-range mobility at the bottom position, forcing your weight forward and preventing full plantar flexion release.",
+      "recommendation": "Prioritize ankle mobility work (weighted dorsiflexion holds, tall-box step-downs, or slant-board squats) to unlock your bottom position and allow fuller knee extension drive in the concentric phase."
+    },
+    "error": ""
+  },
+  {
+    "video_id": "V2",
+    "variant": "Variant J",
+    "model": "claude-sonnet-4-6",
+    "rep_count": 6,
+    "fault_key": "insufficient_depth",
+    "ground_truth": false,
+    "model_prediction": false,
+    "correct": true,
+    "confidence": 0.92,
+    "evidence": "All 6 reps classified as 'deep' in the JSON; knee_angle_min_mean = 91.65\u00b0 (MediaPipe interior angle), corresponding to ~88\u00b0 of knee flexion \u2014 hip crease visually confirmed below knee level in bottom frames across all reps. depth_insufficient_flag = false for every rep.",
+    "evidence_source": "both",
+    "latency_ms": 29267.8,
+    "verdict": "Your depth is consistently excellent and your torso lean is within acceptable range across nearly all reps \u2014 maintain that upright chest position by keeping your elbows pressed firmly against the inside of your knees. Your primary focus for the next session should be ankle mobility: restricted dorsiflexion is limiting your shin forward-travel and will eventually force compensatory forward lean, so address it before increasing load.",
+    "feedback_posture": {
+      "doing_well": "Your torso stays relatively upright throughout the set, with back angle at the bottom averaging 37.3\u00b0 from vertical \u2014 well within the acceptable range for a goblet squat. The slight negative trend across reps shows you are actually improving your upright posture as the set progresses.",
+      "critical_observations": "Rep 3 briefly crossed into the WARNING zone (40.28\u00b0 max) for approximately 0.1 seconds, suggesting a momentary loss of chest-up tension at the bottom. This is isolated and did not persist, but it signals a consistency risk as fatigue accumulates.",
+      "recommendation": "At the bottom of each rep, take a short breath in and brace before you drive up \u2014 this internal pressure cue will lock your chest tall and prevent the brief forward dump seen in rep 3."
+    },
+    "feedback_stability": {
+      "doing_well": "Your foot contact appears grounded across all frames with no visible heel rise despite restricted ankle dorsiflexion \u2014 this shows good instinctive weight management through the foot. Lateral hip sway is minimal from the side-view perspective.",
+      "critical_observations": null,
+      "recommendation": "Actively push your knees out against the inside of your elbows at the bottom position to reinforce knee tracking and maintain a stable base through the full range."
+    },
+    "feedback_movement": {
+      "doing_well": "Reps are highly consistent in depth and back angle, with knee_angle_min values ranging only from 87.82\u00b0 to 94.35\u00b0 across all 6 reps \u2014 a tight variance that indicates well-controlled and repeatable movement. Eccentric and concentric durations are even and symmetrical.",
+      "critical_observations": "Eccentric and concentric phases average just 0.77 s and 0.72 s respectively \u2014 the descent in particular is quite fast, which reduces the time-under-tension stimulus and can mask form breakdowns at heavier loads.",
+      "recommendation": "Slow your descent to a deliberate 2\u20133 second count on each rep; this will increase muscular demand and give you more time to detect and correct any positional drift before reaching the bottom."
+    },
+    "feedback_rom": {
+      "doing_well": "All 6 reps achieved 'deep' classification with the hip crease visually below knee level and knee_angle_min values consistently near 90\u00b0 of flexion \u2014 this is excellent depth for a goblet squat at this load.",
+      "critical_observations": "Ankle dorsiflexion is flagged as 'restricted' across every single rep, meaning the ankle joint is a limiting factor in how freely your shins can travel forward. Left unaddressed, this will place a ceiling on both depth and upright torso position as weight increases.",
+      "recommendation": "Before each squat session, perform 2 sets of 10 slow ankle-to-wall stretches per side (knee-to-wall test distance \u226510 cm is the target) to progressively free up the dorsiflexion range that is currently constrained."
+    },
+    "source_conflicts": [],
+    "error": ""
+  },
+  {
+    "video_id": "V3",
+    "variant": "Control",
+    "model": "meta/llama-3.1-70b-instruct",
+    "rep_count": -1,
+    "fault_key": "knee_valgus",
+    "ground_truth": false,
+    "model_prediction": false,
+    "correct": true,
+    "confidence": 0.9,
+    "evidence": "knee_valgus_distance: 0.2012 (mean), 5/7 reps < 0.22",
+    "evidence_source": "json",
+    "latency_ms": 302008.4,
+    "verdict": "You're doing a great job maintaining a deep range of motion and controlled movement quality. To further improve, focus on reducing your knee valgus and excessive forward lean, as these can put unnecessary stress on your joints. By addressing these issues, you'll be able to maintain a more stable and efficient squat form.",
+    "source_conflicts": [],
+    "feedback_posture": {
+      "doing_well": "You're maintaining a relatively upright posture throughout the squat.",
+      "critical_observations": "However, you're experiencing excessive forward lean, which can put unnecessary stress on your lower back.",
+      "recommendation": "Focus on keeping your chest tall and shoulders back, especially during the descent phase."
+    },
+    "feedback_stability": {
+      "doing_well": "You're demonstrating good control over your movement, with minimal lateral wobble.",
+      "critical_observations": "However, you're experiencing knee valgus, which can put unnecessary stress on your knee joint.",
+      "recommendation": "Focus on keeping your knees in line with your toes, and avoid letting them cave inward during the squat."
+    },
+    "feedback_movement": {
+      "doing_well": "You're demonstrating good control over your movement, with a smooth transition at the bottom of the squat.",
+      "critical_observations": null,
+      "recommendation": "Continue to focus on maintaining a smooth and controlled movement, and avoid any jerky or bouncy movements."
+    },
+    "feedback_rom": {
+      "doing_well": "You're maintaining a deep range of motion, with your hip crease at or below knee level.",
+      "critical_observations": null,
+      "recommendation": "Continue to focus on maintaining a deep range of motion, and avoid any restrictions in your ankle or hip mobility."
+    },
+    "error": ""
+  },
+  {
+    "video_id": "V3",
+    "variant": "Variant A",
+    "model": "meta/llama-3.2-90b-vision-instruct",
+    "rep_count": -1,
+    "fault_key": null,
+    "ground_truth": false,
+    "model_prediction": false,
+    "correct": false,
+    "confidence": -1,
+    "evidence": "",
+    "evidence_source": "",
+    "latency_ms": 0.0,
+    "verdict": "",
+    "source_conflicts": [],
+    "feedback_posture": {
+      "doing_well": "",
+      "critical_observations": null,
+      "recommendation": ""
+    },
+    "feedback_stability": {
+      "doing_well": "",
+      "critical_observations": null,
+      "recommendation": ""
+    },
+    "feedback_movement": {
+      "doing_well": "",
+      "critical_observations": null,
+      "recommendation": ""
+    },
+    "feedback_rom": {
+      "doing_well": "",
+      "critical_observations": null,
+      "recommendation": ""
+    },
+    "error": "Error code: 400 - {'object': 'error', 'message': 'At most 1 image(s) may be provided in one request. You can set `--limit-mm-per-prompt` to increase this limit if the model supports it.', 'type': 'BadRequestError', 'param': None, 'code': 400}"
+  },
+  {
+    "video_id": "V3",
+    "variant": "Variant B",
+    "model": "gemini-2.5-flash",
+    "rep_count": -1,
+    "fault_key": "knee_valgus",
+    "ground_truth": false,
+    "model_prediction": false,
+    "correct": true,
+    "confidence": 1.0,
+    "evidence": "6 out of 7 reps showed knee valgus (knee_valgus_distance < 0.22).",
+    "evidence_source": "json",
+    "latency_ms": 27023.2,
+    "verdict": "You demonstrated excellent depth in all your goblet squats, consistently reaching below parallel. However, you need to address the excessive forward lean, particularly in your initial reps, and the recurring knee valgus. Focus on actively pushing your knees out and keeping your chest tall to improve your posture and knee stability, which will enhance overall squat mechanics.",
+    "source_conflicts": [],
+    "feedback_posture": {
+      "doing_well": "Your back angle showed a positive trend, improving by over 5 degrees from the start to the end of the set.",
+      "critical_observations": "Reps 1 and 2 showed excessive forward lean, with the back angle reaching up to 74.86 degrees from vertical, indicating a significant deviation from an upright torso.",
+      "recommendation": "Focus on keeping your chest up and driving your knees out to maintain a more upright torso throughout the squat."
+    },
+    "feedback_stability": {
+      "doing_well": "Your pause duration was consistent across reps, indicating good control at the bottom.",
+      "critical_observations": "Knee valgus was present in 6 out of 7 reps, particularly in the late phase of the movement, suggesting a lack of knee stability.",
+      "recommendation": "Actively push your knees out to track over your toes, especially during the ascent, to prevent them from caving inwards."
+    },
+    "feedback_movement": {
+      "doing_well": "You maintained a consistent tempo for most reps, with a smooth transition at the bottom.",
+      "critical_observations": null,
+      "recommendation": "Continue to focus on controlled movements, ensuring a smooth and consistent pace for both eccentric and concentric phases."
+    },
+    "feedback_rom": {
+      "doing_well": "You consistently achieved deep squats, with your hip crease well below knee level for all reps.",
+      "critical_observations": null,
+      "recommendation": "Maintain this excellent depth in future sessions, as it indicates good mobility and strength."
+    },
+    "error": ""
+  },
+  {
+    "video_id": "V3",
+    "variant": "Variant D",
+    "model": "gemini-2.5-flash",
+    "rep_count": -1,
+    "fault_key": "knee_valgus",
+    "ground_truth": false,
+    "model_prediction": false,
+    "correct": true,
+    "confidence": 1.0,
+    "evidence": "6 out of 7 valid reps showed knee valgus, with 'knee_valgus_distance' below 0.22 (Rep 2: 0.1826, Rep 3: 0.2027, Rep 4: 0.1927, Rep 5: 0.1775, Rep 6: 0.2072, Rep 7: 0.1646). Visual observation confirms inward knee tracking, particularly during the ascent.",
+    "evidence_source": "both",
+    "latency_ms": 23846.8,
+    "verdict": "You consistently achieve excellent depth in your goblet squats, which is a great foundation. However, focus on actively pushing your knees out to prevent them from caving inward, especially during the ascent. Additionally, work on maintaining a more upright torso throughout the movement by engaging your core and keeping your chest tall, as this will improve overall squat mechanics and reduce strain.",
+    "source_conflicts": [],
+    "feedback_posture": {
+      "doing_well": "You maintain a relatively stable back angle throughout the reps, avoiding significant rounding or arching.",
+      "critical_observations": "There is a consistent and noticeable forward lean of the torso, averaging around 35-40 degrees from vertical, which is more than a 'slight forward lean' expected for a goblet squat. This could indicate a need for improved core bracing or hip mobility.",
+      "recommendation": "Focus on keeping your chest up and actively driving your knees out to maintain a more upright torso throughout the squat."
+    },
+    "feedback_stability": {
+      "doing_well": "Your foot turnout is consistent across reps, suggesting a stable base.",
+      "critical_observations": "Your knees consistently track inward (valgus) during the squat, particularly during the ascent phase, which was observed in 6 out of 7 reps.",
+      "recommendation": "Actively push your knees out to track directly over your toes, especially as you drive up from the bottom of the squat."
+    },
+    "feedback_movement": {
+      "doing_well": "You maintain a controlled tempo, especially during the eccentric and pause phases, and your depth is consistent across all reps.",
+      "critical_observations": null,
+      "recommendation": "Continue to focus on controlled movement and smooth transitions between phases."
+    },
+    "feedback_rom": {
+      "doing_well": "You consistently achieve excellent depth, with your hip crease clearly below knee level on every rep.",
+      "critical_observations": null,
+      "recommendation": "Maintain this excellent depth in future sessions."
+    },
+    "error": ""
+  },
+  {
+    "video_id": "V3",
+    "variant": "Variant E",
+    "model": "meta/llama-3.2-90b-vision-instruct",
+    "rep_count": -1,
+    "fault_key": null,
+    "ground_truth": false,
+    "model_prediction": false,
+    "correct": false,
+    "confidence": -1,
+    "evidence": "",
+    "evidence_source": "",
+    "latency_ms": 0.0,
+    "verdict": "",
+    "source_conflicts": [],
+    "feedback_posture": {
+      "doing_well": "",
+      "critical_observations": null,
+      "recommendation": ""
+    },
+    "feedback_stability": {
+      "doing_well": "",
+      "critical_observations": null,
+      "recommendation": ""
+    },
+    "feedback_movement": {
+      "doing_well": "",
+      "critical_observations": null,
+      "recommendation": ""
+    },
+    "feedback_rom": {
+      "doing_well": "",
+      "critical_observations": null,
+      "recommendation": ""
+    },
+    "error": "Error code: 504"
+  },
+  {
+    "video_id": "V3",
+    "variant": "Variant F",
+    "model": "gpt-4o-mini",
+    "rep_count": -1,
+    "fault_key": "knee_valgus",
+    "ground_truth": false,
+    "model_prediction": false,
+    "correct": true,
+    "confidence": 0.86,
+    "evidence": "knee_valgus_mean: 0.2012",
+    "evidence_source": "json",
+    "latency_ms": 10869.7,
+    "verdict": "Focus on maintaining a more upright torso throughout the squat to avoid excessive forward lean, which can affect stability. Additionally, work on controlling knee tracking to reduce valgus tendencies, especially during the descent. This will enhance overall movement quality and safety.",
+    "source_conflicts": [],
+    "feedback_posture": {
+      "doing_well": "Your back angle is generally acceptable, indicating some control over your torso position.",
+      "critical_observations": "However, there is excessive forward lean observed, especially in reps 2 and 3.",
+      "recommendation": "Keep your chest tall and focus on engaging your core to maintain a more upright torso."
+    },
+    "feedback_stability": {
+      "doing_well": "Your feet remain grounded throughout the movement, which is good for stability.",
+      "critical_observations": "However, knee valgus is present in all reps, indicating a need for better knee tracking.",
+      "recommendation": "Consciously push your knees outward during the squat to keep them aligned with your toes."
+    },
+    "feedback_movement": {
+      "doing_well": "The movement appears fluid with controlled descent and ascent.",
+      "critical_observations": "There are inconsistencies in knee tracking, particularly in the later reps.",
+      "recommendation": "Focus on maintaining consistent knee alignment throughout the squat to improve overall movement quality."
+    },
+    "feedback_rom": {
+      "doing_well": "You are achieving sufficient depth in your squats, with hip crease below knee level.",
+      "critical_observations": "No issues with depth were noted, which is excellent.",
+      "recommendation": "Continue to prioritize depth while ensuring proper knee alignment and torso position."
+    },
+    "error": ""
+  },
+  {
+    "video_id": "V3",
+    "variant": "Variant G",
+    "model": "gpt-4o-mini",
+    "rep_count": -1,
+    "fault_key": "knee_valgus",
+    "ground_truth": false,
+    "model_prediction": false,
+    "correct": true,
+    "confidence": 0.86,
+    "evidence": "knee_valgus_mean: 0.2012",
+    "evidence_source": "json",
+    "latency_ms": 10094.7,
+    "verdict": "You need to focus on reducing knee valgus during your squats. Ensure your knees track over your toes to maintain stability and prevent injury. Additionally, keep your torso upright to support proper posture throughout the movement.",
+    "source_conflicts": [],
+    "feedback_posture": {
+      "doing_well": "Your depth is consistent and sufficient across all reps.",
+      "critical_observations": "However, your back angle indicates excessive forward lean.",
+      "recommendation": "Focus on keeping your chest up and maintaining a more upright torso."
+    },
+    "feedback_stability": {
+      "doing_well": "You are achieving good depth in your squats.",
+      "critical_observations": "Knee valgus is present, indicating instability.",
+      "recommendation": "Ensure your knees track over your toes throughout the squat."
+    },
+    "feedback_movement": {
+      "doing_well": "Your movement is generally fluid and controlled.",
+      "critical_observations": "There is some inconsistency in knee tracking.",
+      "recommendation": "Concentrate on smooth transitions and maintaining knee alignment."
+    },
+    "feedback_rom": {
+      "doing_well": "You are consistently reaching sufficient depth.",
+      "critical_observations": "No issues with range of motion were noted.",
+      "recommendation": "Continue to focus on achieving hip crease below knee level."
+    },
+    "error": ""
+  },
+  {
+    "video_id": "V3",
+    "variant": "Variant H",
+    "model": "claude-haiku-4-5-20251001",
+    "rep_count": -1,
+    "fault_key": "knee_valgus",
+    "ground_truth": false,
+    "model_prediction": false,
+    "correct": true,
+    "confidence": 0.92,
+    "evidence": "7 of 7 reps show valgus_phase = 'LATE', and knee_valgus_distance values across all valid reps are 0.165\u20130.208. All 7 values fall below the 0.22 threshold (100% of reps affected). Visual frames confirm inward knee drift during concentric phase, particularly evident in frames 5\u20138 as you drive upward.",
+    "evidence_source": "both",
+    "latency_ms": 11625.6,
+    "verdict": "Your depth and movement quality are solid across all reps, but late-phase knee valgus is present in every repetition and requires immediate attention to prevent injury. Focus on maintaining outward pressure through your knees and feet throughout the entire squat, especially as you drive back up from the bottom position.",
+    "source_conflicts": [],
+    "feedback_posture": {
+      "doing_well": "Your torso positioning improved significantly from rep 1 onwards. Reps 2\u20137 maintain back angles of 27\u201338\u00b0 at the bottom, which is ideal for a goblet squat and allows proper hip and knee engagement.",
+      "critical_observations": null,
+      "recommendation": "Maintain the upright posture you've achieved in reps 3\u20137 from the very start of each set; the early slouch in rep 1 likely contributed to the subsequent knee control issues."
+    },
+    "feedback_stability": {
+      "doing_well": "Your descent is controlled and you achieve consistent depth without instability or heel lift across all repetitions.",
+      "critical_observations": "Knee valgus (inward collapse) occurs in the final 30\u201340% of the concentric (upward) phase in all 7 reps. This is driven by loss of mid-foot and glute engagement as fatigue accumulates or as you accelerate upward.",
+      "recommendation": "During the drive-up phase, actively push your knees outward and maintain external hip rotation by engaging your glutes and lateral stabilizers; cue yourself to 'screw your feet into the ground' and maintain outward pressure even as you fatigue."
+    },
+    "feedback_movement": {
+      "doing_well": "Rep-to-rep consistency is excellent, with total rep times clustering around 2.4\u20132.7 seconds and minimal variance in tempo across the 7-rep set. Your descent is smooth and controlled throughout.",
+      "critical_observations": null,
+      "recommendation": "Slow the concentric phase to 0.8\u20131.0 seconds on reps 5\u20137 to reduce momentum-driven valgus and reinforce neural control in the upward phase when fatigue is highest."
+    },
+    "feedback_rom": {
+      "doing_well": "You achieve excellent depth across all reps, with knee angles at bottom averaging 103.9\u00b0 and a strong trend toward deeper squats as the set progresses (depth trend: \u22123.98\u00b0). Hip crease consistently reaches or drops below knee level, demonstrating full hip and ankle mobility.",
+      "critical_observations": null,
+      "recommendation": "Maintain this depth consistency while prioritizing outward knee tracking; the depth is not the limiting factor\u2014knee stability during the upward drive is."
+    },
+    "error": ""
+  },
+  {
+    "video_id": "V3",
+    "variant": "Variant I",
+    "model": "claude-haiku-4-5-20251001",
+    "rep_count": -1,
+    "fault_key": "knee_valgus",
+    "ground_truth": false,
+    "model_prediction": false,
+    "correct": true,
+    "confidence": 0.82,
+    "evidence": "6 of 7 reps show knee_valgus_distance < 0.22 (reps 1\u20137: 0.281, 0.183, 0.203, 0.193, 0.178, 0.207, 0.165), exceeding the 50% threshold. Visual inspection of frames 2\u20138 confirms inward knee drift in late bottom position; valgus_phase is LATE across all reps.",
+    "evidence_source": "both",
+    "latency_ms": 12474.9,
+    "verdict": "Your goblet squat form is strong overall with consistent deep depth and good postural control in reps 3\u20137. Address the knee inward collapse (valgus) that appears in the bottom position of all reps by cueing your knees outward and engaging your glutes harder during the descent. This single fix will improve frontal-plane stability without compromising your excellent range of motion.",
+    "source_conflicts": [],
+    "feedback_posture": {
+      "doing_well": "Your torso remains upright and controlled through reps 3\u20137, with back angle stabilizing around 30\u201335\u00b0 at the bottom\u2014appropriate for a goblet squat. Chest is tall and spine neutral in the majority of the session.",
+      "critical_observations": "Rep 1 shows excessive back angle (74.1\u00b0) at bottom, suggesting a warm-up posture adjustment or form break. Rep 2 also sits higher (38.2\u00b0) before normalizing. However, reps 3\u20137 are consistent and clean.",
+      "recommendation": "Focus on maintaining the tight torso position you've achieved in reps 3\u20137 from your first rep onward; this will help establish motor memory and prevent form drift during fatigue."
+    },
+    "feedback_stability": {
+      "doing_well": "Your feet remain grounded and your stance width is stable across all reps, with left foot turnout averaging 21.97\u00b0 and right averaging 18.41\u00b0\u2014both within a natural, stable range.",
+      "critical_observations": "Knee valgus (inward collapse) occurs in the bottom position of all 7 reps, with 6 reps exceeding the valgus threshold (knee_valgus_distance < 0.22). This is your primary stability concern and will compound joint stress if uncorrected.",
+      "recommendation": "Cue your knees outward (slight external rotation) as you enter the bottom position, and actively drive your elbows outward to engage your glutes and prevent the knees from caving inward."
+    },
+    "feedback_movement": {
+      "doing_well": "Your descent is controlled and consistent across all reps, with smooth tempo transitions and no jerky movements or hesitation. Rep-to-rep execution is repeatable, demonstrating good movement control.",
+      "critical_observations": null,
+      "recommendation": "Maintain your current controlled cadence (0.5 s eccentric, 1.4\u20131.6 s pause, 0.5\u20130.6 s concentric) as you add the glute-activation cue; this rhythm supports proper biomechanics for valgus correction."
+    },
+    "feedback_rom": {
+      "doing_well": "All 7 reps achieve true deep squat depth with mean knee angle of 103.9\u00b0 at bottom and hip crease consistently below knee level. Your ankle dorsiflexion is adequate and there is no heel rise, indicating good ankle mobility.",
+      "critical_observations": null,
+      "recommendation": "Preserve this excellent depth consistency in future sessions by prioritizing glute engagement and knee tracking\u2014fixing the valgus will allow you to load this range safely and maximize gains."
+    },
+    "error": ""
+  },
+  {
+    "video_id": "V3",
+    "variant": "Variant J",
+    "model": "claude-sonnet-4-6",
+    "rep_count": 7,
+    "fault_key": "knee_valgus",
+    "ground_truth": true,
+    "model_prediction": true,
+    "correct": true,
+    "confidence": 0.88,
+    "evidence": "Rep 1 is excluded as a walk-in rep (total duration 1.8 s vs. median ~2.6 s, ratio ~1.4 \u2014 does not meet 3\u00d7 threshold, so rep 1 is retained). Applying valgus rule: knee_valgus_distance < 0.22 in reps 2 (0.1826), 3 (0.2027), 4 (0.1927), 5 (0.1775), 6 (0.2072), 7 (0.1646) \u2014 6 of 7 valid reps (86%) fall below 0.22 threshold. All flagged as LATE phase. Visually confirmed in bottom frames: knees visibly tracking inward relative to foot stance width at the deepest position.",
+    "evidence_source": "both",
+    "latency_ms": 31724.0,
+    "verdict": "Your primary fix is knee valgus: actively push your knees out over your pinky toes throughout the descent and especially at the bottom, where collapse occurs on every rep. Note that correcting knee tracking will also improve your torso uprightness, since valgus-driven instability often forces compensatory forward lean \u2014 so the same cue may resolve both issues simultaneously.",
+    "feedback_posture": {
+      "doing_well": "From rep 3 onward your torso lean at the bottom stabilised between 27\u00b0 and 36\u00b0 from vertical, which is well within acceptable range for a goblet squat. Holding the weight at chest height is clearly helping you counterbalance and stay upright.",
+      "critical_observations": "Rep 1 and Rep 2 show elevated back angles (74\u00b0 and 38\u00b0 respectively) suggesting your torso was not yet set at the start of those reps. Rep 2's WARNING status indicates early-set lean that persisted through the descent.",
+      "recommendation": "Before initiating each descent, take a deliberate breath, brace your core, and squeeze your shoulder blades together to lock the chest tall \u2014 do this cue on every rep, not just the first."
+    },
+    "feedback_stability": {
+      "doing_well": "Your lateral hip position appears symmetrical across reps with no visible lateral sway, and your feet remain grounded throughout \u2014 no heel rise detected visually.",
+      "critical_observations": "Knee valgus is present in 6 of 7 reps (mean knee_valgus_distance 0.201), consistently occurring in the late phase (bottom of the squat and initial drive out). This inward knee drift increases medial knee stress and destabilises the base at the most loaded portion of the lift.",
+      "recommendation": "At the moment you reach the bottom position, consciously cue 'spread the floor' \u2014 drive both knees outward so they track over your 4th and 5th toes before you begin the ascent."
+    },
+    "feedback_movement": {
+      "doing_well": "After the opening rep, your tempo became highly consistent \u2014 reps 3\u20137 all cluster around 2.6 s total with a 1.5\u20131.6 s pause at the bottom, showing good discipline and controlled pacing across the session.",
+      "critical_observations": "Your eccentric phase averages only 0.47 s, which is quite fast for a 20 kg goblet squat. A rushed descent reduces time under tension and can contribute to the late-phase valgus collapse by limiting your ability to control hip and knee position on the way down.",
+      "recommendation": "Count a slow '1-2' on every descent \u2014 aim for at least a 2-second lowering phase to give your hip abductors time to resist valgus forces throughout the entire eccentric."
+    },
+    "feedback_rom": {
+      "doing_well": "All 7 reps achieved 'deep' classification with mean knee flexion well past 90\u00b0 (mean knee_angle_min ~104\u00b0 MediaPipe / ~76\u00b0 flexion equivalent). Depth is consistent and never insufficient across the session.",
+      "critical_observations": null,
+      "recommendation": "Maintain your current depth standard; to further reinforce it, add a deliberate 1-second pause at the bottom of each rep to build positional confidence and active hip mobility at end-range."
+    },
+    "source_conflicts": [],
+    "error": ""
+  },
+  {
+    "video_id": "V4",
+    "variant": "Control",
+    "model": "meta/llama-3.1-70b-instruct",
+    "rep_count": -1,
+    "fault_key": "knee_valgus",
+    "ground_truth": false,
+    "model_prediction": false,
+    "correct": false,
+    "confidence": 0.8,
+    "evidence": "knee_valgus_distance < 0.22 in 2 reps",
+    "evidence_source": "json",
+    "latency_ms": 261129.1,
+    "verdict": "You're doing great on maintaining a deep range of motion and controlled descent. Focus on keeping your back upright and avoiding excessive forward lean, as this will help you maintain stability and prevent potential issues with your knees. Keep up the good work!",
+    "source_conflicts": [],
+    "feedback_posture": {
+      "doing_well": "You're maintaining a good back angle at the bottom of the squat.",
+      "critical_observations": "However, your back angle at the start of the squat is slightly higher than ideal.",
+      "recommendation": "Focus on keeping your back upright throughout the entire movement."
+    },
+    "feedback_stability": {
+      "doing_well": "You're doing a great job of keeping your knees tracking over your toes.",
+      "critical_observations": "However, you're showing signs of knee valgus in 2 reps.",
+      "recommendation": "Make sure to keep your knees in line with your toes throughout the entire movement."
+    },
+    "feedback_movement": {
+      "doing_well": "You're maintaining a smooth and controlled descent.",
+      "critical_observations": null,
+      "recommendation": "Continue to focus on keeping your movement smooth and controlled."
+    },
+    "feedback_rom": {
+      "doing_well": "You're achieving a deep range of motion consistently across all reps.",
+      "critical_observations": null,
+      "recommendation": "Continue to focus on keeping your depth consistent across all reps."
+    },
+    "error": ""
+  },
+  {
+    "video_id": "V4",
+    "variant": "Variant A",
+    "model": "meta/llama-3.2-90b-vision-instruct",
+    "rep_count": -1,
+    "fault_key": null,
+    "ground_truth": false,
+    "model_prediction": false,
+    "correct": false,
+    "confidence": -1,
+    "evidence": "",
+    "evidence_source": "",
+    "latency_ms": 0.0,
+    "verdict": "",
+    "source_conflicts": [],
+    "feedback_posture": {
+      "doing_well": "",
+      "critical_observations": null,
+      "recommendation": ""
+    },
+    "feedback_stability": {
+      "doing_well": "",
+      "critical_observations": null,
+      "recommendation": ""
+    },
+    "feedback_movement": {
+      "doing_well": "",
+      "critical_observations": null,
+      "recommendation": ""
+    },
+    "feedback_rom": {
+      "doing_well": "",
+      "critical_observations": null,
+      "recommendation": ""
+    },
+    "error": "Error code: 400 - {'object': 'error', 'message': 'At most 1 image(s) may be provided in one request. You can set `--limit-mm-per-prompt` to increase this limit if the model supports it.', 'type': 'BadRequestError', 'param': None, 'code': 400}"
+  },
+  {
+    "video_id": "V4",
+    "variant": "Variant B",
+    "model": "gemini-2.5-flash",
+    "rep_count": -1,
+    "fault_key": "knee_valgus",
+    "ground_truth": false,
+    "model_prediction": false,
+    "correct": true,
+    "confidence": 1.0,
+    "evidence": "The mean knee valgus distance was 0.2375, and no individual rep had a knee_valgus_distance below the 0.22 threshold, indicating no significant valgus. Visual inspection confirmed knees tracked well over toes.",
+    "evidence_source": "both",
+    "latency_ms": 15437.2,
+    "verdict": "You demonstrated excellent form throughout your goblet squats, consistently achieving deep squats with a stable base and controlled torso. Continue to focus on maintaining this impressive depth and knee stability in your future sessions. Your consistent tempo also contributes to overall movement quality.",
+    "source_conflicts": [],
+    "feedback_posture": {
+      "doing_well": "Your torso lean was controlled and consistent throughout the reps, staying within an acceptable range for a goblet squat without any slouching.",
+      "critical_observations": null,
+      "recommendation": "Maintain your current upright torso position and controlled forward lean."
+    },
+    "feedback_stability": {
+      "doing_well": "Your knees tracked well over your toes, and there was no significant knee valgus observed, indicating good lower body stability.",
+      "critical_observations": null,
+      "recommendation": "Continue to focus on driving your knees out to maintain stability throughout the movement."
+    },
+    "feedback_movement": {
+      "doing_well": "The tempo was consistent across reps, and the movement appeared fluid and controlled without any lurching.",
+      "critical_observations": null,
+      "recommendation": "Keep up the consistent tempo and smooth transitions between phases of the squat."
+    },
+    "feedback_rom": {
+      "doing_well": "You consistently achieved excellent depth, with your hip crease clearly below knee level on every rep.",
+      "critical_observations": null,
+      "recommendation": "Maintain this impressive depth in your future squat sessions."
+    },
+    "error": ""
+  },
+  {
+    "video_id": "V4",
+    "variant": "Variant D",
+    "model": "gemini-2.5-flash",
+    "rep_count": -1,
+    "fault_key": "knee_valgus",
+    "ground_truth": false,
+    "model_prediction": false,
+    "correct": true,
+    "confidence": 1.0,
+    "evidence": "All reps had knee_valgus_distance > 0.22 (mean 0.2375), and no inward knee collapse was observed visually.",
+    "evidence_source": "both",
+    "latency_ms": 14412.3,
+    "verdict": "You demonstrated excellent form throughout your goblet squats, consistently achieving full depth and maintaining a stable, upright torso. Continue to focus on driving your knees out to maintain optimal knee tracking and ensure your chest stays tall to support your spinal position. Keep up the great work!",
+    "source_conflicts": [],
+    "feedback_posture": {
+      "doing_well": "You maintained an upright torso with an acceptable back angle throughout your squats, keeping your chest tall and avoiding excessive forward lean.",
+      "critical_observations": null,
+      "recommendation": "Continue to focus on keeping your chest up and maintaining a stable, neutral spine throughout the movement."
+    },
+    "feedback_stability": {
+      "doing_well": "Your knees tracked well over your toes, demonstrating good stability and control without any signs of valgus collapse.",
+      "critical_observations": null,
+      "recommendation": "Maintain this strong knee tracking by actively pushing your knees out slightly as you descend."
+    },
+    "feedback_movement": {
+      "doing_well": "Your squat tempo was consistent across reps, with smooth transitions and no signs of lurching, indicating good control and coordination.",
+      "critical_observations": null,
+      "recommendation": "Focus on maintaining this consistent tempo and smooth movement pattern in future sessions."
+    },
+    "feedback_rom": {
+      "doing_well": "You consistently achieved excellent depth, with your hip crease clearly below knee level on every rep.",
+      "critical_observations": null,
+      "recommendation": "Continue to prioritize reaching this full depth while maintaining good form."
+    },
+    "error": ""
+  },
+  {
+    "video_id": "V4",
+    "variant": "Variant E",
+    "model": "meta/llama-3.2-90b-vision-instruct",
+    "rep_count": -1,
+    "fault_key": "knee_valgus",
+    "ground_truth": false,
+    "model_prediction": false,
+    "correct": false,
+    "confidence": 0.6,
+    "evidence": "knee_valgus_distance: 0.2375, valgus_flag_reps: 2",
+    "evidence_source": "json",
+    "latency_ms": 793459.5,
+    "verdict": "Maintain your upright posture and controlled descent throughout the squat. Focus on keeping your back straight and your knees in line with your toes. With consistent practice, you'll improve your overall form and stability.",
+    "source_conflicts": [],
+    "feedback_posture": {
+      "doing_well": "You maintained an upright posture throughout the squat, with a slight forward lean that is acceptable.",
+      "critical_observations": null,
+      "recommendation": "Continue to focus on keeping your back straight and your core engaged to maintain good posture."
+    },
+    "feedback_stability": {
+      "doing_well": "You demonstrated good stability throughout the squat, with minimal lateral movement.",
+      "critical_observations": "However, you did exhibit some knee valgus, which can put unnecessary stress on your knee joint.",
+      "recommendation": "Focus on keeping your knees in line with your toes and your weight evenly distributed on both feet to improve your stability."
+    },
+    "feedback_movement": {
+      "doing_well": "You showed good movement quality throughout the squat, with a smooth transition at the bottom and consistent depth.",
+      "critical_observations": null,
+      "recommendation": "Continue to focus on maintaining good movement quality by keeping your core engaged and your weight evenly distributed on both feet."
+    },
+    "feedback_rom": {
+      "doing_well": "You achieved a good range of motion throughout the squat, with your hip crease at or below knee level.",
+      "critical_observations": null,
+      "recommendation": "Continue to focus on achieving a full range of motion by keeping your knees in line with your toes and your weight evenly distributed on both feet."
+    },
+    "error": ""
+  },
+  {
+    "video_id": "V4",
+    "variant": "Variant F",
+    "model": "gpt-4o-mini",
+    "rep_count": -1,
+    "fault_key": "knee_valgus",
+    "ground_truth": false,
+    "model_prediction": false,
+    "correct": false,
+    "confidence": 0.8,
+    "evidence": "knee_valgus_mean: 0.2375",
+    "evidence_source": "json",
+    "latency_ms": 13822.7,
+    "verdict": "Focus on maintaining a more upright torso throughout the squat to prevent excessive forward lean. Additionally, work on controlling your knee alignment to reduce valgus during the descent. This will enhance your stability and overall movement quality.",
+    "source_conflicts": [],
+    "feedback_posture": {
+      "doing_well": "Your back angle at the bottom is within an acceptable range, indicating good posture.",
+      "critical_observations": "However, there is a tendency for excessive forward lean.",
+      "recommendation": "Focus on keeping your chest tall and your torso more upright during the squat."
+    },
+    "feedback_stability": {
+      "doing_well": "Your knee tracking is generally good, but there are moments of instability.",
+      "critical_observations": "Knee valgus was observed in 40% of your reps, indicating a need for improvement.",
+      "recommendation": "Consciously push your knees outward as you squat to maintain alignment over your toes."
+    },
+    "feedback_movement": {
+      "doing_well": "Your movement is fluid and controlled throughout the squat.",
+      "critical_observations": "Ensure that the transition at the bottom remains smooth without any lurching.",
+      "recommendation": "Practice a controlled descent to maintain consistency across all reps."
+    },
+    "feedback_rom": {
+      "doing_well": "You achieved sufficient depth in all reps, with the hip crease below the knee.",
+      "critical_observations": "No issues with range of motion were noted.",
+      "recommendation": "Continue to focus on maintaining this depth in future sessions."
+    },
+    "error": ""
+  },
+  {
+    "video_id": "V4",
+    "variant": "Variant G",
+    "model": "gpt-4o-mini",
+    "rep_count": -1,
+    "fault_key": "knee_valgus",
+    "ground_truth": false,
+    "model_prediction": false,
+    "correct": false,
+    "confidence": 0.8,
+    "evidence": "knee_valgus_mean: 0.2375",
+    "evidence_source": "json",
+    "latency_ms": 10355.4,
+    "verdict": "You are performing well in terms of depth and posture, but you need to address the knee valgus observed in two of your reps. Focus on keeping your knees aligned with your toes throughout the squat to improve stability and prevent potential injury.",
+    "source_conflicts": [],
+    "feedback_posture": {
+      "doing_well": "Your back angle is within an acceptable range, indicating good posture throughout the squat.",
+      "critical_observations": null,
+      "recommendation": "Maintain a tall chest and neutral spine to support your squat form."
+    },
+    "feedback_stability": {
+      "doing_well": "You have a solid base during most of your reps.",
+      "critical_observations": "Knee valgus was observed in two reps, indicating instability.",
+      "recommendation": "Focus on pushing your knees outward to align them with your toes."
+    },
+    "feedback_movement": {
+      "doing_well": "Your movement is generally fluid and controlled.",
+      "critical_observations": null,
+      "recommendation": "Ensure a smooth transition at the bottom of the squat to maintain consistency."
+    },
+    "feedback_rom": {
+      "doing_well": "You consistently achieve sufficient depth in your squats.",
+      "critical_observations": null,
+      "recommendation": "Continue to monitor your ankle dorsiflexion to prevent any heel rise."
+    },
+    "error": ""
+  },
+  {
+    "video_id": "V4",
+    "variant": "Variant H",
+    "model": "claude-haiku-4-5-20251001",
+    "rep_count": -1,
+    "fault_key": "knee_valgus",
+    "ground_truth": false,
+    "model_prediction": false,
+    "correct": true,
+    "confidence": 0.72,
+    "evidence": "Knee valgus distance mean 0.2375 across all reps; only 2 of 5 reps (40%) fall below 0.22 threshold. At 40% < 50%, knee valgus does not meet session-level fault criteria despite pre-computed valgus_flag on reps 2 and 5.",
+    "evidence_source": "json",
+    "latency_ms": 10393.8,
+    "verdict": "Your squat depth and posture are excellent\u2014you're hitting deep, controlled reps with minimal forward lean. Focus on eliminating the subtle inward knee drift that appears in reps 2 and 5; this is a minor stability cue, not a major fault, but addressing it will improve force transmission and reduce joint stress.",
+    "source_conflicts": [],
+    "feedback_posture": {
+      "doing_well": "Your spine remains neutral and chest tall throughout all reps. Back angle at bottom averages 19.65\u00b0 with maximum excursion to 25.26\u00b0, indicating tight control and minimal unnecessary forward lean.",
+      "critical_observations": null,
+      "recommendation": "Maintain your current chest-up cue; this posture is biomechanically sound and sustainable across sets."
+    },
+    "feedback_stability": {
+      "doing_well": "Your feet remain grounded with consistent turnout; left foot averages 29.26\u00b0 and right 12.44\u00b0, showing a natural asymmetric stance. Knee valgus is minimal and inconsistent across reps.",
+      "critical_observations": "Reps 2 and 5 show knee valgus distance just below 0.22 (0.2358 and 0.2331), indicating a subtle inward knee drift in late-range positions on these specific reps. This is not a systemic pattern but a cue-timing issue.",
+      "recommendation": "On reps where you feel fatigue setting in, think 'knees out' during the ascent to prevent that late-stage inward shift; this will improve midline stability and load distribution."
+    },
+    "feedback_movement": {
+      "doing_well": "Rep-to-rep consistency is excellent; total rep duration ranges 2.5\u20132.7 seconds with a minimal downward trend of \u22120.05 s/rep, showing you are not rushing or decelerating. Descent and pause timing remain controlled throughout.",
+      "critical_observations": null,
+      "recommendation": "Continue your current tempo discipline\u2014your 0.5 s eccentric and 1.5+ s pause are ideal for goblet squat control and hypertrophy stimulus."
+    },
+    "feedback_rom": {
+      "doing_well": "Depth is consistent and deep across all 5 reps with no regression; knee angle minimum 88.15\u00b0 (rep 4) and hip angle minimum 70.19\u00b0 (rep 2) confirm full ranges are achieved without compromise. Depth trend is slightly improving (\u22120.865\u00b0 per rep).",
+      "critical_observations": null,
+      "recommendation": "Maintain this depth level in future sessions; the consistency demonstrates good ankle mobility and hip stability, which are foundational for injury-free progression."
+    },
+    "error": ""
+  },
+  {
+    "video_id": "V4",
+    "variant": "Variant I",
+    "model": "claude-haiku-4-5-20251001",
+    "rep_count": -1,
+    "fault_key": "knee_valgus",
+    "ground_truth": false,
+    "model_prediction": false,
+    "correct": true,
+    "confidence": 0.85,
+    "evidence": "Mean knee_valgus_distance 0.2375 across 5 valid reps; only 2 of 5 reps (40%) show distance <0.22 threshold. Below 50% threshold for session-level valgus fault. Visual inspection confirms knees track over toes without inward collapse.",
+    "evidence_source": "json",
+    "latency_ms": 11117.6,
+    "verdict": "Your goblet squat form is strong overall\u2014you're achieving consistent deep depth with acceptable spinal control across all reps. Focus on stabilizing your right foot position (it shows excessive inward rotation, especially late reps) and ensure your left foot doesn't over-rotate; correcting foot alignment will improve your base of support and reduce unnecessary lateral stress on your knees.",
+    "source_conflicts": [],
+    "feedback_posture": {
+      "doing_well": "Your torso remains upright and stable throughout all reps, with back angles averaging 19.65\u00b0 at the bottom. The slight forward lean (max 23.09\u00b0) is appropriate for goblet squat mechanics and does not indicate slouching or spinal instability.",
+      "critical_observations": null,
+      "recommendation": "Maintain your current chest-tall position; your forward lean is biomechanically sound for this movement and supports proper hip-knee loading."
+    },
+    "feedback_stability": {
+      "doing_well": "Your knees track well over your midfoot throughout the movement, and you maintain a solid base with no excessive lateral sway or heel rise visible across the sequence.",
+      "critical_observations": "Your right foot shows excessive inward rotation (foot_turnout_right mean 12.44\u00b0, trending down to 10.69\u00b0 by rep 5), while your left foot shows high outward rotation (foot_turnout_left mean 29.26\u00b0, peaking at 33.28\u00b0 rep 5). This asymmetry creates an unstable and asymmetric base.",
+      "recommendation": "Align both feet to roughly 10\u201315\u00b0 toe-out; cue yourself to 'screw your feet into the floor' equally on both sides during setup to eliminate the left-right turnout mismatch."
+    },
+    "feedback_movement": {
+      "doing_well": "Your rep-to-rep consistency is excellent; total rep duration hovers near 2.5 s with minimal variation (range 2.5\u20132.7 s), and your descent is smooth and controlled throughout all five reps.",
+      "critical_observations": null,
+      "recommendation": "Your tempo is consistent and well-controlled; maintain this steady 0.5 s descent and 1.5 s pause pattern on future sessions to build strength predictably."
+    },
+    "feedback_rom": {
+      "doing_well": "You achieve deep, consistent depth on every rep\u2014knee angles at bottom average 90.74\u00b0 with minimal rep-to-rep variance (range 88.15\u00b0\u201393.08\u00b0), and hip angles confirm the crease reaches well below knee level on all reps.",
+      "critical_observations": null,
+      "recommendation": "Your depth is already optimal; focus next session on maintaining this range while refining foot positioning to ensure your knees and hips are working in a stable, symmetrical alignment."
+    },
+    "error": ""
+  },
+  {
+    "video_id": "V4",
+    "variant": "Variant J",
+    "model": "claude-sonnet-4-6",
+    "rep_count": 5,
+    "fault_key": "knee_valgus",
+    "ground_truth": false,
+    "model_prediction": false,
+    "correct": true,
+    "confidence": 0.35,
+    "evidence": "knee_valgus_distance values across all reps: 0.2467, 0.2358, 0.2355, 0.2362, 0.2331 \u2014 none fall below the 0.22 threshold required to flag a rep, so fewer than 50% of reps meet the valgus criterion; fault is not triggered at session level. However, a mild inward knee drift in the late concentric phase is faintly visible on reps 2 and 5 in the composite frames, consistent with the LATE valgus_phase tags, and the trend is slightly declining (\u22120.0027 per rep), warranting a stability cue.",
+    "evidence_source": "both",
+    "latency_ms": 30367.8,
+    "verdict": "Your depth and torso position are both solid across all five reps \u2014 keep prioritising that upright chest cue on every descent. Your primary focus for the next session should be controlling knee cave in the late concentric phase; as you drive up, actively push your knees out against your elbows to prevent the inward collapse that appeared on reps 2 and 5. Correcting valgus will also relieve lateral stress on your ankles, which may be contributing to the asymmetric foot turnout you're currently showing.",
+    "feedback_posture": {
+      "doing_well": "Your torso stays impressively upright throughout every rep \u2014 back angles at the bottom averaged only 19.7\u00b0 from vertical, well within acceptable range for a goblet squat. Holding the dumbbell at chest height is clearly helping you maintain that tall-chest position.",
+      "critical_observations": null,
+      "recommendation": "At the start of each descent, take a sharp breath into your belly and brace your core before you move \u2014 this will lock in the already-good spinal position and prevent any drift toward the 25\u201326\u00b0 lean seen briefly on reps 1 and 2."
+    },
+    "feedback_stability": {
+      "doing_well": "Knee valgus distance remains above the flagging threshold on every single rep, and your feet stay grounded on the mat throughout all frames with no visible heel rise.",
+      "critical_observations": "A mild inward knee drift occurs in the late concentric phase on reps 2 and 5 (valgus_phase: LATE), and the valgus distance trend is slowly declining across the set (\u22120.0027 per rep), suggesting early signs of fatigue-related instability that should be addressed before it worsens.",
+      "recommendation": "As you begin driving upward from the bottom position, actively press your knees outward against your elbows \u2014 this 'spread the floor' cue will counteract the late-phase collapse and reinforce hip external rotation under load."
+    },
+    "feedback_movement": {
+      "doing_well": "Rep timing is highly consistent across the set \u2014 total rep duration varied by only 0.2 seconds (2.5\u20132.7 s), and the sustained pauses at the bottom (~1.56 s mean) demonstrate good positional control under load.",
+      "critical_observations": "The eccentric phase is very short at 0.48 s mean, meaning the descent is quite rapid rather than truly controlled \u2014 this reduces time-under-tension and can mask form breakdown on the way down.",
+      "recommendation": "Count a deliberate '3 seconds down' on every rep \u2014 slowing the eccentric will increase muscular demand and give you more time to feel and correct knee and hip alignment during the descent."
+    },
+    "feedback_rom": {
+      "doing_well": "All five reps achieve deep classification with a mean knee angle minimum of 90.7\u00b0 (MediaPipe interior), confirming the hip crease consistently reaches or passes knee level on every rep \u2014 depth is not just present on rep 1 but fully sustained across the set.",
+      "critical_observations": "Left foot turnout (mean 29.3\u00b0) is notably greater than the right (mean 12.4\u00b0), an asymmetry of ~17\u00b0 that suggests a difference in hip mobility or habitual foot placement between sides, which over time can create asymmetric loading through the hip and knee.",
+      "recommendation": "Before your next session, stand naturally and consciously equalise your foot angle to approximately 20\u201325\u00b0 on both sides, then rehearse 5 bodyweight squats to groove the symmetric stance before adding load."
+    },
+    "source_conflicts": [],
+    "error": ""
+  },
+  {
+    "video_id": "V5",
+    "variant": "Control",
+    "model": "meta/llama-3.1-70b-instruct",
+    "rep_count": -1,
+    "fault_key": null,
+    "ground_truth": false,
+    "model_prediction": false,
+    "correct": false,
+    "confidence": -1,
+    "evidence": "",
+    "evidence_source": "",
+    "latency_ms": 0.0,
+    "verdict": "",
+    "source_conflicts": [],
+    "feedback_posture": {
+      "doing_well": "",
+      "critical_observations": null,
+      "recommendation": ""
+    },
+    "feedback_stability": {
+      "doing_well": "",
+      "critical_observations": null,
+      "recommendation": ""
+    },
+    "feedback_movement": {
+      "doing_well": "",
+      "critical_observations": null,
+      "recommendation": ""
+    },
+    "feedback_rom": {
+      "doing_well": "",
+      "critical_observations": null,
+      "recommendation": ""
+    },
+    "error": "Error code: 504"
+  },
+  {
+    "video_id": "V5",
+    "variant": "Variant A",
+    "model": "meta/llama-3.2-90b-vision-instruct",
+    "rep_count": -1,
+    "fault_key": null,
+    "ground_truth": false,
+    "model_prediction": false,
+    "correct": false,
+    "confidence": -1,
+    "evidence": "",
+    "evidence_source": "",
+    "latency_ms": 0.0,
+    "verdict": "",
+    "source_conflicts": [],
+    "feedback_posture": {
+      "doing_well": "",
+      "critical_observations": null,
+      "recommendation": ""
+    },
+    "feedback_stability": {
+      "doing_well": "",
+      "critical_observations": null,
+      "recommendation": ""
+    },
+    "feedback_movement": {
+      "doing_well": "",
+      "critical_observations": null,
+      "recommendation": ""
+    },
+    "feedback_rom": {
+      "doing_well": "",
+      "critical_observations": null,
+      "recommendation": ""
+    },
+    "error": "Error code: 400 - {'object': 'error', 'message': 'At most 1 image(s) may be provided in one request. You can set `--limit-mm-per-prompt` to increase this limit if the model supports it.', 'type': 'BadRequestError', 'param': None, 'code': 400}"
+  },
+  {
+    "video_id": "V5",
+    "variant": "Variant B",
+    "model": "gemini-2.5-flash",
+    "rep_count": -1,
+    "fault_key": "excessive_forward_lean",
+    "ground_truth": false,
+    "model_prediction": false,
+    "correct": true,
+    "confidence": 1.0,
+    "evidence": "Mean back angle at bottom is 46.42 degrees, with individual reps reaching up to 52.4-52.6 degrees, and all reps showing 'time_excessive' for back angle.",
+    "evidence_source": "json",
+    "latency_ms": 37656.8,
+    "verdict": "Your goblet squats demonstrate good depth and consistent tempo. However, you exhibit an excessive forward lean throughout the movement, which may be linked to restricted ankle dorsiflexion. Focus on improving your ankle mobility and actively engaging your core to maintain a more upright torso, which will enhance your posture and overall squat mechanics.",
+    "source_conflicts": [],
+    "feedback_posture": {
+      "doing_well": null,
+      "critical_observations": "Your torso shows an excessive forward lean throughout the squat, with the mean back angle at the bottom being 46.42 degrees and individual reps exceeding 50 degrees. This indicates a significant deviation from the upright posture expected in a goblet squat, and all reps triggered a warning for excessive back angle.",
+      "recommendation": "Actively drive your knees forward and keep your chest lifted to maintain a more upright torso, reducing the forward lean."
+    },
+    "feedback_stability": {
+      "doing_well": "The video does not show any obvious signs of lateral instability or foot lift, suggesting a generally stable base.",
+      "critical_observations": "Knee valgus could not be assessed due to missing 'knee_valgus_distance' data in the provided JSON. Therefore, a precise evaluation of knee stability is not possible.",
+      "recommendation": "Ensure your knees consistently track in line with your toes throughout the movement to maintain optimal knee health and stability."
+    },
+    "feedback_movement": {
+      "doing_well": "Your tempo is consistent across reps, with a smooth eccentric phase and a controlled pause at the bottom, indicating good control.",
+      "critical_observations": "There is a slight trend of increasing forward lean (back angle trend of 1.21 degrees) as the set progresses, suggesting a potential breakdown in form with fatigue.",
+      "recommendation": "Maintain consistent core engagement and focus on your upright posture from the first rep to the last to prevent form degradation."
+    },
+    "feedback_rom": {
+      "doing_well": "You consistently achieve excellent depth, with 5 out of 6 reps classified as 'deep' and the remaining rep as 'parallel', ensuring full range of motion.",
+      "critical_observations": "Ankle dorsiflexion is consistently restricted at the bottom of the squat, which often contributes to an increased forward lean to maintain balance.",
+      "recommendation": "Incorporate targeted ankle mobility drills, such as calf stretches and ankle rotations, into your warm-up to improve dorsiflexion."
+    },
+    "error": ""
+  },
+  {
+    "video_id": "V5",
+    "variant": "Variant D",
+    "model": "gemini-2.5-flash",
+    "rep_count": -1,
+    "fault_key": "excessive_forward_lean",
+    "ground_truth": false,
+    "model_prediction": false,
+    "correct": true,
+    "confidence": 1.0,
+    "evidence": "Consolidated back_angle_max_mean is 47.8 degrees, all reps show 'WARNING' status for back_data, and visual inspection confirms a significant forward lean at the bottom of the squat.",
+    "evidence_source": "both",
+    "latency_ms": 22655.2,
+    "verdict": "You are consistently achieving good depth in your goblet squats and maintaining a controlled tempo during the eccentric and pause phases. Your primary focus should be on reducing the excessive forward lean by actively keeping your chest up and driving your knees forward more. Improving your ankle dorsiflexion through dedicated mobility work will biomechanically support a more upright torso, making it easier to maintain better posture throughout the movement.",
+    "source_conflicts": [],
+    "feedback_posture": {
+      "doing_well": "You maintain a relatively consistent back angle throughout the reps, as indicated by the back_angle_trend of 1.2146, showing consistency in your lean.",
+      "critical_observations": "There is a consistent and significant forward lean, with the mean maximum back angle reaching 47.8 degrees and all reps triggering a 'WARNING' status. This indicates the torso is not upright enough for a goblet squat.",
+      "recommendation": "Focus on keeping your chest up and driving your knees forward more to maintain a more upright torso throughout the squat."
+    },
+    "feedback_stability": {
+      "doing_well": "The video does not show any obvious signs of lateral instability or heel lift, suggesting a stable base during the movement.",
+      "critical_observations": "Cannot assess knee valgus from the side view, and relevant JSON data is missing, preventing a full evaluation of knee stability.",
+      "recommendation": "Ensure your knees track directly over your toes throughout the movement to maintain stability and prevent valgus collapse."
+    },
+    "feedback_movement": {
+      "doing_well": "The tempo is fairly consistent across reps, with a total_trend of 0.0686, and the eccentric and pause phases are well-controlled.",
+      "critical_observations": "The concentric phase (ascent) shows some inconsistency, with concentric_mean at 0.9333 but individual reps varying from 0.6 to 1.4 seconds, suggesting some reps are rushed or struggled with.",
+      "recommendation": "Strive for a more consistent and controlled ascent, matching the controlled eccentric phase, to improve overall movement fluidity."
+    },
+    "feedback_rom": {
+      "doing_well": "You consistently achieve sufficient depth, with 5 out of 6 reps classified as 'deep' and the remaining rep as 'parallel', and no reps flagged as insufficient depth.",
+      "critical_observations": "Ankle dorsiflexion is consistently restricted across all reps, which likely contributes to the excessive forward lean observed.",
+      "recommendation": "Incorporate ankle mobility drills into your warm-up to improve dorsiflexion, which will help you maintain a more upright torso and achieve even greater depth comfortably."
+    },
+    "error": ""
+  },
+  {
+    "video_id": "V5",
+    "variant": "Variant E",
+    "model": "meta/llama-3.2-90b-vision-instruct",
+    "rep_count": -1,
+    "fault_key": "excessive_forward_lean",
+    "ground_truth": false,
+    "model_prediction": false,
+    "correct": false,
+    "confidence": 0.7,
+    "evidence": "back_angle_at_bottom_mean: 46.4233",
+    "evidence_source": "json",
+    "latency_ms": 148713.8,
+    "verdict": "Maintain your current depth and posture. Focus on keeping your back straight and your knees in line with your toes throughout the squat. Avoid letting your knees extend past your toes, and keep your weight in your heels.",
+    "source_conflicts": [],
+    "feedback_posture": {
+      "doing_well": "You are maintaining a good posture throughout the squat, with your back straight and your knees in line with your toes.",
+      "critical_observations": null,
+      "recommendation": "Continue to focus on keeping your back straight and your knees in line with your toes."
+    },
+    "feedback_stability": {
+      "doing_well": "You are demonstrating good stability throughout the squat, with your weight evenly distributed between both legs.",
+      "critical_observations": null,
+      "recommendation": "Continue to focus on keeping your weight evenly distributed between both legs."
+    },
+    "feedback_movement": {
+      "doing_well": "You are demonstrating good movement quality throughout the squat, with a smooth and controlled descent and ascent.",
+      "critical_observations": null,
+      "recommendation": "Continue to focus on maintaining a smooth and controlled movement throughout the squat."
+    },
+    "feedback_rom": {
+      "doing_well": "You are demonstrating good range of motion throughout the squat, with your hips and knees moving through a full range of motion.",
+      "critical_observations": null,
+      "recommendation": "Continue to focus on maintaining a full range of motion throughout the squat."
+    },
+    "error": ""
+  },
+  {
+    "video_id": "V5",
+    "variant": "Variant F",
+    "model": "gpt-4o-mini",
+    "rep_count": -1,
+    "fault_key": "excessive_forward_lean",
+    "ground_truth": false,
+    "model_prediction": false,
+    "correct": true,
+    "confidence": 0.9,
+    "evidence": "back_angle_max_mean: 47.815",
+    "evidence_source": "json",
+    "latency_ms": 13118.0,
+    "verdict": "You need to focus on maintaining a more upright torso throughout the squat to avoid excessive forward lean. This will help improve your overall stability and posture. Additionally, ensure that your knees are tracking over your toes to prevent any potential knee valgus issues.",
+    "source_conflicts": [],
+    "feedback_posture": {
+      "doing_well": "Your back angle at the bottom is generally acceptable, but there is a tendency for excessive forward lean.",
+      "critical_observations": "Back angle max mean is 47.815 degrees, indicating a need for improvement.",
+      "recommendation": "Focus on keeping your chest tall and your torso more upright during the squat."
+    },
+    "feedback_stability": {
+      "doing_well": "Your feet are grounded, and you maintain a solid base throughout the movement.",
+      "critical_observations": "Knees show signs of valgus in 4 out of 6 reps.",
+      "recommendation": "Ensure your knees track over your toes to prevent any inward collapse."
+    },
+    "feedback_movement": {
+      "doing_well": "Your descent is controlled, and you achieve good depth in most reps.",
+      "critical_observations": "There is some inconsistency in the transition at the bottom.",
+      "recommendation": "Aim for a smoother transition at the bottom of the squat."
+    },
+    "feedback_rom": {
+      "doing_well": "You achieve sufficient depth in most reps, with a knee angle at the bottom indicating a deep squat.",
+      "critical_observations": "One rep was classified as parallel, indicating a slight inconsistency.",
+      "recommendation": "Work on maintaining depth consistently across all reps."
+    },
+    "error": ""
+  },
+  {
+    "video_id": "V5",
+    "variant": "Variant G",
+    "model": "gpt-4o-mini",
+    "rep_count": -1,
+    "fault_key": "excessive_forward_lean",
+    "ground_truth": false,
+    "model_prediction": false,
+    "correct": true,
+    "confidence": 0.9,
+    "evidence": "back_angle_at_bottom_mean: 46.4233",
+    "evidence_source": "json",
+    "latency_ms": 11004.2,
+    "verdict": "You need to focus on maintaining a more upright torso throughout the squat. This will help improve your overall stability and movement quality. Additionally, ensure that your knees track over your toes to avoid potential knee valgus issues.",
+    "source_conflicts": [],
+    "feedback_posture": {
+      "doing_well": "Your back angle is generally within an acceptable range, indicating some level of torso control.",
+      "critical_observations": "However, there is excessive forward lean observed.",
+      "recommendation": "Focus on keeping your chest up and torso more vertical during the squat."
+    },
+    "feedback_stability": {
+      "doing_well": "Your feet remain grounded throughout the movement.",
+      "critical_observations": "Knees are not consistently tracking over toes, indicating potential instability.",
+      "recommendation": "Ensure your knees stay aligned with your toes as you descend."
+    },
+    "feedback_movement": {
+      "doing_well": "The descent appears controlled and smooth.",
+      "critical_observations": "There are inconsistencies in your rep-to-rep execution.",
+      "recommendation": "Aim for a more consistent tempo across all reps to enhance fluidity."
+    },
+    "feedback_rom": {
+      "doing_well": "You achieve sufficient depth in most reps.",
+      "critical_observations": "One rep was parallel rather than deep.",
+      "recommendation": "Maintain depth by focusing on hip hinge and knee flexion throughout the squat."
+    },
+    "error": ""
+  },
+  {
+    "video_id": "V5",
+    "variant": "Variant H",
+    "model": "claude-haiku-4-5-20251001",
+    "rep_count": -1,
+    "fault_key": "excessive_forward_lean",
+    "ground_truth": false,
+    "model_prediction": false,
+    "correct": true,
+    "confidence": 0.98,
+    "evidence": "Back angle at bottom ranges from 37.68\u00b0\u201352.6\u00b0 (mean 46.42\u00b0), consistently 30\u201350\u00b0 beyond neutral vertical. Visual frames confirm pronounced torso tilt, particularly in frames 3\u20138, with chest folding forward significantly. For goblet squat, acceptable forward lean is typically <25\u00b0; this athlete exceeds that by 20\u201328\u00b0.",
+    "evidence_source": "both",
+    "latency_ms": 13608.4,
+    "verdict": "Your depth is solid and consistent, but excessive forward lean is the primary issue across all reps\u2014your torso is tilting 46\u201353\u00b0 from vertical at the bottom, well beyond the slight forward lean that goblet squats allow. Focus on keeping your chest more upright by improving ankle dorsiflexion mobility and actively driving your knees forward; this will also reduce the compensatory lean and improve overall stability.",
+    "source_conflicts": [],
+    "feedback_posture": {
+      "doing_well": "You maintain a stable, consistent forward lean pattern across all reps with no wobble or asymmetry, demonstrating good core control.",
+      "critical_observations": "Your back angle at bottom averages 46.4\u00b0, which is 20\u201325\u00b0 more forward than optimal for a goblet squat. This excessive lean signals either ankle dorsiflexion restriction (confirmed by 'restricted' ankle status across all reps) or insufficient hip mobility, forcing your torso to compensate by tilting forward to maintain balance.",
+      "recommendation": "Before loading, perform 2\u20133 minutes of ankle mobility work (banded dorsiflexion or couch stretch); then consciously cue 'chest tall, push knees forward' on descent to engage the anterior chain and reduce reliance on forward lean to counterbalance the load."
+    },
+    "feedback_stability": {
+      "doing_well": "Knee tracking is clean and centered over your toes throughout all reps, with no valgus collapse, and your base remains grounded with no visible heel lift.",
+      "critical_observations": null,
+      "recommendation": "Maintain your current knee alignment by actively engaging your quads and glutes; consider adding a small amount of outward toe angle (5\u201310\u00b0) to further improve hip external rotation cues if you add weight."
+    },
+    "feedback_movement": {
+      "doing_well": "Your descent is controlled and symmetrical, and you achieve consistent tempo across all reps (mean 2.97 s total, with concentric slowing slightly in rep 4 but recovering by rep 6). Pauses are steady and deliberate.",
+      "critical_observations": null,
+      "recommendation": "Maintain your 1-1-1 tempo structure; focus on smoothing the transition from pause to concentric in rep 4 (where concentric jumped to 1.4 s) by minimizing the 'sticking point' through better position at the bottom."
+    },
+    "feedback_rom": {
+      "doing_well": "You achieve deep squat depth in 5 of 6 reps (knee angle 86\u201398\u00b0), and rep 6 still reaches parallel (103\u00b0), demonstrating excellent lower-body range.",
+      "critical_observations": "Ankle dorsiflexion is restricted at the bottom of every rep, limiting your ability to keep your shin more vertical and forcing compensatory forward torso lean. This is the root cause of your postural fault.",
+      "recommendation": "Allocate 5 minutes daily to ankle mobility drills (calf stretches, ankle alphabet, tibialis anterior activation); re-test depth in 1\u20132 weeks\u2014as ankle mobility improves, your required forward lean will decrease naturally, and your torso angle should improve to 25\u201330\u00b0 by default."
+    },
+    "error": ""
+  },
+  {
+    "video_id": "V5",
+    "variant": "Variant I",
+    "model": "claude-haiku-4-5-20251001",
+    "rep_count": -1,
+    "fault_key": "excessive_forward_lean",
+    "ground_truth": false,
+    "model_prediction": false,
+    "correct": true,
+    "confidence": 0.92,
+    "evidence": "JSON: back_angle_at_bottom ranges 37.68\u201352.4\u00b0 (mean 46.42\u00b0), all above 30\u00b0 threshold. Visual: frames show consistent forward torso lean from rep 1 through rep 6. Back angle increases slightly with fatigue (rep 4: 52.4\u00b0), indicating posture degrades under load.",
+    "evidence_source": "both",
+    "latency_ms": 13938.6,
+    "verdict": "Your squat depth and tempo are solid, but excessive forward lean is the primary issue across all 6 reps\u2014your torso angle reaches 44\u201353\u00b0 from vertical instead of staying under 30\u00b0. This forward lean is likely driven by restricted ankle dorsiflexion; mobilize your ankles and dorsiflexes before squats, and cue yourself to keep your chest more upright by initiating the descent with a 'hips back' cue rather than knees forward.",
+    "source_conflicts": [],
+    "feedback_posture": {
+      "doing_well": "Your chest stays lifted and you maintain a consistent forward lean pattern throughout the set\u2014no slouching or rounding of the lower back is evident.",
+      "critical_observations": "Your torso leans 37\u201352\u00b0 from vertical at the bottom of each rep. For goblet squats, a slight forward lean (up to ~20\u00b0) is acceptable, but sustained lean beyond 30\u00b0 signals either limited ankle mobility or a default motor pattern prioritizing knee extension over hip hinge. Reps 4 and 6 show the worst forward lean (52.4\u00b0 and 49.66\u00b0), coinciding with slower concentric phases (1.4s and 1.2s), suggesting fatigue is amplifying the lean.",
+      "recommendation": "Cue 'hips back' at the start of each rep to prioritize the hip hinge over knee-forward motion, and spend 2\u20133 minutes pre-squat on ankle dorsiflexion mobility drills (wall ankle mobilizations or calf stretches) to free up forward shin angle\u2014this will naturally reduce forward lean compensation."
+    },
+    "feedback_stability": {
+      "doing_well": "Your base is solid and your knees track cleanly over your toes throughout all 6 reps. No lateral wobble, heel lift, or dynamic knee valgus is visible.",
+      "critical_observations": null,
+      "recommendation": "Maintain foot position and weight distribution by pressing through your whole foot; consider filming from the front on your next session to verify symmetrical knee tracking and confirm no subtle valgus under heavier loads."
+    },
+    "feedback_movement": {
+      "doing_well": "Your eccentric phase is controlled and consistent (0.78\u20130.8s across reps), and your descent is smooth without jerking or compensation patterns.",
+      "critical_observations": "Concentric time increases from 0.6\u20130.9s in reps 1\u20133 to 1.2\u20131.4s in reps 4\u20136, indicating fatigue. Pause times are stable (1.0\u20131.4s), but the slowing concentric phase and rise in forward lean together suggest your hip extensors and quads are fatiguing, forcing greater reliance on torso lean to drive ascent.",
+      "recommendation": "Reduce pause duration to 0.8\u20131.0s to preserve concentric power and maintain upright posture; this will also lower injury risk as fatigue accumulates."
+    },
+    "feedback_rom": {
+      "doing_well": "You achieve excellent depth on 5 of 6 reps (knee angle 86\u201398\u00b0, deep classification) and meet the hip-crease-below-knee standard consistently.",
+      "critical_observations": "Ankle dorsiflexion is restricted at the bottom across all reps (JSON flag: 'restricted'). This restricted dorsiflexion is the root cause of your forward lean\u2014your ankles cannot achieve the ~20\u00b0 dorsiflexion needed to keep your shins more vertical, so your torso compensates by leaning forward to balance the load.",
+      "recommendation": "Perform daily calf and soleus stretches (90/90 position, wall ankle mobilization, or foam-rolling) for 2\u20133 weeks; restricted dorsiflexion will progressively improve, allowing your shins to angle forward more freely and your torso to remain upright without compensation."
+    },
+    "error": ""
+  },
+  {
+    "video_id": "V5",
+    "variant": "Variant J",
+    "model": "claude-sonnet-4-6",
+    "rep_count": 6,
+    "fault_key": "excessive_forward_lean",
+    "ground_truth": true,
+    "model_prediction": true,
+    "correct": true,
+    "confidence": 0.93,
+    "evidence": "Mean back_angle_at_bottom across all 6 reps is 46.42\u00b0 from vertical; rep 4 peaks at 52.40\u00b0 and rep 6 peaks at 52.60\u00b0. All 6 reps carry a WARNING status, and time_excessive values range from 0.2 s (rep 2) to 1.6 s (reps 3 and 4), indicating sustained lean beyond the acceptable threshold. Visual frames confirm pronounced forward trunk inclination at depth, with the torso clearly tilted well past a slight lean.",
+    "evidence_source": "both",
+    "latency_ms": 28203.8,
+    "verdict": "Your primary fix is torso lean \u2014 brace your core harder and drive your elbows down to keep the goblet weight pulled tight to your chest, which will automatically cue your torso upright. Note that correcting forward lean will also reduce compensatory ankle stress, so pairing this cue with daily calf-and-ankle mobility work will help you maintain the depth you are already achieving.",
+    "feedback_posture": {
+      "doing_well": "You maintain a consistent starting position across reps with back angles between 20\u201338\u00b0 at the top, showing reasonable setup discipline before each descent.",
+      "critical_observations": "Forward lean escalates to 47\u201353\u00b0 at the bottom across all six reps, and the trend coefficient of +1.21 confirms the lean is worsening as the set progresses \u2014 likely driven by restricted ankle dorsiflexion forcing a compensatory torso pitch.",
+      "recommendation": "At the bottom of every rep, consciously push your elbows down toward your knees to keep the weight pressed against your sternum \u2014 this cues thoracic extension and prevents the chest from collapsing forward."
+    },
+    "feedback_stability": {
+      "doing_well": "You maintain a grounded foot contact throughout the movement with no visible heel lift in the frames, and your descent appears laterally controlled without obvious wobble.",
+      "critical_observations": null,
+      "recommendation": "Spread the floor with your feet by actively screwing them outward (external rotation intent) at the start of each rep to pre-load hip stability before the descent begins."
+    },
+    "feedback_movement": {
+      "doing_well": "Eccentric tempo is consistent and controlled at approximately 0.78 s across all reps, and rep-to-rep total duration variance is low (2.7\u20133.5 s), indicating good rhythm and repeatability.",
+      "critical_observations": "The lean begins accumulating within the first 0.4\u20131.0 s of each descent (time_warning values), meaning the breakdown is occurring early in the eccentric phase rather than only at end-range \u2014 suggesting the movement pattern itself needs correction, not just depth management.",
+      "recommendation": "Slow your eccentric to a deliberate 3-second count on your next session to give yourself time to feel and correct the torso position before reaching depth."
+    },
+    "feedback_rom": {
+      "doing_well": "Five of six reps reach a 'deep' classification and none are flagged for insufficient depth, confirming you are consistently getting hip crease at or below knee level \u2014 this is a genuine strength of your current technique.",
+      "critical_observations": "Ankle dorsiflexion is flagged as restricted in every rep, which is likely the root driver of your forward lean; limited dorsiflexion forces the tibia to stay vertical, pushing the hips back and the torso forward to compensate.",
+      "recommendation": "Before each squat session, perform 2 sets of 10 reps of wall ankle stretches (knee-to-wall drill) with a 5 cm toe-to-wall starting distance to progressively open dorsiflexion range."
+    },
+    "source_conflicts": [],
+    "error": ""
+  },
+  {
+    "video_id": "V6",
+    "variant": "Control",
+    "model": "meta/llama-3.1-70b-instruct",
+    "rep_count": -1,
+    "fault_key": null,
+    "ground_truth": false,
+    "model_prediction": false,
+    "correct": false,
+    "confidence": -1,
+    "evidence": "",
+    "evidence_source": "",
+    "latency_ms": 0.0,
+    "verdict": "",
+    "source_conflicts": [],
+    "feedback_posture": {
+      "doing_well": "",
+      "critical_observations": null,
+      "recommendation": ""
+    },
+    "feedback_stability": {
+      "doing_well": "",
+      "critical_observations": null,
+      "recommendation": ""
+    },
+    "feedback_movement": {
+      "doing_well": "",
+      "critical_observations": null,
+      "recommendation": ""
+    },
+    "feedback_rom": {
+      "doing_well": "",
+      "critical_observations": null,
+      "recommendation": ""
+    },
+    "error": "Error code: 504"
+  },
+  {
+    "video_id": "V6",
+    "variant": "Variant A",
+    "model": "meta/llama-3.2-90b-vision-instruct",
+    "rep_count": -1,
+    "fault_key": null,
+    "ground_truth": false,
+    "model_prediction": false,
+    "correct": false,
+    "confidence": -1,
+    "evidence": "",
+    "evidence_source": "",
+    "latency_ms": 0.0,
+    "verdict": "",
+    "source_conflicts": [],
+    "feedback_posture": {
+      "doing_well": "",
+      "critical_observations": null,
+      "recommendation": ""
+    },
+    "feedback_stability": {
+      "doing_well": "",
+      "critical_observations": null,
+      "recommendation": ""
+    },
+    "feedback_movement": {
+      "doing_well": "",
+      "critical_observations": null,
+      "recommendation": ""
+    },
+    "feedback_rom": {
+      "doing_well": "",
+      "critical_observations": null,
+      "recommendation": ""
+    },
+    "error": "Error code: 400 - {'object': 'error', 'message': 'At most 1 image(s) may be provided in one request. You can set `--limit-mm-per-prompt` to increase this limit if the model supports it.', 'type': 'BadRequestError', 'param': None, 'code': 400}"
+  },
+  {
+    "video_id": "V6",
+    "variant": "Variant B",
+    "model": "gemini-2.5-flash",
+    "rep_count": -1,
+    "fault_key": "excessive_forward_lean",
+    "ground_truth": false,
+    "model_prediction": false,
+    "correct": false,
+    "confidence": 1.0,
+    "evidence": "The `back_angle_max_mean` is 32.69 degrees, and `back_angle_at_bottom_mean` is 31.508 degrees, indicating a significant forward lean that is also visually apparent in all reps.",
+    "evidence_source": "both",
+    "latency_ms": 23200.7,
+    "verdict": "You consistently achieve excellent depth in your goblet squats and maintain a controlled tempo. However, focus on actively pushing your knees out to prevent valgus, and work on maintaining a more upright torso. Improving your ankle mobility may help reduce the forward lean and further enhance your squat mechanics.",
+    "source_conflicts": [],
+    "feedback_posture": {
+      "doing_well": "Your back angle trend is consistent across reps, and all reps were classified as 'ACCEPTABLE' for posture.",
+      "critical_observations": "The mean back angle at the bottom (31.5 degrees) and max back angle (32.69 degrees) indicate a significant forward lean, which is more than a 'slight forward lean' acceptable for a goblet squat.",
+      "recommendation": "Focus on keeping your chest up and driving your knees forward to maintain a more upright torso throughout the squat."
+    },
+    "feedback_stability": {
+      "doing_well": "You maintained a stable base with no obvious lateral sway or heel lift observed during the movement.",
+      "critical_observations": "Knee valgus (knees caving inward) is consistently observed, particularly during the ascent phase of the squat.",
+      "recommendation": "Actively push your knees out over your toes throughout the movement, especially as you drive up from the bottom."
+    },
+    "feedback_movement": {
+      "doing_well": "You maintained a controlled and consistent tempo across all reps, with a smooth transition at the bottom of the squat.",
+      "critical_observations": null,
+      "recommendation": "Maintain your controlled and consistent tempo throughout the movement."
+    },
+    "feedback_rom": {
+      "doing_well": "You consistently achieved excellent squat depth, with all reps classified as 'deep' and a mean minimum knee angle of 77.604 degrees.",
+      "critical_observations": "Your ankle dorsiflexion is consistently restricted, which could be contributing to the forward lean observed in your posture.",
+      "recommendation": "Incorporate ankle mobility drills into your warm-up to improve dorsiflexion, which may help you maintain a more upright torso."
+    },
+    "error": ""
+  },
+  {
+    "video_id": "V6",
+    "variant": "Variant D",
+    "model": "gemini-2.5-flash",
+    "rep_count": -1,
+    "fault_key": "excessive_forward_lean",
+    "ground_truth": false,
+    "model_prediction": false,
+    "correct": true,
+    "confidence": 0.8,
+    "evidence": "back_data.status is 'ACCEPTABLE' for all reps, and back_angle_max_mean is 32.69 degrees.",
+    "evidence_source": "json",
+    "latency_ms": 24777.6,
+    "verdict": "You demonstrated excellent depth and generally good posture throughout your goblet squats. To further enhance your form, focus on improving ankle mobility to allow for a more upright torso at the bottom of the squat. Additionally, be mindful of driving your knees out to prevent any inward collapse, especially during the deepest part of the movement.",
+    "source_conflicts": [],
+    "feedback_posture": {
+      "doing_well": "Your back angle remained within acceptable limits throughout the session, with a mean maximum lean of 32.69 degrees, indicating good torso control.",
+      "critical_observations": "While generally acceptable, there was a slight increasing trend in your back angle over the reps (0.28 degrees), and the video overlay for Rep 5 showed a higher lean (38.5 degrees) than the JSON reported, suggesting a potential for increased forward lean as fatigue sets in.",
+      "recommendation": "Focus on actively bracing your core and keeping your chest up to maintain a consistent torso angle, especially during later reps."
+    },
+    "feedback_stability": {
+      "doing_well": "You demonstrated good knee stability, with no consistent knee valgus detected across the majority of your repetitions.",
+      "critical_observations": "Rep 4 showed a knee valgus distance of 0.086, indicating some inward knee collapse during that specific rep.",
+      "recommendation": "Pay attention to driving your knees out slightly to track over your toes, particularly as you approach the bottom of the squat."
+    },
+    "feedback_movement": {
+      "doing_well": "Your tempo was consistent across reps, with a smooth eccentric phase averaging 0.7 seconds and a controlled pause at the bottom.",
+      "critical_observations": null,
+      "recommendation": "Continue to maintain your controlled tempo and smooth transitions between phases to optimize muscle engagement."
+    },
+    "feedback_rom": {
+      "doing_well": "You consistently achieved excellent depth, with all reps classified as 'deep' and a mean minimum knee angle of 77.604 degrees, indicating significant hip and knee flexion.",
+      "critical_observations": "Your ankle dorsiflexion was consistently restricted at the bottom of the squat across multiple reps, which might limit further depth or contribute to compensatory movements.",
+      "recommendation": "Incorporate ankle mobility drills into your warm-up to improve dorsiflexion and allow for a more upright torso at maximum depth."
+    },
+    "error": ""
+  },
+  {
+    "video_id": "V6",
+    "variant": "Variant E",
+    "model": "meta/llama-3.2-90b-vision-instruct",
+    "rep_count": -1,
+    "fault_key": "excessive_forward_lean",
+    "ground_truth": false,
+    "model_prediction": false,
+    "correct": true,
+    "confidence": 0.1,
+    "evidence": "back_angle_at_bottom values across reps are below 35 degrees, indicating acceptable forward lean.",
+    "evidence_source": "json",
+    "latency_ms": 111375.4,
+    "verdict": "Maintain your upright posture and controlled descent. Focus on achieving a deeper squat by lowering your body until your hip crease is at or below your knee level. Keep your knees in line with your toes and avoid excessive forward lean.",
+    "source_conflicts": [],
+    "feedback_posture": {
+      "doing_well": "You maintained an upright posture throughout the exercise.",
+      "critical_observations": null,
+      "recommendation": "Continue to focus on keeping your chest tall and your hips square."
+    },
+    "feedback_stability": {
+      "doing_well": "You demonstrated good stability, with your knees tracking over your toes and your feet grounded.",
+      "critical_observations": null,
+      "recommendation": "Maintain this stability by keeping your weight evenly distributed on both feet."
+    },
+    "feedback_movement": {
+      "doing_well": "You showed good movement quality, with a controlled descent and smooth transition at the bottom.",
+      "critical_observations": null,
+      "recommendation": "Continue to focus on smooth, controlled movements throughout the exercise."
+    },
+    "feedback_rom": {
+      "doing_well": "You achieved a good range of motion, with your hip crease at or below your knee level.",
+      "critical_observations": "However, you could improve by lowering your body further to achieve a deeper squat.",
+      "recommendation": "Focus on lowering your body until your hip crease is at or below your knee level."
+    },
+    "error": ""
+  },
+  {
+    "video_id": "V6",
+    "variant": "Variant F",
+    "model": "gpt-4o-mini",
+    "rep_count": -1,
+    "fault_key": "excessive_forward_lean",
+    "ground_truth": false,
+    "model_prediction": false,
+    "correct": true,
+    "confidence": 1.0,
+    "evidence": "back_angle_at_bottom_mean: 31.508",
+    "evidence_source": "json",
+    "latency_ms": 11409.1,
+    "verdict": "Your squat form is generally solid, but focus on reducing knee valgus to enhance stability. Ensure your knees track over your toes throughout the movement to prevent potential injury. Maintaining a neutral spine will also help with overall posture.",
+    "source_conflicts": [],
+    "feedback_posture": {
+      "doing_well": "Your back angle is within an acceptable range, indicating a good torso position.",
+      "critical_observations": null,
+      "recommendation": "Maintain a tall chest and neutral spine throughout the squat."
+    },
+    "feedback_stability": {
+      "doing_well": "Your feet remain grounded, which is essential for stability.",
+      "critical_observations": "Knee valgus is present in multiple reps, indicating instability.",
+      "recommendation": "Focus on keeping your knees aligned with your toes during the descent."
+    },
+    "feedback_movement": {
+      "doing_well": "Your movement is fluid and consistent across all reps.",
+      "critical_observations": null,
+      "recommendation": "Continue to control your descent and ensure a smooth transition at the bottom."
+    },
+    "feedback_rom": {
+      "doing_well": "You achieve sufficient depth in your squats, with the hip crease below the knee.",
+      "critical_observations": null,
+      "recommendation": "Work on ankle mobility to improve dorsiflexion and overall squat mechanics."
+    },
+    "error": ""
+  },
+  {
+    "video_id": "V6",
+    "variant": "Variant G",
+    "model": "gpt-4o-mini",
+    "rep_count": -1,
+    "fault_key": "excessive_forward_lean",
+    "ground_truth": false,
+    "model_prediction": false,
+    "correct": true,
+    "confidence": 1.0,
+    "evidence": "back_angle_at_bottom_mean: 31.508",
+    "evidence_source": "json",
+    "latency_ms": 10573.3,
+    "verdict": "Focus on improving your knee alignment during the squat. Ensure your knees track over your toes to avoid potential injury. Additionally, maintain a consistent torso angle to support your overall posture.",
+    "source_conflicts": [],
+    "feedback_posture": {
+      "doing_well": "Your back angle is generally acceptable, indicating a good torso position. Maintain this upright posture throughout.",
+      "critical_observations": null,
+      "recommendation": "Focus on keeping your chest tall and avoid leaning forward excessively."
+    },
+    "feedback_stability": {
+      "doing_well": "Your feet remain grounded, which is essential for stability during the squat.",
+      "critical_observations": "Knee valgus is present in your last rep, indicating a potential stability issue.",
+      "recommendation": "Ensure your knees track over your toes to prevent valgus collapse."
+    },
+    "feedback_movement": {
+      "doing_well": "Your movement appears fluid and controlled across all reps.",
+      "critical_observations": null,
+      "recommendation": "Continue to focus on a smooth transition at the bottom of the squat."
+    },
+    "feedback_rom": {
+      "doing_well": "You consistently achieve sufficient depth in your squats.",
+      "critical_observations": null,
+      "recommendation": "Maintain this depth while ensuring proper knee alignment."
+    },
+    "error": ""
+  },
+  {
+    "video_id": "V6",
+    "variant": "Variant H",
+    "model": "claude-haiku-4-5-20251001",
+    "rep_count": -1,
+    "fault_key": "excessive_forward_lean",
+    "ground_truth": false,
+    "model_prediction": false,
+    "correct": true,
+    "confidence": 0.95,
+    "evidence": "Back angle at bottom mean = 31.51\u00b0 (range 30.58\u00b0\u201332.7\u00b0); all reps remain within acceptable range for goblet squat (15\u201335\u00b0). Torso remains upright with only slight lean.",
+    "evidence_source": "json",
+    "latency_ms": 11391.3,
+    "verdict": "Your squat form is fundamentally sound with consistent depth and upright posture across all 5 reps. Address the restricted ankle dorsiflexion by incorporating ankle mobility work\u2014this will reduce compensatory forward lean and improve stability as loads increase.",
+    "source_conflicts": [],
+    "feedback_posture": {
+      "doing_well": "Your torso stays consistently upright across all reps, with back angles at bottom averaging 31.5\u00b0 and ranging only 2.1\u00b0 across the set. Chest remains tall and spine neutral throughout the movement.",
+      "critical_observations": null,
+      "recommendation": "Maintain this neutral spine position in future sessions; it is your strongest postural asset and should be preserved as you progress load."
+    },
+    "feedback_stability": {
+      "doing_well": "Knee tracking is stable in reps 1\u20133 and 5, and foot contact remains grounded throughout all reps with no visible heel lift or lateral wobble.",
+      "critical_observations": "Rep 4 shows mild inward knee drift in the late ascent phase (frontal-plane valgus distance 0.086), though this is an isolated event and does not reflect a systematic pattern.",
+      "recommendation": "Focus on 'spreading the floor' with your feet during ascent to reinforce external hip rotation and prevent late-rep knee valgus as fatigue accumulates."
+    },
+    "feedback_movement": {
+      "doing_well": "Descent is controlled with consistent eccentric timing (0.7 s across all reps) and smooth transition at the bottom. Rep-to-rep consistency is high, with minimal variance in pause duration (1.4\u20131.6 s) and total rep time (2.8\u20133.0 s).",
+      "critical_observations": null,
+      "recommendation": "Maintain your current tempo discipline; the consistency you've demonstrated here is a sign of solid motor control and will support safe load progression."
+    },
+    "feedback_rom": {
+      "doing_well": "Hip crease is clearly at or below knee level in all frames; knee angle at bottom is consistently deep (mean 77.6\u00b0) with minimal rep-to-rep variance (depth trend +1.61\u00b0 across the set shows only slight shallowing).",
+      "critical_observations": "Ankle dorsiflexion is restricted at bottom in 4 of 5 reps (reps 1\u20133, 5), indicating limited mobility in plantarflexion dorsiflexion capacity. Heels show no visible rise, but the restriction is present.",
+      "recommendation": "Perform 2\u20133 min of ankle mobility work (90/90 stretch, tall kneeling ankle flexion, or banded ankle distraction) before squat sessions to unlock dorsiflexion range and reduce compensatory forward lean over time."
+    },
+    "error": ""
+  },
+  {
+    "video_id": "V6",
+    "variant": "Variant I",
+    "model": "claude-haiku-4-5-20251001",
+    "rep_count": -1,
+    "fault_key": "excessive_forward_lean",
+    "ground_truth": false,
+    "model_prediction": false,
+    "correct": true,
+    "confidence": 0.05,
+    "evidence": "Back angle at bottom across all reps: 30.58\u201332.70\u00b0 (mean 31.51\u00b0). All within acceptable range for goblet squat; slight forward lean is normal and appropriate for this movement.",
+    "evidence_source": "json",
+    "latency_ms": 12255.2,
+    "verdict": "Your goblet squat form is fundamentally sound with consistent depth and upright posture across all five reps. Focus on improving ankle dorsiflexion mobility\u2014your heels are likely rising slightly at the bottom, which limits hip drive during the concentric phase and may contribute to the restricted dorsiflexion pattern observed across reps. Incorporate calf stretches and ankle mobility work to unlock deeper ankle flexion, which will enhance stability and power output.",
+    "source_conflicts": [],
+    "feedback_posture": {
+      "doing_well": "Your torso remains upright and stable throughout all five reps, with back angles consistently in the 30\u201333\u00b0 range at the bottom. This demonstrates excellent spine control and chest position for a goblet squat.",
+      "critical_observations": null,
+      "recommendation": "Maintain this neutral spine position by cueing 'chest tall' at the start of each rep, and reinforce the habit of holding the weight at chest height to naturally anchor your upper body."
+    },
+    "feedback_stability": {
+      "doing_well": "Your base is solid across the session; no heel lift or lateral wobble is evident from the video analysis, and knee tracking appears straight through the frontal plane in the majority of reps.",
+      "critical_observations": "Rep 4 shows a late-phase knee valgus flag (valgus_flag: true, valgus_phase: 'LATE'), although it does not meet the threshold for a session-level fault. This suggests momentary inward knee drift as fatigue sets in near lockout.",
+      "recommendation": "During the final 1\u20132 reps of a set, actively cue 'knees out' or 'press knees apart' to counteract any late-rep valgus collapse, especially as fatigue accumulates."
+    },
+    "feedback_movement": {
+      "doing_well": "Your reps are consistent and fluid, with a steady eccentric phase (0.7 s across all reps) and controlled transitions. Rep-to-rep tempo variance is minimal (total time range 2.8\u20133.0 s), showing good rhythm.",
+      "critical_observations": null,
+      "recommendation": "Continue your deliberate 1\u20132 second pause at the bottom; this pause reinforces positional awareness and stability under load."
+    },
+    "feedback_rom": {
+      "doing_well": "You achieve full, consistent depth across all reps, with knee flexion angles ranging only 72\u201381\u00b0 and all five reps classified as 'deep.' This demonstrates excellent hip and knee mobility.",
+      "critical_observations": "Dorsiflexion is restricted across all five reps (ankle_dorsiflexion_at_bottom: 'restricted'). Although depth is adequate, restricted ankle dorsiflexion often signals tight calves or anterior tibialis weakness, which can reduce the mechanical advantage of your hip extensors during the drive out of the hole.",
+      "recommendation": "Add 60\u201390 seconds of calf stretching and dorsiflexion mobilization (e.g., wall ankle mobilizations or resistance band ankle flexion drills) into your warm-up and cool-down to improve ankle range and reduce reliance on forward lean to compensate."
+    },
+    "error": ""
+  },
+  {
+    "video_id": "V6",
+    "variant": "Variant J",
+    "model": "claude-sonnet-4-6",
+    "rep_count": 5,
+    "fault_key": "excessive_forward_lean",
+    "ground_truth": false,
+    "model_prediction": false,
+    "correct": true,
+    "confidence": 0.8,
+    "evidence": "back_angle_at_bottom mean is 31.51\u00b0 from vertical across all reps; maximum recorded is 33.78\u00b0 (rep 2). All reps are classified ACCEPTABLE in the JSON. Visually, bottom frames show a noticeable but sub-excessive forward trunk lean consistent with restricted ankle dorsiflexion rather than a technique breakdown. Threshold for excessive is typically \u226545\u00b0 from vertical \u2014 not reached.",
+    "evidence_source": "both",
+    "latency_ms": 27160.0,
+    "verdict": "Your depth and torso control are solid \u2014 focus your next session on improving ankle dorsiflexion mobility, as restricted ankles are currently limiting your shin angle and pushing your torso forward at the bottom. Adding heel-elevated goblet squats or daily ankle mobility work will directly reduce your forward lean and help you stay more upright through the full range.",
+    "feedback_posture": {
+      "doing_well": "Your torso stays within acceptable lean angles across all five reps, with a consistent back angle at the bottom averaging ~31.5\u00b0 from vertical \u2014 well below the excessive threshold. The chest-up goblet position is helping you stay relatively upright.",
+      "critical_observations": "The forward lean progressively increases from standing (~15\u00b0) to the bottom position (~31\u201334\u00b0), which is at the upper boundary of acceptable. This pattern is consistent with restricted ankle dorsiflexion pulling the torso forward to compensate, rather than a spine control failure.",
+      "recommendation": "As you descend, actively think 'tall chest, elbows between knees' to counteract the forward pull caused by your ankle restriction."
+    },
+    "feedback_stability": {
+      "doing_well": "Foot positioning appears grounded across reps and there is no visible lateral wobble or heel rise severe enough to destabilize the movement. The side-view frames show consistent stance width.",
+      "critical_observations": "Rep 4 recorded a knee_valgus_distance of 0.086 during the late phase of the concentric, suggesting a brief inward knee collapse on that rep. However, this was isolated to one rep and does not meet the session-level fault threshold.",
+      "recommendation": "On the drive up, consciously cue 'push knees out over pinky toes' at the sticking point to prevent any late-phase valgus from becoming a habit as load increases."
+    },
+    "feedback_movement": {
+      "doing_well": "Rep tempo is highly consistent across all five reps \u2014 eccentric phase is a steady 0.7 s every rep and total rep duration stays between 2.8\u20133.0 s. There is no evidence of lurching, rushing, or loss of control during the descent or transition.",
+      "critical_observations": null,
+      "recommendation": "Continue using a deliberate 1-second pause at the bottom to reinforce positional control \u2014 your current pause duration (1.4\u20131.6 s) is a strength you should maintain as you progress to heavier loads."
+    },
+    "feedback_rom": {
+      "doing_well": "All five reps achieve a 'deep' classification with knee flexion angles at the bottom ranging from 72.83\u00b0 to 80.98\u00b0 (MediaPipe), confirming the hip crease reaches or passes knee level consistently \u2014 this is excellent goblet squat depth.",
+      "critical_observations": "Ankle dorsiflexion is flagged as 'restricted' in all four side-view reps. Limited dorsiflexion is the primary constraint on this session \u2014 it caps shin angle, forces increased forward trunk lean, and will limit how deep and upright you can squat as load increases.",
+      "recommendation": "Before each session, spend 2 minutes per side doing a half-kneeling ankle dorsiflexion stretch (knee-to-wall drill) to progressively open ankle range and reduce the compensatory forward lean at the bottom."
+    },
+    "source_conflicts": [],
+    "error": ""
+  }
+]
