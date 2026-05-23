@@ -1054,7 +1054,7 @@ h1 { font-size:20px; font-weight:700; color:#f8fafc; }
     </div>
   </div>
 
-  <div class="connector"><span>↓ Haiku Call 1 complete → OpenCV Part 2 reads rep_scores[] to find worst rep</span></div>
+  <div class="connector"><span>↓ Haiku Call 1 complete → OpenCV Part 2 uses Haiku's worst_rep_index to extract worst-rep frame</span></div>
 
   <!-- ═══ STEP 5b: OPENCV FRAME EXTRACTION ═══ -->
   <div class="step backend process">
@@ -1078,7 +1078,7 @@ h1 { font-size:20px; font-weight:700; color:#f8fafc; }
         <div class="sub-label">Input</div>
         <div class="io-row">
           <span class="io-pill io-in">Original video file (GCS URI from form_analyses.video_url)</span>
-          <span class="io-pill io-in">rep_scores[] from Haiku Call 1 output — Squad 2 finds lowest overall score → worst_rep_number</span>
+          <span class="io-pill io-in">worst_rep_index from Haiku Call 1 output (0-based array index of lowest-scoring rep)</span>
           <span class="io-pill io-in">bottom_timestamp_ms for that rep — looked up from biomechanics JSON in DB</span>
           <span class="io-pill io-in">worst_rep angle values from biomechanics JSON (knee, hip, ankle) — for text overlay</span>
           <span class="io-pill io-in">gold standard angles from Supabase gold standard table — for comparison overlay</span>
@@ -1087,8 +1087,8 @@ h1 { font-size:20px; font-weight:700; color:#f8fafc; }
       <div class="sub-section">
         <div class="sub-label">Frame Selection Logic <span style="font-size:9px;font-weight:800;padding:1px 6px;border-radius:3px;background:#1c1000;color:#fb923c;border:1px solid #78350f;">V2</span></div>
         <div style="background:#070a0f; border:1px solid #1e2433; border-radius:8px; padding:12px 14px; font-size:11px; color:#94a3b8; line-height:1.8;">
-          <strong style="color:#cbd5e1;">1. Find worst rep</strong> — from Haiku Call 1 <code style="background:#0d1117;padding:1px 4px;border-radius:3px;color:#86efac;">rep_scores[]</code>: <code style="background:#0d1117;padding:1px 4px;border-radius:3px;color:#86efac;">worst_rep = min(rep_scores, key=lambda r: r["overall"])</code><br>
-          <strong style="color:#cbd5e1;">2. Get bottom frame</strong> — look up <code style="background:#0d1117;padding:1px 4px;border-radius:3px;color:#86efac;">bottom_timestamp_ms</code> for that rep number from biomechanics JSON stored in DB (Step 4)<br>
+          <strong style="color:#cbd5e1;">1. Get worst rep index</strong> — use Haiku's <code style="background:#0d1117;padding:1px 4px;border-radius:3px;color:#86efac;">worst_rep_index</code> (0-based). Convert to rep_number: <code style="background:#0d1117;padding:1px 4px;border-radius:3px;color:#86efac;">rep_number = worst_rep_index + 1</code><br>
+          <strong style="color:#cbd5e1;">2. Get bottom frame</strong> — look up <code style="background:#0d1117;padding:1px 4px;border-radius:3px;color:#86efac;">bottom_timestamp_ms</code> for that rep from biomechanics JSON in DB (Step 4)<br>
           <strong style="color:#cbd5e1;">3. Seek to timestamp</strong> — <code style="background:#0d1117;padding:1px 4px;border-radius:3px;color:#fde68a;">cv2.VideoCapture.set(cv2.CAP_PROP_POS_MSEC, frame.timestamp_ms)</code><br>
           <strong style="color:#cbd5e1;">4. Extract raw frame</strong> — save to GCS: <code style="background:#0d1117;padding:1px 4px;border-radius:3px;color:#fde68a;">gs://.../analyses/{analysis_id}/frame_raw.jpg</code><br>
           <strong style="color:#cbd5e1;">5. Draw joint overlays</strong> — using screen_landmarks from that frame:
@@ -1164,6 +1164,7 @@ h1 { font-size:20px; font-weight:700; color:#f8fafc; }
           <tr><td colspan="3" style="background:#0a0f1a;color:#475569;font-size:10px;padding:4px 10px;font-style:italic;">── Rep-level scores — from Haiku Call 1 ──</td></tr>
           <tr><td style="color:#fde68a;">rep_scores <span style="background:rgba(250,204,21,0.15);padding:1px 4px;border-radius:3px;font-size:9px;font-weight:700;">🆕 NEW</span></td><td><span class="type">jsonb array</span></td><td><span class="example">[{ "rep_number": 1, "overall": 82, "posture": 84, "stability": 75, "movement_quality": 85, "range_of_motion": 78 }, ...]</span></td></tr>
           <tr><td>rep_count</td><td><span class="type">int</span></td><td><span class="example">8</span></td></tr>
+          <tr><td style="color:#fde68a;">worst_rep_index <span style="background:rgba(250,204,21,0.15);padding:1px 4px;border-radius:3px;font-size:9px;font-weight:700;">🆕 NEW</span></td><td><span class="type">int</span></td><td><span class="example">7</span></td><td style="font-size:10px;color:#64748b;">0-based array index of rep with lowest overall score. Haiku computes, OpenCV Part 2 uses for frame extraction.</td></tr>
           <tr><td>issue_tags</td><td><span class="type">text[] + GIN index</span></td><td><span class="example">["knee_valgus"]</span></td></tr>
           <tr><td colspan="3" style="background:#070a0f;color:#475569;font-size:10px;padding:5px 10px;line-height:1.6;">
             <strong style="color:#cbd5e1;">Vocabulary (fixed set):</strong>&nbsp;
