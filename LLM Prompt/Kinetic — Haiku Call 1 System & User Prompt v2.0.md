@@ -698,6 +698,8 @@ REASONING FIELD — complete before assigning scores:
 Return ONLY the 2 JSON objects below. No preamble. No text outside the JSON.
 S2 routes: db_output → form_analysis_results table · frontend_output → API response to S1
 
+worst_rep_index: Calculate and include the 0-based array index of the rep with the lowest overall score from rep_scores. S2 writes this value directly to the DB. OpenCV Part 2 uses it to extract and annotate the worst-performing rep.
+
 ```json
 // ── OUTPUT 1: DB SAVE ── form_analysis_results table ──────────────────
 {
@@ -708,6 +710,7 @@ S2 routes: db_output → form_analysis_results table · frontend_output → API 
     "movement_quality_score": integer,
     "range_of_motion_score": integer,
     "rep_count": integer,
+    "worst_rep_index": integer,  // 0-based array index of rep with lowest overall score
     "rep_scores": [{"rep_number":int,"overall":int,"posture":int,"stability":int,"movement_quality":int,"range_of_motion":int}],
     "camera_angle": "side|front",
     "issue_tags": ["string"],
