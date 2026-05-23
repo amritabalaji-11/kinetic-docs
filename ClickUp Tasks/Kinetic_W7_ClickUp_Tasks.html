@@ -487,41 +487,6 @@ td ul{padding-left:16px;} td li{margin-bottom:3px;}
 </ul></div>
 </div></div>
 
-<div class="task"><div class="task-hdr" onclick="tog(this)">
-  <span class="tid">S2-W7-09</span>
-  <div class="tname-wrap"><div class="tname">Update form_analysis_results Table Schema — Supabase Migration</div>
-  <div class="tbadges"><span class="badge b-todo">To Do</span><span class="badge b-med">Medium</span><span class="badge b-s2">Squad 2</span></div></div>
-  <span class="chev">▼</span>
-</div><div class="tbody"><div class="divider"></div>
-<div class="sec"><div class="slbl">Description</div><div class="desc">
-<p>Execute the database schema migration to update <code>form_analysis_results</code> table in Supabase to match the specification in DB_Schema.md. This migration prepares the table to store the full Haiku Call 1 output schema (scores, fault detection, causal reasoning, and coaching output).</p>
-<p><strong>Schema changes (fully documented in DB_Schema.md Section 2):</strong></p>
-<ul>
-  <li><strong>ADD 9 new columns</strong> to capture Haiku output: <code>range_of_motion_score</code>, <code>rep_scores</code>, <code>faults_detected</code>, <code>fault_confidence</code>, <code>causal_chains</code>, <code>fault_detail</code>, <code>trends</code>, <code>reasoning</code>, <code>camera_angle</code></li>
-  <li><strong>REMOVE 5 legacy columns</strong> from Nemotron era: <code>nemotron_output_url</code>, <code>chain_of_thought</code>, <code>annotated_frames_urls</code>, <code>issues_json</code>, <code>progression_recommendation</code></li>
-  <li><strong>UPDATE annotated_frame_url</strong> to nullable (written by OpenCV Part 2, not Haiku Call 1)</li>
-  <li><strong>ADD progression_output</strong> nullable column (written by Haiku Call 2 async)</li>
-</ul>
-<p><strong>Reference:</strong> All field definitions, types, nullability, and example structures are in DB_Schema.md lines 102–313. Updated technical_data_schema.html Section 6 documents the same schema in visual form.</p>
-</div></div>
-<div class="sec"><div class="slbl ac">Acceptance Criteria</div><ul class="ac-list">
-  <li>Supabase migration file created and validated (no syntax errors)</li>
-  <li>All 9 new columns added with correct types: range_of_motion_score (int), rep_scores (jsonb), faults_detected (jsonb), fault_confidence (jsonb), causal_chains (jsonb), fault_detail (jsonb), trends (jsonb), reasoning (text), camera_angle (enum)</li>
-  <li>annotated_frame_url updated to allow NULL (nullable)</li>
-  <li>progression_output added as jsonb, nullable</li>
-  <li>All 5 legacy Nemotron columns safely removed (confirm no data loss, archive if needed)</li>
-  <li>Migration tested against a clone of production DB — rollback tested and confirmed working</li>
-  <li>Post-migration schema validated: <code>SELECT column_name, data_type, is_nullable FROM information_schema.columns WHERE table_name='form_analysis_results'</code> returns correct fields</li>
-  <li>Squad 2 confirms table ready for Haiku Call 1 INSERT (S2-W7-05)</li>
-</ul></div>
-<div class="sec"><div class="slbl dep">Blocked by</div><div class="dep-row">
-  <span class="dp dp-dep">None — can start immediately</span>
-</div></div>
-<div class="sec"><div class="slbl blocks">Blocks</div><div class="dep-row">
-  <span class="dp dp-blk">S2-W7-05 — Haiku Call 1 INSERT requires updated schema</span>
-</div></div>
-</div></div>
-
 </div>
 <div style="margin-top:20px;padding:14px 18px;background:#1a0a2e;border:1px solid #6d28d9;border-radius:10px;">
   <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:0.6px;color:#a78bfa;margin-bottom:10px;">🔧 Schema + Contract Patches — complete before pipeline wiring</div>
