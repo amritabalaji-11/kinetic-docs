@@ -134,6 +134,7 @@ Source: Haiku Call 1 output. Stored flat so Haiku Call 2 can compare across sess
 | Field | Type | Nullable | Format | Written by | Step |
 |---|---|---|---|---|---|
 | `rep_count` | integer | No | 1–99 | S2 — from Haiku Call 1 | Step 5 INSERT |
+| `worst_rep_index` | integer | No | 0–98 (0-based array index) | S2 — Haiku calculates and returns this in db_output. The 0-based array index of the rep with the lowest overall score from `rep_scores`. S2 writes it directly to DB. OpenCV Part 2 uses this to extract the worst-performing rep for frame annotation. | Step 5 INSERT |
 | `rep_scores` | jsonb array | No | See format below | S2 — from Haiku Call 1. OpenCV Part 2 reads this to find the lowest-scoring rep for frame extraction. | Step 5 INSERT |
 
 **`rep_scores` format:**
