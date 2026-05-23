@@ -2146,9 +2146,9 @@ coaching_content = load_md_files(exercise=<span class="js">"goblet_squat"</span>
     </table>
     <div style="display:flex;align-items:center;justify-content:space-between;margin:20px 0 10px;">
       <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:0.7px;color:#475569;">User-Facing Frontend Messages — per SSE Event</div>
-      <div style="font-size:10px;font-weight:700;color:#f59e0b;background:#1c1309;border:1px solid #78350f;border-radius:4px;padding:2px 8px;">✎ Updated May 19, 2026</div>
+      <div style="font-size:10px;font-weight:700;color:#f59e0b;background:#1c1309;border:1px solid #78350f;border-radius:4px;padding:2px 8px;">✎ Updated May 23, 2026</div>
     </div>
-    <div style="font-size:10px;color:#64748b;margin-bottom:10px;">6 distinct messages · <code style="background:#0d1117;padding:1px 4px;border-radius:3px;font-size:9px;">biomechanics_complete</code> and remaining events advance % bar only · copy defined in <span style="color:#60a5fa;">S1-W5-06</span></div>
+    <div style="font-size:10px;color:#64748b;margin-bottom:10px;">4 distinct message strings · <code style="background:#0d1117;padding:1px 4px;border-radius:3px;font-size:9px;">mediapipe_complete</code> and <code style="background:#0d1117;padding:1px 4px;border-radius:3px;font-size:9px;">biomechanics_complete</code> are silent (% bar only) · <code style="background:#0d1117;padding:1px 4px;border-radius:3px;font-size:9px;">frame_ready</code> and <code style="background:#0d1117;padding:1px 4px;border-radius:3px;font-size:9px;">progression_ready</code> have no Processing screen message — user already navigated · copy defined in <span style="color:#60a5fa;">S1-W5-06</span></div>
     <table style="width:100%;border-collapse:collapse;font-size:11px;margin-bottom:20px;">
       <tr style="border-bottom:1px solid #1e2433;">
         <th style="text-align:left;padding:6px 10px;color:#64748b;font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:0.5px;">SSE Event(s)</th>
@@ -2178,7 +2178,7 @@ coaching_content = load_md_files(exercise=<span class="js">"goblet_squat"</span>
         <td style="padding:8px 10px;font-family:monospace;font-size:9.5px;color:#c4b5fd;">haiku_started</td>
         <td style="padding:8px 10px;color:#f1f5f9;font-weight:600;">"Analysing your form frame by frame..."</td>
         <td style="padding:8px 10px;text-align:center;color:#94a3b8;">35%</td>
-        <td style="padding:8px 10px;color:#64748b;font-size:10px;">Longest step — "frame by frame" implies precision without surfacing AI jargon</td>
+        <td style="padding:8px 10px;color:#64748b;font-size:10px;">Longest step (~10–15s). Bar stays at 35% until <code style="background:#0d1117;padding:1px 4px;border-radius:3px;font-size:9px;">analysis_ready</code> — do not advance it. "frame by frame" implies precision without surfacing AI jargon.</td>
       </tr>
       <tr style="border-bottom:1px solid #111827;background:#080d12;">
         <td style="padding:8px 10px;font-family:monospace;font-size:9.5px;color:#86efac;">analysis_ready</td>
@@ -2188,15 +2188,15 @@ coaching_content = load_md_files(exercise=<span class="js">"goblet_squat"</span>
       </tr>
       <tr style="border-bottom:1px solid #111827;">
         <td style="padding:8px 10px;font-family:monospace;font-size:9.5px;color:#86efac;">frame_ready</td>
-        <td style="padding:8px 10px;color:#f1f5f9;font-weight:600;">Annotated image swaps into Tab 1</td>
+        <td style="padding:8px 10px;color:#475569;font-style:italic;">No message — user on Analysis screen</td>
         <td style="padding:8px 10px;text-align:center;color:#94a3b8;">— (~2–3s after)</td>
-        <td style="padding:8px 10px;color:#64748b;font-size:10px;">No message on Processing screen — user already on Analysis screen. Handled there.</td>
+        <td style="padding:8px 10px;color:#64748b;font-size:10px;">No Processing screen message. Frontend action: annotated image swaps into Tab 1 placeholder. Handled by fresh listener on Analysis screen.</td>
       </tr>
       <tr style="border-bottom:1px solid #111827;background:#080d12;">
         <td style="padding:8px 10px;font-family:monospace;font-size:9.5px;color:#86efac;">progression_ready</td>
-        <td style="padding:8px 10px;color:#f1f5f9;font-weight:600;">Tab 2 unlocks — user can tap to view progression</td>
+        <td style="padding:8px 10px;color:#475569;font-style:italic;">No message — user on Analysis screen</td>
         <td style="padding:8px 10px;text-align:center;color:#94a3b8;">— (async)</td>
-        <td style="padding:8px 10px;color:#64748b;font-size:10px;">No message on Processing screen — user already on Analysis screen. Tab 2 unlocks there.</td>
+        <td style="padding:8px 10px;color:#64748b;font-size:10px;">No Processing screen message. Frontend action: Tab 2 unlocks. FE calls <code style="background:#0d1117;padding:1px 4px;border-radius:3px;font-size:9px;">GET /analysis/{id}/progression</code>. Only fires if a prior session exists for same exercise + user.</td>
       </tr>
       <tr style="border-bottom:1px solid #111827;">
         <!-- REMOVED May 21 2026: progression_ready "Almost there" — retired pre-May-19 event, does not exist in current architecture -->
@@ -2205,7 +2205,7 @@ coaching_content = load_md_files(exercise=<span class="js">"goblet_squat"</span>
         <td style="padding:8px 10px;font-family:monospace;font-size:9.5px;color:#f87171;font-weight:700;">error</td>
         <td style="padding:8px 10px;color:#fca5a5;font-weight:600;">Message varies by <code style="background:#2d0a0a;padding:1px 4px;border-radius:3px;font-size:10px;">error_code</code> — see Error Taxonomy below</td>
         <td style="padding:8px 10px;text-align:center;color:#f87171;">—</td>
-        <td style="padding:8px 10px;color:#64748b;font-size:10px;"><code style="background:#1a0500;padding:1px 4px;border-radius:3px;font-size:9px;">retryable: true</code> → "Try again" CTA &nbsp;|&nbsp; <code style="background:#1a0500;padding:1px 4px;border-radius:3px;font-size:9px;">retryable: false</code> → "Re-film and upload" CTA</td>
+        <td style="padding:8px 10px;color:#64748b;font-size:10px;"><code style="background:#1a0500;padding:1px 4px;border-radius:3px;font-size:9px;">retryable: "true"</code> → "Try again" CTA (same video ok) &nbsp;|&nbsp; <code style="background:#1a0500;padding:1px 4px;border-radius:3px;font-size:9px;">retryable: "false"</code> → "Re-film and upload" CTA &nbsp;|&nbsp; <code style="background:#1a0500;padding:1px 4px;border-radius:3px;font-size:9px;">retryable: "partial"</code> → inline warning only, no blocking CTA (results still load)</td>
       </tr>
     </table>
 
