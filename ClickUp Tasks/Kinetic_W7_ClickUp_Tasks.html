@@ -676,6 +676,70 @@ td ul{padding-left:16px;} td li{margin-bottom:3px;}
 </ul></div>
 </div></div>
 
+<div class="task"><div class="task-hdr" onclick="tog(this)">
+  <span class="tid">S3-W7-06</span>
+  <div class="tname-wrap"><div class="tname">OpenCV Part 2 — Annotated Frame with Angles + Issues Overlay</div>
+  <div class="tbadges"><span class="badge b-todo">To Do</span><span class="badge b-hi">High</span><span class="badge b-s3">Squad 3</span></div></div>
+  <span class="chev">▼</span>
+</div><div class="tbody"><div class="divider"></div>
+<div class="sec"><div class="slbl">Description</div><div class="desc">
+<p>Implement OpenCV Part 2 pipeline — triggered after Haiku Call 1 completes. Extract worst-rep frame at squat bottom position and overlay joint angles + detected faults as visual annotations. Output a single JPEG showing exactly where issues are on the user's body with measured values. The complete end-to-end flow:</p>
+<p><strong>1. PIPELINE TRIGGER</strong></p>
+<ul>
+  <li>S2-W7-05 (Haiku Call 1) completes and writes <code>coaching_output</code> + <code>fault_detail</code> to <code>form_analysis_results</code></li>
+  <li>S2-W7-05 fires <code>analysis_ready</code> SSE to S1 → Tab 1 unlocks, initial coaching text renders</li>
+  <li>After <code>analysis_ready</code> fires, OpenCV Part 2 pipeline automatically starts (async, ~2–3s after Haiku)</li>
+</ul>
+<p><strong>2. DATA INPUTS TO OPENCV PART 2</strong></p>
+<ul>
+  <li><strong>Raw video:</strong> <code>gs://kinetic-videos/videos/{user_id}/{analysis_id}/original.mp4</code> (already in GCS from Step 2)</li>
+  <li><strong>Biomechanics JSON:</strong> Retrieved from <code>form_analyses.biomechanics_json</code> — contains <code>rep_count</code>, per-rep angle data, and <code>worst_rep_index</code> (which rep had lowest score)</li>
+  <li><strong>Bottom frame metadata:</strong> <code>bottom_frame</code> (frame index) + <code>bottom_timestamp_ms</code> (milliseconds) from biomechanics JSON for the worst rep (added in PATCH-S3-W7-A)</li>
+  <li><strong>Fault details:</strong> <code>fault_detail</code> JSONB from <code>form_analysis_results</code> (written by Haiku Call 1) — contains per-fault info: present, reps_affected, severity, trend</li>
+  <li><strong>Gold standard angles (optional):</strong> Query <code>gold_standard_biomechanics</code> for ideal angle ranges per exercise — used for reference overlay</li>
+</ul>
+<p><strong>3. OPENCV PROCESSING</strong></p>
+<ul>
+  <li><strong>Frame extraction:</strong> Use ffmpeg to seek video to <code>bottom_timestamp_ms</code>, extract frame at worst-rep bottom position</li>
+  <li><strong>Angle overlays:</strong> Draw joint angle values on frame (knee, hip, back, ankle dorsiflexion) — sourced from biomechanics JSON for worst rep</li>
+  <li><strong>Fault overlays:</strong> Add text labels for detected faults (e.g. "Knee Valgus: 0.18m", "Forward Lean: 22°") — sourced from fault_detail JSON</li>
+  <li><strong>Gold standard reference (optional):</strong> Show ideal angle ranges on frame for comparison (e.g. "Ideal knee: 88–95°" vs "Your angle: 142°")</li>
+  <li><strong>Image optimization:</strong> Compress JPEG to ≤500KB for web delivery</li>
+</ul>
+<p><strong>4. SAVE TO GCS + DB UPDATE</strong></p>
+<ul>
+  <li><strong>GCS write:</strong> Upload JPEG to <code>gs://kinetic-videos/analyses/{analysis_id}/worst_rep_frame.jpg</code> with public read access</li>
+  <li><strong>DB update:</strong> UPDATE <code>form_analysis_results SET annotated_frame_url = 'gs://...'</code> for this analysis_id</li>
+</ul>
+<p><strong>5. SSE EVENT TO FRONTEND</strong></p>
+<ul>
+  <li>After annotated_frame_url written to DB, S2-W7-06 (SSE layer) fires <code>frame_ready</code> event to S1: <code>{ analysis_id, annotated_frame_url: "https://..." }</code></li>
+  <li>S1 receives <code>frame_ready</code> → Image component on Results screen downloads and renders the annotated JPEG (~2–3s after analysis_ready event)</li>
+</ul>
+</div></div>
+<div class="sec"><div class="slbl ac">Acceptance Criteria</div><ul class="ac-list">
+  <li>Frame correctly extracted at worst-rep lowest point using <code>bottom_timestamp_ms</code> from biomechanics JSON</li>
+  <li>Joint angles (knee, hip, back, ankle) overlaid on the extracted frame with clear, readable text</li>
+  <li>Detected faults from <code>fault_detail</code> displayed as text labels on the frame (e.g. "Knee Valgus", "Forward Lean 22°")</li>
+  <li>Angles use MediaPipe convention (not conventional flexion) and match values in biomechanics JSON exactly</li>
+  <li>Output JPEG quality suitable for web display (optimized file size, ≤500KB)</li>
+  <li>JPEG uploaded to GCS with correct URI path and public read access</li>
+  <li>form_analysis_results.annotated_frame_url successfully populated with GCS URI</li>
+  <li>Tested on ≥2 videos with different fault patterns — visual output clearly communicates issues</li>
+  <li>Runs within 2–3 seconds after Haiku Call 1 completes (async, independent of analysis_ready SSE)</li>
+</ul></div>
+<div class="sec"><div class="slbl dep">Blocked by</div><div class="dep-row">
+  <span class="dp dp-dep">S3-W7-01 — MediaPipe pipeline updated with bottom_frame data</span>
+  <span class="dp dp-dep">PATCH-S3-W7-A — biomechanics JSON includes bottom_frame + bottom_timestamp_ms</span>
+  <span class="dp dp-dep">S2-W7-05 — Haiku Call 1 returns fault_detail JSON</span>
+  <span class="dp dp-dep">PATCH-S2-W7-A — form_analysis_results table has annotated_frame_url column</span>
+</div></div>
+<div class="sec"><div class="slbl blocks">Blocks</div><div class="dep-row">
+  <span class="dp dp-blk">S2-W7-06 — SSE frame_ready event (fires when annotated_frame_url written)</span>
+  <span class="dp dp-blk">S1-W7-01 — Results screen displays annotated image</span>
+</div></div>
+</div></div>
+
 </div>
 <div style="margin-top:20px;padding:14px 18px;background:#1a0a2e;border:1px solid #6d28d9;border-radius:10px;">
   <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:0.6px;color:#a78bfa;margin-bottom:10px;">🔧 Biomechanics Schema Patches — required for OpenCV Part 2</div>
