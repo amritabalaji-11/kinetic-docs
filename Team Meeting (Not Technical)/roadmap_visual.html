@@ -379,13 +379,7 @@
 
   <div class="cell sq1">
     <div class="task task-sq1 task-design"><span class="task-id">S1-W7-01</span><div class="design-tag">DESIGN HANDOFF</div> Onboarding · Dashboard · Workout Builder & Tracker — all design handoffs complete by end of W7</div>
-    <div class="task task-sq1 task-dep"><span class="task-id">S1-W7-02</span><div class="dep-tag">RECEIVES ←</div> Replace dummy data on Results with real pipeline output</div>
     <div class="task task-sq1 task-cut"><span class="task-id">S1-W7-03</span><div class="cut-tag">AUTH DROPPED</div>Complete Onboarding / Sign-up screen: wire to real auth endpoint — auth removed for demo. Replaced by demo user selection screen (S1-W6-05).</div>
-    <div class="task task-sq1 task-updated"><span class="task-id">S1-W7-04</span><div class="updated-tag">FE ONLY</div>Build Workout Builder screen: create plan, add exercises, set target sets/reps/weights. Frontend only — no backend. No data saved. Shows product vision.</div>
-    <div class="task task-sq1 task-updated"><span class="task-id">S1-W7-05</span><div class="updated-tag">FE ONLY</div>Build Track Workout screen: log sets, reps, weight. Frontend only — no backend integration, no data saved. UI complete for demo.</div>
-    <div class="task task-sq1 task-updated"><span class="task-id">S1-W7-06</span><div class="updated-tag">SHELL ONLY</div>Build Profile screen: frontend shell only. Routable, displays dummy data, no save functionality. Signals future personalisation without backend build.</div>
-    <div class="task task-sq1"><span class="task-id">S1-W7-07</span>Update Dashboard with real session data from GET /users/{id}/dashboard (post-demo — dummy data for demo)</div>
-    <div class="task task-sq1"><span class="task-id">S1-W7-08</span>Build History screen: past sessions list + form score trend line</div>
   </div>
 
   <div class="cell sq1">
@@ -458,12 +452,7 @@
   </div>
 
   <div class="cell sq2">
-    <div class="task task-sq2"><span class="task-id">S2-W7-01</span>Complete Nemotron integration: full JSON output + word-level timestamps + chain-of-thought. <strong>Error handling:</strong> NEMOTRON_TIMEOUT (retryable: true), NEMOTRON_NO_OUTPUT (retryable: true), NEMOTRON_CONTEXT_OVERFLOW (retryable: false) — emit full SSE error shape per FE_SSE_and_Errors.md</div>
     <div class="task task-sq2 task-dep task-updated"><span class="task-id">S2-W7-02</span><div class="updated-tag">UPDATED</div><div class="dep-tag">RECEIVES ←</div> On Nemotron output: inject MD coaching files into Claude system prompt. <strong>Error handling:</strong> RAG_UNAVAILABLE + RAG_NO_RESULTS (both retryable: "partial" — pipeline continues to Claude without coaching context, results still load)</div>
-    <div class="task task-sq2"><span class="task-id">S2-W7-03</span>Query structured DB: retrieve user weight history + past form sessions</div>
-    <div class="task task-sq2"><span class="task-id">S2-W7-04</span>Pass Nemotron output + MD coaching files + user history → <span style="text-decoration:line-through;color:#94a3b8;opacity:0.7;">Claude Sonnet</span> <span style="color:#a78bfa;font-weight:700;">→ Claude Haiku 4.5 — Call 2 (async)</span> <span style="font-size:10px;color:#64748b;font-style:italic;">(W6 A/B test)</span> → coaching output. <strong>Error handling:</strong> CLAUDE_TIMEOUT (retryable: true), CLAUDE_ERROR (retryable: true) — emit full SSE error shape per FE_SSE_and_Errors.md</div>
-    <div class="task task-sq2 task-dep task-cut"><span class="task-id">S2-W7-05</span><div class="cut-tag">AUTH DROPPED</div><div class="dep-tag">OUTPUTS →</div> Auth endpoints: POST /auth/signup, POST /auth/login — removed for demo. Using hardcoded user IDs.</div>
-    <div class="task task-sq2 task-dep task-cut"><span class="task-id">S2-W7-06</span><div class="cut-tag">AUTH DROPPED</div><div class="dep-tag">OUTPUTS →</div> Onboarding endpoint: POST /users/profile — removed. No auth = no onboarding flow. Profile is frontend shell only.</div>
   </div>
 
   <div class="cell sq2">
@@ -523,15 +512,9 @@
     <div class="task task-sq3 task-dep task-cut"><span class="task-id">S3-W6-04</span><div class="cut-tag">SCOPE REDUCED</div><div class="dep-tag">OUTPUTS →</div> Expose RAG retrieval endpoint for Squad 2 — replaced by MD files in Claude system prompt. No retrieval endpoint needed.</div>
     <div class="task task-sq3 task-dep task-updated"><span class="task-id">S3-W6-05</span><div class="updated-tag">NEW</div><div class="dep-tag">OUTPUTS →</div> Expose process_video(gcs_path, analysis_id) to Squad 2: returns {overlay_video_url, biomechanics_json} on success or {error_code, affected_landmarks} on quality gate failure. Confirm file path + function signature + dependencies.</div>
     <div class="task task-sq3 task-updated"><span class="task-id">S3-W6-06</span><div class="updated-tag">NEW</div> Curate 5–10 MD coaching files for Claude system prompt: PT coaching language, Goblet Squat form cues, progression principles. Commit to repo.</div>
-    <div class="task task-sq3 task-updated"><span class="task-id">S3-W6-07</span><div class="updated-tag">NEW</div> Gold standard data prep: identify 3–5 good-form Goblet Squat videos → run through MediaPipe + Biomechanics pipeline → store angle distributions in gold_standard_biomechanics DB table. Two purposes: (1) LLM angle reference for Claude, (2) visual overlay comparison for OpenCV Part 2.</div>
-    <div class="task task-sq3 task-updated"><span class="task-id">S3-W6-08</span><div class="updated-tag">NEW</div> Model eval testing — run Nemotron A/B/C + Option C (angles only → Claude) comparison. Log output quality, per-rep scores, and latency. Feed findings to PM to confirm architecture before W7 build. Ref: pipeline_architecture_discussion.html</div>
   </div>
 
   <div class="cell sq3">
-    <div class="task task-sq3 task-cut"><span class="task-id">S3-W7-01</span><div class="cut-tag">SCOPE REDUCED</div>Enhance RAG corpus: add audio transcripts, anatomy images — no vector DB corpus to enhance. MD files curated in W6 are sufficient.</div>
-    <div class="task task-sq3 task-cut"><span class="task-id">S3-W7-02</span><div class="cut-tag">SCOPE REDUCED</div>Refine retrieval: tune chunking, re-rank — no retrieval pipeline. MD files are static system prompt context.</div>
-    <div class="task task-sq3 task-updated"><span class="task-id">S3-W7-03</span><div class="updated-tag">UPDATED</div>Define 3–5 gold standard + 3–5 known-bad Goblet Squat videos for accuracy validation (W9 PT expert review). Smaller set, higher quality bar.</div>
-    <div class="task task-sq3 task-cut"><span class="task-id">S3-W7-04</span><div class="cut-tag">SCOPE REDUCED</div>Stress-test RAG endpoint — no RAG endpoint. MD files loaded at Claude call time, no separate service to stress-test.</div>
   </div>
 
   <div class="cell sq3">
