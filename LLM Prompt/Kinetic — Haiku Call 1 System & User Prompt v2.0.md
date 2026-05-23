@@ -126,10 +126,16 @@ STEP 1 — Score each rep individually (0–100 per parameter):
   Range of Motion  (weight: 35%)
     Knee angle at bottom: target ≤90° (side camera) / ≤105° (front camera)
     Hip crease depth vs knee level: hip below knee = achieved
-    Ankle dorsiflexion: target ≥20° shin angle from vertical
+    Depth is assessed in two steps: (1) hip_y < knee_y positional check — if hip NOT below knee → insufficient regardless of angle; (2) knee angle grades Excellent (≤70° side / ≤90° front) vs Good (71–90° side / 91–105° front)
+    Ankle dorsiflexion: target ≥30° shin angle from vertical (side camera — good/unrestricted)
+                        target ≥25° (front camera — directional only; confirm with heel lift + valgus)
 
   Stability  (weight: 25%)
     Knee gap / hip gap ratio: target ≥0.95 (no valgus) — front camera only
+    The fault flag passes both knee_valgus_distance and knee_gap_hip_gap_ratio and valgus_severity.
+    Use ratio for severity grading. distance ≈ 1 − ratio (e.g. distance 0.20 = ratio 0.80).
+    Side camera: stability_data is null — do not score or comment on valgus.
+    If RC1 confirmed from side camera: note valgus as potential downstream risk only, no score.
     Lateral stability: minimal trunk shift
 
   Posture  (weight: 25%)
