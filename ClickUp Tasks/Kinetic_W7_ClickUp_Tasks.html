@@ -610,31 +610,47 @@ td ul{padding-left:16px;} td li{margin-bottom:3px;}
 
 <div class="task"><div class="task-hdr" onclick="tog(this)">
   <span class="tid">S3-W7-04</span>
-  <div class="tname-wrap"><div class="tname">Synthetic User Data — Seed 3 Past Sessions</div>
+  <div class="tname-wrap"><div class="tname">Real User Data — 2 Users Record 5–7 Videos Each for Persona Building</div>
   <div class="tbadges"><span class="badge b-todo">To Do</span><span class="badge b-hi">High</span><span class="badge b-s3">Squad 3</span></div></div>
   <span class="chev">▼</span>
 </div><div class="tbody"><div class="divider"></div>
 <div class="sec"><div class="slbl">Description</div><div class="desc">
-<p>Seed a test user ID with 3 past sessions to validate the longitudinal feedback pipeline before real user data exists. Each session must include:</p>
+<p>Recruit 2 real users to record 5–7 goblet squat videos each with varying weights. These real user personas will build authentic progression history and enable end-to-end testing of the longitudinal coaching pipeline (Haiku Call 2, Tab 2 progression view). Videos will be uploaded through the real pipeline, processed through MediaPipe, saved to Supabase, and Haiku Call 1 coaching generated for each session.</p>
+<p><strong>User video recording requirements:</strong></p>
 <ul>
-  <li>Weight used (e.g. 10kg, 12kg, 14kg across sessions)</li>
-  <li>MediaPipe biomechanics JSON (can reuse existing test JSON files)</li>
-  <li>Haiku coaching output (can use outputs from A/B test results)</li>
+  <li><strong>2 users</strong> — recruit team members or volunteers (not synthetic data)</li>
+  <li><strong>5–7 videos per user</strong> — minimum 5 sessions to establish progression trends</li>
+  <li><strong>Varying weights</strong> — e.g. User 1: 8kg, 10kg, 12kg, 12kg, 14kg / User 2: 10kg, 12kg, 12kg, 14kg, 14kg, 16kg</li>
+  <li><strong>Filming instructions</strong> — provide standard phone/camera positioning guide to both users (side camera preferred for initial data)</li>
+  <li><strong>Real form variation</strong> — users should perform with natural form variation so progression testing detects realistic improvement/decline patterns</li>
 </ul>
-<p>Coordinate user ID with Squad 2 (S2-W7-07).</p>
+<p><strong>Data pipeline after video capture:</strong></p>
+<ul>
+  <li>Videos uploaded through S1 frontend (standard user workflow)</li>
+  <li>MediaPipe pipeline (S3-W7-01) processes each video → biomechanics JSON</li>
+  <li>Haiku Call 1 generates coaching output for each session</li>
+  <li>All session data saved to Supabase form_analysis_results table (after PATCH-S2-W7-A)</li>
+  <li>Enables S2-W7-03 session history queries and Haiku Call 2 longitudinal context</li>
+</ul>
 </div></div>
 <div class="sec"><div class="slbl ac">Acceptance Criteria</div><ul class="ac-list">
-  <li>Test user ID has exactly 3 past sessions in the sessions DB</li>
-  <li>Each session has weight, mediapipe_json, and coaching_output populated</li>
-  <li>Sessions are for Goblet Squat exercise type</li>
-  <li>S2-W7-03 query returns all 3 sessions correctly for this user ID</li>
-  <li>Haiku prompt with historical context includes all 3 sessions in context block</li>
+  <li>2 unique user IDs enrolled with realistic user profiles (name, weight used)</li>
+  <li>Total of ≥10 videos recorded (5–7 per user) with varying weights across sessions</li>
+  <li>All videos conform to filming standard (side camera, full squat visible, lighting adequate)</li>
+  <li>All 10+ videos successfully uploaded and processed through full pipeline (MediaPipe → Haiku Call 1 → DB save)</li>
+  <li>Supabase form_analysis_results contains ≥10 rows for these 2 users with complete coaching_output</li>
+  <li>Session history query (S2-W7-03) returns all sessions for each user in chronological order</li>
+  <li>Haiku Call 2 longitudinal prompt can reference 5+ prior sessions per user for progression context</li>
+  <li>Real progression or form variation visible in scores across sessions (not identical synthetic data)</li>
 </ul></div>
 <div class="sec"><div class="slbl dep">Blocked by</div><div class="dep-row">
-  <span class="dp dp-dep">S2-W7-07 — Demo user IDs confirmed</span>
+  <span class="dp dp-dep">S3-W7-01 — MediaPipe pipeline ready</span>
+  <span class="dp dp-dep">PATCH-S2-W7-A — form_analysis_results schema updated</span>
+  <span class="dp dp-dep">S1 frontend upload working</span>
 </div></div>
 <div class="sec"><div class="slbl blocks">Blocks</div><div class="dep-row">
-  <span class="dp dp-blk">S2-W7-03 — Session history query testing</span>
+  <span class="dp dp-blk">S2-W7-03 — Session history query testing (validation)</span>
+  <span class="dp dp-blk">PATCH-S2-W7-C — Haiku Call 2 longitudinal coaching (needs real history)</span>
 </div></div>
 </div></div>
 
