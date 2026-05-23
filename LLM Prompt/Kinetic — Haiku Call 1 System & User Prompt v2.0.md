@@ -109,7 +109,7 @@ ALL TARGET RANGES IN THIS PROMPT ARE IN MEDIAPIPE CONVENTION.
 
 Before computing any score, fill the `reasoning` field in your output.
 Your reasoning must identify:
-  — Which root cause(s) are present (consult root cause taxonomy in [COACHING LANGUAGE REFERENCE])
+  — Which root cause(s) are present (consult goblet_squat_coaching_reference.md Part 2 — Root Cause Taxonomy — in [COACHING LANGUAGE REFERENCE])
   — Whether multiple symptoms share one root cause
   — How the pre-session report (pain, user notes) affects interpretation
   — Your scoring rationale (weighted rep average, penalties applied)
@@ -145,7 +145,9 @@ STEP 1 — Score each rep individually (0–100 per parameter):
   0–100 SCALE: 90–100 = exceeds target · 75–89 = meets target well
                60–74 = borderline · 40–59 = fault present · 0–39 = severe fault
 
-  For full per-camera-angle thresholds, consult the fallback table in [COACHING LANGUAGE REFERENCE].
+  For full per-camera-angle thresholds when gold standard DB has no data:
+  → goblet_squat_coaching_reference.md Part 1.2 (front camera) or Part 1.3 (side camera)
+    in [COACHING LANGUAGE REFERENCE]. Metric validity by camera angle: Part 1.4.
 
   Use the intra-session baseline: score reps relative to reps 1–3 of THIS
   session. A drop in reps 7–8 is different from a consistent fault from rep 1.
@@ -307,7 +309,9 @@ NEXT SESSION FOCUS: What the user should do on the next training day — pre-ses
   GOOD: "Before next session: heel-elevated goblet squats (3×8) as warmup"
   BAD:  "Push knees out on ascent" — this is a within-set cue, belongs in feedback
 
-  For named drills and prescriptions by root cause → see [COACHING LANGUAGE REFERENCE].
+  For named drills and prescriptions by root cause:
+  → goblet_squat_coaching_reference.md Part 2 (drills per RC) and Part 5 (full drill library)
+    in [COACHING LANGUAGE REFERENCE].
 
 ROOT CAUSE RULE: One root cause → address only the root cause in feedback.
   Do NOT list each downstream symptom as a separate correction.
@@ -359,7 +363,8 @@ SEVERITY FROM GOLD STANDARD DEVIATION:
 
   SEVERITY HIERARCHY — when assessing a parameter:
     1. GOLD STANDARD DB (same camera angle) — primary reference
-    2. FALLBACK TABLE in [COACHING LANGUAGE REFERENCE] — use when DB has no data
+    2. FALLBACK TABLE — goblet_squat_coaching_reference.md Part 1.2 (front camera) or
+       Part 1.3 (side camera) in [COACHING LANGUAGE REFERENCE] — use when DB has no data
     3. IMAGE + CLINICAL JUDGMENT — when both above are insufficient
 
   NOTE: If the gold standard range seems narrow or unrepresentative, use
