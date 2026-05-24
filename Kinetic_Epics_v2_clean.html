@@ -715,6 +715,38 @@
             <span class="story-pill e2" style="background:var(--e2-soft);color:var(--e2);border:1px solid var(--e2-border);font-size:12px;padding:4px 10px;border-radius:16px;">E2 complete</span>
             <span class="story-pill e4" style="background:var(--e4-soft);color:var(--e4);border:1px solid var(--e4-border);font-size:12px;padding:4px 10px;border-radius:16px;">E4 shell</span>
           </div>
+          <div class="week-squad-goals">
+            <div class="wsg-squad">
+              <div class="wsg-label wsg-sq1">Squad 1 — Frontend</div>
+              <ul class="wsg-list">
+                <li class="wsg-item wip">Form Analysis Results — 1st Cut (wire to real Haiku)</li>
+                <li class="wsg-item not-started">Home Screen + Login Page Build</li>
+                <li class="wsg-item not-started">Start Build — Profile Screen</li>
+                <li class="wsg-item done">Profile + Onboarding — Dev Handoff</li>
+                <li class="wsg-item not-started">Workout Builder & Logger — Begins</li>
+                <li class="wsg-item wip">Update Upload → Results — Figma Changes</li>
+              </ul>
+            </div>
+            <div class="wsg-squad">
+              <div class="wsg-label wsg-sq2">Squad 2 — Backend</div>
+              <ul class="wsg-list">
+                <li class="wsg-item done">Replace Nemotron with Claude Haiku 4.5</li>
+                <li class="wsg-item wip">Coaching Content Retrieval — .md Files</li>
+                <li class="wsg-item wip">Assemble Haiku Prompt + Call API</li>
+                <li class="wsg-item wip">SSE Delivery — Coaching Output</li>
+              </ul>
+            </div>
+            <div class="wsg-squad">
+              <div class="wsg-label wsg-sq3">Squad 3 — Data</div>
+              <ul class="wsg-list">
+                <li class="wsg-item done">MediaPipe Update — JSON + OpenCV</li>
+                <li class="wsg-item not-started">Real User Data — 2 Users × 5-7 Videos</li>
+                <li class="wsg-item done">Coaching .md Files — Curate + Organise</li>
+                <li class="wsg-item done">Visual Output Scoping — Frame vs Clip vs Overlay</li>
+                <li class="wsg-item wip">OpenCV Part 2 — Annotated Frame + Angles</li>
+              </ul>
+            </div>
+          </div>
           <div class="week-ship">
             <strong>Ship:</strong> Demo user selection screen live. Full Results screen with real pipeline output — <span style="text-decoration:line-through;color:#94a3b8;opacity:0.7;">Claude Sonnet</span> <span style="color:#a78bfa;font-weight:700;">→ Claude Haiku 4.5 — Call 2 (async)</span> <span style="font-size:10px;color:#64748b;font-style:italic;">(W6 A/B test)</span> coaching (MD files → system prompt), weight-specific advice from DB history, visual proof of form. History screen shell. PT-01 Phase 2 threshold refinement.
           </div>
@@ -735,6 +767,39 @@
             <span class="story-pill e4" style="background:var(--e4-soft);color:var(--e4);border:1px solid var(--e4-border);font-size:12px;padding:4px 10px;border-radius:16px;">E4 complete</span>
             <span class="story-pill e5" style="background:var(--e5-soft);color:var(--e5);border:1px solid var(--e5-border);font-size:12px;padding:4px 10px;border-radius:16px;">E5 FE only</span>
             <span class="story-pill e6" style="background:var(--e6-soft);color:var(--e6);border:1px solid var(--e6-border);font-size:12px;padding:4px 10px;border-radius:16px;">E6 shell</span>
+          </div>
+          <div class="week-squad-goals">
+            <div class="wsg-squad">
+              <div class="wsg-label wsg-sq1">Squad 1 — Frontend</div>
+              <ul class="wsg-list">
+                <li class="wsg-item">Progression Page — Display Logic</li>
+                <li class="wsg-item">Progression Page — Styling + Animations</li>
+                <li class="wsg-item">Home Screen + Profile Screen</li>
+                <li class="wsg-item carry">Home Screen + Login Page Build (carried from W7)</li>
+                <li class="wsg-item carry">Start Build — Profile Screen (carried from W7)</li>
+                <li class="wsg-item carry">Workout Builder & Logger — Begins (carried from W7)</li>
+              </ul>
+            </div>
+            <div class="wsg-squad">
+              <div class="wsg-label wsg-sq2">Squad 2 — Backend</div>
+              <ul class="wsg-list">
+                <li class="wsg-item">Data Schema Review + Update</li>
+                <li class="wsg-item">Haiku Call 2 — Async Job Pipeline</li>
+                <li class="wsg-item">Job Status Endpoint</li>
+                <li class="wsg-item wip">SSE Events for Async Job</li>
+                <li class="wsg-item wip">Error Handling + Retry Logic</li>
+                <li class="wsg-item">Demo User Setup — 3 Hardcoded IDs</li>
+                <li class="wsg-item">Haiku Prompt Engineering — Analysis + Coaching</li>
+              </ul>
+            </div>
+            <div class="wsg-squad">
+              <div class="wsg-label wsg-sq3">Squad 3 — Data</div>
+              <ul class="wsg-list">
+                <li class="wsg-item carry">Real User Data — 2 Users × 5-7 Videos (carried from W7)</li>
+                <li class="wsg-item">MD Files — Weight/Progression Coaching</li>
+                <li class="wsg-item">Test Data — Seeding from Videos</li>
+              </ul>
+            </div>
           </div>
           <div class="week-ship">
             <strong>Ship:</strong> Progression recommendation live (weight history → Claude). Dashboard + History on real data. Workout Builder + Tracker (frontend only — no backend). Profile screen shell. PT-01 Phase 3 final spec to Squad 2.
