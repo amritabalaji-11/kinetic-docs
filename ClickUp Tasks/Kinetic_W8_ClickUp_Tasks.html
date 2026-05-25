@@ -511,47 +511,11 @@ h1 { font-size: 28px; font-weight: 800; color: #f8fafc; margin-bottom: 8px; }
     </div>
   </div>
 
-  <!-- S2-W8-03a -->
+  <!-- S2-W8-03 -->
   <div class="task">
     <div class="task-header-bar">
       <div class="task-badge badge-todo">◯ To Do</div>
-      <div class="task-id">S2-W8-03a</div>
-      <div class="task-title">OpenCV Status Endpoint</div>
-      <div class="task-priority priority-high">HIGH</div>
-    </div>
-    <div class="task-body">
-      <div class="section">
-        <div class="section-title">Description</div>
-        <div class="section-content">
-          GET /form_analysis/{id}/opencv-status — Return real-time status of OpenCV Part 2 async job.
-          <ul class="desc-list">
-            <li>Returns: <code>opencv_part_2_status, queued_at, started_at, completed_at, error, annotated_frame_url</code></li>
-            <li>Status values: queued | running | complete | failed</li>
-            <li>Response time &lt;50ms</li>
-          </ul>
-        </div>
-      </div>
-      <div class="section">
-        <div class="section-title">Acceptance Criteria</div>
-        <ul class="criteria-list">
-          <li>Returns correct status at each stage</li>
-          <li>Includes annotated_frame_url when status = complete</li>
-          <li>Includes error message when status = failed</li>
-          <li>Response time &lt;50ms</li>
-        </ul>
-      </div>
-      <div class="section">
-        <div class="section-title">Dependencies</div>
-        <div class="section-content"><span class="dep-badge">DEPENDS ON</span> S2-W8-01 (Schema) + S2-W8-09 (Job sets status)</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- S2-W8-03b -->
-  <div class="task">
-    <div class="task-header-bar">
-      <div class="task-badge badge-todo">◯ To Do</div>
-      <div class="task-id">S2-W8-03b</div>
+      <div class="task-id">S2-W8-03</div>
       <div class="task-title">Haiku Call 2 Status Endpoint</div>
       <div class="task-priority priority-high">HIGH</div>
     </div>
@@ -578,7 +542,8 @@ h1 { font-size: 28px; font-weight: 800; color: #f8fafc; margin-bottom: 8px; }
       </div>
       <div class="section">
         <div class="section-title">Dependencies</div>
-        <div class="section-content"><span class="dep-badge">DEPENDS ON</span> S2-W8-01 (Schema) + S2-W8-02 (Job sets status)</div>
+        <div class="section-content"><span class="dep-badge">DEPENDS ON</span> S2-W8-01 (Schema with job tracking fields)<br>
+        <span class="dep-badge">DEPENDS ON</span> S2-W8-02 (Haiku Call 2 job pipeline sets status)</div>
       </div>
     </div>
   </div>
@@ -712,7 +677,7 @@ h1 { font-size: 28px; font-weight: 800; color: #f8fafc; margin-bottom: 8px; }
         <div class="section-content">
           <span class="dep-badge">DEPENDS ON</span> S2-W8-01 (Schema with job tracking fields)<br>
           <span class="dep-badge">DEPENDS ON</span> S2-W8-02 (Haiku Call 2 job pipeline exists to emit from)<br>
-          <span class="dep-badge">DEPENDS ON</span> S2-W8-03b (Haiku status endpoint for job state)
+          <span class="dep-badge">DEPENDS ON</span> S2-W8-03 (Haiku status endpoint for job state)
         </div>
       </div>
     </div>
@@ -893,7 +858,7 @@ h1 { font-size: 28px; font-weight: 800; color: #f8fafc; margin-bottom: 8px; }
         <div class="section-content">
           <span class="dep-badge">DEPENDS ON</span> S2-W8-01 (Schema with job tracking fields)<br>
           <span class="dep-badge">DEPENDS ON</span> S2-W8-02 (Haiku Call 2 job pipeline exists, needs error handling added)<br>
-          <span class="dep-badge">DEPENDS ON</span> S2-W8-03b (Haiku status endpoint needs to return error_code)<br>
+          <span class="dep-badge">DEPENDS ON</span> S2-W8-03 (Haiku status endpoint needs to return error_code)<br>
           <span class="dep-badge">DEPENDS ON</span> S2-W8-04 (SSE events include job_failed event + error_code)
         </div>
       </div>
@@ -1354,14 +1319,19 @@ h1 { font-size: 28px; font-weight: 800; color: #f8fafc; margin-bottom: 8px; }
       <div class="section">
         <div class="section-title">Description</div>
         <div class="section-content">
-          S3 to annotate the extracted frame with skeleton overlay (from MediaPipe landmarks), angle values, classification labels, and color-coded form assessment. Pass annotated frame to S2 for frontend communication and GCS storage.
+          <strong>S3 executes annotation work:</strong> Annotate the extracted frame with skeleton overlay (from MediaPipe landmarks), angle values, classification labels, and color-coded form assessment.
           <ul class="desc-list">
             <li>Skeleton: draw lines between MediaPipe joints</li>
             <li>Angles: label knee_angle, hip_angle, back_angle_value near joints</li>
             <li>Labels: display back_label, valgus_label, depth_classification, dorsiflexion_status</li>
             <li>Color-coding: green (good) / amber (borderline) / red (out of range)</li>
             <li>Output: annotated frame_bgr (BGR color space, original resolution)</li>
-            <li>Pass to S2 immediately for frontend notification and GCS storage</li>
+          </ul>
+          <strong>Handoff to S2:</strong> Once annotation is complete, share annotated frame_bgr with S2 immediately. S2 will:
+          <ul class="desc-list">
+            <li>Emit SSE frame_ready event to frontend with base64-encoded frame data (for instant display)</li>
+            <li>Encode frame as JPEG and upload to GCS</li>
+            <li>Store GCS URL in form_analysis_results.annotated_frame_url (for persistent storage)</li>
           </ul>
         </div>
       </div>
