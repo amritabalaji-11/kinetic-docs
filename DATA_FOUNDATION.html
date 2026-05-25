@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kinetic Data Foundation</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      line-height: 1.6;
+      color: #333;
+      background: #f5f5f5;
+      padding: 40px 20px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    h1, h2, h3 { color: #1a1a1a; }
+    h1 { font-size: 28px; margin-top: 0; border-bottom: 3px solid #0066cc; padding-bottom: 10px; }
+    h2 { font-size: 20px; margin-top: 30px; color: #0066cc; }
+    h3 { font-size: 16px; margin-top: 20px; }
+    code {
+      background: #f0f0f0;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-family: 'Monaco', 'Menlo', monospace;
+      font-size: 13px;
+    }
+    pre {
+      background: #f9f9f9;
+      border-left: 4px solid #0066cc;
+      padding: 12px;
+      overflow-x: auto;
+      border-radius: 4px;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      background: white;
+    }
+    th {
+      background: #0066cc;
+      color: white;
+      padding: 12px;
+      text-align: left;
+      font-weight: 600;
+    }
+    td {
+      padding: 10px 12px;
+      border-bottom: 1px solid #ddd;
+    }
+    tr:nth-child(even) { background: #f9f9f9; }
+    strong { color: #0066cc; }
+    .highlight {
+      background: #fff3cd;
+      padding: 15px;
+      border-radius: 4px;
+      margin: 15px 0;
+      border-left: 4px solid #ffc107;
+    }
+    .section-box {
+      background: white;
+      padding: 20px;
+      margin: 20px 0;
+      border-radius: 6px;
+      border-left: 4px solid #0066cc;
+    }
+    hr { border: none; border-top: 2px solid #ddd; margin: 30px 0; }
+    ul { margin: 15px 0; }
+    li { margin: 8px 0; }
+  </style>
+</head>
+<body>
+
+<h1>Kinetic Data Foundation</h1>
+
+<div class="section-box">
+  <strong>Overview</strong>
+  <p>This document defines the core data schemas for exercises, users, and sessions in Kinetic.</p>
+  <ul>
+    <li><strong>Database:</strong> Supabase (PostgreSQL)</li>
+    <li><strong>Exercise ID Convention:</strong> <code>{category}_{sequence}_{exercise_name}</code> (e.g., <code>leg_001_goblet</code>)</li>
+    <li><strong>User ID Strategy:</strong> 3 hardcoded user IDs based on profile selection (no UUID generation)</li>
+    <li><strong>Scope:</strong> Starting with Goblet Squat (MVP), designed to scale to RDL and beyond</li>
+  </ul>
+</div>
+
+<hr>
+
+<h2>1. Exercise Definitions</h2>
+
+<h3>Goblet Squat Example</h3>
+<pre>id: "leg_001_goblet"
+name: "Goblet Squat"
+slug: "goblet-squat"
+category: "lower-body"
+difficulty: 2
+description: "Squat holding a weight at chest level. Excellent for beginners, improves posture and knee tracking."
+primary_muscles: ["quadriceps", "glutes"]
+secondary_muscles: ["hamstrings", "core", "upper-back"]
+equipment: ["kettlebell", "dumbbell"]</pre>
+
+<hr>
+
+<h2>2. User Schema & Hardcoded User IDs (For Demo)</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>User ID</th>
+      <th>Email</th>
+      <th>Name</th>
+      <th>Notes</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>user_001</code></td>
+      <td>user001@demo.kinetic</td>
+      <td>User 1 (Real Video)</td>
+      <td>Goblet squat real video run through MediaPipe + Haiku Call 1</td>
+    </tr>
+    <tr>
+      <td><code>user_002</code></td>
+      <td>user002@demo.kinetic</td>
+      <td>User 2 (Real Video)</td>
+      <td>Goblet squat real video run through MediaPipe + Haiku Call 1</td>
+    </tr>
+    <tr>
+      <td><code>user_003</code></td>
+      <td>user003@demo.kinetic</td>
+      <td>User 3 (Real Video)</td>
+      <td>Goblet squat real video run through MediaPipe + Haiku Call 1</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="highlight">
+  <strong>Backend Instructions:</strong> Do NOT generate UUIDs for user creation. Use only these 3 hardcoded IDs: <code>user_001</code>, <code>user_002</code>, <code>user_003</code>. Each ID can only exist once. Email must be unique. Pre-populate with real video analysis results.
+</div>
+
+<hr>
+
+<h2>3. Demo User Selection Flow</h2>
+
+<pre>Frontend (App Launch)
+    ↓
+Profile Selection Screen (3 hardcoded options)
+    ├─ "Beginner" card → select
+    ├─ "Intermediate" card → select
+    └─ "Advanced" card → select
+    ↓
+User Selects Profile (e.g., "Beginner")
+    ↓
+Frontend stores: user_id = "user_beginner_001" in sessionStorage
+    ↓
+ALL subsequent API calls include header: { "user_id": "user_beginner_001" }
+    ↓
+Backend reads header, queries DB for user_beginner_001's sessions & data
+    ↓
+Dashboard loads: form_analysis_results + progression data</pre>
+
+<p><strong>Key point:</strong> No dynamic mapping. Each profile card has a hardcoded user_id. Selection is: user picks card → frontend uses that card's ID on every request.</p>
+
+<hr>
+
+<h2>4. Pre-Seeded Session Data (Real User Videos)</h2>
+
+<h3>Process</h3>
+<p>Film 2–3 real users performing Goblet Squat. Run each video through the full pipeline (MediaPipe + Haiku Call 1). Save real analysis results to the DB for each user.</p>
+
+<h3>Pipeline for Each Real User Video</h3>
+<ol>
+  <li>Record 1 high-quality Goblet Squat video (8–10 reps)</li>
+  <li>Run through MediaPipe → extract landmarks + quality gate pass</li>
+  <li>Run through Biomechanics script → calculate angles per rep</li>
+  <li>Run through OpenCV Part 1 → generate 8-frame composite</li>
+  <li>Run through Haiku Call 1 → get form scores + coaching + rep breakdown</li>
+  <li>Run through OpenCV Part 2 → extract worst rep, annotate with angles</li>
+  <li>Save all outputs to <code>form_analysis_results</code> table</li>
+  <li>Demo: User selection → Dashboard shows this real analysis</li>
+</ol>
+
+<div class="highlight">
+  <strong>Why Real Data Matters:</strong> Real data is infinitely more credible than dummy data. When an investor clicks on a session, they see actual form analysis on an actual person—immediately proves the product works.
+</div>
+
+<hr>
+
+<h2>5. Biomechanics JSON → OpenCV Frame Extraction Flow</h2>
+
+<h3>Step 1: Biomechanics Script Output (Squad 3)</h3>
+<pre>{
+  "rep_1": {
+    "knee_angle": 88.2,
+    "hip_angle": 86.5,
+    "ankle_dorsiflexion": 22.1,
+    "tempo_seconds": 1.37,
+    "bottom_frame": 42,
+    "bottom_timestamp_ms": 1400
+  },
+  "rep_2": {
+    "knee_angle": 85.0,
+    "hip_angle": 87.2,
+    "ankle_dorsiflexion": 23.5,
+    "tempo_seconds": 1.41,
+    "bottom_frame": 84,
+    "bottom_timestamp_ms": 2800
+  }
+}</pre>
+
+<h3>Step 2: Haiku Call 1 Scoring (Squad 2)</h3>
+<pre>{
+  "overall_score": 72,
+  "per_rep_scores": [78, 79, 68, 74, 71],
+  "worst_rep_index": 2,
+  "coaching": "Your ankle dorsiflexion is limiting depth..."
+}</pre>
+
+<h3>Step 3: OpenCV Part 2 Frame Extraction (Squad 3)</h3>
+<p><strong>The critical handoff:</strong> OpenCV reads worst_rep_index → looks up that rep's <code>bottom_timestamp_ms</code> in biomechanics JSON → extracts frame → annotates with angles + gold standard reference lines.</p>
+
+<pre>OpenCV Part 2 Logic:
+  1. Read worst_rep_index from Haiku output → "2" (rep 3)
+  2. Read biomechanics JSON from form_analysis_results
+  3. Look up rep_2 (index 2) in JSON → get bottom_timestamp_ms = 2800
+  4. Seek raw video to 2800ms
+  5. Extract frame at that timestamp
+  6. Draw skeleton overlay + angle values
+  7. Add gold standard reference lines
+  8. Color code: green (in range), amber (borderline), red (out of range)
+  9. Save annotated JPEG to GCS
+  10. Return annotated_frame_url to frontend via SSE</pre>
+
+<hr>
+
+<h2>6. Supabase Table Schemas</h2>
+
+<h3>Users Table</h3>
+<pre>CREATE TABLE users (
+  id TEXT PRIMARY KEY,
+  email TEXT UNIQUE NOT NULL,
+  name TEXT NOT NULL,
+  profile_type TEXT NOT NULL,
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
+);
+
+INSERT INTO users (id, email, name, profile_type) VALUES
+  ('user_beginner_001', 'beginner@demo.kinetic', 'Alex Chen', 'beginner'),
+  ('user_intermediate_001', 'intermediate@demo.kinetic', 'Jordan Smith', 'intermediate'),
+  ('user_advanced_001', 'advanced@demo.kinetic', 'Morgan Lee', 'advanced');</pre>
+
+<h3>Exercises Table</h3>
+<pre>CREATE TABLE exercises (
+  id TEXT PRIMARY KEY,
+  name TEXT NOT NULL,
+  slug TEXT UNIQUE,
+  category TEXT,
+  difficulty INT,
+  description TEXT,
+  primary_muscles TEXT[],
+  secondary_muscles TEXT[],
+  equipment TEXT[],
+  created_at TIMESTAMP DEFAULT NOW()
+);</pre>
+
+<h3>User Profiles Table (HOME SCREEN DATA)</h3>
+<pre>CREATE TABLE user_profiles (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id TEXT UNIQUE NOT NULL REFERENCES users(id),
+  experience_level TEXT,
+  progression_graph_url TEXT,
+  calendar_heatmap_url TEXT,
+  weight_recommendation TEXT,
+  last_progression_status TEXT,
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
+);</pre>
+
+<div class="highlight">
+  <strong>For demo:</strong> Pre-load <code>progression_graph_url</code> and <code>calendar_heatmap_url</code> pointing to dummy PNG images per user. This is the backup plan if Squad 1 doesn't have time to build real graph logic.
+</div>
+
+<h3>Form Sessions Table</h3>
+<pre>CREATE TABLE form_sessions (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id TEXT NOT NULL REFERENCES users(id),
+  exercise_id TEXT NOT NULL REFERENCES exercises(id),
+  session_date TIMESTAMP,
+  weight_value FLOAT,
+  weight_unit TEXT,
+  created_at TIMESTAMP DEFAULT NOW()
+);</pre>
+
+<h3>Form Analysis Results Table</h3>
+<pre>CREATE TABLE form_analysis_results (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id TEXT NOT NULL REFERENCES users(id),
+  exercise_id TEXT NOT NULL REFERENCES exercises(id),
+  session_id UUID NOT NULL REFERENCES form_sessions(id),
+  weight_value FLOAT,
+  weight_unit TEXT,
+  biomechanics_json JSONB,
+  quality_gate_status TEXT,
+  overlay_video_url TEXT,
+  annotated_frame_url TEXT,
+  haiku_call_1_output JSONB,
+  haiku_call_2_output JSONB,
+  status TEXT,
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
+);</pre>
+
+<h3>Gold Standard Biomechanics Table</h3>
+<pre>CREATE TABLE gold_standard_biomechanics (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  exercise_id TEXT NOT NULL REFERENCES exercises(id),
+  video_url TEXT,
+  reference_name TEXT,
+  knee_angle_range JSONB,
+  hip_angle_range JSONB,
+  ankle_dorsiflexion_range JSONB,
+  biomechanics_json JSONB,
+  created_at TIMESTAMP DEFAULT NOW()
+);</pre>
+
+<hr>
+
+<h2>7. Dummy Image Storage (Backup Plan)</h2>
+
+<h3>Storage Folder Structure</h3>
+<pre>kinetic-demo/
+├── dummy/
+│   ├── user_001_progress_ladder.png
+│   ├── user_001_calendar.png
+│   ├── user_002_progress_ladder.png
+│   ├── user_002_calendar.png
+│   ├── user_003_progress_ladder.png
+│   └── user_003_calendar.png
+└── gold-standard/
+    ├── goblet_ref_1.mp4
+    ├── goblet_ref_2.mp4
+    └── goblet_ref_3.mp4</pre>
+
+<h3>Images Needed (1 per user)</h3>
+<ul>
+  <li><strong>Progress Ladder:</strong> Weight trend over 5 sessions (line chart, 480×280px)</li>
+  <li><strong>Calendar Heatmap:</strong> May 2026 with session dots on specific dates (480×280px)</li>
+</ul>
+
+<h3>Frontend: Load Images Based on User Selection</h3>
+<pre>const getDashboardImages = (userId: string) => {
+  const imageMap = {
+    'user_001': {
+      progressGraphUrl: 'https://storage.googleapis.com/kinetic-demo/dummy/user_001_progress_ladder.png',
+      calendarUrl: 'https://storage.googleapis.com/kinetic-demo/dummy/user_001_calendar.png'
+    },
+    'user_002': {
+      progressGraphUrl: 'https://storage.googleapis.com/kinetic-demo/dummy/user_002_progress_ladder.png',
+      calendarUrl: 'https://storage.googleapis.com/kinetic-demo/dummy/user_002_calendar.png'
+    },
+    'user_003': {
+      progressGraphUrl: 'https://storage.googleapis.com/kinetic-demo/dummy/user_003_progress_ladder.png',
+      calendarUrl: 'https://storage.googleapis.com/kinetic-demo/dummy/user_003_calendar.png'
+    }
+  };
+  return imageMap[userId] || imageMap['user_001'];
+};
+
+// Render:
+const { progressGraphUrl, calendarUrl } = getDashboardImages(selectedUserId);
+&lt;img src={progressGraphUrl} alt="Progress Ladder" /&gt;
+&lt;img src={calendarUrl} alt="Calendar" /&gt;</pre>
+
+<div class="highlight">
+  <strong>Backup plan:</strong> If Squad 1 runs out of time building real graph generation, this is a 2-hour job (create 3 PNG images + upload + hardcode URLs). Zero frontend complexity—just load and render images.
+</div>
+
+<hr>
+
+<h2>8. Backend Dev Checklist</h2>
+
+<ul>
+  <li>✓ Set up Supabase with hardcoded user IDs (NO UUID generation)</li>
+  <li>✓ Create Exercise table with <code>leg_001_goblet</code> record</li>
+  <li>✓ Create form_sessions and form_analysis_results tables</li>
+  <li>✓ Pre-populate 5 sessions per demo user (for dashboard progression story)</li>
+  <li>✓ Create user_profiles table with image URL columns</li>
+  <li>✓ Pre-load dummy image URLs per user (backup plan)</li>
+  <li>✓ Set up indexes on user_id + session_date for fast queries</li>
+  <li>✓ Enforce unique constraint on user IDs (one per profile)</li>
+</ul>
+
+<hr>
+
+<p style="text-align: center; color: #666; font-size: 12px; margin-top: 40px;">
+  Kinetic Data Foundation | Ready for backend + frontend teams
+</p>
+
+</body>
+</html>
