@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OpenCV Part 2 — Input Requirements</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      line-height: 1.6;
+      color: #333;
+      background: #f5f5f5;
+      padding: 40px 20px;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    h1, h2, h3 { color: #1a1a1a; }
+    h1 { font-size: 28px; margin-top: 0; border-bottom: 3px solid #0066cc; padding-bottom: 10px; }
+    h2 { font-size: 20px; margin-top: 30px; color: #0066cc; }
+    h3 { font-size: 16px; margin-top: 20px; }
+    code {
+      background: #f0f0f0;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-family: 'Monaco', 'Menlo', monospace;
+      font-size: 13px;
+    }
+    pre {
+      background: #f9f9f9;
+      border-left: 4px solid #0066cc;
+      padding: 12px;
+      overflow-x: auto;
+      border-radius: 4px;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      background: white;
+    }
+    th {
+      background: #0066cc;
+      color: white;
+      padding: 12px;
+      text-align: left;
+      font-weight: 600;
+    }
+    td {
+      padding: 10px 12px;
+      border-bottom: 1px solid #ddd;
+    }
+    tr:nth-child(even) { background: #f9f9f9; }
+    strong { color: #0066cc; }
+    .highlight {
+      background: #fff3cd;
+      padding: 15px;
+      border-radius: 4px;
+      margin: 15px 0;
+      border-left: 4px solid #ffc107;
+    }
+    .section-box {
+      background: white;
+      padding: 20px;
+      margin: 20px 0;
+      border-radius: 6px;
+      border-left: 4px solid #0066cc;
+    }
+    hr { border: none; border-top: 2px solid #ddd; margin: 30px 0; }
+    ul, ol { margin: 15px 0; }
+    li { margin: 8px 0; }
+    .diagram {
+      background: #f9f9f9;
+      padding: 20px;
+      border-radius: 6px;
+      border: 1px solid #ddd;
+      font-family: 'Monaco', 'Menlo', monospace;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      margin: 20px 0;
+    }
+    .checkbox { margin-right: 8px; }
+  </style>
+</head>
+<body>
+
+<h1>OpenCV Part 2 — Input Requirements</h1>
+
+<div class="section-box">
+  <strong>Scope: Extract & Annotate Worst Rep Frame</strong>
+  <p>OpenCV Part 2 needs to:</p>
+  <ol>
+    <li>Identify the worst rep (from Haiku analysis)</li>
+    <li>Find the exact frame/timestamp for that rep (from biomechanics data)</li>
+    <li>Extract frame from raw video</li>
+    <li>Annotate with skeleton overlay, angles, color coding</li>
+    <li>Save annotated frame to GCS</li>
+  </ol>
+</div>
+
+<hr>
+
+<h2>Input Data Sources</h2>
+
+<h3>1. Query Parameters (from orchestrator/caller)</h3>
+<table>
+  <thead>
+    <tr>
+      <th>Field</th>
+      <th>Type</th>
+      <th>Purpose</th>
+      <th>Example</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>user_id</code></td>
+      <td>TEXT</td>
+      <td>Identify user for DB query</td>
+      <td><code>user_001</code></td>
+    </tr>
+    <tr>
+      <td><code>analysis_id</code></td>
+      <td>UUID</td>
+      <td>Identify analysis session for DB query</td>
+      <td><code>550e8400-e29b-41d4-a716-446655440000</code></td>
+    </tr>
+    <tr>
+      <td><code>exercise_id</code></td>
+      <td>TEXT</td>
+      <td>Identify exercise for DB query</td>
+      <td><code>leg_001_goblet</code></td>
+    </tr>
+  </tbody>
+</table>
+
+<hr>
+
+<h3>2. form_analyses Table (Query by user_id, analysis_id, exercise_id)</h3>
+<table>
+  <thead>
+    <tr>
+      <th>Field</th>
+      <th>Type</th>
+      <th>Purpose for OpenCV Part 2</th>
+      <th>Example</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>video_url</code></td>
+      <td>TEXT</td>
+      <td>Path to raw video file to extract frame from</td>
+      <td><code>gs://kinetic-demo/videos/user_001_session_20260523.mp4</code></td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>Query:</strong></p>
+<pre>SELECT video_url FROM form_analyses
+WHERE user_id = $1 AND analysis_id = $2 AND exercise_id = $3</pre>
+
+<hr>
+
+<h3>3. form_analysis_results Table (Query by user_id, analysis_id, exercise_id)</h3>
+<table>
+  <thead>
+    <tr>
+      <th>Field</th>
+      <th>Type</th>
+      <th>Purpose for OpenCV Part 2</th>
+      <th>Example</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>haiku_call_1_output</code></td>
+      <td>JSONB</td>
+      <td>Extract <code>worst_rep_index</code> to identify which rep to visualize</td>
+      <td><code>{ "worst_rep_index": 2, "overall_score": 72, ... }</code></td>
+    </tr>
+    <tr>
+      <td><code>biomechanics_json</code></td>
+      <td>JSONB</td>
+      <td>Look up rep's <code>bottom_timestamp_ms</code> and angle values</td>
+      <td><code>{ "rep_0": { "bottom_timestamp_ms": 1400, "knee_angle": 88.2, ... }, "rep_1": {...}, "rep_2": {...} }</code></td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>Query:</strong></p>
+<pre>SELECT haiku_call_1_output, biomechanics_json FROM form_analysis_results
+WHERE user_id = $1 AND analysis_id = $2 AND exercise_id = $3</pre>
+
+<p><strong>Data extraction from these fields:</strong></p>
+<ul>
+  <li>Extract <code>worst_rep_index</code> from <code>haiku_call_1_output</code> → e.g., <code>2</code></li>
+  <li>Look up <code>biomechanics_json["rep_2"]</code> → get <code>bottom_timestamp_ms</code> (e.g., <code>2800</code>)</li>
+  <li>Extract angle values for that rep: <code>knee_angle</code>, <code>hip_angle</code>, <code>ankle_dorsiflexion</code></li>
+</ul>
+
+<hr>
+
+<h3>4. Hardcoded Angle Thresholds (in OpenCV Part 2 code)</h3>
+<p>For MVP (Goblet Squat), angle ranges are hardcoded directly in OpenCV Part 2 logic, not queried from DB.</p>
+
+<p><strong>Hardcoded thresholds for Goblet Squat:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Angle</th>
+      <th>Min</th>
+      <th>Max</th>
+      <th>Color Range</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Knee Angle</td>
+      <td>75°</td>
+      <td>110°</td>
+      <td>Green if in range, amber if borderline, red if out</td>
+    </tr>
+    <tr>
+      <td>Hip Angle</td>
+      <td>80°</td>
+      <td>100°</td>
+      <td>Green if in range, amber if borderline, red if out</td>
+    </tr>
+    <tr>
+      <td>Ankle Dorsiflexion</td>
+      <td>15°</td>
+      <td>30°</td>
+      <td>Green if in range, amber if borderline, red if out</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>No DB query needed</strong> — these values are embedded in the OpenCV Part 2 code.</p>
+
+<hr>
+
+<h2>Data Flow Diagram</h2>
+
+<div class="diagram">OpenCV Part 2 Receives:
+  user_id, analysis_id, exercise_id
+    ↓
+Query form_analyses (get video_url)
+  + Query form_analysis_results (get haiku_call_1_output + biomechanics_json)
+    ↓
+Extract from haiku_call_1_output:
+  worst_rep_index = 2
+    ↓
+Look up biomechanics_json["rep_2"]:
+  bottom_timestamp_ms = 2800
+  knee_angle = 85.0
+  hip_angle = 87.2
+  ankle_dorsiflexion = 23.5
+    ↓
+Download video from video_url
+  → Seek to 2800ms
+  → Extract frame (JPEG)
+    ↓
+Annotate frame:
+  • Draw skeleton overlay (from MediaPipe landmarks stored in biomechanics_json)
+  • Draw angle values next to joints
+  • Color-code: green/amber/red based on HARDCODED thresholds
+  • Add reference lines for "perfect form"
+    ↓
+Save annotated frame to GCS
+  Update form_analysis_results.annotated_frame_url = &lt;GCS_URL&gt;</div>
+
+<hr>
+
+<h2>Summary Table: All Inputs</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Source</th>
+      <th>Query Key</th>
+      <th>Fields Needed</th>
+      <th>Purpose</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Parameter</td>
+      <td>-</td>
+      <td>user_id, analysis_id, exercise_id</td>
+      <td>DB query identifiers</td>
+    </tr>
+    <tr>
+      <td>form_analyses</td>
+      <td>user_id, analysis_id, exercise_id</td>
+      <td>video_url</td>
+      <td>Download raw video</td>
+    </tr>
+    <tr>
+      <td>form_analysis_results</td>
+      <td>user_id, analysis_id, exercise_id</td>
+      <td>haiku_call_1_output, biomechanics_json</td>
+      <td>worst_rep_index, timestamps, angles</td>
+    </tr>
+    <tr>
+      <td>OpenCV Code</td>
+      <td>-</td>
+      <td>Hardcoded thresholds (knee: 75-110°, hip: 80-100°, ankle: 15-30°)</td>
+      <td>Color-code annotations</td>
+    </tr>
+  </tbody>
+</table>
+
+<hr>
+
+<h2>Decisions Made</h2>
+
+<div class="section-box">
+  <h3>1. Biomechanics Persistence Strategy</h3>
+  <p><strong>Decision (May 25, 2026):</strong> S2 backend will pre-save <code>biomechanics_json</code> to <code>form_analysis_results</code> BEFORE calling Haiku Call 1. Haiku does NOT echo biomechanics back in its response.</p>
+
+  <p><strong>Rationale:</strong></p>
+  <ul>
+    <li>Keeps Haiku output focused on analysis results (not redundantly echoing input)</li>
+    <li>Ensures biomechanics data is persisted even if Haiku fails</li>
+    <li>Allows async OpenCV Part 2 (running hours later) to query biomechanics from DB</li>
+    <li>Smaller Haiku response = faster, cheaper (fewer cache tokens)</li>
+    <li>Atomic: S2 uses transaction to save biomechanics → call Haiku → update results in one logical operation</li>
+  </ul>
+</div>
+
+<div class="section-box">
+  <h3>2. Execution Model</h3>
+  <p><strong>OpenCV Part 2 runs asynchronously</strong> after Haiku Call 1 completes and results are saved to the database. This allows OpenCV to process independently and in parallel with other system operations.</p>
+</div>
+
+<div class="section-box">
+  <h3>3. Biomechanics Data Structure</h3>
+  <p><strong>Squad 3 responsibility:</strong> Produce biomechanics_json with the following structure per frame/rep:</p>
+  <pre>{
+  "frame_index": &lt;int&gt;,
+  "frame_bgr": &lt;numpy array or serialized BGR frame data&gt;,
+  "camera_view": "front" | "side",
+  "norm_pose": &lt;MediaPipe landmarks array&gt;,
+  "width": &lt;int&gt;,
+  "height": &lt;int&gt;,
+  "hip_angle": &lt;float&gt;,
+  "knee_angle": &lt;float&gt;,
+  "back_angle_value": &lt;float&gt;,
+  "back_label": &lt;string | null&gt;,
+  "valgus_label": &lt;string | null&gt;,
+  "depth_classification": &lt;string | null&gt;,
+  "dorsiflexion_status": &lt;string | null&gt;,
+  "dorsiflexion_at_bottom": &lt;float | null&gt;,
+  "rep_number": &lt;int&gt;
+}</pre>
+  <p><strong>Note:</strong> Frame data (frame_bgr) can be stored as base64 string or binary reference for DB serialization.</p>
+</div>
+
+<h2>Open Questions / Gaps to Confirm</h2>
+
+<div class="highlight">
+  <ul>
+    <li><input type="checkbox" class="checkbox"> Is <code>biomechanics_json</code> JSONB column added to <code>form_analysis_results</code>?</li>
+    <li><input type="checkbox" class="checkbox"> Does S2 have transaction support to atomically save biomechanics + Haiku output?</li>
+    <li><input type="checkbox" class="checkbox"> What is max expected size of biomechanics_json? (target: &lt;200KB for safe JSONB storage)</li>
+    <li><input type="checkbox" class="checkbox"> How should frame_bgr be serialized (base64, binary, reference only)?</li>
+  </ul>
+</div>
+
+<hr>
+
+<p style="text-align: center; color: #666; font-size: 12px; margin-top: 40px;">
+  OpenCV Part 2 Input Requirements | Kinetic
+</p>
+
+</body>
+</html>
