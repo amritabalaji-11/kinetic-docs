@@ -778,14 +778,14 @@ h1 { font-size: 28px; font-weight: 800; color: #f8fafc; margin-bottom: 8px; }
 <div class="squad-section">
   <div class="squad-header">
     <div class="squad-dot s3"></div>
-    <div class="squad-title">OpenCV Part 2 — Extract & Annotate Worst Rep Frame</div>
-    <div class="squad-meta">11 subtasks</div>
+    <div class="squad-title">OpenCV Part 2 — Save BGR Frame to GCS</div>
+    <div class="squad-meta">9 subtasks</div>
   </div>
 
   <div style="background: #1a1f2e; border: 1px solid #0e7490; border-radius: 8px; padding: 16px; margin-bottom: 24px;">
     <p style="font-size: 12px; color: #22d3ee; margin-bottom: 8px;"><strong>Reference:</strong> projects/Kinetic/OPENCV_PART2_INPUTS.html</p>
     <p style="font-size: 12px; color: #cbd5e1; line-height: 1.6;">
-      Extract the worst-performing rep frame from raw video and annotate with skeleton overlay, angles, and form assessment labels. Runs asynchronously after Haiku Call 1 completes. Database schema → S2 persistence logic → async trigger → frame extraction → annotation → GCS storage.
+      S3 produces raw BGR frame from biomechanics and annotates it with skeleton overlay, angles, and form assessment labels. S2 then encodes and saves to GCS. Runs asynchronously after Haiku Call 1 completes. Database schema → S2 persistence logic → async trigger → S3 annotation → S2 GCS storage.
     </p>
   </div>
 
@@ -928,76 +928,7 @@ h1 { font-size: 28px; font-weight: 800; color: #f8fafc; margin-bottom: 8px; }
     </div>
   </div>
 
-  <!-- S2-W8-10 -->
-  <div class="task">
-    <div class="task-header-bar">
-      <div class="task-badge badge-todo">◯ To Do</div>
-      <div class="task-id">S2-W8-10</div>
-      <div class="task-title">Extract Worst Rep Frame from Video</div>
-      <div class="task-priority priority-high">HIGH</div>
-    </div>
-    <div class="task-body">
-      <div class="section">
-        <div class="section-title">Description</div>
-        <div class="section-content">
-          Download video from GCS, seek to correct timestamp, extract worst rep frame in BGR format.
-        </div>
-      </div>
-      <div class="section">
-        <div class="section-title">Acceptance Criteria</div>
-        <ul class="criteria-list">
-          <li>Video successfully downloaded from GCS</li>
-          <li>Seeks to correct timestamp</li>
-          <li>Frame extracted in BGR format with correct resolution</li>
-        </ul>
-      </div>
-      <div class="section">
-        <div class="section-title">Dependencies</div>
-        <div class="section-content"><span class="dep-badge">DEPENDS ON</span> S2-W8-09 (Query & fetch)</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- S2-W8-11 -->
-  <div class="task">
-    <div class="task-header-bar">
-      <div class="task-badge badge-todo">◯ To Do</div>
-      <div class="task-id">S2-W8-11</div>
-      <div class="task-title">Annotate Frame with Skeleton, Angles & Labels</div>
-      <div class="task-priority priority-high">HIGH</div>
-    </div>
-    <div class="task-body">
-      <div class="section">
-        <div class="section-title">Description</div>
-        <div class="section-content">
-          Draw skeleton overlay (from MediaPipe landmarks), angle values, classification labels, and color-coded form assessment on extracted frame.
-          <ul class="desc-list">
-            <li>Skeleton: lines between MediaPipe joints</li>
-            <li>Angles: knee_angle, hip_angle, back_angle_value labeled near joints</li>
-            <li>Labels: back_label, valgus_label, depth_classification, dorsiflexion_status</li>
-            <li>Color-coding: green (good) / amber (borderline) / red (out of range)</li>
-          </ul>
-        </div>
-      </div>
-      <div class="section">
-        <div class="section-title">Acceptance Criteria</div>
-        <ul class="criteria-list">
-          <li>Skeleton drawn from MediaPipe landmarks</li>
-          <li>All angles labeled and visible</li>
-          <li>Classification labels displayed</li>
-          <li>Color-coding applied correctly</li>
-          <li>Annotations readable and not overlapping</li>
-          <li>Works on front & side camera views</li>
-        </ul>
-      </div>
-      <div class="section">
-        <div class="section-title">Dependencies</div>
-        <div class="section-content"><span class="dep-badge">DEPENDS ON</span> S2-W8-10 (Frame extraction)</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- S2-W8-12 -->
+  <!-- S2-W8-11 (was S2-W8-12, renumbered) -->
   <div class="task">
     <div class="task-header-bar">
       <div class="task-badge badge-todo">◯ To Do</div>
@@ -1110,6 +1041,47 @@ h1 { font-size: 28px; font-weight: 800; color: #f8fafc; margin-bottom: 8px; }
     <div class="task-header-bar">
       <div class="task-badge badge-todo">◯ To Do</div>
       <div class="task-id">S3-W8-04</div>
+      <div class="task-title">Annotate Frame with Skeleton, Angles & Labels</div>
+      <div class="task-priority priority-high">HIGH</div>
+    </div>
+    <div class="task-body">
+      <div class="section">
+        <div class="section-title">Description</div>
+        <div class="section-content">
+          S3 to annotate the extracted frame with skeleton overlay (from MediaPipe landmarks), angle values, classification labels, and color-coded form assessment. This annotated frame is then saved to GCS by S2.
+          <ul class="desc-list">
+            <li>Skeleton: draw lines between MediaPipe joints</li>
+            <li>Angles: label knee_angle, hip_angle, back_angle_value near joints</li>
+            <li>Labels: display back_label, valgus_label, depth_classification, dorsiflexion_status</li>
+            <li>Color-coding: green (good) / amber (borderline) / red (out of range)</li>
+            <li>Output: annotated frame_bgr passed to S2</li>
+          </ul>
+        </div>
+      </div>
+      <div class="section">
+        <div class="section-title">Acceptance Criteria</div>
+        <ul class="criteria-list">
+          <li>Skeleton drawn from MediaPipe landmarks</li>
+          <li>All angles labeled and visible</li>
+          <li>Classification labels displayed</li>
+          <li>Color-coding applied correctly based on thresholds</li>
+          <li>Annotations readable and not overlapping</li>
+          <li>Works on front & side camera views</li>
+          <li>Annotated frame_bgr passed to S2 for GCS storage</li>
+        </ul>
+      </div>
+      <div class="section">
+        <div class="section-title">Dependencies</div>
+        <div class="section-content"><span class="dep-badge">DEPENDS ON</span> S3-W8-03 (Biomechanics frame_bgr available)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- S3-W8-05 (was S3-W8-04) -->
+  <div class="task">
+    <div class="task-header-bar">
+      <div class="task-badge badge-todo">◯ To Do</div>
+      <div class="task-id">S3-W8-05</div>
       <div class="task-title">E2E Integration Testing</div>
       <div class="task-priority priority-high">HIGH</div>
     </div>
@@ -1134,16 +1106,17 @@ h1 { font-size: 28px; font-weight: 800; color: #f8fafc; margin-bottom: 8px; }
       </div>
       <div class="section">
         <div class="section-title">Dependencies</div>
-        <div class="section-content"><span class="dep-badge">DEPENDS ON</span> S2-W8-13 (Error handling complete)</div>
+        <div class="section-content"><span class="dep-badge">DEPENDS ON</span> S2-W8-13 (Error handling complete)<br>
+        <span class="dep-badge">DEPENDS ON</span> S3-W8-04 (Annotation complete)</div>
       </div>
     </div>
   </div>
 
-  <!-- S3-W8-05 -->
+  <!-- S3-W8-06 (was S3-W8-05) -->
   <div class="task">
     <div class="task-header-bar">
       <div class="task-badge badge-todo">◯ To Do</div>
-      <div class="task-id">S3-W8-05</div>
+      <div class="task-id">S3-W8-06</div>
       <div class="task-title">Documentation & Production Deployment</div>
       <div class="task-priority priority-high">HIGH</div>
     </div>
@@ -1186,9 +1159,11 @@ h1 { font-size: 28px; font-weight: 800; color: #f8fafc; margin-bottom: 8px; }
     <div class="dep-flow">S2-W8-02 (Async Job) → S1-W8-01a (Results to display)</div>
     <div class="dep-flow">OCV2-00 (DB Schema) → OCV2-01 (S2 Save)</div>
     <div class="dep-flow">OCV2-01 (S2 Save) → S2-W8-08 (Async Trigger)</div>
-    <div class="dep-flow">S3-W8-03 (Biomechanics frame_bgr) → S2-W8-12 (GCS upload)</div>
+    <div class="dep-flow">S3-W8-03 (Biomechanics frame_bgr) → S3-W8-04 (Annotate frame)</div>
+    <div class="dep-flow">S3-W8-04 (Annotated frame_bgr) → S2-W8-12 (GCS upload + store URL)</div>
     <div class="dep-flow">S2-W8-06 (Schema: biomechanics_json) → S2-W8-12 (Store URL in biomechanics_JSON)</div>
-    <div class="dep-flow">S2-W8-08 (Trigger) → S2-W8-09 (Query) → S2-W8-10 (Extract) → S2-W8-11 (Annotate) → S2-W8-13 (Error Handling)</div>
+    <div class="dep-flow">S2-W8-12 (GCS Save) → S2-W8-13 (Error Handling)</div>
+    <div class="dep-flow">S2-W8-13 (Error Handling) → S3-W8-05 (E2E Testing)</div>
     <div class="dep-flow">S2-W8-12 (GCS Save) → S2-W8-13 (Error Handling)</div>
     <div class="dep-flow">S2-W8-13 (Error Handling) → S3-W8-04 (E2E Testing)</div>
     <div class="dep-flow">S3-W8-04 (E2E Testing) → S3-W8-05 (Deploy + Docs)</div>
@@ -1202,7 +1177,7 @@ h1 { font-size: 28px; font-weight: 800; color: #f8fafc; margin-bottom: 8px; }
     <strong>Squad 1:</strong> Progression page live and polling successfully • Home screen shows session history with re-upload links • Profile screen connected to 3 demo users with localStorage persistence<br><br>
     <strong>Squad 2:</strong> Schema migrations applied • Haiku Call 2 async job queue operational (queued → running → complete cycle tested) • Job status endpoint responding <50ms • SSE events firing in real time • Error handling + retry logic in place (tested with simulated failures) • S2 pre-save biomechanics_json logic implemented with transaction support<br><br>
     <strong>Squad 3:</strong> 5+ .md coaching files finalized and committed • Test data seeded: 10–14 realistic past sessions across user_001/002/003 with progressive weights and varying form scores • Biomechanics JSON generation spec finalized, implementation underway<br><br>
-    <strong>OpenCV Part 2:</strong> Database schema updated with biomechanics_json + annotated_frame_url columns • Task structure created (11 subtasks across OCV2-00 to S3-W8-05) • S2 pre-save logic and async trigger integration planned • Frame extraction & annotation pipeline architected
+    <strong>OpenCV Part 2:</strong> Database schema updated with biomechanics_json + annotated_frame_url columns • Task structure created (9 subtasks: S2-W8-06 → S2-W8-13, S3-W8-03 → S3-W8-06) • S3 annotation pipeline defined • S2 GCS storage with retry logic planned • S3 annotation + S2 GCS storage integration ready for squad execution
   </div>
 </div>
 
