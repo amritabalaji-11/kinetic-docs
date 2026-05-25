@@ -511,51 +511,74 @@ h1 { font-size: 28px; font-weight: 800; color: #f8fafc; margin-bottom: 8px; }
     </div>
   </div>
 
-  <!-- S2-W8-03 -->
+  <!-- S2-W8-03a -->
   <div class="task">
     <div class="task-header-bar">
       <div class="task-badge badge-todo">◯ To Do</div>
-      <div class="task-id">S2-W8-03</div>
-      <div class="task-title">Job Status Endpoint</div>
+      <div class="task-id">S2-W8-03a</div>
+      <div class="task-title">OpenCV Status Endpoint</div>
       <div class="task-priority priority-high">HIGH</div>
     </div>
     <div class="task-body">
       <div class="section">
         <div class="section-title">Description</div>
         <div class="section-content">
-          Implement GET endpoint that returns the real-time status of Haiku Call 2 async job. Frontend polls this every 2 seconds to show progress and eventually display results.
+          GET /form_analysis/{id}/opencv-status — Return real-time status of OpenCV Part 2 async job.
           <ul class="desc-list">
-            <li>Endpoint: GET /form_analysis/{id}/status</li>
-            <li>Returns JSON: { job_status, progress_percent, estimated_seconds_remaining, haiku_call_2_output (if complete) }</li>
-            <li>job_status: one of queued / running / complete / failed / timeout</li>
-            <li>progress_percent: 0–100, estimated based on how long job has been running</li>
-            <li>estimated_seconds_remaining: rough ETA (only if running)</li>
-            <li>haiku_call_2_output: full result if job_status = complete, otherwise null</li>
-            <li>Support frequent polling (every 2 seconds) without performance issues</li>
+            <li>Returns: <code>opencv_part_2_status, queued_at, started_at, completed_at, error, annotated_frame_url</code></li>
+            <li>Status values: queued | running | complete | failed</li>
+            <li>Response time &lt;50ms</li>
           </ul>
         </div>
       </div>
-
       <div class="section">
         <div class="section-title">Acceptance Criteria</div>
         <ul class="criteria-list">
-          <li>Endpoint responds with correct job_status at all stages (queued, running, complete)</li>
-          <li>Response time <50ms for status-only checks (no database lock issues)</li>
-          <li>progress_percent increases smoothly as job runs (0 → 100)</li>
-          <li>estimated_seconds_remaining is reasonable (not wildly off)</li>
-          <li>haiku_call_2_output included only when job_status = complete</li>
-          <li>Handles missing analysis_id gracefully (404 with clear message)</li>
-          <li>Multiple concurrent status checks don't cause timeouts or locks</li>
-          <li>Works with S1-W8-01a polling every 2 seconds without strain</li>
+          <li>Returns correct status at each stage</li>
+          <li>Includes annotated_frame_url when status = complete</li>
+          <li>Includes error message when status = failed</li>
+          <li>Response time &lt;50ms</li>
         </ul>
       </div>
-
       <div class="section">
         <div class="section-title">Dependencies</div>
+        <div class="section-content"><span class="dep-badge">DEPENDS ON</span> S2-W8-01 (Schema) + S2-W8-09 (Job sets status)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- S2-W8-03b -->
+  <div class="task">
+    <div class="task-header-bar">
+      <div class="task-badge badge-todo">◯ To Do</div>
+      <div class="task-id">S2-W8-03b</div>
+      <div class="task-title">Haiku Call 2 Status Endpoint</div>
+      <div class="task-priority priority-high">HIGH</div>
+    </div>
+    <div class="task-body">
+      <div class="section">
+        <div class="section-title">Description</div>
         <div class="section-content">
-          <span class="dep-badge">DEPENDS ON</span> S2-W8-01 (Schema with job_status, timestamps)<br>
-          <span class="dep-badge">DEPENDS ON</span> S2-W8-02 (Job pipeline sets statuses)
+          GET /form_analysis/{id}/haiku-status — Return real-time status of Haiku Call 2 async job.
+          <ul class="desc-list">
+            <li>Returns: <code>haiku_call_2_status, queued_at, started_at, completed_at, error, haiku_call_2_output</code></li>
+            <li>Status values: queued | running | complete | failed</li>
+            <li>Response time &lt;50ms</li>
+          </ul>
         </div>
+      </div>
+      <div class="section">
+        <div class="section-title">Acceptance Criteria</div>
+        <ul class="criteria-list">
+          <li>Returns correct status at each stage</li>
+          <li>Includes haiku_call_2_output (weight recommendation) when status = complete</li>
+          <li>Includes error message when status = failed</li>
+          <li>Response time &lt;50ms</li>
+        </ul>
+      </div>
+      <div class="section">
+        <div class="section-title">Dependencies</div>
+        <div class="section-content"><span class="dep-badge">DEPENDS ON</span> S2-W8-01 (Schema) + S2-W8-02 (Job sets status)</div>
       </div>
     </div>
   </div>
@@ -909,21 +932,71 @@ h1 { font-size: 28px; font-weight: 800; color: #f8fafc; margin-bottom: 8px; }
       <div class="section">
         <div class="section-title">Description</div>
         <div class="section-content">
-          Implement OpenCV Part 2 to query form_analyses and form_analysis_results tables and extract all required data (video URL, worst_rep_index, frame data, angles, landmarks).
+          Enqueue and execute async job that queries <code>biomechanics_json</code> for worst-performing rep, downloads video from GCS, and extracts frame at timestamp for annotation.
+          <ul class="desc-list">
+            <li><strong>Step 1: Enqueue Job (after Haiku Call 1 saves)</strong>
+              <ol style="margin-top: 6px; margin-left: 16px;">
+                <li>Write to DB: <code>opencv_part_2_status = "queued"</code>, <code>opencv_part_2_queued_at = NOW()</code></li>
+                <li>Enqueue Cloud Tasks job with analysis_id, user_id</li>
+              </ol>
+            </li>
+            <li><strong>Step 2: Worker Executes Job</strong>
+              <ol style="margin-top: 6px; margin-left: 16px;">
+                <li>Write to DB: <code>opencv_part_2_status = "running"</code>, <code>opencv_part_2_started_at = NOW()</code></li>
+                <li>Query DB: fetch <code>worst_rep_index</code> and <code>biomechanics_json</code> for this analysis_id</li>
+                <li>Use <code>worst_rep_index</code> to get rep: <code>biomechanics_json.reps[worst_rep_index]</code></li>
+                <li>Extract bottom keyframe index: <code>keyframe_indices.bottom</code> (the lowest point of the squat)</li>
+                <li>Extract frame image: <code>reps[worst_rep_index].frames[bottom_keyframe_index]</code> (image data already in biomechanics_json)</li>
+                <li>Collect all rep fields: <code>form_score</code>, <code>scorecard</code> (angles), <code>coaching_dimensions</code>, <code>symmetry</code>, <code>phases</code></li>
+                <li>Pass to S3/OpenCV: frame image + all rep fields for annotation overlay (S2-W8-13)</li>
+              </ol>
+            </li>
+            <li><strong>Step 3: On Success</strong>
+              <ol style="margin-top: 6px; margin-left: 16px;">
+                <li>Write to DB: <code>opencv_part_2_status = "complete"</code>, <code>opencv_part_2_completed_at = NOW()</code></li>
+                <li><strong>Trigger S2-W8-02 (Haiku Call 2) job to start</strong></li>
+              </ol>
+            </li>
+            <li><strong>Step 3b: On Failure</strong>
+              <ol style="margin-top: 6px; margin-left: 16px;">
+                <li>Write to DB: <code>opencv_part_2_status = "failed"</code>, <code>opencv_part_2_error = "{error_message}"</code>, <code>opencv_part_2_completed_at = NOW()</code></li>
+                <li>Do NOT trigger Haiku Call 2</li>
+              </ol>
+            </li>
+          </ul>
         </div>
       </div>
       <div class="section">
         <div class="section-title">Acceptance Criteria</div>
         <ul class="criteria-list">
-          <li>Successfully queries both tables</li>
-          <li>Extracts worst_rep_index from Haiku output</li>
-          <li>Looks up correct rep data in biomechanics_json</li>
-          <li>Handles missing/null data gracefully</li>
+          <li>Job enqueued in Cloud Tasks immediately after Haiku Call 1 saves</li>
+          <li><code>opencv_part_2_status</code> transitions: queued → running → complete (or failed)</li>
+          <li><code>opencv_part_2_queued_at</code>, <code>_started_at</code>, <code>_completed_at</code> timestamps recorded</li>
+          <li>Worst rep correctly identified by lowest <code>form_score</code> in biomechanics_json</li>
+          <li>Video successfully downloaded from GCS without errors</li>
+          <li>Frame extracted at correct timestamp (±100ms tolerance)</li>
+          <li>Frame bytes passed to S3 for annotation</li>
+          <li>On failure: <code>opencv_part_2_status = "failed"</code> and <code>opencv_part_2_error</code> populated with error message</li>
+          <li><strong>On success: S2-W8-02 (Haiku Call 2) job automatically triggered</strong></li>
+          <li>Latency: frame extraction + pass-off completes in &lt;8 seconds</li>
         </ul>
       </div>
       <div class="section">
         <div class="section-title">Dependencies</div>
-        <div class="section-content"><span class="dep-badge">DEPENDS ON</span> S2-W8-08 (Async trigger)</div>
+        <div class="section-content">
+          <span class="dep-badge">DEPENDS ON</span> S2-W8-01 (schema with opencv_part_2_* fields)<br>
+          <span class="dep-badge">BLOCKS</span> S2-W8-02 (Haiku Call 2 cannot start until this completes)
+        </div>
+      </div>
+      <div class="section">
+        <div class="section-title">Database Writes</div>
+        <div class="section-content">
+          <code>form_analysis_results.opencv_part_2_status</code> (queued → running → complete/failed)<br>
+          <code>form_analysis_results.opencv_part_2_queued_at</code> (timestamp)<br>
+          <code>form_analysis_results.opencv_part_2_started_at</code> (timestamp)<br>
+          <code>form_analysis_results.opencv_part_2_completed_at</code> (timestamp)<br>
+          <code>form_analysis_results.opencv_part_2_error</code> (error message on failure)
+        </div>
       </div>
     </div>
   </div>
