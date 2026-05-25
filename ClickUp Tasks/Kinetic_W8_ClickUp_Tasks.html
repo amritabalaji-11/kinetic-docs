@@ -595,7 +595,14 @@ h1 { font-size: 28px; font-weight: 800; color: #f8fafc; margin-bottom: 8px; }
       <div class="section">
         <div class="section-title">Goal</div>
         <div class="section-content">
-          Emit real-time SSE messages to Squad 1 (Frontend) as async jobs progress. The frontend needs to show progress updates as Haiku Call 2 (progression recommendations) and OpenCV Part 2 (visual proof) execute in parallel after Haiku Call 1 completes.
+          Emit real-time SSE messages to Squad 1 (Frontend) as <strong>Haiku Call 2</strong> async job progresses. The frontend needs to show progress updates as the progression recommendations job executes after Haiku Call 1 completes.
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Scope Note</div>
+        <div class="section-content">
+          <strong>This task covers Haiku Call 2 SSE events ONLY.</strong> OpenCV Part 2 SSE events will be scoped separately in post-demo work. Focus here is on progression recommendations visibility during Week 8.
         </div>
       </div>
 
@@ -604,29 +611,26 @@ h1 { font-size: 28px; font-weight: 800; color: #f8fafc; margin-bottom: 8px; }
         <div class="section-content">
           ✓ W7: SSE skeleton implemented on frontend (Upload screen shows processing states)<br>
           ✓ W7: Haiku Call 1 emits SSE events at pipeline stages (<code>haiku_started</code>, <code>analysis_ready</code>, <code>frame_ready</code>)<br>
-          ✗ W8: <strong>Problem:</strong> No SSE emission for async jobs — they run silently in background. Frontend has no visibility into job progress after "Analysis complete" — user doesn't know progression recommendation or visual proof are being generated.
+          ✗ W8: <strong>Problem:</strong> No SSE emission for Haiku Call 2 — it runs silently in background. Frontend has no visibility into progression job progress after "Analysis complete" — user doesn't know recommendations are being generated.
         </div>
       </div>
 
       <div class="section">
-        <div class="section-title">Scope: New SSE Event Types</div>
+        <div class="section-title">Scope: New SSE Event Types (Haiku Call 2)</div>
         <div class="section-content">
-          <strong>7 new events to emit:</strong>
+          <strong>4 new events to emit:</strong>
           <ul class="desc-list">
             <li><code>haiku_call_2_queued</code> — Progression job enqueued (with initial ETA)</li>
             <li><code>haiku_call_2_started</code> — Progression job execution began</li>
             <li><code>haiku_call_2_complete</code> — Progression job finished; output ready</li>
-            <li><code>opencv_part_2_queued</code> — Visual proof job enqueued (with initial ETA)</li>
-            <li><code>opencv_part_2_started</code> — Visual proof job execution began</li>
-            <li><code>opencv_part_2_complete</code> — Visual proof job finished; output ready</li>
-            <li><code>job_failed</code> — Either job failed; error reason included</li>
+            <li><code>job_failed</code> — Job failed (for haiku_call_2); error reason included</li>
           </ul>
           <strong>Event emission points:</strong>
           <ul class="desc-list">
-            <li>When Haiku Call 1 completes, enqueue both jobs → emit <code>haiku_call_2_queued</code> + <code>opencv_part_2_queued</code></li>
-            <li>When either job enters <code>running</code> state → emit <code>[job]_started</code></li>
-            <li>When either job completes → emit <code>[job]_complete</code> with output payload</li>
-            <li>On any failure → emit <code>job_failed</code> with error details</li>
+            <li>When Haiku Call 1 completes, enqueue Haiku Call 2 → emit <code>haiku_call_2_queued</code></li>
+            <li>When job enters <code>running</code> state → emit <code>haiku_call_2_started</code></li>
+            <li>When job completes → emit <code>haiku_call_2_complete</code> with output payload</li>
+            <li>On failure → emit <code>job_failed</code> with error_code + job_type="haiku_call_2"</li>
           </ul>
           <strong>Standardized event payload schema:</strong>
           <pre style="background: #0a0f18; padding: 10px; border-radius: 4px; font-size: 11px; color: #a5f3fc; overflow-x: auto;">{
@@ -646,30 +650,30 @@ h1 { font-size: 28px; font-weight: 800; color: #f8fafc; margin-bottom: 8px; }
         <div class="section-content">
           <strong>1. Define Event Contract</strong>
           <ul class="desc-list">
-            <li>Document all 7 event types in <code>FE_SSE_and_Errors.md</code> (update from W7)</li>
+            <li>Document all 4 new event types in <code>FE_SSE_and_Errors.md</code> (update from W7)</li>
             <li>Define payload schema for each event</li>
             <li>Confirm event ordering and timing expectations with Squad 1</li>
           </ul>
           <strong>2. Implement Job Event Emission</strong>
           <ul class="desc-list">
             <li>Create <code>emit_job_event()</code> helper in backend (reuses existing SSE stream writer)</li>
-            <li>Modify <code>job_runner.py</code> to emit <code>[job]_queued</code> when job is enqueued</li>
-            <li>Emit <code>[job]_started</code> when job execution begins</li>
-            <li>Emit <code>[job]_complete</code> when job finishes; include output payload</li>
-            <li>Emit <code>job_failed</code> on failure; include error message and retry guidance</li>
+            <li>Modify <code>job_runner.py</code> to emit <code>haiku_call_2_queued</code> when job is enqueued</li>
+            <li>Emit <code>haiku_call_2_started</code> when job execution begins</li>
+            <li>Emit <code>haiku_call_2_complete</code> when job finishes; include output payload</li>
+            <li>Emit <code>job_failed</code> on failure; include error_code + job_type="haiku_call_2"</li>
           </ul>
           <strong>3. Integration Points</strong>
           <ul class="desc-list">
-            <li>Hook job callbacks into existing async job queue</li>
-            <li>Ensure events fire in correct order: Call 1 complete → jobs queued → jobs start → jobs complete</li>
+            <li>Hook job callbacks into Haiku Call 2 async job queue (S2-W8-02)</li>
+            <li>Ensure events fire in correct order: Call 1 complete → haiku_call_2_queued → haiku_call_2_started → haiku_call_2_complete</li>
             <li>Test SSE delivery under network delays (simulate slow job)</li>
           </ul>
           <strong>4. Testing</strong>
           <ul class="desc-list">
             <li>Manual: Upload video, watch SSE events stream in browser console</li>
-            <li>Verify both jobs emit events in parallel</li>
+            <li>Verify Haiku Call 2 emits events with correct timing</li>
             <li>Verify event payload contains all required fields</li>
-            <li>Test error scenarios: job timeout, invalid video, API failure</li>
+            <li>Test error scenarios: job timeout, API failure</li>
             <li>Confirm frontend receives and renders each event type</li>
           </ul>
         </div>
@@ -678,15 +682,15 @@ h1 { font-size: 28px; font-weight: 800; color: #f8fafc; margin-bottom: 8px; }
       <div class="section">
         <div class="section-title">Acceptance Criteria</div>
         <ul class="criteria-list">
-          <li>All 7 new event types emit correctly (haiku_call_2_queued/started/complete, opencv_part_2_queued/started/complete, job_failed)</li>
-          <li>Events appear in correct order and timing; both jobs emit events in parallel</li>
+          <li>All 4 new event types emit correctly (haiku_call_2_queued/started/complete, job_failed with job_type="haiku_call_2")</li>
+          <li>Events appear in correct order and timing</li>
           <li>Event payloads match documented schema; all required fields present</li>
           <li>Frontend receives and renders events in real time</li>
-          <li>Error events include actionable error messages</li>
+          <li>Error events include actionable error code and message</li>
           <li>Events don't duplicate or send twice</li>
-          <li>SSE stream remains open until both jobs complete (or error occurs)</li>
+          <li>SSE stream remains open until job completes (or error occurs)</li>
           <li>Works with existing SSE stream without breaking Haiku Call 1 events</li>
-          <li>Handles job timeout: emits job_failed with error_code = "timeout"</li>
+          <li>Handles job timeout: emits job_failed with error_code = "HAIKU_CALL_2_TIMEOUT"</li>
           <li>Updated <code>FE_SSE_and_Errors.md</code> documents all new event types and payloads</li>
         </ul>
       </div>
@@ -696,10 +700,9 @@ h1 { font-size: 28px; font-weight: 800; color: #f8fafc; margin-bottom: 8px; }
         <div class="section-content">
           Once S2-W8-04 is complete, Squad 1 will:
           <ul class="desc-list">
-            <li>Watch SSE stream for <code>haiku_call_2_*</code> and <code>opencv_part_2_*</code> events</li>
-            <li>Show progress UI: "Generating recommendations..." → "Ready" (once <code>haiku_call_2_complete</code> arrives)</li>
-            <li>Show visual proof status in parallel (OpenCV events)</li>
-            <li>Display final output once both jobs complete</li>
+            <li>Watch SSE stream for <code>haiku_call_2_*</code> events</li>
+            <li>Show progress UI in Tab 2: "Generating recommendations..." → "Ready" (once <code>haiku_call_2_complete</code> arrives)</li>
+            <li>Display final weight recommendation output once job completes</li>
           </ul>
         </div>
       </div>
@@ -708,8 +711,8 @@ h1 { font-size: 28px; font-weight: 800; color: #f8fafc; margin-bottom: 8px; }
         <div class="section-title">Dependencies</div>
         <div class="section-content">
           <span class="dep-badge">DEPENDS ON</span> S2-W8-01 (Schema with job tracking fields)<br>
-          <span class="dep-badge">DEPENDS ON</span> S2-W8-02 (Job pipeline exists to emit from)<br>
-          <span class="dep-badge">DEPENDS ON</span> S2-W8-03a/03b (Status endpoints for jobs)
+          <span class="dep-badge">DEPENDS ON</span> S2-W8-02 (Haiku Call 2 job pipeline exists to emit from)<br>
+          <span class="dep-badge">DEPENDS ON</span> S2-W8-03b (Haiku status endpoint for job state)
         </div>
       </div>
     </div>
@@ -727,23 +730,30 @@ h1 { font-size: 28px; font-weight: 800; color: #f8fafc; margin-bottom: 8px; }
       <div class="section">
         <div class="section-title">Goal</div>
         <div class="section-content">
-          Implement robust error handling and intelligent retry mechanisms for async jobs (Haiku Call 2 and OpenCV Part 2). Ensure failed jobs recover gracefully, frontend receives actionable error information, and operators observe failure patterns via structured logging.
+          Implement robust error handling and intelligent retry mechanisms for <strong>Haiku Call 2 async job</strong>. Ensure failed jobs recover gracefully, frontend receives actionable error information, and operators observe failure patterns via structured logging.
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Scope Note</div>
+        <div class="section-content">
+          <strong>This task covers Haiku Call 2 error handling ONLY.</strong> OpenCV Part 2 error handling will be scoped separately in S2-W8-13 (post-demo, Week 9+). Haiku Call 2 is in critical path and requires robust retry logic.
         </div>
       </div>
 
       <div class="section">
         <div class="section-title">Current State Problem</div>
         <div class="section-content">
-          ✗ No retry logic — jobs fail once and stay failed<br>
+          ✗ No retry logic — Haiku Call 2 jobs fail once and stay failed<br>
           ✗ No error categorization — frontend doesn't know if "try again" or "need new video"<br>
           ✗ No fallback strategies — single point of failure (S3 .md file fetch blocks entire job)<br>
           ✗ No structured logging — ops can't see failure patterns<br><br>
-          <strong>Impact:</strong> If Haiku Call 2 times out or OpenCV hits transient GCS error, job fails permanently. Frontend shows error but can't distinguish retryable vs. non-retryable.
+          <strong>Impact:</strong> If Haiku Call 2 times out or API fails, job fails permanently. Frontend shows error but can't distinguish retryable vs. non-retryable.
         </div>
       </div>
 
       <div class="section">
-        <div class="section-title">Error Categories & Retry Strategy</div>
+        <div class="section-title">Error Categories & Retry Strategy (Haiku Call 2 Only)</div>
         <div class="section-content">
           <strong>Haiku Call 2 — 3 Retries (1s → 3s → 9s exponential backoff)</strong>
           <ul class="desc-list">
@@ -752,25 +762,17 @@ h1 { font-size: 28px; font-weight: 800; color: #f8fafc; margin-bottom: 8px; }
             <li><strong>Expected (No Retry):</strong> NO_PREVIOUS_SESSION (first session — show empty state)</li>
             <li><strong>Fallback:</strong> S3 coaching fetch fails → use generic coaching (job continues, lower quality)</li>
           </ul>
-          <strong>OpenCV Part 2 — 2 Retries (2s → 5s backoff) [Non-Blocking]</strong>
-          <ul class="desc-list">
-            <li><strong>Retryable:</strong> GoogleAPICallError (timeout/5xx), rare cv2 race conditions</li>
-            <li><strong>Non-Retryable:</strong> cv2.error (frame extraction/annotation), persistent GCS auth failure, wall-clock >60s, DB write error</li>
-            <li><strong>Key:</strong> All OpenCV failures are non-blocking — Tab 1 coaching visible, image placeholder empty</li>
-          </ul>
           <strong>Timeout Enforcement</strong>
           <ul class="desc-list">
             <li><strong>Haiku Call 2:</strong> 120s wall-clock hard limit + 45s per API call timeout</li>
-            <li><strong>OpenCV Part 2:</strong> 60s wall-clock hard limit + 30s GCS upload, 10s S3 fetch per-op timeouts</li>
             <li><strong>Hard timeouts are NOT retryable:</strong> If wall-clock exceeded, fail immediately (don't retry)</li>
           </ul>
         </div>
       </div>
 
       <div class="section">
-        <div class="section-title">Exception → Error Code Mapping</div>
+        <div class="section-title">Exception → Error Code Mapping (Haiku Call 2)</div>
         <div class="section-content">
-          <strong>Haiku Call 2</strong>
           <ul class="desc-list">
             <li>APITimeoutError → HAIKU_CALL_2_TIMEOUT (retryable)</li>
             <li>RateLimitError (429) → HAIKU_CALL_2_API_ERROR (retryable)</li>
@@ -781,16 +783,6 @@ h1 { font-size: 28px; font-weight: 800; color: #f8fafc; margin-bottom: 8px; }
             <li>IntegrityError (DB lock) → HAIKU_CALL_2_DB_WRITE_ERROR (retryable)</li>
             <li>Other DatabaseError → HAIKU_CALL_2_DB_WRITE_ERROR (NOT retryable)</li>
             <li>Wall-clock >120s → HAIKU_CALL_2_TIMEOUT (NOT retryable)</li>
-          </ul>
-          <strong>OpenCV Part 2</strong>
-          <ul class="desc-list">
-            <li>GoogleAPICallError (timeout/5xx) → OPENCV_GCS_WRITE_ERROR (retryable)</li>
-            <li>GoogleAPICallError (403/401) → OPENCV_GCS_WRITE_ERROR (NOT retryable)</li>
-            <li>cv2.error (frame extraction) → FRAME_EXTRACTION_FAILED (NOT retryable)</li>
-            <li>cv2.error (draw/annotation) → ANNOTATION_FAILED (NOT retryable)</li>
-            <li>DefaultCredentialsError → OPENCV_GCS_WRITE_ERROR (NOT retryable, auth issue)</li>
-            <li>DatabaseError (write failed) → OPENCV_DB_WRITE_ERROR (NOT retryable)</li>
-            <li>Wall-clock >60s → OPENCV_TIMEOUT (NOT retryable)</li>
           </ul>
         </div>
       </div>
@@ -838,10 +830,9 @@ h1 { font-size: 28px; font-weight: 800; color: #f8fafc; margin-bottom: 8px; }
         <div class="section-title">Key Design Decisions</div>
         <div class="section-content">
           <ul class="desc-list">
-            <li><strong>Why 3 retries for Haiku, 2 for OpenCV?</strong> Haiku Call 2 blocks Tab 2 (critical path) — worth more retries. OpenCV is non-blocking — faster to fail gracefully.</li>
-            <li><strong>Why fallback for S3 coaching, not fail?</strong> Coaching enriches recommendations but isn't required. Better to serve degraded recommendations than fail entirely.</li>
-            <li><strong>Why hard timeout at 120s/60s?</strong> User shouldn't wait indefinitely. Hard stop ensures bounded latency.</li>
-            <li><strong>Why "partial" retryable for OpenCV errors?</strong> Tab 1 coaching always visible. Image is nice-to-have, not blocking. Don't prevent user from reading analysis.</li>
+            <li><strong>Why 3 retries for Haiku Call 2?</strong> This job blocks Tab 2 (critical path) and is worth more aggressive retry attempts. Transient API errors are common and usually succeed on retry.</li>
+            <li><strong>Why fallback for S3 coaching?</strong> Coaching enriches recommendations but isn't required. Better to serve degraded recommendations than fail entirely.</li>
+            <li><strong>Why hard timeout at 120s?</strong> User shouldn't wait indefinitely. Hard stop ensures bounded latency for critical path.</li>
           </ul>
         </div>
       </div>
@@ -888,11 +879,11 @@ h1 { font-size: 28px; font-weight: 800; color: #f8fafc; margin-bottom: 8px; }
         <div class="section-content">
           Squad 1 must handle:
           <ul class="desc-list">
-            <li>Consume <code>job_failed</code> SSE event with job_type + error_code + retryable</li>
-            <li>For <code>job_type: "haiku_call_2"</code> failures: show error in Tab 2 · retryable="true" → "Try again" button · retryable="false" → "Re-film and upload" button</li>
-            <li>For <code>job_type: "opencv_part_2"</code> failures: keep Tab 1 visible (non-blocking) · show inline warning or keep placeholder · no blocking CTA</li>
+            <li>Consume <code>job_failed</code> SSE event with job_type="haiku_call_2" + error_code + retryable</li>
+            <li>For <code>haiku_call_2</code> failures: show error in Tab 2 · retryable="true" → "Try again" button · retryable="false" → "Re-film and upload" button</li>
             <li>Map error_code to user-facing message (from FE_SSE_and_Errors.md error lookup table)</li>
             <li>Never display error_message field (internal log only)</li>
+            <li><strong>Note:</strong> OpenCV Part 2 error handling is scoped separately in S2-W8-13 (Week 9+)</li>
           </ul>
         </div>
       </div>
@@ -901,8 +892,8 @@ h1 { font-size: 28px; font-weight: 800; color: #f8fafc; margin-bottom: 8px; }
         <div class="section-title">Dependencies</div>
         <div class="section-content">
           <span class="dep-badge">DEPENDS ON</span> S2-W8-01 (Schema with job tracking fields)<br>
-          <span class="dep-badge">DEPENDS ON</span> S2-W8-02 (Job pipeline exists, needs error handling added)<br>
-          <span class="dep-badge">DEPENDS ON</span> S2-W8-03a/03b (Status endpoints need to return error_code)<br>
+          <span class="dep-badge">DEPENDS ON</span> S2-W8-02 (Haiku Call 2 job pipeline exists, needs error handling added)<br>
+          <span class="dep-badge">DEPENDS ON</span> S2-W8-03b (Haiku status endpoint needs to return error_code)<br>
           <span class="dep-badge">DEPENDS ON</span> S2-W8-04 (SSE events include job_failed event + error_code)
         </div>
       </div>
