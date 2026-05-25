@@ -366,7 +366,98 @@ DATA STRUCTURE: form_analysis_results.biomechanics_JSON
 
 <hr>
 
-<h2>Decisions Made</h2>
+<h2>Week 8 Task Sequence — OpenCV Part 2 Pipeline</h2>
+
+<p><strong>Team execution roadmap:</strong> 6 tasks across Squad 2 & 3 to build the complete BGR frame capture → annotate → GCS storage pipeline.</p>
+
+<div class="section-box">
+  <h3>Task Sequence (in execution order)</h3>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Task ID</th>
+        <th>Squad</th>
+        <th>Description</th>
+        <th>Depends On</th>
+        <th>Output</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>S2-W8-06</strong></td>
+        <td>Squad 2</td>
+        <td>Update form_analysis_results DB Schema</td>
+        <td>None (parallel start)</td>
+        <td>DB columns: <code>biomechanics_json</code>, <code>annotated_frame_urls</code></td>
+      </tr>
+      <tr>
+        <td><strong>S3-W8-03</strong></td>
+        <td>Squad 3</td>
+        <td>Biomechanics JSON Generation</td>
+        <td>None (parallel start)</td>
+        <td>Raw <code>frame_bgr</code> + angles + MediaPipe landmarks per rep</td>
+      </tr>
+      <tr>
+        <td><strong>S3-W8-04</strong></td>
+        <td>Squad 3</td>
+        <td>Annotate Frame with Skeleton, Angles & Labels</td>
+        <td>S3-W8-03</td>
+        <td>Annotated <code>frame_bgr</code> (skeleton + angles + labels + color-coding)</td>
+      </tr>
+      <tr>
+        <td><strong>S2-W8-12</strong></td>
+        <td>Squad 2</td>
+        <td>Save Annotated Frame to GCS and Store URL</td>
+        <td>S3-W8-04, S2-W8-06</td>
+        <td>GCS URL stored in <code>form_analysis_results.annotated_frame_urls</code></td>
+      </tr>
+      <tr>
+        <td><strong>S2-W8-13</strong></td>
+        <td>Squad 2</td>
+        <td>Error Handling & Retry Logic</td>
+        <td>S2-W8-12</td>
+        <td>Robust error handling + exponential backoff retry mechanism</td>
+      </tr>
+      <tr>
+        <td><strong>S3-W8-05</strong></td>
+        <td>Squad 3</td>
+        <td>E2E Integration Testing</td>
+        <td>S2-W8-13</td>
+        <td>Verified end-to-end flow with test results</td>
+      </tr>
+      <tr>
+        <td><strong>S3-W8-06</strong></td>
+        <td>Squad 3</td>
+        <td>Documentation & Production Deployment</td>
+        <td>S3-W8-05</td>
+        <td>Docs + deployed to production + team trained</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>Execution Flow Diagram</h3>
+  <div class="diagram">┌─ S2-W8-06 (Schema)
+│
+├─ S3-W8-03 (Biomechanics frame_bgr)
+│   ↓
+├─ S3-W8-04 (Annotate frame)
+│   ├→ Send to frontend for display
+│   └→ Pass to S2
+│       ↓
+│   ┌─ S2-W8-12 (Encode JPEG → Upload GCS → Store URL)
+│   │   ↓
+│   ├─ S2-W8-13 (Error handling + retry)
+│   │   ↓
+├─ S3-W8-05 (E2E Integration Testing)
+│   ↓
+└─ S3-W8-06 (Deploy + Docs)
+
+KEY HANDOFFS:
+→ S3-W8-03 → S3-W8-04: Raw frame_bgr with biomechanics data
+→ S3-W8-04 → Frontend: Display annotated frame immediately
+→ S3-W8-04 → S2-W8-12: Pass annotated frame_bgr for GCS storage
+→ S2-W8-12 → form_analysis_results: Store GCS URL in annotated_frame_urls field
 
 <div class="section-box">
   <h3>1. Biomechanics Persistence Strategy</h3>
