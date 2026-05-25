@@ -725,17 +725,123 @@ h1 { font-size: 28px; font-weight: 800; color: #f8fafc; margin-bottom: 8px; }
     </div>
     <div class="task-body">
       <div class="section">
-        <div class="section-title">Description</div>
+        <div class="section-title">Goal</div>
         <div class="section-content">
-          Implement robust error handling and retry mechanisms for the async job pipeline. Ensures failed jobs are retried intelligently and frontend gets meaningful error messages.
+          Implement robust error handling and intelligent retry mechanisms for async jobs (Haiku Call 2 and OpenCV Part 2). Ensure failed jobs recover gracefully, frontend receives actionable error information, and operators observe failure patterns via structured logging.
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Current State Problem</div>
+        <div class="section-content">
+          ✗ No retry logic — jobs fail once and stay failed<br>
+          ✗ No error categorization — frontend doesn't know if "try again" or "need new video"<br>
+          ✗ No fallback strategies — single point of failure (S3 .md file fetch blocks entire job)<br>
+          ✗ No structured logging — ops can't see failure patterns<br><br>
+          <strong>Impact:</strong> If Haiku Call 2 times out or OpenCV hits transient GCS error, job fails permanently. Frontend shows error but can't distinguish retryable vs. non-retryable.
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Error Categories & Retry Strategy</div>
+        <div class="section-content">
+          <strong>Haiku Call 2 — 3 Retries (1s → 3s → 9s exponential backoff)</strong>
           <ul class="desc-list">
-            <li><strong>Haiku API Failures:</strong> Implement 3-retry strategy with exponential backoff (1s, 3s, 9s delays)</li>
-            <li><strong>Job Timeout:</strong> Hard stop at 120 seconds, mark as timeout, emit haiku_call_2_failed event</li>
-            <li><strong>Database Write Failures:</strong> Log error, alert ops, mark job as failed with error_code</li>
-            <li><strong>MD File Fetch Failures:</strong> Retry S3 read, fallback to generic coaching if unavailable</li>
-            <li><strong>Frontend Error Response:</strong> Return { error_code, error_message, retryable (bool) } so frontend knows whether to show "try again" button</li>
-            <li><strong>Logging:</strong> Log all failures with context (attempt #, error type, full stack trace)</li>
-            <li><strong>UI Fallback:</strong> If job fails, Progression Page shows "Unable to generate recommendation" instead of hanging</li>
+            <li><strong>Retryable:</strong> APITimeoutError, RateLimitError (429), APIStatusError (5xx), IntegrityError (DB lock)</li>
+            <li><strong>Non-Retryable:</strong> JSONDecodeError, KeyError (missing fields), context_window_exceeded, wall-clock >120s, other DatabaseError</li>
+            <li><strong>Expected (No Retry):</strong> NO_PREVIOUS_SESSION (first session — show empty state)</li>
+            <li><strong>Fallback:</strong> S3 coaching fetch fails → use generic coaching (job continues, lower quality)</li>
+          </ul>
+          <strong>OpenCV Part 2 — 2 Retries (2s → 5s backoff) [Non-Blocking]</strong>
+          <ul class="desc-list">
+            <li><strong>Retryable:</strong> GoogleAPICallError (timeout/5xx), rare cv2 race conditions</li>
+            <li><strong>Non-Retryable:</strong> cv2.error (frame extraction/annotation), persistent GCS auth failure, wall-clock >60s, DB write error</li>
+            <li><strong>Key:</strong> All OpenCV failures are non-blocking — Tab 1 coaching visible, image placeholder empty</li>
+          </ul>
+          <strong>Timeout Enforcement</strong>
+          <ul class="desc-list">
+            <li><strong>Haiku Call 2:</strong> 120s wall-clock hard limit + 45s per API call timeout</li>
+            <li><strong>OpenCV Part 2:</strong> 60s wall-clock hard limit + 30s GCS upload, 10s S3 fetch per-op timeouts</li>
+            <li><strong>Hard timeouts are NOT retryable:</strong> If wall-clock exceeded, fail immediately (don't retry)</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Exception → Error Code Mapping</div>
+        <div class="section-content">
+          <strong>Haiku Call 2</strong>
+          <ul class="desc-list">
+            <li>APITimeoutError → HAIKU_CALL_2_TIMEOUT (retryable)</li>
+            <li>RateLimitError (429) → HAIKU_CALL_2_API_ERROR (retryable)</li>
+            <li>APIStatusError (5xx) → HAIKU_CALL_2_API_ERROR (retryable)</li>
+            <li>JSONDecodeError → HAIKU_CALL_2_INVALID_OUTPUT (NOT retryable)</li>
+            <li>KeyError (missing field) → HAIKU_CALL_2_INVALID_OUTPUT (NOT retryable)</li>
+            <li>BadRequestError ("context_window_exceeded") → HAIKU_CALL_2_CONTEXT_OVERFLOW (NOT retryable)</li>
+            <li>IntegrityError (DB lock) → HAIKU_CALL_2_DB_WRITE_ERROR (retryable)</li>
+            <li>Other DatabaseError → HAIKU_CALL_2_DB_WRITE_ERROR (NOT retryable)</li>
+            <li>Wall-clock >120s → HAIKU_CALL_2_TIMEOUT (NOT retryable)</li>
+          </ul>
+          <strong>OpenCV Part 2</strong>
+          <ul class="desc-list">
+            <li>GoogleAPICallError (timeout/5xx) → OPENCV_GCS_WRITE_ERROR (retryable)</li>
+            <li>GoogleAPICallError (403/401) → OPENCV_GCS_WRITE_ERROR (NOT retryable)</li>
+            <li>cv2.error (frame extraction) → FRAME_EXTRACTION_FAILED (NOT retryable)</li>
+            <li>cv2.error (draw/annotation) → ANNOTATION_FAILED (NOT retryable)</li>
+            <li>DefaultCredentialsError → OPENCV_GCS_WRITE_ERROR (NOT retryable, auth issue)</li>
+            <li>DatabaseError (write failed) → OPENCV_DB_WRITE_ERROR (NOT retryable)</li>
+            <li>Wall-clock >60s → OPENCV_TIMEOUT (NOT retryable)</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Implementation Phases</div>
+        <div class="section-content">
+          <strong>Phase 1: Error Categorization (Day 1)</strong>
+          <ul class="desc-list">
+            <li>Define <code>map_exception_to_error_code()</code> function in <code>errors.py</code></li>
+            <li>Map all exception types → (error_code, is_retryable) tuple</li>
+            <li>Unit tests: 10+ test cases covering each error type</li>
+          </ul>
+          <strong>Phase 2: Retry Loop Implementation (Day 1–2)</strong>
+          <ul class="desc-list">
+            <li>Implement main job execution loop with retry logic</li>
+            <li>Add backoff delays: 1s, 3s, 9s for Haiku; 2s, 5s for OpenCV</li>
+            <li>Enforce timeout at job start + each operation</li>
+            <li>Log every state change: queued, started, attempt N, retrying, success, failure</li>
+          </ul>
+          <strong>Phase 3: Fallback Strategies (Day 2)</strong>
+          <ul class="desc-list">
+            <li>Implement S3 coaching content fallback</li>
+            <li>If S3 fails → use generic coaching prompt (non-blocking)</li>
+            <li>Add DEFAULT_COACHING_BY_FILE constants for 3+ coaching files</li>
+          </ul>
+          <strong>Phase 4: Structured Logging (Day 2–3)</strong>
+          <ul class="desc-list">
+            <li>Every error: log job_id, error_code, exception_type, attempt, elapsed_seconds, full traceback</li>
+            <li>Route to CloudLogging with severity level (INFO/WARNING/ERROR)</li>
+            <li>Exclude PII (no video URLs, user data)</li>
+            <li>Create CloudLogging dashboard: queryable by error_code, job_type, analysis_id</li>
+          </ul>
+          <strong>Phase 5: Integration & Testing (Day 3)</strong>
+          <ul class="desc-list">
+            <li>Wire into job_runner.py (S2-W8-02)</li>
+            <li>Ensure status endpoint returns error_code (S2-W8-03)</li>
+            <li>Ensure job_failed SSE event includes error_code + retryable (S2-W8-04)</li>
+            <li>End-to-end test: upload video, simulate job failure, verify SSE event + error message</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Key Design Decisions</div>
+        <div class="section-content">
+          <ul class="desc-list">
+            <li><strong>Why 3 retries for Haiku, 2 for OpenCV?</strong> Haiku Call 2 blocks Tab 2 (critical path) — worth more retries. OpenCV is non-blocking — faster to fail gracefully.</li>
+            <li><strong>Why fallback for S3 coaching, not fail?</strong> Coaching enriches recommendations but isn't required. Better to serve degraded recommendations than fail entirely.</li>
+            <li><strong>Why hard timeout at 120s/60s?</strong> User shouldn't wait indefinitely. Hard stop ensures bounded latency.</li>
+            <li><strong>Why "partial" retryable for OpenCV errors?</strong> Tab 1 coaching always visible. Image is nice-to-have, not blocking. Don't prevent user from reading analysis.</li>
           </ul>
         </div>
       </div>
@@ -743,24 +849,61 @@ h1 { font-size: 28px; font-weight: 800; color: #f8fafc; margin-bottom: 8px; }
       <div class="section">
         <div class="section-title">Acceptance Criteria</div>
         <ul class="criteria-list">
-          <li>Failed Haiku API call triggers 3 retries with 1s, 3s, 9s delays</li>
-          <li>If all 3 retries fail, job marked as failed, haiku_call_2_failed event emitted</li>
-          <li>Job timeout enforced at 120 seconds (test with simulated slow processing)</li>
-          <li>Timeout triggers haiku_call_2_failed event with error_code = "timeout"</li>
-          <li>DB write failures logged with full stack trace</li>
-          <li>S3 read failures caught, fallback to generic coaching text (doesn't block job)</li>
+          <li>All exception types → error_code mapping correct (Haiku + OpenCV)</li>
+          <li>Retryable vs. non-retryable categorized correctly for each error</li>
+          <li>Haiku: 3 retries with 1s, 3s, 9s backoff for retryable errors</li>
+          <li>OpenCV: 2 retries with 2s, 5s backoff for retryable errors</li>
+          <li>Non-retryable errors fail immediately (no retry attempt)</li>
+          <li>Hard timeout enforced: Haiku at 120s, OpenCV at 60s — no retry on timeout</li>
+          <li>Per-operation timeouts set: Haiku API 45s, GCS 30s, S3 10s</li>
+          <li>S3 coaching unavailable → generic coaching used (job continues)</li>
+          <li>Every error logged: job_id, error_code, exception_type, attempt, elapsed_seconds, traceback</li>
+          <li>CloudLogging dashboard queryable by error_code, job_type, analysis_id</li>
           <li>Frontend receives { error_code, error_message, retryable } in error responses</li>
-          <li>All failures logged to CloudLogging with severity level</li>
-          <li>Progression Page gracefully shows error message when job fails</li>
-          <li>Manual retry possible (S2 or frontend can retry failed jobs)</li>
+          <li>job_failed SSE event includes job_type to identify which job failed</li>
+          <li>Error message never shown to user (internal log only) — frontend maps error_code to message</li>
+          <li>OpenCV failures don't block Tab 1 (coaching visible, image placeholder empty)</li>
+          <li>Manual E2E test: upload video, job fails, error surfaces on frontend with correct message</li>
         </ul>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Testing Checklist</div>
+        <div class="section-content">
+          <strong>Unit Tests:</strong> Exception → error_code mapping (20+ error types) · Timeout detection · Backoff calculation · Fallback on S3 failure<br><br>
+          <strong>Integration Tests:</strong> Haiku timeout (retry succeeds) · All 3 retries fail → job_failed event · OpenCV GCS failure (2 retries) → success · Hard timeout (no retry) · S3 unavailable → generic coaching<br><br>
+          <strong>Manual E2E Tests:</strong>
+          <ul class="desc-list">
+            <li>Upload video → both jobs succeed → SSE progress events</li>
+            <li>Haiku timeout (retry succeeds) → observe 1s sleep + retry → Tab 2 shows recommendations</li>
+            <li>OpenCV GCS failure (retries fail) → Tab 1 visible, image placeholder empty</li>
+            <li>S3 coaching unavailable → generic coaching used → Tab 2 shows recommendations</li>
+            <li>Hard timeout (>120s) → immediate failure, no retry</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Frontend Integration</div>
+        <div class="section-content">
+          Squad 1 must handle:
+          <ul class="desc-list">
+            <li>Consume <code>job_failed</code> SSE event with job_type + error_code + retryable</li>
+            <li>For <code>job_type: "haiku_call_2"</code> failures: show error in Tab 2 · retryable="true" → "Try again" button · retryable="false" → "Re-film and upload" button</li>
+            <li>For <code>job_type: "opencv_part_2"</code> failures: keep Tab 1 visible (non-blocking) · show inline warning or keep placeholder · no blocking CTA</li>
+            <li>Map error_code to user-facing message (from FE_SSE_and_Errors.md error lookup table)</li>
+            <li>Never display error_message field (internal log only)</li>
+          </ul>
+        </div>
       </div>
 
       <div class="section">
         <div class="section-title">Dependencies</div>
         <div class="section-content">
+          <span class="dep-badge">DEPENDS ON</span> S2-W8-01 (Schema with job tracking fields)<br>
           <span class="dep-badge">DEPENDS ON</span> S2-W8-02 (Job pipeline exists, needs error handling added)<br>
-          <span class="dep-badge">DEPENDS ON</span> S2-W8-03 (Status endpoint needs to return error info)
+          <span class="dep-badge">DEPENDS ON</span> S2-W8-03a/03b (Status endpoints need to return error_code)<br>
+          <span class="dep-badge">DEPENDS ON</span> S2-W8-04 (SSE events include job_failed event + error_code)
         </div>
       </div>
     </div>
