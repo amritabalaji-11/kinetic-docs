@@ -26,10 +26,10 @@ h1 { font-size: 24px; font-weight: 800; color: #f8fafc; margin-bottom: 8px; }
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 1px;
-  color: #334155;
+  color: #94a3b8;
   margin-bottom: 8px;
 }
-.week-title { font-size: 20px; font-weight: 800; color: #f1f5f9; margin-bottom: 4px; }
+.week-title { font-size: 20px; font-weight: 800; color: #ffffff; margin-bottom: 4px; }
 .week-desc { font-size: 12px; color: #64748b; line-height: 1.6; }
 
 /* Squads grid */
@@ -1011,6 +1011,42 @@ h1 { font-size: 24px; font-weight: 800; color: #f8fafc; margin-bottom: 8px; }
             <div class="task-tags"><span class="tag tag-high">HIGH</span></div>
           </div>
         </div>
+        <div class="task">
+          <div class="task-badge task-todo">◯</div>
+          <div class="task-info">
+            <div class="task-id">S2-W8-08</div>
+            <div class="task-name">Haiku Prompt Assembly — Context + History</div>
+            <div class="task-desc">Assemble Haiku Call 2 prompt: 8-frame composite + biomechanics + gold standard + weight history + coaching content</div>
+            <div class="task-tags"><span class="tag tag-high">HIGH</span></div>
+          </div>
+        </div>
+        <div class="task">
+          <div class="task-badge task-todo">◯</div>
+          <div class="task-info">
+            <div class="task-id">S2-W8-09</div>
+            <div class="task-name">Async Job Queue Integration</div>
+            <div class="task-desc">Wire Cloud Tasks job queue for Haiku Call 2 execution. Set up job triggers after Haiku Call 1 completes</div>
+            <div class="task-tags"><span class="tag tag-high">HIGH</span></div>
+          </div>
+        </div>
+        <div class="task">
+          <div class="task-badge task-todo">◯</div>
+          <div class="task-info">
+            <div class="task-id">S2-W8-12</div>
+            <div class="task-name">OpenCV Part 2 — Query + Extract Frame</div>
+            <div class="task-desc">Subtasks ST4–ST5: Query DB for worst_rep_index, download video from GCS, extract frame at timestamp</div>
+            <div class="task-tags"><span class="tag tag-high">HIGH</span></div>
+          </div>
+        </div>
+        <div class="task">
+          <div class="task-badge task-todo">◯</div>
+          <div class="task-info">
+            <div class="task-id">S2-W8-13</div>
+            <div class="task-name">OpenCV Part 2 — Save to GCS + Update DB</div>
+            <div class="task-desc">Subtasks ST7: Encode annotated frame as JPEG, upload to GCS, update form_analysis_results.annotated_frame_url</div>
+            <div class="task-tags"><span class="tag tag-high">HIGH</span></div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -1049,6 +1085,74 @@ h1 { font-size: 24px; font-weight: 800; color: #f8fafc; margin-bottom: 8px; }
             <div class="task-tags"><span class="tag tag-high">HIGH</span></div>
           </div>
         </div>
+
+        <div class="task">
+          <div class="task-badge task-todo">◯</div>
+          <div class="task-info">
+            <div class="task-id">S3-W8-04</div>
+            <div class="task-name">OpenCV Part 2 — Annotate Frame (ST6)</div>
+            <div class="task-desc">Draw skeleton overlay, angles, form labels. Color-code by threshold (green/amber/red)</div>
+            <div class="task-tags"><span class="tag tag-high">HIGH</span></div>
+          </div>
+        </div>
+
+        <div class="task">
+          <div class="task-badge task-todo">◯</div>
+          <div class="task-info">
+            <div class="task-id">S3-W8-05</div>
+            <div class="task-name">OpenCV Part 2 — Error Handling (ST8)</div>
+            <div class="task-desc">Retry logic, graceful fallbacks for frame extraction & annotation failures</div>
+            <div class="task-tags"><span class="tag tag-high">HIGH</span></div>
+          </div>
+        </div>
+
+        <div class="task">
+          <div class="task-badge task-todo">◯</div>
+          <div class="task-info">
+            <div class="task-id">S3-W8-06</div>
+            <div class="task-name">OpenCV Part 2 — E2E Testing + Deploy (ST9–ST10)</div>
+            <div class="task-desc">Integration testing, documentation, production deployment, monitoring setup</div>
+            <div class="task-tags"><span class="tag tag-high">HIGH</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CRITICAL SCOPE: OpenCV Part 2 -->
+  <div style="background: rgba(249, 115, 22, 0.08); border: 2px solid rgba(249, 115, 22, 0.3); border-radius: 12px; padding: 20px; margin: 20px 0;">
+    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
+      <span style="font-size: 16px;">🎯</span>
+      <span style="font-size: 11px; font-weight: 800; color: #f97316; text-transform: uppercase; letter-spacing: 0.8px;">Critical Scope — Week 8</span>
+    </div>
+    <div style="font-size: 13px; font-weight: 800; color: #f97316; margin-bottom: 12px;">Visual Proof of Form — OpenCV Part 2 Pipeline (10 ClickUp Subtasks)</div>
+    <div style="font-size: 12px; color: #cbd5e1; line-height: 1.6; margin-bottom: 14px;">
+      After Haiku Call 1 completes, <strong>OpenCV Part 2 runs asynchronously</strong> to extract the worst-performing rep frame and annotate it with skeleton overlay, angles, and form labels.
+    </div>
+    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; font-size: 11px;">
+      <div>
+        <div style="font-weight: 700; color: #f97316; margin-bottom: 6px;">Schema + Integration</div>
+        <ul style="list-style: none; padding-left: 0; color: #94a3b8;">
+          <li style="margin-bottom: 4px;"><strong style="color: #fbbf24;">ST0:</strong> Update DB schema (biomechanics_json + annotated_frame_url)</li>
+          <li style="margin-bottom: 4px;"><strong style="color: #fbbf24;">ST1–3:</strong> S2 integration (pre-save, async trigger)</li>
+        </ul>
+      </div>
+      <div>
+        <div style="font-weight: 700; color: #f97316; margin-bottom: 6px;">Core Pipeline (ST4–ST7)</div>
+        <ul style="list-style: none; padding-left: 0; color: #94a3b8;">
+          <li style="margin-bottom: 4px;"><strong style="color: #fbbf24;">ST4:</strong> Query DB + fetch data</li>
+          <li style="margin-bottom: 4px;"><strong style="color: #fbbf24;">ST5:</strong> Extract worst rep frame</li>
+          <li style="margin-bottom: 4px;"><strong style="color: #fbbf24;">ST6:</strong> Annotate (skeleton + angles)</li>
+          <li style="margin-bottom: 4px;"><strong style="color: #fbbf24;">ST7:</strong> Save to GCS + update DB</li>
+        </ul>
+      </div>
+      <div>
+        <div style="font-weight: 700; color: #f97316; margin-bottom: 6px;">Robustness + Deploy (ST8–ST10)</div>
+        <ul style="list-style: none; padding-left: 0; color: #94a3b8;">
+          <li style="margin-bottom: 4px;"><strong style="color: #fbbf24;">ST8:</strong> Error handling + retry logic</li>
+          <li style="margin-bottom: 4px;"><strong style="color: #fbbf24;">ST9:</strong> E2E integration testing</li>
+          <li style="margin-bottom: 4px;"><strong style="color: #fbbf24;">ST10:</strong> Documentation + deployment</li>
+        </ul>
       </div>
     </div>
   </div>

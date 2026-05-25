@@ -119,8 +119,8 @@
     .week-card.current  { border-color: rgba(96,165,250,0.4); }
     .week-header { padding: 14px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
     .week-num   { font-size: 13px; font-weight: 700; color: #fff; }
-    .week-dates { font-size: 12px; color: var(--text-muted); }
-    .week-theme { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; padding: 2px 8px; border-radius: 4px; margin-left: auto; background: var(--tag-bg); color: var(--text-muted); border: 1px solid var(--border); white-space: nowrap; }
+    .week-dates { font-size: 12px; color: #cbd5e1; }
+    .week-theme { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; padding: 2px 8px; border-radius: 4px; margin-left: auto; background: var(--tag-bg); color: #a0aec0; border: 1px solid var(--border); white-space: nowrap; }
     .week-theme.done    { background: rgba(52,211,153,0.12); color: #34d399; border-color: rgba(52,211,153,0.25); }
     .week-theme.current { background: rgba(96,165,250,0.12); color: #60a5fa; border-color: rgba(96,165,250,0.25); }
     .week-body { padding: 16px 20px; display: flex; flex-direction: column; gap: 12px; }
@@ -182,10 +182,10 @@
       <span class="badge">Epics &amp; Delivery Plan</span>
       <span class="badge blue">v2 · Revised Scope</span>
       <span class="badge green">W5–W10</span>
-      <span class="badge yellow">May 11, 2026</span>
+      <span class="badge yellow">May 25, 2026</span>
     </div>
     <h1>Epics v2 — Revised Scope</h1>
-    <p class="header-sub">Outcome-oriented epics · W5 May 4–10 through W10 Jun 8 · Based on mentor review May 10, 2026</p>
+    <p class="header-sub">Outcome-oriented epics · W5 May 4–10 through W10 Jun 8 · Updated May 25, 2026 (W8 start)</p>
   </div>
 
 
@@ -655,59 +655,58 @@
       </div>
 
       <!-- W6 -->
-      <div class="week-card wfull current">
+      <div class="week-card wfull finished">
         <div class="week-header">
           <span class="week-num">Week 6</span>
           <span class="week-dates">May 11–17, 2026</span>
-          <span class="week-theme current">Current week</span>
+          <span class="week-theme done">✓ Finished</span>
         </div>
         <div class="week-body">
           <div class="week-epics">
             <span class="story-pill e2" style="background:var(--e2-soft);color:var(--e2);border:1px solid var(--e2-border);font-size:12px;padding:4px 10px;border-radius:16px;">E2 partial</span>
           </div>
-          <div class="week-ship"><strong>Theme:</strong> First time all three squads connect. Real video through the full biomechanics pipeline, results on screen. Nemotron's best scenario output on FE. Gold standard data prepped.</div>
+          <div class="week-ship"><strong>Theme:</strong> First E2E slice — real video upload → MediaPipe biomechanics → Results screen. All three squads connect for the first time.</div>
           <div class="week-squad-goals">
             <div class="wsg-squad">
-              <div class="wsg-label wsg-sq1">Squad 1 — Frontend</div>
+              <div class="wsg-label wsg-sq1">Squad 1 — Frontend · 6/6 ✓</div>
               <ul class="wsg-list">
-                <li class="wsg-item"><strong>Upload screen</strong> — complete with inline filming tips + demo user selector</li>
-                <li class="wsg-item"><strong>Results screen</strong> — wired to real biomechanics JSON by Thursday; basic Nemotron score if available</li>
-                <li class="wsg-item"><strong>SSE client</strong> — wired to real pipeline events</li>
-                <li class="wsg-item"><strong>Dashboard shell</strong> — score trend chart with dummy data</li>
-                <li class="wsg-item"><strong>Design handoff</strong> — Homepage · Auth proxy · Profile screens</li>
+                <li class="wsg-item done">✓ Upload screen — full build with filming tips</li>
+                <li class="wsg-item done">✓ Results screen — dummy data layout (wired to real data by Thu)</li>
+                <li class="wsg-item done">✓ SSE client — wired to real pipeline events</li>
+                <li class="wsg-item done">✓ Analysis Results Screen — Score, joint angles, coaching tips</li>
+                <li class="wsg-item done">✓ Replace dummy data → real upload (E2E milestone)</li>
+                <li class="wsg-item done">✓ Design handoff — Homepage, Auth, Profile wireframes</li>
               </ul>
             </div>
             <div class="wsg-squad">
-              <div class="wsg-label wsg-sq2">Squad 2 — Backend</div>
+              <div class="wsg-label wsg-sq2">Squad 2 — Backend · 7/7 ✓</div>
               <ul class="wsg-list">
-                <li class="wsg-item"><strong>Real /upload endpoint</strong> — GCS + DB write + analysis_id</li>
-                <li class="wsg-item"><strong>SSE orchestration</strong> — events at each pipeline stage</li>
-                <li class="wsg-item"><strong>Nemotron A/B/C tests</strong> — execute + findings to PM by Thu</li>
-                <li class="wsg-item"><strong>Best Nemotron scenario → FE</strong> — wire basic score output to Results screen</li>
-                <li class="wsg-item"><strong>Biomechanics integration</strong> — receive from Squad 3, store to DB, serve to FE</li>
+                <li class="wsg-item done">✓ Video Upload Endpoint — GCS save + SSE stream start</li>
+                <li class="wsg-item done">✓ MediaPipe Pipeline — Frame selection + quality gate</li>
+                <li class="wsg-item done">✓ Biomechanics Script — Landmarks → angles, tempo, stability, rep count</li>
+                <li class="wsg-item done">✓ SSE Events — Emit at each pipeline stage</li>
+                <li class="wsg-item done">✓ Nemotron Test A — Joint overlay → output quality + response time</li>
+                <li class="wsg-item wip">◑ Structured Biomechanics JSON → /analyze endpoint</li>
+                <li class="wsg-item wip">◑ Nemotron Tests B+C — Findings to PM for W7 architecture</li>
               </ul>
             </div>
             <div class="wsg-squad">
-              <div class="wsg-label wsg-sq3">Squad 3 — Data</div>
+              <div class="wsg-label wsg-sq3">Squad 3 — Data · SCOPE REMOVED</div>
               <ul class="wsg-list">
-                <li class="wsg-item"><strong>MediaPipe + quality gate + OpenCV overlay</strong> — full pipeline to overlay_video_url</li>
-                <li class="wsg-item"><strong>Biomechanics script</strong> — angles, tempo, stability, bottom_frame per rep → DB</li>
-                <li class="wsg-item"><strong>PT-02 Gold standard data prep</strong> — 3–5 reference videos → DB</li>
-                <li class="wsg-item"><strong>MD file curation</strong> — 5–10 coaching documents → MD format</li>
-                <li class="wsg-item"><strong>RAG source collection</strong> (carry-over W5) — complete this week</li>
+                <li class="wsg-item not-started">RAG/Vector DB scope removed — shifted to direct MD file approach</li>
               </ul>
             </div>
           </div>
-          <div class="week-test"><span>Thursday merge:</span> Real video → GCS → MediaPipe → biomechanics JSON → SSE → Results screen shows real data. Nemotron best-scenario basic output on Results screen. Gold standard in DB. MD files committed.</div>
+          <div class="week-test"><span>Thursday merge:</span> Upload → Real endpoint → MediaPipe JSON → Results screen renders real data. Nemotron test results. Full E2E pipeline testable.</div>
         </div>
       </div>
 
       <!-- W7 -->
-      <div class="week-card">
+      <div class="week-card wfull">
         <div class="week-header">
           <span class="week-num">Week 7</span>
           <span class="week-dates">May 18–24, 2026</span>
-          <span class="week-theme">Full pipeline</span>
+          <span class="week-theme">Full pipeline with Haiku</span>
         </div>
         <div class="week-body">
           <div class="week-epics">
@@ -717,109 +716,235 @@
           </div>
           <div class="week-squad-goals">
             <div class="wsg-squad">
-              <div class="wsg-label wsg-sq1">Squad 1 — Frontend</div>
+              <div class="wsg-label wsg-sq1">Squad 1 — Frontend · 2/6</div>
               <ul class="wsg-list">
-                <li class="wsg-item wip">Form Analysis Results — 1st Cut (wire to real Haiku)</li>
-                <li class="wsg-item not-started">Home Screen + Login Page Build</li>
-                <li class="wsg-item not-started">Start Build — Profile Screen</li>
-                <li class="wsg-item done">Profile + Onboarding — Dev Handoff</li>
-                <li class="wsg-item not-started">Workout Builder & Logger — Begins</li>
-                <li class="wsg-item wip">Update Upload → Results — Figma Changes</li>
+                <li class="wsg-item wip">◑ Form Analysis Results — 1st Cut (wire to real Haiku)</li>
+                <li class="wsg-item not-started">Home Screen + Login Page Build (3 demo profiles)</li>
+                <li class="wsg-item not-started">Start Build — Profile Screen (scaffold only)</li>
+                <li class="wsg-item done">✓ Profile + Onboarding — Dev Handoff</li>
+                <li class="wsg-item not-started">[Design] Workout Builder & Logger — Design begins</li>
+                <li class="wsg-item wip">◑ Update Upload → Results — Implement Figma changes</li>
               </ul>
             </div>
             <div class="wsg-squad">
-              <div class="wsg-label wsg-sq2">Squad 2 — Backend</div>
+              <div class="wsg-label wsg-sq2">Squad 2 — Backend · 1/6</div>
               <ul class="wsg-list">
-                <li class="wsg-item done">Replace Nemotron with Claude Haiku 4.5</li>
-                <li class="wsg-item wip">Coaching Content Retrieval — .md Files</li>
-                <li class="wsg-item wip">Assemble Haiku Prompt + Call API</li>
-                <li class="wsg-item wip">SSE Delivery — Coaching Output</li>
+                <li class="wsg-item done">✓ Replace Nemotron with Claude Haiku 4.5</li>
+                <li class="wsg-item not-started">Gold Standard Query — Supabase (scope removed)</li>
+                <li class="wsg-item not-started">User Session History Query (scope removed)</li>
+                <li class="wsg-item wip">◑ Coaching Content Retrieval — Direct .md file access</li>
+                <li class="wsg-item wip">◑ Assemble Haiku Prompt + Call API (8-frame + biomechanics + history + coaching)</li>
+                <li class="wsg-item wip">◑ SSE Delivery — Coaching Output (haiku_started → analysis_ready → frame_ready)</li>
               </ul>
             </div>
             <div class="wsg-squad">
-              <div class="wsg-label wsg-sq3">Squad 3 — Data</div>
+              <div class="wsg-label wsg-sq3">Squad 3 — Data · 4/6</div>
               <ul class="wsg-list">
-                <li class="wsg-item done">MediaPipe Update — JSON + OpenCV</li>
-                <li class="wsg-item not-started">Real User Data — 2 Users × 5-7 Videos</li>
-                <li class="wsg-item done">Coaching .md Files — Curate + Organise</li>
-                <li class="wsg-item done">Visual Output Scoping — Frame vs Clip vs Overlay</li>
-                <li class="wsg-item wip">OpenCV Part 2 — Annotated Frame + Angles</li>
+                <li class="wsg-item done">✓ MediaPipe Update — JSON output + switch to 8-frame composite</li>
+                <li class="wsg-item not-started">Gold Standard Table — Populate Supabase (scope removed)</li>
+                <li class="wsg-item done">✓ Coaching .md Files — Curate + Organise for direct retrieval</li>
+                <li class="wsg-item not-started">Real User Data — 2 Users × 5-7 Videos (recruit + capture)</li>
+                <li class="wsg-item done">✓ Visual Output Scoping — Frame vs Clip vs Overlay (estimate + recommend)</li>
+                <li class="wsg-item wip">◑ OpenCV Part 2 — Extract worst-rep frame + annotate with angles + fault labels</li>
               </ul>
             </div>
           </div>
           <div class="week-ship">
-            <strong>Ship:</strong> Demo user selection screen live. Full Results screen with real pipeline output — <span style="text-decoration:line-through;color:#94a3b8;opacity:0.7;">Claude Sonnet</span> <span style="color:#a78bfa;font-weight:700;">→ Claude Haiku 4.5 — Call 2 (async)</span> <span style="font-size:10px;color:#64748b;font-style:italic;">(W6 A/B test)</span> coaching (MD files → system prompt), weight-specific advice from DB history, visual proof of form. History screen shell. PT-01 Phase 2 threshold refinement.
+            <strong>Ship:</strong> Full pipeline live end-to-end. Results screen with real Haiku coaching (MD files → system prompt). Home + Login screens committed. Design handoffs for Profile. Real user data seeding begins. PT-01 Phase 2 threshold refinement.
           </div>
-          <div class="week-test"><span>Test:</span> Upload → real coaching output with weight-specific advice → visual proof of form on Results screen</div>
+          <div class="week-test"><span>Test:</span> Upload → real Haiku coaching output with weight-specific advice → full pipeline &lt; 35s end-to-end</div>
         </div>
       </div>
 
-      <!-- W8 -->
-      <div class="week-card">
-        <div class="week-header">
-          <span class="week-num">Week 8</span>
-          <span class="week-dates">May 25–31, 2026</span>
-          <span class="week-theme">Differentiation + Lifecycle</span>
+      <!-- W8 - MAJOR SECTION -->
+      <div class="week-card wfull current" style="border: 2px solid rgba(34,211,238,0.5); background: rgba(34,211,238,0.05);">
+        <div class="week-header" style="background: rgba(34,211,238,0.08); padding: 20px 24px; border-bottom: 2px solid rgba(34,211,238,0.3);">
+          <span class="week-num" style="font-size:18px;color:#22d3ee;">Week 8</span>
+          <span class="week-dates" style="font-size:14px;">May 25–31, 2026</span>
+          <span class="week-theme current" style="background: rgba(34,211,238,0.15); border: 1px solid rgba(34,211,238,0.4);">Current week</span>
+          <span style="margin-left:auto; font-size:12px; font-weight:700; text-transform:uppercase; color:#22d3ee; letter-spacing:0.1em;">Differentiation + Lifecycle</span>
         </div>
-        <div class="week-body">
-          <div class="week-epics">
-            <span class="story-pill e3" style="background:var(--e3-soft);color:var(--e3);border:1px solid var(--e3-border);font-size:12px;padding:4px 10px;border-radius:16px;">E3</span>
-            <span class="story-pill e4" style="background:var(--e4-soft);color:var(--e4);border:1px solid var(--e4-border);font-size:12px;padding:4px 10px;border-radius:16px;">E4 complete</span>
-            <span class="story-pill e5" style="background:var(--e5-soft);color:var(--e5);border:1px solid var(--e5-border);font-size:12px;padding:4px 10px;border-radius:16px;">E5 FE only</span>
-            <span class="story-pill e6" style="background:var(--e6-soft);color:var(--e6);border:1px solid var(--e6-border);font-size:12px;padding:4px 10px;border-radius:16px;">E6 shell</span>
-          </div>
-          <div class="week-squad-goals">
-            <div class="wsg-squad">
-              <div class="wsg-label wsg-sq1">Squad 1 — Frontend</div>
-              <ul class="wsg-list">
-                <li class="wsg-item">Progression Page — Display Logic</li>
-                <li class="wsg-item">Progression Page — Styling + Animations</li>
-                <li class="wsg-item">Home Screen + Profile Screen</li>
-                <li class="wsg-item carry">Home Screen + Login Page Build (carried from W7)</li>
-                <li class="wsg-item carry">Start Build — Profile Screen (carried from W7)</li>
-                <li class="wsg-item carry">Workout Builder & Logger — Begins (carried from W7)</li>
-              </ul>
+        <div class="week-body" style="padding: 24px;">
+          <div style="background:rgba(34,211,238,0.06);border:1px solid rgba(34,211,238,0.2);border-radius:8px;padding:16px;margin-bottom:24px;">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+              <span style="font-size:12px;font-weight:700;color:#22d3ee;text-transform:uppercase;letter-spacing:0.08em;">Key Focus</span>
             </div>
-            <div class="wsg-squad">
-              <div class="wsg-label wsg-sq2">Squad 2 — Backend</div>
-              <ul class="wsg-list">
-                <li class="wsg-item">Data Schema Review + Update</li>
-                <li class="wsg-item">Haiku Call 2 — Async Job Pipeline</li>
-                <li class="wsg-item">Job Status Endpoint</li>
-                <li class="wsg-item wip">SSE Events for Async Job</li>
-                <li class="wsg-item wip">Error Handling + Retry Logic</li>
-                <li class="wsg-item">Demo User Setup — 3 Hardcoded IDs</li>
-                <li class="wsg-item">Haiku Prompt Engineering — Analysis + Coaching</li>
-              </ul>
+            <ul style="font-size:14px;color:var(--text-dim);line-height:1.8;list-style:none;padding-left:0;margin:0;">
+              <li style="padding:8px 0;"><strong style="color:#22d3ee;">→</strong> Progression recommendations (weight history → Claude) — 1st cut, results visible on screen</li>
+              <li style="padding:8px 0;"><strong style="color:#22d3ee;">→</strong> Profile Selection page working and linked to user IDs · Homepage renders with dummy data</li>
+              <li style="padding:8px 0;"><strong style="color:#22d3ee;">→</strong> Critical: Visual proof of form (OpenCV Part 2) runs async after Haiku Call 1, annotates worst-rep frame with skeleton, angles, and form labels</li>
+              <li style="padding:8px 0;"><strong style="color:#f87171;">🚨</strong> Form Analysis Front End Results (still blocked to delivery)</li>
+            </ul>
+          </div>
+
+          <div class="week-epics" style="margin-bottom:24px;">
+            <span class="story-pill e3" style="background:var(--e3-soft);color:var(--e3);border:1px solid var(--e3-border);font-size:12px;padding:6px 12px;border-radius:16px;font-weight:600;">E3 — Form Comparison</span>
+            <span class="story-pill e4" style="background:var(--e4-soft);color:var(--e4);border:1px solid var(--e4-border);font-size:12px;padding:6px 12px;border-radius:16px;font-weight:600;">E4 Complete</span>
+            <span class="story-pill e5" style="background:var(--e5-soft);color:var(--e5);border:1px solid var(--e5-border);font-size:12px;padding:6px 12px;border-radius:16px;font-weight:600;">E5 FE only</span>
+            <span class="story-pill e6" style="background:var(--e6-soft);color:var(--e6);border:1px solid var(--e6-border);font-size:12px;padding:6px 12px;border-radius:16px;font-weight:600;">E6 Shell</span>
+          </div>
+
+          <!-- SQUAD 1 -->
+          <div class="wsg-squad" style="margin-bottom:28px;padding:18px;background:rgba(96,165,250,0.06);border:1px solid rgba(96,165,250,0.15);border-radius:8px;">
+            <div class="wsg-label wsg-sq1" style="font-size:12px;margin-bottom:12px;">👥 Squad 1 — Frontend</div>
+            <ul class="wsg-list">
+              <li class="wsg-item"><strong>Progression Page</strong> — Display logic + styling/animations</li>
+              <li class="wsg-item"><strong>Profile Selection Screen</strong> — User ID linking + demo user switching</li>
+              <li class="wsg-item"><strong>Home Screen</strong> — Form score trend chart, session list on real data</li>
+              <li class="wsg-item"><strong>Dashboard + History</strong> — Connect to real user data flow</li>
+              <li class="wsg-item"><strong>Workout Builder &amp; Tracker</strong> — Design work this week (UI flow + specs)</li>
+            </ul>
+          </div>
+
+          <!-- SQUAD 2 -->
+          <div class="wsg-squad" style="margin-bottom:28px;padding:18px;background:rgba(76,175,80,0.06);border:1px solid rgba(76,175,80,0.15);border-radius:8px;">
+            <div class="wsg-label wsg-sq2" style="font-size:12px;margin-bottom:12px;">⚙️  Squad 2 — Backend</div>
+            <ul class="wsg-list">
+              <li class="wsg-item"><strong>Data Schema Review</strong> — Verify biomechanics_json + annotated_frame_url columns</li>
+              <li class="wsg-item"><strong>Haiku Call 2 — Async Job Pipeline</strong> — Progression recommendation engine</li>
+              <li class="wsg-item"><strong>Job Status Endpoint</strong> — Poll async completion</li>
+              <li class="wsg-item"><strong>SSE Events</strong> — Stream async job progress to frontend</li>
+              <li class="wsg-item"><strong>Error Handling + Retry Logic</strong> — Robust failure recovery</li>
+              <li class="wsg-item"><strong>Haiku Prompt Engineering</strong> — System prompt tuning for analysis + coaching</li>
+              <li class="wsg-item"><strong>Async Trigger</strong> — Fire OpenCV Part 2 after Haiku Call 1 saves</li>
+            </ul>
+          </div>
+
+          <!-- KEY SCOPE: VISUAL PROOF OF FORM -->
+          <div style="background:rgba(251,146,60,0.08);border:2px solid rgba(251,146,60,0.3);border-radius:10px;padding:20px;margin-bottom:28px;">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+              <span style="font-size:14px;">🎯</span>
+              <span style="font-size:12px;font-weight:700;color:#fb923c;text-transform:uppercase;letter-spacing:0.08em;">Critical Scope</span>
             </div>
-            <div class="wsg-squad">
-              <div class="wsg-label wsg-sq3">Squad 3 — Data</div>
-              <ul class="wsg-list">
-                <li class="wsg-item carry">Real User Data — 2 Users × 5-7 Videos (carried from W7)</li>
-                <li class="wsg-item">MD Files — Weight/Progression Coaching</li>
-                <li class="wsg-item">Test Data — Seeding from Videos</li>
-              </ul>
+            <div style="font-size:14px;font-weight:700;color:#fb923c;margin-bottom:12px;">Visual Proof of Form — OpenCV Part 2 Pipeline</div>
+            <div style="font-size:13px;color:var(--text-dim);line-height:1.7;margin-bottom:14px;">
+              After Haiku Call 1 completes analysis, <strong>OpenCV Part 2 runs asynchronously</strong> to extract and annotate the worst-performing rep frame:
+            </div>
+            <div style="background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:12px;margin-bottom:12px;font-size:12px;color:var(--text-muted);line-height:1.6;font-family:monospace;">
+              <strong style="color:var(--text);">Pipeline:</strong> Query DB (worst_rep_index) → Download video from GCS → Extract frame at timestamp → Draw skeleton overlay + angles + form labels → Color-code by threshold (green/amber/red) → Save to GCS → Update DB with annotated_frame_url
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:12px;">
+              <div>
+                <div style="font-weight:700;color:#fb923c;margin-bottom:6px;">ClickUp Tasks (10 Subtasks)</div>
+                <ul style="list-style:none;padding-left:0;">
+                  <li style="padding:4px 0;color:var(--text-muted);">• ST0: Schema update (biomechanics_json + annotated_frame_url)</li>
+                  <li style="padding:4px 0;color:var(--text-muted);">• ST1–3: S2 integration (pre-save + async trigger)</li>
+                  <li style="padding:4px 0;color:var(--text-muted);">• ST4–7: OpenCV Part 2 core (query → extract → annotate → save)</li>
+                  <li style="padding:4px 0;color:var(--text-muted);">• ST8–10: Error handling, E2E testing, deployment</li>
+                </ul>
+              </div>
+              <div>
+                <div style="font-weight:700;color:#fb923c;margin-bottom:6px;">Deliverable by Fri</div>
+                <ul style="list-style:none;padding-left:0;">
+                  <li style="padding:4px 0;color:var(--text-muted);">✓ DB schema updated</li>
+                  <li style="padding:4px 0;color:var(--text-muted);">✓ S2 pre-saves biomechanics_json</li>
+                  <li style="padding:4px 0;color:var(--text-muted);">✓ OpenCV Part 2 pipeline complete</li>
+                  <li style="padding:4px 0;color:var(--text-muted);">✓ Annotated frame visible on Results screen</li>
+                </ul>
+              </div>
             </div>
           </div>
-          <div class="week-ship">
-            <strong>Ship:</strong> Progression recommendation live (weight history → Claude). Dashboard + History on real data. Workout Builder + Tracker (frontend only — no backend). Profile screen shell. PT-01 Phase 3 final spec to Squad 2.
+
+          <!-- SQUAD 3 -->
+          <div class="wsg-squad" style="margin-bottom:24px;padding:18px;background:rgba(251,146,60,0.06);border:1px solid rgba(251,146,60,0.15);border-radius:8px;">
+            <div class="wsg-label wsg-sq3" style="font-size:12px;margin-bottom:12px;">📊 Squad 3 — Data &amp; OpenCV</div>
+            <ul class="wsg-list">
+              <li class="wsg-item"><strong>Demo User Setup</strong> — 3 hardcoded user IDs + preload history</li>
+              <li class="wsg-item"><strong>OpenCV Part 2 Implementation</strong> — Full pipeline (query, extract, annotate, save)</li>
+              <li class="wsg-item"><strong>Real User Data</strong> — Seed 2 users × 5–7 videos with progression story (carried from W7)</li>
+              <li class="wsg-item"><strong>MD Files — Progression Coaching</strong> — Weight-specific tips for Claude system prompt</li>
+              <li class="wsg-item"><strong>Test Data Seeding</strong> — Load representative analyses for demo</li>
+              <li class="wsg-item"><strong>E2E Testing</strong> — Verify full pipeline: biomechanics → Haiku → OpenCV → frame visible on FE</li>
+            </ul>
           </div>
-          <div class="week-test"><span>Test:</span> Does progression recommendation fire correctly using weight history from DB?</div>
+
+          <!-- DELIVERABLES -->
+          <div class="week-ship" style="background:rgba(52,211,153,0.08);border:1px solid rgba(52,211,153,0.2);padding:16px;border-radius:8px;margin-bottom:16px;">
+            <strong style="color:#34d399;">🚀 Ship by Friday:</strong>
+            <div style="margin-top:10px;color:var(--text-dim);line-height:1.8;">
+              Progression recommendation live (weight history → Claude Haiku) · Dashboard + History on real data · Workout Builder + Tracker (UI only) · Profile screen shell · <strong style="color:#34d399;">Visual proof of form with annotated skeleton overlay</strong> · PT-01 Phase 3 final spec to Squad 2
+            </div>
+          </div>
+
+          <!-- TEST FOCUS -->
+          <div class="week-test" style="background:rgba(34,211,238,0.08);border:1px solid rgba(34,211,238,0.2);padding:16px;border-radius:8px;">
+            <span style="color:#22d3ee;font-weight:700;">✓ Test Focus:</span>
+            <div style="margin-top:10px;color:var(--text-muted);line-height:1.8;">
+              Does progression recommendation fire correctly? Does annotated frame load on Results screen? Full pipeline latency &lt; 35s end-to-end.
+            </div>
+          </div>
         </div>
       </div>
 
       <!-- W9 -->
-      <div class="week-card">
+      <div class="week-card wfull">
         <div class="week-header">
           <span class="week-num">Week 9</span>
           <span class="week-dates">Jun 1–7, 2026</span>
-          <span class="week-theme">Validation</span>
+          <span class="week-theme">Validation & Optimization</span>
         </div>
         <div class="week-body">
-          <div class="week-ship">
-            <strong>Ship:</strong> Gold standard videos validated by PT experts. Latency confirmed under 35s. SSE narration states polished. Dashboard seeded with compelling progression story for all 3 demo users. PT-01 Phase 4 expert review.
+          <div style="background:rgba(34,211,238,0.06);border:1px solid rgba(34,211,238,0.2);border-radius:8px;padding:16px;margin-bottom:24px;">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+              <span style="font-size:12px;font-weight:700;color:#22d3ee;text-transform:uppercase;letter-spacing:0.08em;">Week 9 Focus</span>
+            </div>
+            <ul style="font-size:14px;color:var(--text-dim);line-height:1.8;list-style:none;padding-left:0;margin:0;">
+              <li style="padding:8px 0;"><strong style="color:#22d3ee;">→</strong> Refine weight progression logic based on real user profiles and data patterns</li>
+              <li style="padding:8px 0;"><strong style="color:#22d3ee;">→</strong> End-to-end testing — verify data flow (DB persistence, pipeline data handoff, SSE delivery)</li>
+              <li style="padding:8px 0;"><strong style="color:#22d3ee;">→</strong> Performance & latency validation — full pipeline &lt;35s, identify optimization opportunities</li>
+            </ul>
           </div>
-          <div class="week-test"><span>Test:</span> Do PT reviewers agree with coaching + recommendation outputs? Is the live demo smooth under 35s?</div>
+
+          <div class="week-squad-goals">
+            <div class="wsg-squad">
+              <div class="wsg-label wsg-sq1">Squad 1 — Frontend</div>
+              <ul class="wsg-list">
+                <li class="wsg-item">Polish Results screen — UX refinements based on E2E testing</li>
+                <li class="wsg-item">Profile selector — edge cases, session persistence validation</li>
+                <li class="wsg-item">Dashboard → Progression flow — test full user journey</li>
+                <li class="wsg-item">Performance monitoring — monitor UI rendering latency during SSE updates</li>
+                <li class="wsg-item"><strong>Workout Builder + Logger Frontend</strong> — Frontend-only build (dummy actions/save) &amp; Splash screen</li>
+                <li class="wsg-item"><strong>Frontend Display Optimization</strong> — Fix UI rendering issues + polish display across all screens</li>
+              </ul>
+            </div>
+            <div class="wsg-squad">
+              <div class="wsg-label wsg-sq2">Squad 2 — Backend</div>
+              <ul class="wsg-list">
+                <li class="wsg-item">Data flow validation — verify biomechanics_json, annotated_frame_url saved correctly at each stage</li>
+                <li class="wsg-item">Pipeline data handoff testing — Haiku Call 1 → OpenCV Part 2 → Results display</li>
+                <li class="wsg-item">SSE event accuracy — ensure all events fire in correct order with proper payloads</li>
+                <li class="wsg-item">Latency profiling — measure time per pipeline stage (upload, MediaPipe, Haiku, OpenCV, DB save)</li>
+                <li class="wsg-item">Error scenarios — test failure paths (missing data, timeout, GCS failures)</li>
+              </ul>
+            </div>
+            <div class="wsg-squad">
+              <div class="wsg-label wsg-sq3">Squad 3 — Data &amp; PT Review</div>
+              <ul class="wsg-list">
+                <li class="wsg-item">PT-01 Phase 4 — Expert review on 3–5 test videos with real data patterns</li>
+                <li class="wsg-item">Weight progression thresholds — refine based on actual user data (2 users × 5-7 sessions)</li>
+                <li class="wsg-item">Biomechanics validation — PT experts confirm angles and form classifications are accurate</li>
+                <li class="wsg-item">Test data analysis — identify edge cases (poor form, depth variation, weight jumps)</li>
+                <li class="wsg-item">Dashboard seeding — populate 3 demo users with compelling progression stories for demo day</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="week-ship" style="background:rgba(52,211,153,0.08);border:1px solid rgba(52,211,153,0.2);padding:16px;border-radius:8px;margin-bottom:16px;">
+            <strong style="color:#34d399;">✓ Validation Complete by Friday:</strong>
+            <div style="margin-top:10px;color:var(--text-dim);line-height:1.8;">
+              Full pipeline E2E tested end-to-end · Data persistence verified in DB · SSE event ordering confirmed · Latency under 35s validated · PT experts sign off on progression logic + form accuracy · Gold standard videos validated · Dashboard seeded with 3 compelling user progression stories · All optimization opportunities identified for post-demo iterations
+            </div>
+          </div>
+
+          <div class="week-test" style="background:rgba(251,146,60,0.08);border:1px solid rgba(251,146,60,0.2);padding:16px;border-radius:8px;">
+            <span style="color:#fb923c;font-weight:700;">⏱️ Validation Checklist:</span>
+            <div style="margin-top:10px;color:var(--text-muted);line-height:1.8;font-size:13px;">
+              <strong>Data Flow:</strong> Upload → GCS save ✓ | MediaPipe → biomechanics_json ✓ | Haiku Call 1 output → DB ✓ | OpenCV Part 2 frame → GCS + annotated_frame_url ✓<br>
+              <strong>Pipeline:</strong> SSE events fire in order ✓ | Worst-rep identification correct ✓ | Progression recommendation fires ✓ | Frontend receives all data ✓<br>
+              <strong>Performance:</strong> Upload: &lt;2s | MediaPipe: &lt;8s | Haiku: &lt;10s | OpenCV: &lt;8s | Total: &lt;35s ✓<br>
+              <strong>PT Review:</strong> Angle accuracy validated ✓ | Form classifications agreed ✓ | Progression thresholds reasonable ✓
+            </div>
+          </div>
         </div>
       </div>
 
@@ -979,7 +1104,7 @@
   </div>
 
   <div style="text-align:center;color:var(--text-muted);font-size:12px;padding-top:20px;">
-    Kinetic · Epics v2 · Revised Scope · May 11, 2026
+    Kinetic · Epics v2 · Revised Scope · Updated May 25, 2026 (W8)
   </div>
 
 </div>
