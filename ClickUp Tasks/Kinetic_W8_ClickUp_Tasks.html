@@ -588,21 +588,89 @@ h1 { font-size: 28px; font-weight: 800; color: #f8fafc; margin-bottom: 8px; }
     <div class="task-header-bar">
       <div class="task-badge badge-todo">◯ To Do</div>
       <div class="task-id">S2-W8-04</div>
-      <div class="task-title">SSE Events for Async Job Lifecycle</div>
+      <div class="task-title">SSE Events for Async Job Status</div>
       <div class="task-priority priority-high">HIGH</div>
     </div>
     <div class="task-body">
       <div class="section">
-        <div class="section-title">Description</div>
+        <div class="section-title">Goal</div>
         <div class="section-content">
-          Emit Server-Sent Events (SSE) as Haiku Call 2 job progresses through its lifecycle. This provides real-time updates to the frontend (alternative to polling, or complementary to polling).
+          Emit real-time SSE messages to Squad 1 (Frontend) as async jobs progress. The frontend needs to show progress updates as Haiku Call 2 (progression recommendations) and OpenCV Part 2 (visual proof) execute in parallel after Haiku Call 1 completes.
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Current State</div>
+        <div class="section-content">
+          ✓ W7: SSE skeleton implemented on frontend (Upload screen shows processing states)<br>
+          ✓ W7: Haiku Call 1 emits SSE events at pipeline stages (<code>haiku_started</code>, <code>analysis_ready</code>, <code>frame_ready</code>)<br>
+          ✗ W8: <strong>Problem:</strong> No SSE emission for async jobs — they run silently in background. Frontend has no visibility into job progress after "Analysis complete" — user doesn't know progression recommendation or visual proof are being generated.
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Scope: New SSE Event Types</div>
+        <div class="section-content">
+          <strong>7 new events to emit:</strong>
           <ul class="desc-list">
-            <li><code>haiku_call_2_queued</code> — job_id, timestamp — emitted when task enters queue</li>
-            <li><code>haiku_call_2_started</code> — job_id, timestamp — emitted when worker picks it up</li>
-            <li><code>haiku_call_2_complete</code> — job_id, haiku_call_2_output, timestamp — emitted when result stored in DB</li>
-            <li><code>haiku_call_2_failed</code> — job_id, error_code, error_message, timestamp — emitted on failure</li>
-            <li>Integrate with existing SSE stream (GET /analysis/{id}/stream)</li>
-            <li>Events are JSON payloads in SSE format</li>
+            <li><code>haiku_call_2_queued</code> — Progression job enqueued (with initial ETA)</li>
+            <li><code>haiku_call_2_started</code> — Progression job execution began</li>
+            <li><code>haiku_call_2_complete</code> — Progression job finished; output ready</li>
+            <li><code>opencv_part_2_queued</code> — Visual proof job enqueued (with initial ETA)</li>
+            <li><code>opencv_part_2_started</code> — Visual proof job execution began</li>
+            <li><code>opencv_part_2_complete</code> — Visual proof job finished; output ready</li>
+            <li><code>job_failed</code> — Either job failed; error reason included</li>
+          </ul>
+          <strong>Event emission points:</strong>
+          <ul class="desc-list">
+            <li>When Haiku Call 1 completes, enqueue both jobs → emit <code>haiku_call_2_queued</code> + <code>opencv_part_2_queued</code></li>
+            <li>When either job enters <code>running</code> state → emit <code>[job]_started</code></li>
+            <li>When either job completes → emit <code>[job]_complete</code> with output payload</li>
+            <li>On any failure → emit <code>job_failed</code> with error details</li>
+          </ul>
+          <strong>Standardized event payload schema:</strong>
+          <pre style="background: #0a0f18; padding: 10px; border-radius: 4px; font-size: 11px; color: #a5f3fc; overflow-x: auto;">{
+  "event_type": "haiku_call_2_started",
+  "job_id": "unique-job-id",
+  "form_analysis_id": "parent-analysis-id",
+  "status": "running",
+  "output": null,
+  "error": null,
+  "timestamp_ms": 1234567890
+}</pre>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Implementation Steps</div>
+        <div class="section-content">
+          <strong>1. Define Event Contract</strong>
+          <ul class="desc-list">
+            <li>Document all 7 event types in <code>FE_SSE_and_Errors.md</code> (update from W7)</li>
+            <li>Define payload schema for each event</li>
+            <li>Confirm event ordering and timing expectations with Squad 1</li>
+          </ul>
+          <strong>2. Implement Job Event Emission</strong>
+          <ul class="desc-list">
+            <li>Create <code>emit_job_event()</code> helper in backend (reuses existing SSE stream writer)</li>
+            <li>Modify <code>job_runner.py</code> to emit <code>[job]_queued</code> when job is enqueued</li>
+            <li>Emit <code>[job]_started</code> when job execution begins</li>
+            <li>Emit <code>[job]_complete</code> when job finishes; include output payload</li>
+            <li>Emit <code>job_failed</code> on failure; include error message and retry guidance</li>
+          </ul>
+          <strong>3. Integration Points</strong>
+          <ul class="desc-list">
+            <li>Hook job callbacks into existing async job queue</li>
+            <li>Ensure events fire in correct order: Call 1 complete → jobs queued → jobs start → jobs complete</li>
+            <li>Test SSE delivery under network delays (simulate slow job)</li>
+          </ul>
+          <strong>4. Testing</strong>
+          <ul class="desc-list">
+            <li>Manual: Upload video, watch SSE events stream in browser console</li>
+            <li>Verify both jobs emit events in parallel</li>
+            <li>Verify event payload contains all required fields</li>
+            <li>Test error scenarios: job timeout, invalid video, API failure</li>
+            <li>Confirm frontend receives and renders each event type</li>
           </ul>
         </div>
       </div>
@@ -610,21 +678,38 @@ h1 { font-size: 28px; font-weight: 800; color: #f8fafc; margin-bottom: 8px; }
       <div class="section">
         <div class="section-title">Acceptance Criteria</div>
         <ul class="criteria-list">
-          <li>All 4 event types emitted in correct sequence for successful job</li>
-          <li>Events sent via SSE (Content-Type: text/event-stream)</li>
-          <li>Event payloads include all required fields (job_id, timestamp, data)</li>
-          <li>Frontend receives events in real time during job execution</li>
-          <li>On failure, haiku_call_2_failed event contains descriptive error message</li>
+          <li>All 7 new event types emit correctly (haiku_call_2_queued/started/complete, opencv_part_2_queued/started/complete, job_failed)</li>
+          <li>Events appear in correct order and timing; both jobs emit events in parallel</li>
+          <li>Event payloads match documented schema; all required fields present</li>
+          <li>Frontend receives and renders events in real time</li>
+          <li>Error events include actionable error messages</li>
           <li>Events don't duplicate or send twice</li>
-          <li>Handles job timeout: emits haiku_call_2_failed with error_code = "timeout"</li>
-          <li>Works with existing SSE stream without breaking other events</li>
+          <li>SSE stream remains open until both jobs complete (or error occurs)</li>
+          <li>Works with existing SSE stream without breaking Haiku Call 1 events</li>
+          <li>Handles job timeout: emits job_failed with error_code = "timeout"</li>
+          <li>Updated <code>FE_SSE_and_Errors.md</code> documents all new event types and payloads</li>
         </ul>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Frontend Integration</div>
+        <div class="section-content">
+          Once S2-W8-04 is complete, Squad 1 will:
+          <ul class="desc-list">
+            <li>Watch SSE stream for <code>haiku_call_2_*</code> and <code>opencv_part_2_*</code> events</li>
+            <li>Show progress UI: "Generating recommendations..." → "Ready" (once <code>haiku_call_2_complete</code> arrives)</li>
+            <li>Show visual proof status in parallel (OpenCV events)</li>
+            <li>Display final output once both jobs complete</li>
+          </ul>
+        </div>
       </div>
 
       <div class="section">
         <div class="section-title">Dependencies</div>
         <div class="section-content">
-          <span class="dep-badge">DEPENDS ON</span> S2-W8-02 (Job pipeline exists to emit from)
+          <span class="dep-badge">DEPENDS ON</span> S2-W8-01 (Schema with job tracking fields)<br>
+          <span class="dep-badge">DEPENDS ON</span> S2-W8-02 (Job pipeline exists to emit from)<br>
+          <span class="dep-badge">DEPENDS ON</span> S2-W8-03a/03b (Status endpoints for jobs)
         </div>
       </div>
     </div>

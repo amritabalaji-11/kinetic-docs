@@ -58,7 +58,7 @@ Frontend (S1)                     Backend (S2)                    Data/CV (S3)
 
 ## Squad Dependencies Overview
 
-*(Updated May 19, 2026 — removed Nemotron/RAG/Claude events, added Haiku events)*
+*(Updated May 25, 2026 — added W8 async job events; May 19, 2026 — removed Nemotron/RAG/Claude events, added Haiku events)*
 
 | Event | Fired by | Consumed by | Inter-squad dependency |
 |---|---|---|---|
@@ -68,8 +68,15 @@ Frontend (S1)                     Backend (S2)                    Data/CV (S3)
 | `biomechanics_complete` | S2 | S1 | **S3 must return biomechanics JSON to S2** before S2 can fire this |
 | `haiku_started` | S2 | S1 | S2-internal — no S3 dependency |
 | `analysis_ready` | S2 | S1 | Haiku Call 1 must complete + all scores written to DB |
-| `frame_ready` | S2 | S1 | **S3 must run OpenCV Part 2 and return annotated_frame_url** before S2 fires this |
-| `progression_ready` | S2 | S1 | Haiku Call 2 must complete + progression_output written to DB — async |
+| `frame_ready` (W7) | S2 | S1 | **S3 must run OpenCV Part 2 and return annotated_frame_url** before S2 fires this |
+| `progression_ready` (W7) | S2 | S1 | Haiku Call 2 must complete + progression_output written to DB — async |
+| `haiku_call_2_queued` (W8) | S2 | S1 | S2-W8-02 enqueues job; fired alongside `opencv_part_2_queued` |
+| `haiku_call_2_started` (W8) | S2 | S1 | Job worker picks up Haiku Call 2 from queue |
+| `haiku_call_2_complete` (W8) | S2 | S1 | **Haiku Call 2 API completes + progression_output written to DB** before S2 fires this |
+| `opencv_part_2_queued` (W8) | S2 | S1 | S2-W8-02 enqueues job; fired alongside `haiku_call_2_queued` |
+| `opencv_part_2_started` (W8) | S2 | S1 | Job worker picks up OpenCV Part 2 from queue |
+| `opencv_part_2_complete` (W8) | S2 | S1 | **S3 runs OpenCV Part 2 + returns annotated_frame_url + S2 writes to DB** before S2 fires this |
+| `job_failed` (W8) | S2 | S1 | Fired when either async job fails after retry exhaustion |
 | `error` | S2 (pipeline) or S1 (pre-upload) | S1 | Stage-dependent — see error taxonomy |
 
 **S2 ↔ S3 output format dependency:**
@@ -279,6 +286,188 @@ Only fires if a previous completed analysis exists for the same `exercise_id` + 
 
 ---
 
+### `haiku_call_2_queued` *(Added May 25, 2026 — W8 async job tracking)*
+**Fired by:** S2 — Backend · **Consumed by:** S1 — Frontend · **S3 dependency:** None — S2 enqueues job immediately after `analysis_ready`
+
+Fires when Haiku Call 2 (progression recommendation job) is enqueued. Emitted alongside `opencv_part_2_queued` — both async jobs start in parallel.
+
+```json
+{
+  "analysis_id": "uuid",
+  "session_id":  "uuid",
+  "user_id":     "uuid",
+  "job_id":      "haiku_call_2_uuid",
+  "status":      "queued",
+  "estimated_completion_ms": 15000
+}
+```
+
+| Field | Type | Nullable | FE Note |
+|---|---|---|---|
+| `job_id` | uuid | No | Unique async job ID. Used to track individual job status. |
+| `status` | enum (string) | No | Always `"queued"` for this event. |
+| `estimated_completion_ms` | integer | No | Estimated milliseconds until job completes. Use to show ETA or progress indicator. |
+
+**Frontend action on receipt:** Show "Generating recommendations..." in a loading area or badge on Tab 2 (if visible).
+
+---
+
+### `haiku_call_2_started` *(Added May 25, 2026 — W8 async job tracking)*
+**Fired by:** S2 — Backend · **Consumed by:** S1 — Frontend · **S3 dependency:** None
+
+Fires when Haiku Call 2 execution begins (job picked up by worker from queue).
+
+```json
+{
+  "analysis_id": "uuid",
+  "session_id":  "uuid",
+  "user_id":     "uuid",
+  "job_id":      "haiku_call_2_uuid",
+  "status":      "running",
+  "started_at":  "2026-05-25T14:32:18.123Z"
+}
+```
+
+| Field | Type | Nullable | FE Note |
+|---|---|---|---|
+| `status` | enum (string) | No | `"running"` — job execution started. |
+| `started_at` | timestamp | No | ISO 8601 UTC when job worker picked it up. |
+
+**Frontend action on receipt:** Update loading state — message can change to "Analysing progression..." if desired.
+
+---
+
+### `haiku_call_2_complete` *(Added May 25, 2026 — W8 async job tracking)*
+**Fired by:** S2 — Backend · **Consumed by:** S1 — Frontend · **S3 dependency:** None
+
+Fires when Haiku Call 2 completes successfully and `progression_output` is written to DB. **Tab 2 unlocks on this event.**
+
+```json
+{
+  "analysis_id": "uuid",
+  "session_id":  "uuid",
+  "user_id":     "uuid",
+  "job_id":      "haiku_call_2_uuid",
+  "status":      "complete",
+  "completed_at": "2026-05-25T14:32:33.412Z"
+}
+```
+
+| Field | Type | Nullable | FE Note |
+|---|---|---|---|
+| `status` | enum (string) | No | `"complete"` — job finished successfully. |
+| `completed_at` | timestamp | No | ISO 8601 UTC when job completed. |
+
+**Frontend action on receipt:** Unlock Tab 2. Call `GET /analysis/{id}/progression` to fetch full progression data. Replace loading state with progression results.
+
+---
+
+### `opencv_part_2_queued` *(Added May 25, 2026 — W8 async job tracking)*
+**Fired by:** S2 — Backend · **Consumed by:** S1 — Frontend · **S3 dependency:** None
+
+Fires when OpenCV Part 2 (annotated frame extraction) job is enqueued. Emitted alongside `haiku_call_2_queued` — both start in parallel.
+
+```json
+{
+  "analysis_id": "uuid",
+  "session_id":  "uuid",
+  "user_id":     "uuid",
+  "job_id":      "opencv_part_2_uuid",
+  "status":      "queued",
+  "estimated_completion_ms": 8000
+}
+```
+
+| Field | Type | Nullable | FE Note |
+|---|---|---|---|
+| `job_id` | uuid | No | Unique async job ID for visual proof job. |
+| `status` | enum (string) | No | Always `"queued"` for this event. |
+| `estimated_completion_ms` | integer | No | Estimated ms until frame extraction completes. |
+
+**Frontend action on receipt:** Optionally show loading indicator for image in Tab 1.
+
+---
+
+### `opencv_part_2_started` *(Added May 25, 2026 — W8 async job tracking)*
+**Fired by:** S2 — Backend · **Consumed by:** S1 — Frontend · **S3 dependency:** None
+
+Fires when OpenCV Part 2 worker picks up the job and begins frame extraction.
+
+```json
+{
+  "analysis_id": "uuid",
+  "session_id":  "uuid",
+  "user_id":     "uuid",
+  "job_id":      "opencv_part_2_uuid",
+  "status":      "running",
+  "started_at":  "2026-05-25T14:32:18.156Z"
+}
+```
+
+**Frontend action on receipt:** Update loading state for image placeholder if visible.
+
+---
+
+### `opencv_part_2_complete` *(Added May 25, 2026 — W8 async job tracking)*
+**Fired by:** S2 — Backend · **Consumed by:** S1 — Frontend · **S3 dependency:** S3 must return annotated_frame_url
+
+Fires when OpenCV Part 2 completes and `annotated_frame_url` is written to DB. Image placeholder swaps to annotated frame in Tab 1.
+
+```json
+{
+  "analysis_id": "uuid",
+  "session_id":  "uuid",
+  "user_id":     "uuid",
+  "job_id":      "opencv_part_2_uuid",
+  "status":      "complete",
+  "completed_at": "2026-05-25T14:32:26.789Z",
+  "annotated_frame_url": "https://storage.googleapis.com/kinetic-videos/analyses/{analysis_id}/worst_rep_frame.jpg"
+}
+```
+
+| Field | Type | Nullable | FE Note |
+|---|---|---|---|
+| `status` | enum (string) | No | `"complete"` — job finished. |
+| `completed_at` | timestamp | No | ISO 8601 UTC when job finished. |
+| `annotated_frame_url` | string (URL) | No | Public signed GCS URL. Use directly as `<img src>`. |
+
+**Frontend action on receipt:** Swap image placeholder with annotated frame URL in Tab 1.
+
+---
+
+### `job_failed` *(Added May 25, 2026 — W8 async job error event)*
+**Fired by:** S2 — Backend · **Consumed by:** S1 — Frontend · **S3 dependency:** Depends on which job failed
+
+Fires when either Haiku Call 2 or OpenCV Part 2 fails after retry exhaustion.
+
+```json
+{
+  "analysis_id": "uuid",
+  "session_id":  "uuid",
+  "user_id":     "uuid",
+  "job_id":      "haiku_call_2_uuid or opencv_part_2_uuid",
+  "job_type":    "haiku_call_2" | "opencv_part_2",
+  "status":      "failed",
+  "error_code":  "HAIKU_CALL_2_TIMEOUT",
+  "error_message": "Internal error — never shown to user",
+  "retryable":   "true" | "false" | "partial"
+}
+```
+
+| Field | Type | Nullable | Values | FE Note |
+|---|---|---|---|---|
+| `job_type` | enum (string) | No | `"haiku_call_2"` · `"opencv_part_2"` | Identifies which job failed. |
+| `error_code` | string | No | See error taxonomy below | Use to look up user-facing copy. |
+| `error_message` | string | No | max 500 chars | **Internal log only — never show to user.** |
+| `retryable` | string | No | `"true"` · `"false"` · `"partial"` | **String, not boolean.** |
+
+**Frontend action based on job_type:**
+
+- **`job_type: "haiku_call_2"`** → Tab 2 shows error. Tab 1 unaffected. Use `retryable` to show retry option.
+- **`job_type: "opencv_part_2"`** → Tab 1 image stays as placeholder. Use `retryable: "partial"` — coaching text visible, just no image.
+
+---
+
 ## 2. Error SSE Event
 
 **Fired by:** S2 — Backend (all pipeline stages) or S1 — Frontend (pre-upload validation only) · **Consumed by:** S1 — Frontend
@@ -300,7 +489,7 @@ Only fires if a previous completed analysis exists for the same `exercise_id` + 
 | Field | Type | Nullable | Values | FE Note |
 |---|---|---|---|---|
 | `error_code` | enum (string) | No | See taxonomy below | Use this to look up user-facing copy. SCREAMING_SNAKE_CASE. |
-| `error_stage` | enum (string) | No | `quality_gate` · `biomechanics` · `haiku_call_1` · `opencv_part_2` · `haiku_call_2` · `pipeline` | Identifies which pipeline stage failed. *(Updated May 19 — removed `nemotron`, `frame_extraction`, `rag`, `claude`)* |
+| `error_stage` | enum (string) | No | `quality_gate` · `biomechanics` · `haiku_call_1` · `opencv_part_2` · `haiku_call_2` · `pipeline` | Identifies which pipeline stage failed. *(Updated May 25 — added async job stages `haiku_call_2` and `opencv_part_2`; May 19 — removed `nemotron`, `frame_extraction`, `rag`, `claude`)* |
 | `retryable` | enum (string) | No | `"true"` · `"false"` · `"partial"` | **String, not boolean.** Use `retryable === "true"`. Never check truthiness — `"false"` is truthy in JS. |
 | `message` | string | No | max 500 chars | **Internal log — never show to user.** Frontend derives copy from `error_code`. |
 
@@ -374,29 +563,39 @@ Blocks Tab 1. If Haiku Call 1 fails, no results are available and Tab 2 never st
 
 ---
 
-### OpenCV Part 2 — `error_stage: "opencv_part_2"` *(Added May 19, 2026 — replaces `frame_extraction` stage)*
+### OpenCV Part 2 — `error_stage: "opencv_part_2"` *(Added May 19, 2026 — replaces `frame_extraction` stage; expanded May 25, 2026 for W8 async tracking)*
 
-**Owner: S3 runs OpenCV · S2 fires the error event.**
-Non-blocking — Tab 1 coaching text is already visible. Image placeholder just stays as placeholder. Use `retryable: "partial"` — no blocking CTA.
+**Owner: S3 runs OpenCV (async job) · S2 fires the error event.**
+Non-blocking — Tab 1 coaching text is already visible. Image placeholder just stays as placeholder. Use `retryable: "partial"` — no blocking CTA. All opencv_part_2 errors are non-fatal.
 
 | error_code | Trigger | User-facing message | retryable |
 |---|---|---|---|
+| `OPENCV_PART_2_QUEUED` | Job enqueued successfully (not an error — informational) | *(no message)* | N/A |
+| `OPENCV_PART_2_STARTED` | Job execution started (not an error — informational) | *(no message)* | N/A |
 | `FRAME_EXTRACTION_FAILED` | OpenCV can't seek to `bottom_timestamp_ms` — video file corrupt or timestamp missing | "We couldn't generate the form snapshot. Your coaching is still fully available above." | `"partial"` |
 | `ANNOTATION_FAILED` | Frame extracted but OpenCV failed to draw overlays or save to GCS | "We couldn't generate the form snapshot. Your coaching is still fully available above." | `"partial"` |
+| `OPENCV_TIMEOUT` | Job execution exceeds 60s wall clock timeout | "Form snapshot generation is taking longer — coaching available above." | `"partial"` |
+| `OPENCV_GCS_WRITE_ERROR` | Frame generated but GCS upload fails | "Form snapshot generated but couldn't be saved. Coaching analysis complete." | `"partial"` |
+| `OPENCV_DB_WRITE_ERROR` | Frame saved to GCS but `annotated_frame_url` write to DB fails | "Form snapshot partially saved. Coaching analysis complete." | `"partial"` |
 
-> Both errors are `partial` — Tab 1 renders with coaching text. `annotated_frame_url` is null. Show coaching only, no image.
+> All `opencv_part_2` errors are `partial` — Tab 1 renders with coaching text. `annotated_frame_url` is null or stale. Show coaching only, no image.
 
 ---
 
-### Haiku Call 2 — `error_stage: "haiku_call_2"` *(Added May 19, 2026 — replaces `claude` stage)*
+### Haiku Call 2 — `error_stage: "haiku_call_2"` *(Added May 19, 2026 — replaces `claude` stage; expanded May 25, 2026 for W8 async tracking)*
 
 **Owner: S2 — Backend calls Anthropic API async · S2 fires the error event.**
 Async — Tab 1 is already fully visible. Failure only affects Tab 2. Use `retryable: "partial"` — Tab 1 is always unaffected.
 
 | error_code | Trigger | User-facing message (Tab 2 only) | retryable |
 |---|---|---|---|
-| `HAIKU_CALL_2_TIMEOUT` | Anthropic API call for longitudinal coaching exceeds timeout | "Progression data is taking longer than expected. Try tapping the tab again in a moment." | `"partial"` |
-| `HAIKU_CALL_2_ERROR` | Malformed response or API error | "We couldn't load your progression data. Your form analysis above is complete and saved." | `"partial"` |
+| `HAIKU_CALL_2_QUEUED` | Job enqueued successfully (not an error — informational) | *(no message)* | N/A |
+| `HAIKU_CALL_2_STARTED` | Job execution started (not an error — informational) | *(no message)* | N/A |
+| `HAIKU_CALL_2_TIMEOUT` | Anthropic API call exceeds 120s or job exceeds wall clock timeout | "Progression data is taking longer than expected. Try tapping the tab again in a moment." | `"partial"` |
+| `HAIKU_CALL_2_INVALID_OUTPUT` | Haiku response missing required fields or malformed JSON | "We couldn't generate your progression data. Your form analysis above is complete and saved." | `"partial"` |
+| `HAIKU_CALL_2_CONTEXT_OVERFLOW` | Job context too large (prompt token limit exceeded) | "Your session history is too long for progression analysis. Form analysis remains complete." | `"partial"` |
+| `HAIKU_CALL_2_API_ERROR` | Anthropic API returns 5xx or rate limit | "Progression service temporarily unavailable. Try again in a moment." | `"partial"` |
+| `HAIKU_CALL_2_DB_WRITE_ERROR` | Database write of progression_output fails | "Progression saved partially — analysis complete above." | `"partial"` |
 | `NO_PREVIOUS_SESSION` | No prior completed analysis for same `exercise_id` + `user_id` | "This is your first session for this exercise — progression tracking will appear after your next upload." | `"false"` |
 
 ---
@@ -489,6 +688,11 @@ const SSE_PROGRESS = {
 ---
 
 ## Changelog
+- May 25, 2026: Added W8 async job event tracking.
+  - New events: `haiku_call_2_queued`, `haiku_call_2_started`, `haiku_call_2_complete`, `opencv_part_2_queued`, `opencv_part_2_started`, `opencv_part_2_complete`, `job_failed`
+  - New error codes: `HAIKU_CALL_2_TIMEOUT`, `HAIKU_CALL_2_INVALID_OUTPUT`, `HAIKU_CALL_2_CONTEXT_OVERFLOW`, `HAIKU_CALL_2_API_ERROR`, `HAIKU_CALL_2_DB_WRITE_ERROR`, `OPENCV_TIMEOUT`, `OPENCV_GCS_WRITE_ERROR`, `OPENCV_DB_WRITE_ERROR`
+  - New job_type field in `job_failed` event: identifies which async job failed (haiku_call_2 or opencv_part_2)
+  - Updated Squad Dependencies table: added W8 async job events with their firing conditions
 - May 19, 2026: Full rewrite — Nemotron → Haiku 4.5 architecture.
   - Removed events: `overlay_complete`, `nemotron_started`, `nemotron_complete`, `frames_extracting`, `frames_ready`, `rag_started`, `rag_complete`, `claude_started`, `claude_complete`, `analysis_complete`, `comparison_ready`
   - Added events: `haiku_started`, `analysis_ready` (Tab 1 unlocks), `frame_ready` (image loads ~2–3s later), `progression_ready` (Tab 2 unlocks async)
