@@ -455,12 +455,57 @@ DATA STRUCTURE: form_analysis_results.biomechanics_JSON
 
 KEY HANDOFFS:
 → S3-W8-03 → S3-W8-04: Raw frame_bgr with biomechanics data
-→ S3-W8-04 → Frontend: Display annotated frame immediately
+→ S3-W8-04 → Frontend: Display annotated frame immediately (via SSE frame_ready event)
 → S3-W8-04 → S2-W8-12: Pass annotated frame_bgr for GCS storage
 → S2-W8-12 → form_analysis_results: Store GCS URL in annotated_frame_urls field
 
+<hr>
+
+<h2>SSE Event: frame_ready</h2>
+
+<p><strong>When:</strong> After S3-W8-04 completes annotation</p>
+<p><strong>Purpose:</strong> Notify frontend that annotated frame is ready for immediate display (no waiting for GCS upload)</p>
+
 <div class="section-box">
-  <h3>1. Biomechanics Persistence Strategy</h3>
+  <h3>Event Payload</h3>
+  <pre>{
+  "event": "frame_ready",
+  "analysis_id": "550e8400-e29b-41d4-a716-446655440000",
+  "user_id": "user_001",
+  "exercise_id": "leg_001_goblet",
+  "worst_rep_index": 2,
+  "frame_data": "&lt;base64-encoded-annotated-frame&gt;",
+  "frame_format": "jpeg",
+  "timestamp_ms": 2800,
+  "annotations": {
+    "skeleton_drawn": true,
+    "angles": {"knee": 85.0, "hip": 87.2},
+    "labels": {"back_label": "good", "valgus": "neutral"}
+  }
+}</pre>
+
+  <h3>Frontend Action</h3>
+  <ul class="desc-list">
+    <li>Listen to SSE stream for <code>frame_ready</code> events</li>
+    <li>Receive annotated frame data (base64-encoded JPEG)</li>
+    <li>Decode and display in results UI immediately</li>
+    <li>Optional: Render annotation metadata (angles, labels) alongside image</li>
+  </ul>
+
+  <h3>Backend Timeline</h3>
+  <div class="diagram">S3-W8-04: Annotation complete
+  ↓
+Emit SSE: frame_ready event
+  (base64 frame data + metadata)
+  ↓
+Frontend receives + displays
+  (user sees result immediately)
+  ↓
+(Parallel, non-blocking)
+S2-W8-12: Encode JPEG → Upload GCS
+  ↓
+S2-W8-12: Store GCS URL in DB
+  (for long-term persistence + caching)
   <p><strong>Decision (May 25, 2026):</strong> S2 backend will pre-save <code>biomechanics_json</code> to <code>form_analysis_results</code> BEFORE calling Haiku Call 1. Haiku does NOT echo biomechanics back in its response.</p>
 
   <p><strong>Rationale:</strong></p>

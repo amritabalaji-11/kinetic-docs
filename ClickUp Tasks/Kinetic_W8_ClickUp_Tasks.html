@@ -1048,7 +1048,7 @@ h1 { font-size: 28px; font-weight: 800; color: #f8fafc; margin-bottom: 8px; }
       <div class="section">
         <div class="section-title">Description</div>
         <div class="section-content">
-          S3 to annotate the extracted frame with skeleton overlay (from MediaPipe landmarks), angle values, classification labels, and color-coded form assessment. Send annotated frame to frontend for display, and pass to S2 for GCS storage.
+          S3 to annotate the extracted frame with skeleton overlay (from MediaPipe landmarks), angle values, classification labels, and color-coded form assessment. Send annotated frame to frontend for display, emit SSE event to notify frontend, and pass to S2 for GCS storage.
           <ul class="desc-list">
             <li>Skeleton: draw lines between MediaPipe joints</li>
             <li>Angles: label knee_angle, hip_angle, back_angle_value near joints</li>
@@ -1056,6 +1056,7 @@ h1 { font-size: 28px; font-weight: 800; color: #f8fafc; margin-bottom: 8px; }
             <li>Color-coding: green (good) / amber (borderline) / red (out of range)</li>
             <li>Output: annotated frame_bgr</li>
             <li>Send to frontend (for immediate display/preview)</li>
+            <li><strong>Emit SSE event: <code>frame_ready</code></strong> with annotated frame data (base64 or image bytes) to notify frontend that annotated frame is ready for display</li>
             <li>Pass to S2 for GCS encoding and storage</li>
           </ul>
         </div>
@@ -1070,6 +1071,8 @@ h1 { font-size: 28px; font-weight: 800; color: #f8fafc; margin-bottom: 8px; }
           <li>Annotations readable and not overlapping</li>
           <li>Works on front & side camera views</li>
           <li>Annotated frame_bgr sent to frontend for display</li>
+          <li><strong>SSE event <code>frame_ready</code> emitted with annotated frame data</strong></li>
+          <li>Frontend receives and displays frame immediately upon <code>frame_ready</code> event</li>
           <li>Annotated frame_bgr passed to S2 for GCS storage and URL save to form_analysis_results.annotated_frame_urls</li>
         </ul>
       </div>
