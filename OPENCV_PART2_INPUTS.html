@@ -455,16 +455,16 @@ DATA STRUCTURE: form_analysis_results.biomechanics_JSON
 
 KEY HANDOFFS:
 → S3-W8-03 → S3-W8-04: Raw frame_bgr with biomechanics data
-→ S3-W8-04 → Frontend: Display annotated frame immediately (via SSE frame_ready event)
-→ S3-W8-04 → S2-W8-12: Pass annotated frame_bgr for GCS storage
+→ S3-W8-04 → S2-W8-12: Pass annotated frame_bgr immediately
+→ S2-W8-12 → Frontend: Display annotated frame immediately (via SSE frame_ready event)
 → S2-W8-12 → form_analysis_results: Store GCS URL in annotated_frame_urls field
 
 <hr>
 
-<h2>SSE Event: frame_ready</h2>
+<h2>SSE Event: frame_ready (Emitted by S2-W8-12)</h2>
 
-<p><strong>When:</strong> After S3-W8-04 completes annotation</p>
-<p><strong>Purpose:</strong> Notify frontend that annotated frame is ready for immediate display (no waiting for GCS upload)</p>
+<p><strong>When:</strong> S2-W8-12 receives annotated frame from S3-W8-04 (immediate)</p>
+<p><strong>Purpose:</strong> Notify frontend that annotated frame is ready for display (no waiting for GCS upload)</p>
 
 <div class="section-box">
   <h3>Event Payload</h3>

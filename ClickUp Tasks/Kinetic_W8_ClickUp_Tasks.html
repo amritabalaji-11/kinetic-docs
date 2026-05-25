@@ -933,21 +933,32 @@ h1 { font-size: 28px; font-weight: 800; color: #f8fafc; margin-bottom: 8px; }
     <div class="task-header-bar">
       <div class="task-badge badge-todo">◯ To Do</div>
       <div class="task-id">S2-W8-12</div>
-      <div class="task-title">Save Annotated Frame to GCS and Store URL in form_analysis_results</div>
+      <div class="task-title">Annotated Frame — Notify Frontend via SSE + Save to GCS & DB</div>
       <div class="task-priority priority-high">HIGH</div>
     </div>
     <div class="task-body">
       <div class="section">
         <div class="section-title">Description</div>
         <div class="section-content">
-          Receive annotated frame_bgr from S3-W8-04, encode as JPEG, upload to GCS, and store the resulting URL in form_analysis_results.annotated_frame_urls field.
+          Receive annotated frame_bgr from S3-W8-04. Execute two parallel actions: (1) emit SSE frame_ready event to notify frontend with base64-encoded frame data, and (2) encode as JPEG, upload to GCS, and store URL in form_analysis_results.
           <ul class="desc-list">
-            <li>S3 hands off: annotated frame_bgr with skeleton overlay, angles, and labels (BGR color space, original video resolution)</li>
-            <li>S2 encodes frame to JPEG (quality 95)</li>
-            <li>S2 uploads to GCS with path: <code>{bucket}/{user_id}/{analysis_id}/annotated_frame.jpg</code></li>
-            <li>S2 receives GCS URL from upload response</li>
-            <li>S2 stores URL in <code>form_analysis_results.annotated_frame_urls</code> field</li>
-            <li>Implement retry logic: exponential backoff on transient failures (max 3 retries)</li>
+            <li><strong>Action 1: Emit SSE Event to Frontend</strong>
+              <ol style="margin-top: 6px; margin-left: 16px;">
+                <li>Receive annotated frame_bgr from S3</li>
+                <li>Encode frame to base64</li>
+                <li>Emit SSE event <code>frame_ready</code> with payload: frame_data (base64), analysis_id, user_id, exercise_id, worst_rep_index, timestamp_ms, annotation metadata</li>
+                <li>Frontend receives and displays immediately (no blocking on GCS upload)</li>
+              </ol>
+            </li>
+            <li><strong>Action 2: Save to GCS & DB (Parallel to Action 1)</strong>
+              <ol style="margin-top: 6px; margin-left: 16px;">
+                <li>Encode annotated frame_bgr to JPEG (quality 95)</li>
+                <li>Upload to GCS with path: <code>{bucket}/{user_id}/{analysis_id}/annotated_frame.jpg</code></li>
+                <li>Receive GCS URL from upload response</li>
+                <li>Store URL in <code>form_analysis_results.annotated_frame_urls</code> field</li>
+                <li>Implement retry logic: exponential backoff on transient failures (max 3 retries)</li>
+              </ol>
+            </li>
           </ul>
         </div>
       </div>
@@ -955,11 +966,14 @@ h1 { font-size: 28px; font-weight: 800; color: #f8fafc; margin-bottom: 8px; }
         <div class="section-title">Acceptance Criteria</div>
         <ul class="criteria-list">
           <li>Annotated frame_bgr successfully received from S3 in expected format</li>
+          <li><strong>SSE frame_ready event emitted immediately with base64 frame data</strong></li>
+          <li><strong>Frontend receives and can display frame without waiting for GCS upload</strong></li>
           <li>Frame encoded as JPEG (quality 95)</li>
           <li>Uploaded to GCS successfully</li>
           <li>GCS URL stored in form_analysis_results.annotated_frame_urls field</li>
-          <li>URL is valid and accessible from frontend</li>
+          <li>URL is valid and accessible</li>
           <li>Retry logic works: transient failures trigger exponential backoff</li>
+          <li>Both actions (SSE + GCS) complete, no race conditions</li>
           <li>Tested with multiple annotated frames and users</li>
         </ul>
       </div>
@@ -1048,16 +1062,14 @@ h1 { font-size: 28px; font-weight: 800; color: #f8fafc; margin-bottom: 8px; }
       <div class="section">
         <div class="section-title">Description</div>
         <div class="section-content">
-          S3 to annotate the extracted frame with skeleton overlay (from MediaPipe landmarks), angle values, classification labels, and color-coded form assessment. Send annotated frame to frontend for display, emit SSE event to notify frontend, and pass to S2 for GCS storage.
+          S3 to annotate the extracted frame with skeleton overlay (from MediaPipe landmarks), angle values, classification labels, and color-coded form assessment. Pass annotated frame to S2 for frontend communication and GCS storage.
           <ul class="desc-list">
             <li>Skeleton: draw lines between MediaPipe joints</li>
             <li>Angles: label knee_angle, hip_angle, back_angle_value near joints</li>
             <li>Labels: display back_label, valgus_label, depth_classification, dorsiflexion_status</li>
             <li>Color-coding: green (good) / amber (borderline) / red (out of range)</li>
-            <li>Output: annotated frame_bgr</li>
-            <li>Send to frontend (for immediate display/preview)</li>
-            <li><strong>Emit SSE event: <code>frame_ready</code></strong> with annotated frame data (base64 or image bytes) to notify frontend that annotated frame is ready for display</li>
-            <li>Pass to S2 for GCS encoding and storage</li>
+            <li>Output: annotated frame_bgr (BGR color space, original resolution)</li>
+            <li>Pass to S2 immediately for frontend notification and GCS storage</li>
           </ul>
         </div>
       </div>
@@ -1070,10 +1082,8 @@ h1 { font-size: 28px; font-weight: 800; color: #f8fafc; margin-bottom: 8px; }
           <li>Color-coding applied correctly based on thresholds</li>
           <li>Annotations readable and not overlapping</li>
           <li>Works on front & side camera views</li>
-          <li>Annotated frame_bgr sent to frontend for display</li>
-          <li><strong>SSE event <code>frame_ready</code> emitted with annotated frame data</strong></li>
-          <li>Frontend receives and displays frame immediately upon <code>frame_ready</code> event</li>
-          <li>Annotated frame_bgr passed to S2 for GCS storage and URL save to form_analysis_results.annotated_frame_urls</li>
+          <li>Annotated frame_bgr passed to S2 in expected format</li>
+          <li>Handoff to S2 is immediate (no delays)</li>
         </ul>
       </div>
       <div class="section">
