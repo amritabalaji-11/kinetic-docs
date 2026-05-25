@@ -789,7 +789,7 @@ h1 { font-size: 28px; font-weight: 800; color: #f8fafc; margin-bottom: 8px; }
     </p>
   </div>
 
-  <!-- OCV2-00 -->
+  <!-- S2-W8-06 -->
   <div class="task">
     <div class="task-header-bar">
       <div class="task-badge badge-todo">◯ To Do</div>
@@ -804,7 +804,7 @@ h1 { font-size: 28px; font-weight: 800; color: #f8fafc; margin-bottom: 8px; }
           Add new JSONB and TEXT columns to form_analysis_results table to store biomechanics data and annotated frame output URL.
           <ul class="desc-list">
             <li>Add <code>biomechanics_json</code> (JSONB) — per-frame biomechanics data (angles, MediaPipe landmarks, labels)</li>
-            <li>Add <code>annotated_frame_url</code> (TEXT) — GCS URL of annotated worst-rep frame</li>
+            <li>Add <code>annotated_frame_urls</code> (TEXT) — GCS URL of annotated frame with skeleton overlay, angles, and labels</li>
             <li>Both columns nullable, safe for backfill</li>
             <li>Create index on analysis_id for fast biomechanics queries</li>
           </ul>
@@ -814,7 +814,7 @@ h1 { font-size: 28px; font-weight: 800; color: #f8fafc; margin-bottom: 8px; }
         <div class="section-title">Acceptance Criteria</div>
         <ul class="criteria-list">
           <li>biomechanics_json JSONB column added and indexed</li>
-          <li>annotated_frame_url TEXT column added</li>
+          <li>annotated_frame_urls TEXT column added</li>
           <li>Migration tested in staging, deployed to production</li>
           <li>No data corruption or downtime</li>
           <li>Query performance verified</li>
@@ -928,25 +928,25 @@ h1 { font-size: 28px; font-weight: 800; color: #f8fafc; margin-bottom: 8px; }
     </div>
   </div>
 
-  <!-- S2-W8-11 (was S2-W8-12, renumbered) -->
+  <!-- S2-W8-12 -->
   <div class="task">
     <div class="task-header-bar">
       <div class="task-badge badge-todo">◯ To Do</div>
       <div class="task-id">S2-W8-12</div>
-      <div class="task-title">Save BGR Frame to GCS and Store URL in biomechanics_JSON</div>
+      <div class="task-title">Save Annotated Frame to GCS and Store URL in form_analysis_results</div>
       <div class="task-priority priority-high">HIGH</div>
     </div>
     <div class="task-body">
       <div class="section">
         <div class="section-title">Description</div>
         <div class="section-content">
-          Receive raw BGR frame from S3 biomechanics, encode as JPEG, upload to GCS, and store the resulting URL in form_analysis_results.biomechanics_JSON subfield.
+          Receive annotated frame_bgr from S3-W8-04, encode as JPEG, upload to GCS, and store the resulting URL in form_analysis_results.annotated_frame_urls field.
           <ul class="desc-list">
-            <li>S3 hands off: annotated frame_bgr (BGR color space, original video resolution)</li>
+            <li>S3 hands off: annotated frame_bgr with skeleton overlay, angles, and labels (BGR color space, original video resolution)</li>
             <li>S2 encodes frame to JPEG (quality 95)</li>
             <li>S2 uploads to GCS with path: <code>{bucket}/{user_id}/{analysis_id}/annotated_frame.jpg</code></li>
             <li>S2 receives GCS URL from upload response</li>
-            <li>S2 stores URL in <code>form_analysis_results.biomechanics_JSON[rep_X].annotated_frame_url</code></li>
+            <li>S2 stores URL in <code>form_analysis_results.annotated_frame_urls</code> field</li>
             <li>Implement retry logic: exponential backoff on transient failures (max 3 retries)</li>
           </ul>
         </div>
@@ -954,19 +954,19 @@ h1 { font-size: 28px; font-weight: 800; color: #f8fafc; margin-bottom: 8px; }
       <div class="section">
         <div class="section-title">Acceptance Criteria</div>
         <ul class="criteria-list">
-          <li>BGR frame successfully received from S3 in expected format</li>
+          <li>Annotated frame_bgr successfully received from S3 in expected format</li>
           <li>Frame encoded as JPEG (quality 95)</li>
           <li>Uploaded to GCS successfully</li>
-          <li>GCS URL stored in biomechanics_JSON subfield for corresponding rep</li>
-          <li>URL is valid and accessible</li>
+          <li>GCS URL stored in form_analysis_results.annotated_frame_urls field</li>
+          <li>URL is valid and accessible from frontend</li>
           <li>Retry logic works: transient failures trigger exponential backoff</li>
-          <li>Tested with multiple frames and users</li>
+          <li>Tested with multiple annotated frames and users</li>
         </ul>
       </div>
       <div class="section">
         <div class="section-title">Dependencies</div>
-        <div class="section-content"><span class="dep-badge">DEPENDS ON</span> S3-W8-03 (S3 generates and passes frame_bgr)<br>
-        <span class="dep-badge">DEPENDS ON</span> S2-W8-06 (biomechanics_json column in schema)</div>
+        <div class="section-content"><span class="dep-badge">DEPENDS ON</span> S3-W8-04 (Annotated frame_bgr from S3)<br>
+        <span class="dep-badge">DEPENDS ON</span> S2-W8-06 (annotated_frame_urls column in schema)</div>
       </div>
     </div>
   </div>
@@ -1048,13 +1048,15 @@ h1 { font-size: 28px; font-weight: 800; color: #f8fafc; margin-bottom: 8px; }
       <div class="section">
         <div class="section-title">Description</div>
         <div class="section-content">
-          S3 to annotate the extracted frame with skeleton overlay (from MediaPipe landmarks), angle values, classification labels, and color-coded form assessment. This annotated frame is then saved to GCS by S2.
+          S3 to annotate the extracted frame with skeleton overlay (from MediaPipe landmarks), angle values, classification labels, and color-coded form assessment. Send annotated frame to frontend for display, and pass to S2 for GCS storage.
           <ul class="desc-list">
             <li>Skeleton: draw lines between MediaPipe joints</li>
             <li>Angles: label knee_angle, hip_angle, back_angle_value near joints</li>
             <li>Labels: display back_label, valgus_label, depth_classification, dorsiflexion_status</li>
             <li>Color-coding: green (good) / amber (borderline) / red (out of range)</li>
-            <li>Output: annotated frame_bgr passed to S2</li>
+            <li>Output: annotated frame_bgr</li>
+            <li>Send to frontend (for immediate display/preview)</li>
+            <li>Pass to S2 for GCS encoding and storage</li>
           </ul>
         </div>
       </div>
@@ -1067,7 +1069,8 @@ h1 { font-size: 28px; font-weight: 800; color: #f8fafc; margin-bottom: 8px; }
           <li>Color-coding applied correctly based on thresholds</li>
           <li>Annotations readable and not overlapping</li>
           <li>Works on front & side camera views</li>
-          <li>Annotated frame_bgr passed to S2 for GCS storage</li>
+          <li>Annotated frame_bgr sent to frontend for display</li>
+          <li>Annotated frame_bgr passed to S2 for GCS storage and URL save to form_analysis_results.annotated_frame_urls</li>
         </ul>
       </div>
       <div class="section">
