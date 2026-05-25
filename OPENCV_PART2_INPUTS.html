@@ -273,7 +273,59 @@ Save annotated frame to GCS
 
 <hr>
 
-<h2>Summary Table: All Inputs</h2>
+<h2>GCS Frame Storage Flow (S3 → S2)</h2>
+
+<div class="diagram">SQUAD 3 (Biomechanics)
+  Produces: annotated frame_bgr
+  • Color space: BGR (OpenCV standard)
+  • Resolution: original video dimensions
+  • Data type: numpy array or raw bytes
+    ↓
+  ┌─────────────────────────────────┐
+  │ S3 → S2 DATA CONTRACT           │
+  │ Frame format defined once       │
+  │ (consistency across all calls)  │
+  └─────────────────────────────────┘
+    ↓
+SQUAD 2 (Backend)
+  Receives: annotated frame_bgr from S3
+    ↓
+  [Step 1] Encode frame to JPEG
+  • Input: BGR numpy array (e.g., 1080×1920×3)
+  • Output: JPEG bytes
+    ↓
+  [Step 2] Upload to GCS with retry logic
+  • Destination: gs://bucket/{user_id}/{analysis_id}/annotated_frame.jpg
+  • On failure: Retry with exponential backoff
+  • On success: Receive GCS URL
+    ↓
+  [Step 3] Store URL in form_analysis_results
+  • Update: form_analysis_results.biomechanics_JSON
+  • New field: "annotated_frame_url": "gs://bucket/.../annotated_frame.jpg"
+  • Scope: Internal processing only (not retrieved by S1)
+    ↓
+  [Step 4] Set 60-day retention policy
+  • GCS lifecycle: Delete object after 60 days
+  • Cost optimization for large video annotations
+  • Configurable per bucket lifecycle rule
+
+═══════════════════════════════════════════════════════
+DATA STRUCTURE: form_analysis_results.biomechanics_JSON
+═══════════════════════════════════════════════════════
+{
+  "rep_0": {
+    "bottom_timestamp_ms": 1400,
+    "knee_angle": 88.2,
+    "hip_angle": 91.5,
+    "frame_bgr": &lt;bytes or reference&gt;,
+    ...
+  },
+  "rep_1": {...},
+  "rep_2": {
+    ...
+    "annotated_frame_url": "gs://kinetic-demo/user_001/550e8400-e29b-41d4-a716-446655440000/annotated_frame.jpg"
+  }
+}
 
 <table>
   <thead>
@@ -336,7 +388,31 @@ Save annotated frame to GCS
 </div>
 
 <div class="section-box">
-  <h3>3. Biomechanics Data Structure</h3>
+  <h3>3. GCS Frame Storage Design</h3>
+  <p><strong>Decision (May 25, 2026):</strong> Annotated frames from S3 are encoded to JPEG and uploaded to GCS by S2, with URL stored in <code>biomechanics_JSON</code> under each rep.</p>
+
+  <p><strong>Design Details:</strong></p>
+  <ul>
+    <li><strong>Upload flow:</strong> S3 passes annotated frame_bgr → S2 encodes to JPEG → uploads to GCS → receives URL → stores in DB</li>
+    <li><strong>GCS path structure:</strong> <code>{bucket}/{user_id}/{analysis_id}/annotated_frame.jpg</code></li>
+    <li><strong>Error handling:</strong> Retry with exponential backoff on transient failures (timeouts, 503 errors); fail fast on permanent errors (auth, invalid bucket)</li>
+    <li><strong>Retention policy:</strong> 60-day lifecycle rule — objects automatically deleted after 60 days to optimize storage costs</li>
+    <li><strong>Usage:</strong> Internal processing only — S1 frontend does NOT retrieve these images</li>
+    <li><strong>Data integrity:</strong> URL stored in <code>form_analysis_results.biomechanics_JSON[rep_X].annotated_frame_url</code> alongside all other rep data</li>
+  </ul>
+
+  <p><strong>Rationale:</strong></p>
+  <ul>
+    <li>✅ Scalable: GCS handles large video frame storage without database bloat</li>
+    <li>✅ Persistent: URLs can be accessed for analysis/debugging within 60-day window</li>
+    <li>✅ Cost-effective: 60-day retention prevents indefinite storage cost growth</li>
+    <li>✅ Reliable: Retry logic handles transient network failures</li>
+    <li>❌ Trade-off: Extra network call to GCS (added latency)</li>
+  </ul>
+</div>
+
+<div class="section-box">
+  <h3>4. Biomechanics Data Structure</h3>
   <p><strong>Squad 3 responsibility:</strong> Produce biomechanics_json with the following structure per frame/rep:</p>
   <pre>{
   "frame_index": &lt;int&gt;,
@@ -361,18 +437,28 @@ Save annotated frame to GCS
 <h2>Open Questions / Gaps to Confirm</h2>
 
 <div class="highlight">
+  <h3>Resolved ✅</h3>
   <ul>
+    <li><input type="checkbox" class="checkbox" checked> GCS bucket setup for frame storage</li>
+    <li><input type="checkbox" class="checkbox" checked> 60-day lifecycle retention policy</li>
+    <li><input type="checkbox" class="checkbox" checked> S2 → GCS upload with retry logic (W8)</li>
+    <li><input type="checkbox" class="checkbox" checked> Store annotated_frame_url in biomechanics_JSON</li>
+  </ul>
+
+  <h3>Pending 🔄</h3>
+  <ul>
+    <li><input type="checkbox" class="checkbox"> <strong>S3-S2 Frame Contract:</strong> Define exact format S3 passes to S2 (color space, resolution, data type, transmission method) — Task #2</li>
     <li><input type="checkbox" class="checkbox"> Is <code>biomechanics_json</code> JSONB column added to <code>form_analysis_results</code>?</li>
     <li><input type="checkbox" class="checkbox"> Does S2 have transaction support to atomically save biomechanics + Haiku output?</li>
     <li><input type="checkbox" class="checkbox"> What is max expected size of biomechanics_json? (target: &lt;200KB for safe JSONB storage)</li>
-    <li><input type="checkbox" class="checkbox"> How should frame_bgr be serialized (base64, binary, reference only)?</li>
+    <li><input type="checkbox" class="checkbox"> How should frame_bgr be serialized in DB (base64, binary reference, or GCS URL only)?</li>
   </ul>
 </div>
 
 <hr>
 
 <p style="text-align: center; color: #666; font-size: 12px; margin-top: 40px;">
-  OpenCV Part 2 Input Requirements | Kinetic
+  OpenCV Part 2 Input Requirements | Kinetic | Last updated May 25, 2026
 </p>
 
 </body>
