@@ -804,7 +804,7 @@ h1 { font-size: 28px; font-weight: 800; color: #f8fafc; margin-bottom: 8px; }
           Add new JSONB and TEXT columns to form_analysis_results table to store biomechanics data and annotated frame output URL.
           <ul class="desc-list">
             <li>Add <code>biomechanics_json</code> (JSONB) — per-frame biomechanics data (angles, MediaPipe landmarks, labels)</li>
-            <li>Add <code>annotated_frame_urls</code> (TEXT) — GCS URL of annotated frame with skeleton overlay, angles, and labels</li>
+            <li>Add <code>annotated_frame_url</code> (TEXT) — GCS URL of annotated frame with skeleton overlay, angles, and labels</li>
             <li>Both columns nullable, safe for backfill</li>
             <li>Create index on analysis_id for fast biomechanics queries</li>
           </ul>
@@ -814,7 +814,7 @@ h1 { font-size: 28px; font-weight: 800; color: #f8fafc; margin-bottom: 8px; }
         <div class="section-title">Acceptance Criteria</div>
         <ul class="criteria-list">
           <li>biomechanics_json JSONB column added and indexed</li>
-          <li>annotated_frame_urls TEXT column added</li>
+          <li>annotated_frame_url TEXT column added</li>
           <li>Migration tested in staging, deployed to production</li>
           <li>No data corruption or downtime</li>
           <li>Query performance verified</li>
@@ -955,7 +955,7 @@ h1 { font-size: 28px; font-weight: 800; color: #f8fafc; margin-bottom: 8px; }
                 <li>Encode annotated frame_bgr to JPEG (quality 95)</li>
                 <li>Upload to GCS with path: <code>{bucket}/{user_id}/{analysis_id}/annotated_frame.jpg</code></li>
                 <li>Receive GCS URL from upload response</li>
-                <li>Store URL in <code>form_analysis_results.annotated_frame_urls</code> field</li>
+                <li>Store URL in <code>form_analysis_results.annotated_frame_url</code> field</li>
                 <li>Implement retry logic: exponential backoff on transient failures (max 3 retries)</li>
               </ol>
             </li>
@@ -970,7 +970,7 @@ h1 { font-size: 28px; font-weight: 800; color: #f8fafc; margin-bottom: 8px; }
           <li><strong>Frontend receives and can display frame without waiting for GCS upload</strong></li>
           <li>Frame encoded as JPEG (quality 95)</li>
           <li>Uploaded to GCS successfully</li>
-          <li>GCS URL stored in form_analysis_results.annotated_frame_urls field</li>
+          <li>GCS URL stored in form_analysis_results.annotated_frame_url field</li>
           <li>URL is valid and accessible</li>
           <li>Retry logic works: transient failures trigger exponential backoff</li>
           <li>Both actions (SSE + GCS) complete, no race conditions</li>
@@ -980,7 +980,7 @@ h1 { font-size: 28px; font-weight: 800; color: #f8fafc; margin-bottom: 8px; }
       <div class="section">
         <div class="section-title">Dependencies</div>
         <div class="section-content"><span class="dep-badge">DEPENDS ON</span> S3-W8-04 (Annotated frame_bgr from S3)<br>
-        <span class="dep-badge">DEPENDS ON</span> S2-W8-06 (annotated_frame_urls column in schema)</div>
+        <span class="dep-badge">DEPENDS ON</span> S2-W8-06 (annotated_frame_url column in schema)</div>
       </div>
     </div>
   </div>
