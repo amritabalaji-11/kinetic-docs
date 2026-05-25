@@ -740,7 +740,7 @@ h1 { font-size: 22px; font-weight: 800; color: #f8fafc; letter-spacing: -0.5px; 
         <div class="pipe-content">
           <div class="pipe-text">
             <div class="pipe-name">Claude Haiku 4.5 — Call 1 · form analysis + coaching</div>
-            <div class="pipe-io">IN: 8-frame composite + biomechanics JSON + weight + gold standard + last 3 sessions + .md coaching files · OUT: scores (overall + 4 params + per-rep) + full coaching JSON · Tab 1 unlocks</div>
+            <div class="pipe-io">IN: 8-frame composite + biomechanics JSON + gold standard + .md coaching files · OUT: scores (overall + 4 params + per-rep) + full coaching JSON · Tab 1 unlocks</div>
             <div class="pipe-sse">haiku_started → analysis_ready (Tab 1 unlocked)</div>
           </div>
           <div class="pipe-visual">
@@ -769,6 +769,9 @@ h1 { font-size: 22px; font-weight: 800; color: #f8fafc; letter-spacing: -0.5px; 
         <div class="pipe-content">
           <div class="pipe-text">
             <div class="pipe-name">OpenCV Part 2 — worst-rep frame extraction (runs after Haiku)</div>
+            <div style="margin-bottom:8px;padding:7px 9px;background:#1a0f0a;border:1px solid #7f3422;border-radius:6px;font-size:9.5px;color:#f87171;line-height:1.5;">
+              <strong style="color:#f87171;">Demo Day Scope:</strong> Reduced scope from part of pipeline to manual run and save results in DB for Demo Day.
+            </div>
             <div class="pipe-io">Finds lowest-scoring rep from Haiku rep_scores[] · looks up bottom_timestamp_ms from biomechanics JSON · extracts frame · annotates with angles + gold standard · saves JPEG · shown to user</div>
             <div class="pipe-tags">
               <span class="pipe-tag tag-db-read">form_analysis_results: rep_scores[] from Haiku to identify worst rep</span>
@@ -815,6 +818,9 @@ h1 { font-size: 22px; font-weight: 800; color: #f8fafc; letter-spacing: -0.5px; 
         <div class="pipe-content">
           <div class="pipe-text">
             <div class="pipe-name">Claude Haiku 4.5 — Call 2 · longitudinal coaching · async</div>
+            <div style="margin-bottom:8px;padding:7px 9px;background:rgba(96,165,250,0.08);border:1px solid rgba(96,165,250,0.25);border-radius:6px;font-size:9.5px;color:#60a5fa;line-height:1.5;">
+              <strong style="color:#60a5fa;">Timing:</strong> Haiku Call 2 initiates after Step 7 when Haiku Call 1 output is saved in DB
+            </div>
             <div class="pipe-io">Runs async after Call 1 is saved to DB · IN: current scores + last 5 sessions' scores + Haiku outputs from form_analysis_results · OUT: today vs previous comparison + 5-session trend insights + weight decision · Tab 2 unlocks</div>
             <div class="pipe-tags">
               <span class="pipe-tag tag-db-read">form_analysis_results: current + last 5 sessions (scores + Haiku output per session)</span>
@@ -1262,7 +1268,7 @@ sse.emit(<span class="js">"biomechanics_complete"</span>, { analysis_id, rep_cou
 haiku_input = {<br>
 &nbsp;&nbsp;<span class="jk">"composite_grid_b64"</span>: result[<span class="js">"composite_grid_b64"</span>],  <span class="jc"># base64 bytes — no GCS URL</span><br>
 &nbsp;&nbsp;<span class="jk">"biomechanics_json"</span>: result[<span class="js">"biomechanics_json"</span>],<br>
-&nbsp;&nbsp;<span class="jc"># + weight, exercise from form_analyses, gold standard, last 3 sessions, .md files</span><br>
+&nbsp;&nbsp;<span class="jc"># + exercise from form_analyses, gold standard, .md coaching files</span><br>
 }
   </div>
 </div>
@@ -1287,9 +1293,8 @@ haiku_input = {<br>
       <div class="io-row"><div class="io-label io-in">IN</div><div class="io-val">
         <code>composite_grid_b64</code> (base64 JPEG from Step 5 — in memory, no GCS URL) ·
         <code>biomechanics_json</code> (from Step 6) ·
-        <code>form_analyses</code> fields: user_id, analysis_id, weight_value, weight_unit, exercise_id, exercise_name ·
+        <code>form_analyses</code> fields: user_id, analysis_id, exercise_id, exercise_name ·
         gold standard JSON (from Supabase) ·
-        last 3 sessions (weight + MediaPipe JSON + past Haiku output, from <code>form_analysis_results</code>) ·
         coaching .md files (injected into prompt)
       </div></div>
       <div class="io-row"><div class="io-label io-out">OUT</div><div class="io-val">
@@ -1551,7 +1556,7 @@ haiku_input = {<br>
       </div>
       <div class="pipe-content">
         <div class="pipe-io">
-          <div class="io-row"><div class="io-dir io-in">IN</div><div class="io-val">composite_grid_b64 (base64, in memory) · biomechanics JSON · weight + exercise from form_analyses · gold standard JSON · last 3 sessions · .md coaching files</div></div>
+          <div class="io-row"><div class="io-dir io-in">IN</div><div class="io-val">composite_grid_b64 (base64, in memory) · biomechanics JSON · exercise from form_analyses · gold standard JSON · .md coaching files</div></div>
           <div class="io-row"><div class="io-dir io-out">OUT</div><div class="io-val">overall_score · posture/stability/movement/range_of_motion scores · rep_scores[] · faults · coaching JSON · Tab 1 unlocks</div></div>
           <div class="io-row"><div class="io-dir io-sse">SSE</div><div class="io-val">haiku_started · analysis_ready → { analysis_id, session_id, user_id, overall_score }</div></div>
         </div>
