@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kinetic Demo Day Strategy — Video Upload Pipeline</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #0a0d14;
+            color: #e2e8f0;
+            padding: 40px 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+        h1 { font-size: 32px; font-weight: 800; color: #f8fafc; margin-bottom: 8px; }
+        .subtitle { font-size: 14px; color: #64748b; margin-bottom: 32px; }
+        h2 { font-size: 20px; font-weight: 700; color: #f1f5f9; margin-top: 40px; margin-bottom: 16px; border-bottom: 2px solid #1e2433; padding-bottom: 8px; }
+        h3 { font-size: 16px; font-weight: 700; color: #e2e8f0; margin-top: 24px; margin-bottom: 12px; }
+
+        /* Section containers */
+        .section {
+            background: #0d1117;
+            border: 1px solid #1e2433;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+        .section.highlight {
+            background: rgba(34, 197, 94, 0.08);
+            border-color: rgba(34, 197, 94, 0.3);
+            border-left: 4px solid #22c55e;
+        }
+        .section.warning {
+            background: rgba(249, 115, 22, 0.08);
+            border-color: rgba(249, 115, 22, 0.3);
+            border-left: 4px solid #f97316;
+        }
+
+        /* Two-column layout */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+        @media (max-width: 1024px) {
+            .grid-2 { grid-template-columns: 1fr; }
+        }
+
+        /* Three-column layout */
+        .grid-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        @media (max-width: 1024px) {
+            .grid-3 { grid-template-columns: 1fr; }
+        }
+
+        /* Cards */
+        .card {
+            background: #080c12;
+            border: 1px solid #1e2433;
+            border-radius: 10px;
+            padding: 16px;
+        }
+        .card-title {
+            font-size: 13px;
+            font-weight: 800;
+            color: #f8fafc;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .card-desc {
+            font-size: 12px;
+            color: #94a3b8;
+            line-height: 1.5;
+        }
+
+        /* Task lists */
+        .task-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .task-item {
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+            padding: 10px;
+            background: #0a0f18;
+            border-left: 3px solid #1e2433;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+        .task-item.build {
+            border-left-color: #3b82f6;
+        }
+        .task-item.prefill {
+            border-left-color: #22c55e;
+        }
+        .task-item.skip {
+            border-left-color: #f97316;
+            opacity: 0.6;
+        }
+        .task-icon {
+            font-size: 14px;
+            flex-shrink: 0;
+            width: 20px;
+        }
+        .task-text {
+            flex: 1;
+        }
+
+        /* Timeline */
+        .timeline {
+            position: relative;
+            padding-left: 40px;
+            margin: 20px 0;
+        }
+        .timeline-item {
+            position: relative;
+            padding: 12px 0;
+            border-left: 2px solid #1e2433;
+            padding-left: 24px;
+        }
+        .timeline-item:last-child {
+            border-left: 2px solid transparent;
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -6px;
+            top: 16px;
+            width: 10px;
+            height: 10px;
+            background: #3b82f6;
+            border-radius: 50%;
+            border: 2px solid #0d1117;
+        }
+        .timeline-item.complete::before {
+            background: #22c55e;
+        }
+        .timeline-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: #64748b;
+            text-transform: uppercase;
+        }
+        .timeline-text {
+            font-size: 13px;
+            color: #e2e8f0;
+            margin-top: 4px;
+        }
+
+        /* Table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+        }
+        th {
+            background: #080c12;
+            color: #f1f5f9;
+            font-weight: 700;
+            font-size: 11px;
+            text-align: left;
+            padding: 12px;
+            border: 1px solid #1e2433;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        td {
+            padding: 12px;
+            border: 1px solid #1e2433;
+            font-size: 12px;
+        }
+        td.build { background: rgba(59, 130, 246, 0.05); }
+        td.prefill { background: rgba(34, 197, 94, 0.05); }
+        td.skip { background: rgba(249, 115, 22, 0.05); }
+
+        /* Badges */
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        .badge-build { background: #1e2d52; color: #60a5fa; }
+        .badge-prefill { background: #1a3a2a; color: #4ade80; }
+        .badge-skip { background: #3a2110; color: #fbbf24; }
+
+        /* Code block */
+        .code-block {
+            background: #0a0f18;
+            border: 1px solid #1e2433;
+            border-radius: 8px;
+            padding: 14px;
+            overflow-x: auto;
+            font-family: 'SF Mono', monospace;
+            font-size: 11px;
+            color: #cbd5e1;
+            margin: 12px 0;
+        }
+
+        /* Diagram */
+        .diagram {
+            background: #080c12;
+            border: 1px solid #1e2433;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            margin: 20px 0;
+            font-size: 12px;
+            color: #94a3b8;
+        }
+        .flow-box {
+            display: inline-block;
+            background: #1a1f2e;
+            border: 1px solid #3b82f6;
+            border-radius: 6px;
+            padding: 12px 20px;
+            margin: 8px;
+            color: #60a5fa;
+            font-weight: 600;
+        }
+        .flow-arrow {
+            display: inline-block;
+            color: #64748b;
+            margin: 0 8px;
+        }
+
+        /* Decision matrix */
+        .decision-box {
+            background: #080c12;
+            border: 2px solid #1e2433;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 12px 0;
+        }
+        .decision-box.option1 {
+            border-color: #3b82f6;
+        }
+        .decision-box.option2 {
+            border-color: #22c55e;
+        }
+        .decision-title {
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        .option1 .decision-title { color: #60a5fa; }
+        .option2 .decision-title { color: #4ade80; }
+
+        /* Summary stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin: 16px 0;
+        }
+        @media (max-width: 768px) {
+            .stats-grid { grid-template-columns: 1fr; }
+        }
+        .stat-card {
+            background: #0a0f18;
+            border: 1px solid #1e2433;
+            border-radius: 8px;
+            padding: 14px;
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 20px;
+            font-weight: 800;
+            color: #f1f5f9;
+        }
+        .stat-label {
+            font-size: 10px;
+            color: #64748b;
+            margin-top: 4px;
+            text-transform: uppercase;
+        }
+
+        /* Checklist */
+        .checklist {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .checklist-item {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            padding: 10px;
+            background: #0a0f18;
+            border-radius: 6px;
+            font-size: 12px;
+        }
+        .checklist-box {
+            width: 16px;
+            height: 16px;
+            border: 1.5px solid #64748b;
+            border-radius: 3px;
+            flex-shrink: 0;
+        }
+
+        /* Footnote */
+        .footnote {
+            font-size: 11px;
+            color: #64748b;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid #1e2433;
+        }
+
+        /* Call to action */
+        .discussion-prompt {
+            background: rgba(168, 85, 247, 0.08);
+            border: 2px solid rgba(168, 85, 247, 0.3);
+            border-left: 4px solid #a855f7;
+            padding: 16px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .discussion-prompt-title {
+            font-weight: 700;
+            color: #d8b4fe;
+            margin-bottom: 8px;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Kinetic Demo Day Strategy</h1>
+<p class="subtitle">Video Upload Pipeline — What to Build vs. Pre-Compute</p>
+
+<!-- EXECUTIVE SUMMARY -->
+<div class="section highlight">
+    <h2>Executive Summary</h2>
+    <p><strong>Goal:</strong> Show a realistic upload → processing → results flow during the demo, without waiting for the full real-time pipeline.</p>
+    <p style="margin-top: 12px;"><strong>Approach:</strong> Pre-compute all demo results (MediaPipe, Haiku, OpenCV Part 2) + pre-script SSE event sequences. When a demo video is uploaded, the backend recognizes it and replays the pre-recorded event stream with pre-built results.</p>
+    <p style="margin-top: 12px;"><strong>Benefit:</strong> Attendees see a smooth 10–15 second "processing" flow with live progress updates, ending with polished coaching output and annotated form frames.</p>
+
+    <div class="stats-grid" style="margin-top: 20px;">
+        <div class="stat-card">
+            <div class="stat-value">1.5</div>
+            <div class="stat-label">Days Demo Prep</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">3–5</div>
+            <div class="stat-label">Demo Videos</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">10–15s</div>
+            <div class="stat-label">Demo Flow Time</div>
+        </div>
+    </div>
+</div>
+
+<!-- THE CHALLENGE: WHAT, HOW, FALLBACK -->
+<div class="section">
+    <h2>The Challenge: What, How & Fallback</h2>
+
+    <div class="grid-2">
+        <div class="card">
+            <div class="card-title">❓ What We're Trying to Do</div>
+            <div class="card-desc">
+                Show attendees a realistic upload → processing → results flow. The key: <strong>instantly display a polished annotated form frame</strong> without waiting for real-time OpenCV processing (which takes 5–10 seconds).
+                <br><br>
+                <strong>Core insight:</strong> The annotated frame is the visual proof. Pre-compute it once per user, reuse it across all their demo uploads.
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">💡 How We Plan to Do It</div>
+            <div class="card-desc">
+                <strong>1. Pre-compute annotated frame offline (one-time per user):</strong><br>
+                Select one demo video for each user. Run MediaPipe → identify worst rep → extract frame → annotate with angles → save to GCS.
+                <br><br>
+                <strong>2. Store in user_profiles table:</strong><br>
+                Add <code>annotated_frame_url</code> column. Pre-populate for user_001, user_002, user_003 with GCS URLs.
+                <br><br>
+                <strong>3. Real pipeline runs normally:</strong><br>
+                User uploads any video → backend processes with real MediaPipe + Haiku. No video hashing, no demo config.
+                <br><br>
+                <strong>4. Frontend shows pre-computed frame:</strong><br>
+                Query user_profiles for annotated_frame_url → display if exists. Otherwise, wait for real OpenCV Part 2 result.
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">📋 Demo Day Execution</div>
+            <div class="card-desc">
+                <strong>You control the upload:</strong> You decide which demo video to upload. No attendee surprises.
+                <br><br>
+                <strong>Setup:</strong> Pre-compute annotated frame for your chosen demo video. Store in user_profile for the demo user you're logged in as (e.g., user_001).
+                <br><br>
+                <strong>During demo:</strong> Upload the video you pre-computed for → annotated frame displays instantly from user_profile.
+                <br><br>
+                <strong>If something goes wrong:</strong> You have the pre-computed frame saved in GCS. Can manually display or re-upload same video.
+            </div>
+        </div>
+    </div>
+
+    <div style="background: #051e26; border: 1px solid #0e7490; border-radius: 8px; padding: 14px; margin-top: 16px;">
+        <div style="font-size: 11px; font-weight: 700; color: #22d3ee; text-transform: uppercase; margin-bottom: 8px;">✅ Why This Works</div>
+        <div style="font-size: 12px; color: #67e8f9; line-height: 1.6;">
+            <strong>Simplest possible approach.</strong> One database column. Real pipeline unchanged. You upload the video you pre-computed for. Annotated frame shows instantly. No video hashing, no config files, no complexity. Same code path for demo and production.
+        </div>
+    </div>
+</div>
+
+<!-- VIDEO IDENTIFICATION: USER PROFILE APPROACH -->
+<div class="section highlight">
+    <h2>How Videos Are Identified: User Profile Lookup</h2>
+
+    <h3>The Simple Approach</h3>
+    <p>Store the pre-computed annotated frame in the <strong>user_profiles table</strong>. When demo user uploads a video, immediately show their pre-saved annotated frame.</p>
+
+    <div class="diagram">
+        <div class="flow-box">User logs in as user_001</div>
+        <div class="flow-arrow">↓</div>
+        <div class="flow-box">User uploads video (any video)</div>
+        <div class="flow-arrow">↓</div>
+        <div class="flow-box">Backend queries: SELECT annotated_frame_url FROM user_profiles WHERE user_id = 'user_001'</div>
+        <div class="flow-arrow">↓</div>
+        <div class="flow-box" style="border-color: #22c55e; color: #4ade80;">Show pre-computed annotated image</div>
+    </div>
+
+    <h3 style="margin-top: 24px;">Zero Changes to Pipeline</h3>
+    <p>This approach requires minimal changes:</p>
+
+    <div class="grid-2">
+        <div class="card">
+            <div class="card-title">Database Change (One-Time)</div>
+            <div class="card-desc">
+                Add column to <code>user_profiles</code> table:<br>
+                <code>annotated_frame_url TEXT</code><br><br>
+                Pre-populate for demo users:
+                <ul style="margin-top: 10px; margin-left: 16px; font-size: 11px;">
+                    <li>user_001 → gs://kinetic-demo/demo-frames/user-001-annotated.jpg</li>
+                    <li>user_002 → gs://kinetic-demo/demo-frames/user-002-annotated.jpg</li>
+                    <li>user_003 → gs://kinetic-demo/demo-frames/user-003-annotated.jpg</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">Backend Change (Minimal)</div>
+            <div class="card-desc">
+                In Results Screen endpoint or frontend:<br><br>
+                <code style="color: #86efac; font-weight: 600;">
+                    // Check user_profiles first<br>
+                    user_profile = db.query(user_profiles, user_id)<br><br>
+                    if user_profile.annotated_frame_url:<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;show pre-computed image<br>
+                    else:<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;wait for real OpenCV result
+                </code>
+            </div>
+        </div>
+    </div>
+
+    <h3 style="margin-top: 24px;">Database Schema Update</h3>
+
+    <div class="code-block">
+-- Add to user_profiles table
+
+ALTER TABLE user_profiles ADD COLUMN annotated_frame_url TEXT;
+
+-- Pre-populate demo users
+UPDATE user_profiles
+SET annotated_frame_url = 'gs://kinetic-demo/demo-frames/user-001-annotated.jpg'
+WHERE user_id = 'user_001';
+
+UPDATE user_profiles
+SET annotated_frame_url = 'gs://kinetic-demo/demo-frames/user-002-annotated.jpg'
+WHERE user_id = 'user_002';
+
+UPDATE user_profiles
+SET annotated_frame_url = 'gs://kinetic-demo/demo-frames/user-003-annotated.jpg'
+WHERE user_id = 'user_003';
+    </div>
+
+    <h3 style="margin-top: 24px;">Frontend: Display Logic</h3>
+    <p>When showing Results screen, check if user has a pre-computed frame:</p>
+
+    <div class="code-block">
+// Results.tsx or similar
+
+const resultsData = await fetch(`/analysis/${analysisId}/results`);
+const { haiku_output, biomechanics, user_profile } = resultsData;
+
+// Show coaching text immediately (from API)
+setCoachingText(haiku_output.verdict);
+
+// Check for pre-computed frame
+if (user_profile?.annotated_frame_url) {
+  // Demo mode: use pre-computed frame
+  setAnnotatedFrameUrl(user_profile.annotated_frame_url);
+} else {
+  // Production mode: wait for OpenCV Part 2 result
+  setAnnotatedFrameUrl(results.annotated_frame_url);
+}
+    </div>
+
+    <h3 style="margin-top: 20px;">Why This Works</h3>
+    <div class="grid-2">
+        <div class="card">
+            <div class="card-title">✓ Zero Video Matching Logic</div>
+            <div class="card-desc">
+                No hash computation, no DEMO_VIDEOS config, no filename matching. Just a simple database lookup.
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-title">✓ One Column Add</div>
+            <div class="card-desc">
+                Add <code>annotated_frame_url</code> to user_profiles. Pre-populate for demo users. That's it.
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-title">✓ No Pipeline Changes</div>
+            <div class="card-desc">
+                Real MediaPipe, real Haiku, real processing still happens. Annotated frame is just shown from user profile if available.
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-title">✓ Production-Ready</div>
+            <div class="card-desc">
+                After demo, other users won't have annotated_frame_url set, so they get real OpenCV results. Clean handoff.
+            </div>
+        </div>
+    </div>
+
+    <h3 style="margin-top: 20px;">Pre-Demo Setup (Simple)</h3>
+    <div class="timeline">
+        <div class="timeline-item complete">
+            <div class="timeline-label">Step 1</div>
+            <div class="timeline-text">Select demo video for each user (user_001, user_002, user_003)</div>
+        </div>
+        <div class="timeline-item complete">
+            <div class="timeline-label">Step 2</div>
+            <div class="timeline-text">Run OpenCV Part 2 offline: extract worst rep frame → annotate → save to GCS</div>
+        </div>
+        <div class="timeline-item complete">
+            <div class="timeline-label">Step 3</div>
+            <div class="timeline-text">Add annotated_frame_url column to user_profiles table</div>
+        </div>
+        <div class="timeline-item complete">
+            <div class="timeline-label">Step 4</div>
+            <div class="timeline-text">Update user_profiles with GCS URLs for each demo user</div>
+        </div>
+        <div class="timeline-item">
+            <div class="timeline-label">Step 5</div>
+            <div class="timeline-text">Add lookup logic to frontend (1 if-statement)</div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+<!-- WEEK 8 SCOPE: BUILD VS. PREFILL -->
+<div class="section">
+    <h2>Week 8 Task Mapping</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Task ID</th>
+                <th>Original Task</th>
+                <th>Demo Strategy</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>S2-W8-01</strong></td>
+                <td>Data Schema Review + Update</td>
+                <td class="build">Build</td>
+                <td><span class="badge badge-build">BUILD</span></td>
+            </tr>
+            <tr>
+                <td><strong>S2-W8-02</strong></td>
+                <td>Haiku Call 2 — Async Job Pipeline</td>
+                <td class="build">Build</td>
+                <td><span class="badge badge-build">BUILD</span></td>
+            </tr>
+            <tr>
+                <td><strong>S2-W8-03</strong></td>
+                <td>Job Status Endpoint</td>
+                <td class="build">Build</td>
+                <td><span class="badge badge-build">BUILD</span></td>
+            </tr>
+            <tr>
+                <td><strong>S2-W8-04</strong></td>
+                <td>SSE Events for Async Job</td>
+                <td class="build">Build (+ demo conditional)</td>
+                <td><span class="badge badge-build">BUILD</span></td>
+            </tr>
+            <tr>
+                <td><strong>S2-W8-12</strong></td>
+                <td>OpenCV Part 2 — Query + Extract Frame</td>
+                <td class="skip">Skip for demo</td>
+                <td><span class="badge badge-skip">SKIP</span></td>
+            </tr>
+            <tr>
+                <td><strong>S2-W8-13</strong></td>
+                <td>OpenCV Part 2 — Save to GCS + Update DB</td>
+                <td class="skip">Skip for demo</td>
+                <td><span class="badge badge-skip">SKIP</span></td>
+            </tr>
+            <tr>
+                <td><strong>S3-W8-04</strong></td>
+                <td>OpenCV Part 2 — Annotate Frame (ST6)</td>
+                <td class="prefill">Run offline (pre-demo)</td>
+                <td><span class="badge badge-prefill">PRE-FILL</span></td>
+            </tr>
+            <tr>
+                <td><strong>S3-W8-05</strong></td>
+                <td>OpenCV Part 2 — Error Handling (ST8)</td>
+                <td class="skip">Skip for demo</td>
+                <td><span class="badge badge-skip">SKIP</span></td>
+            </tr>
+            <tr>
+                <td><strong>S3-W8-06</strong></td>
+                <td>OpenCV Part 2 — E2E Testing + Deploy (ST9–ST10)</td>
+                <td class="skip">Skip for demo</td>
+                <td><span class="badge badge-skip">SKIP</span></td>
+            </tr>
+            <tr>
+                <td><strong>S3-W7-04</strong></td>
+                <td>Real User Data — 2 Users × 5–7 Videos</td>
+                <td class="prefill">Use for pre-compute</td>
+                <td><span class="badge badge-prefill">PRE-FILL</span></td>
+            </tr>
+            <tr>
+                <td><strong>S3-W8-03</strong></td>
+                <td>Test Data — Seeding from S3-W7-04 Videos</td>
+                <td class="prefill">Create demo config</td>
+                <td><span class="badge badge-prefill">PRE-FILL</span></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="footnote">
+        <strong>Key:</strong>
+        <span class="badge badge-build">BUILD</span> = Implement in Week 8
+        <span class="badge badge-prefill">PRE-FILL</span> = Run offline before demo day
+        <span class="badge badge-skip">SKIP</span> = Deferred to post-demo work
+    </div>
+</div>
+
+<!-- EFFORT & TIMELINE -->
+<div class="section">
+    <h2>Effort Breakdown</h2>
+
+    <h3>Demo Prep Timeline (Before Demo Day)</h3>
+    <div class="timeline">
+        <div class="timeline-item complete">
+            <div class="timeline-label">Day 1 (May 27–28)</div>
+            <div class="timeline-text"><strong>Select + Prepare Demo Videos</strong><br>Pick 3–5 Goblet Squat videos with varied form quality (good, average, bad). Download locally.</div>
+        </div>
+        <div class="timeline-item complete">
+            <div class="timeline-label">Day 1–2</div>
+            <div class="timeline-text"><strong>Run Pre-Compute Pipeline</strong><br>For each video: MediaPipe (15 min) + Haiku Call (5 min) + OpenCV Part 2 (10 min) = ~30 min per video. For 4 videos = ~2 hours. Upload annotated frames to GCS.</div>
+        </div>
+        <div class="timeline-item">
+            <div class="timeline-label">Day 2–3</div>
+            <div class="timeline-text"><strong>Create Demo Config + SSE Event Sequences</strong><br>Document video hashes, analysis IDs, event timing, result URLs in DEMO_VIDEOS config. ~1 hour to create 4 entries with realistic event delays.</div>
+        </div>
+        <div class="timeline-item">
+            <div class="timeline-label">Day 3 (May 29)</div>
+            <div class="timeline-text"><strong>Week 8 Build: Demo Upload Handler</strong><br>Squad 2 implements hash recognition + SSE replayer conditional logic. ~4 hours + testing.</div>
+        </div>
+        <div class="timeline-item">
+            <div class="timeline-label">May 29–30</div>
+            <div class="timeline-text"><strong>E2E Testing + Refinement</strong><br>Upload demo videos locally, verify event sequence, confirm frontend displays results. Tweak event delays for smooth UX.</div>
+        </div>
+    </div>
+
+    <div class="stats-grid" style="margin-top: 20px;">
+        <div class="stat-card">
+            <div class="stat-value">2h</div>
+            <div class="stat-label">Pre-Compute (4 videos)</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">1h</div>
+            <div class="stat-label">Demo Config Creation</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">4h</div>
+            <div class="stat-label">Backend Implementation</div>
+        </div>
+    </div>
+</div>
+
+<!-- DECISION: FULL REPLAY VS HYBRID -->
+<div class="section warning">
+    <h2>Decision Point: Full Replay vs. Hybrid Mode</h2>
+    <p style="margin-bottom: 16px;">Two approaches to demo mode. <strong>Which fits your narrative better?</strong></p>
+
+    <div class="grid-2">
+        <div class="decision-box option1">
+            <div class="decision-title">Option A: Full Replay (Instant)</div>
+            <p style="font-size: 12px; color: #94a3b8; margin-bottom: 12px;">
+                All results (MediaPipe, Haiku, OpenCV) are pre-computed. Upload video → backend replays event sequence with pre-built results in 10–15 seconds.
+            </p>
+            <div class="task-list" style="margin: 12px 0;">
+                <div style="font-size: 11px; color: #60a5fa; font-weight: 600; margin-bottom: 8px;">Pros:</div>
+                <div style="font-size: 11px; color: #94a3b8;">✓ Guaranteed fast (no real processing)</div>
+                <div style="font-size: 11px; color: #94a3b8;">✓ No code to debug during demo</div>
+                <div style="font-size: 11px; color: #94a3b8;">✓ Full focus on visual output quality</div>
+            </div>
+            <div class="task-list">
+                <div style="font-size: 11px; color: #f87171; font-weight: 600; margin-bottom: 8px;">Cons:</div>
+                <div style="font-size: 11px; color: #94a3b8;">✗ Doesn't show real MediaPipe accuracy</div>
+                <div style="font-size: 11px; color: #94a3b8;">✗ If someone asks "what's my score?", it's hardcoded</div>
+            </div>
+        </div>
+
+        <div class="decision-box option2">
+            <div class="decision-title">Option B: Hybrid (Real + Pre-Built)</div>
+            <p style="font-size: 12px; color: #94a3b8; margin-bottom: 12px;">
+                Run real MediaPipe + Haiku at demo time (~5–8 sec each), but use pre-built OpenCV annotated frame. Results are real, but visual finishes instantly.
+            </p>
+            <div class="task-list" style="margin: 12px 0;">
+                <div style="font-size: 11px; color: #4ade80; font-weight: 600; margin-bottom: 8px;">Pros:</div>
+                <div style="font-size: 11px; color: #94a3b8;">✓ Real form analysis (actual MediaPipe output)</div>
+                <div style="font-size: 11px; color: #94a3b8;">✓ Can answer "why is the score X?"</div>
+                <div style="font-size: 11px; color: #94a3b8;">✓ Demonstrates real pipeline accuracy</div>
+            </div>
+            <div class="task-list">
+                <div style="font-size: 11px; color: #f87171; font-weight: 600; margin-bottom: 8px;">Cons:</div>
+                <div style="font-size: 11px; color: #94a3b8;">✗ Still ~10–15 sec total (real processing time)</div>
+                <div style="font-size: 11px; color: #94a3b8;">✗ More code to test (MediaPipe + Haiku calls)</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="discussion-prompt">
+        <div class="discussion-prompt-title">❓ Team Discussion</div>
+        <p style="font-size: 12px; color: #d8b4fe;">
+            Which approach aligns with your demo story? Are you showing "here's what real analysis looks like" (Hybrid), or "here's the polished end-to-end experience" (Full Replay)?
+        </p>
+    </div>
+</div>
+
+<!-- DEMO VIDEO SOURCING -->
+<div class="section">
+    <h2>Demo Video Selection</h2>
+    <p>Select 3–5 Goblet Squat videos with varied form quality:</p>
+    <ul style="font-size: 12px; color: #94a3b8; margin-left: 20px;">
+        <li style="margin-bottom: 8px;"><strong>Excellent Form:</strong> Clean execution, knees tracking, good depth (~85+ score)</li>
+        <li style="margin-bottom: 8px;"><strong>Common Fault:</strong> Knee valgus or limited dorsiflexion (~65–70 score)</li>
+        <li style="margin-bottom: 8px;"><strong>Form Issue:</strong> Shallow squat, no parallel (~60 score)</li>
+    </ul>
+    <p style="margin-top: 16px; font-size: 12px; color: #94a3b8;">
+        <strong>Source:</strong> Use S3-W7-04 real user data, record fresh from team, or use existing test footage.
+    </p>
+</div>
+
+<!-- IMPLEMENTATION SUMMARY -->
+<div class="section">
+    <h2>Implementation Summary</h2>
+
+    <h3>Backend Implementation (Squad 2, ~4 hours)</h3>
+    <div class="checklist">
+        <div class="checklist-item">
+            <div class="checklist-box"></div>
+            <div style="flex: 1;"><strong>Add annotated_frame_url column</strong> to user_profiles table and pre-populate for demo users</div>
+        </div>
+        <div class="checklist-item">
+            <div class="checklist-box"></div>
+            <div style="flex: 1;"><strong>Implement frame lookup logic</strong> in Results endpoint: query user_profiles first, fallback to form_analysis_results</div>
+        </div>
+        <div class="checklist-item">
+            <div class="checklist-box"></div>
+            <div style="flex: 1;"><strong>Test end-to-end</strong> with demo videos to verify annotated frames display correctly</div>
+        </div>
+    </div>
+
+    <h3 style="margin-top: 20px;">Pre-Demo Prep (Offline, ~2–3 hours)</h3>
+    <div class="checklist">
+        <div class="checklist-item">
+            <div class="checklist-box"></div>
+            <div style="flex: 1;">Run MediaPipe + Haiku + OpenCV Part 2 on 3–5 demo videos offline</div>
+        </div>
+        <div class="checklist-item">
+            <div class="checklist-box"></div>
+            <div style="flex: 1;">Save annotated frames to GCS with documented URLs</div>
+        </div>
+        <div class="checklist-item">
+            <div class="checklist-box"></div>
+            <div style="flex: 1;">Populate user_profiles with GCS URLs before demo day</div>
+        </div>
+    </div>
+
+    <h3 style="margin-top: 20px;">Demo Day Checklist</h3>
+    <div class="checklist">
+        <div class="checklist-item">
+            <div class="checklist-box"></div>
+            <div style="flex: 1;">Bring demo videos as backup (USB/laptop)</div>
+        </div>
+        <div class="checklist-item">
+            <div class="checklist-box"></div>
+            <div style="flex: 1;">Test upload 30 minutes before attendees arrive</div>
+        </div>
+        <div class="checklist-item">
+            <div class="checklist-box"></div>
+            <div style="flex: 1;">Have fallback: error message or run real pipeline for non-demo uploads</div>
+        </div>
+    </div>
+</div>
+
+<!-- RISKS -->
+<div class="section">
+    <h2>Key Risks</h2>
+
+    <div class="grid-2">
+        <div class="card">
+            <div class="card-title">⚠️ Non-Demo Upload</div>
+            <div class="card-desc">
+                Attendee uploads non-demo video → no pre-built results. <strong>Mitigation:</strong> Provide demo videos on USB or show friendly error message.
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">⚠️ SSE Event Timing</div>
+            <div class="card-desc">
+                Events fire too fast/slow or in wrong order. <strong>Mitigation:</strong> Test extensively on May 29–30; adjust timing as needed.
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">⚠️ GCS URL Issues</div>
+            <div class="card-desc">
+                Pre-built frame URL wrong or corrupted. <strong>Mitigation:</strong> Verify all URLs 48 hours before demo; keep local backup.
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">⚠️ Performance Issues</div>
+            <div class="card-desc">
+                Pipeline still slow (real Haiku call, latency). <strong>Mitigation:</strong> Use Full Replay mode to guarantee fast demo.
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- AFTER DEMO -->
+<div class="section">
+    <h2>Post-Demo Day (Week 9+)</h2>
+
+    <p style="margin-bottom: 12px;">
+        This demo strategy buys time for UI/UX polish in Week 8. After the demo, <strong>delete the demo mode code and implement the real async OpenCV Part 2 pipeline for production.</strong>
+    </p>
+
+    <div class="checklist">
+        <div class="checklist-item">
+            <div class="checklist-box"></div>
+            <div style="flex: 1;"><strong>S2-W8-12/13:</strong> Real OpenCV Part 2 — query video, extract frame, save to GCS, update DB</div>
+        </div>
+        <div class="checklist-item">
+            <div class="checklist-box"></div>
+            <div style="flex: 1;"><strong>S3-W8-04 to S3-W8-06:</strong> Error handling, E2E testing, deployment</div>
+        </div>
+        <div class="checklist-item">
+            <div class="checklist-box"></div>
+            <div style="flex: 1;"><strong>Remove demo mode conditional</strong> from backend — delete hash matching and SSE replayer logic</div>
+        </div>
+    </div>
+</div>
+
+<!-- KEY DECISIONS -->
+<div class="section discussion-prompt">
+    <div class="discussion-prompt-title">📋 Key Decisions for Team Sync</div>
+    <p style="font-size: 12px; color: #d8b4fe; margin-bottom: 12px;">
+        <strong>1. Full Replay vs. Hybrid?</strong> Do you want all results pre-computed (guaranteed fast, but pre-scripted) or run real MediaPipe/Haiku and pre-compute only the annotated frame?
+    </p>
+    <p style="font-size: 12px; color: #d8b4fe; margin-bottom: 12px;">
+        <strong>2. Demo video source:</strong> Use S3-W7-04 real user data, or record fresh videos from team?
+    </p>
+    <p style="font-size: 12px; color: #d8b4fe;">
+        <strong>3. Non-demo uploads:</strong> Error with a message, or run the real pipeline (slower)?
+    </p>
+</div>
+
+<!-- FOOTER -->
+<div style="margin-top: 60px; padding-top: 20px; border-top: 1px solid #1e2433; font-size: 11px; color: #64748b; text-align: center;">
+    <p>Kinetic Demo Day Strategy · May 25, 2026</p>
+    <p style="margin-top: 4px;">For team discussion and alignment before implementing Week 8 scope</p>
+</div>
+
+</body>
+</html>
