@@ -84,6 +84,8 @@ h1 { font-size: 28px; font-weight: 800; color: #f8fafc; margin-bottom: 8px; }
 .badge-todo { background: #0d1117; color: #64748b; border: 1px solid #1e2433; }
 .badge-done { background: #0a1f12; color: #4ade80; border: 1px solid #14532d; }
 .badge-progress { background: #1a1205; color: #fbbf24; border: 1px solid #92400e; }
+.badge-deferred { background: #0d0d0d; color: #475569; border: 1px solid #2d3748; font-style: italic; }
+.badge-cancelled { background: #1a0a0a; color: #ef4444; border: 1px solid #7f1d1d; text-decoration: line-through; }
 
 .task-id {
   font-family: 'SF Mono', monospace;
@@ -237,10 +239,11 @@ h1 { font-size: 28px; font-weight: 800; color: #f8fafc; margin-bottom: 8px; }
 <body>
 
 <h1>Kinetic AI — Week 8 ClickUp Tasks</h1>
-<p class="meta"><strong>Sprint:</strong> Week 8 — May 25–31 &nbsp;·&nbsp; <strong>Theme:</strong> Progression + Lifecycle + OpenCV Part 2</p>
+<p class="meta"><strong>Sprint:</strong> Week 8 — May 25–31 &nbsp;·&nbsp; <strong>Theme:</strong> Progression + Lifecycle</p>
 
 <div class="goal">
-  <strong>Week Goal:</strong> Haiku Call 2 async job pipeline live • Progression page renders weight recommendations with past 3 sessions • Home + Profile screens connected to 3 demo user IDs • Test data seeded for longitudinal testing • OpenCV Part 2 frame annotation pipeline planned and tasked
+  <strong>Week Goal:</strong> Haiku Call 2 async pipeline live (session-to-session progression analysis) • Progression tab renders with two loading states: computed data instant, AI verdict async • GET /progression/:session_id endpoint returns full comparison shape • progression_results table live • Home + Profile screens connected to 3 demo user IDs • Test data seeded + progress_ladder_image_url seeded in user_profile<br><br>
+  <strong style="color:#ef4444;">Out of demo scope:</strong> OpenCV Part 2 (frame annotation pipeline) — deferred to post-demo. All related tasks tracked in the Post-Demo Backlog section below.
 </div>
 
 <!-- ============ SQUAD 1 ============ -->
@@ -248,7 +251,7 @@ h1 { font-size: 28px; font-weight: 800; color: #f8fafc; margin-bottom: 8px; }
   <div class="squad-header">
     <div class="squad-dot s1"></div>
     <div class="squad-title">Squad 1 — Frontend</div>
-    <div class="squad-meta">3 tasks</div>
+    <div class="squad-meta">4 tasks</div>
   </div>
 
   <!-- S1-W8-01a -->
@@ -256,22 +259,36 @@ h1 { font-size: 28px; font-weight: 800; color: #f8fafc; margin-bottom: 8px; }
     <div class="task-header-bar">
       <div class="task-badge badge-todo">◯ To Do</div>
       <div class="task-id">S1-W8-01a</div>
-      <div class="task-title">Progression Page — Display Logic</div>
+      <div class="task-title">Progression Tab — Display Logic (All Components)</div>
       <div class="task-priority priority-high">HIGH</div>
     </div>
     <div class="task-body">
       <div class="section">
         <div class="section-title">Description</div>
         <div class="section-content">
-          Build the progression metrics display view that shows users their weight progression history and recommendations. The page should poll the job status endpoint every 2 seconds while Haiku Call 2 is running, and display final results once the async job completes.
+          Build the Progression tab — the second tab on the Results screen alongside Analytics. Calls GET /progression/:session_id once on tab open. Renders in two distinct loading phases.<br><br>
+          <strong>Phase 1 — Computed data (renders immediately from DB, no AI wait):</strong>
           <ul class="desc-list">
-            <li>Poll GET /form_analysis/{id}/status every 2 seconds during job execution</li>
-            <li>Display last 3 sessions with form scores, weights, and dates in a table or card layout</li>
-            <li>Show weight progression recommendation (hold / increase by X lbs / decrease) once job completes</li>
-            <li>Render session-to-session improvement trend (score comparison)</li>
-            <li>Show loading/placeholder state while Call 2 is queued or running</li>
-            <li>Display final results when job_status = 'complete'</li>
-            <li>Handle job failures: show "Unable to generate recommendation" message</li>
+            <li><strong>Session comparison strip:</strong> Two thumbnail cards side-by-side (current vs previous session) with date label and overall score badge</li>
+            <li><strong>"We've Told You" card:</strong> Always render — display previous session's next_session_focus as bulleted list (2–3 items from DB field, no AI call needed)</li>
+            <li><strong>Key Insights rows (×4):</strong> Posture, Stability, Movement Quality, Range of Motion — each row shows: parameter name, score from session A → score from session B, colored arrow (green ↑ red ↓ grey —) driven by numeric delta. Arrow is always computed — it never changes. Phase 2 adds a short coaching sentence beneath each row (posture_trend / stability_trend / range_of_motion_trend / movement_quality_trend text from Haiku Call 2). Expandable via chevron.</li>
+            <li><strong>Rep-by-Rep chart:</strong> Dual-line graph — "Last Session" vs "This Session" rep scores overlaid. X-axis = rep number, Y-axis = score (0–100). Show spread badge (e.g. "5 PT SPREAD") = max(rep_scores) − min(rep_scores) for current session</li>
+            <li><strong>Progress Ladder:</strong> Render as a single static image — src from progression.progress_ladder_image_url (stored in user_profile). No data layer, no dot logic.</li>
+            <li><strong>Form History:</strong> Past 3 sessions <em>excluding the current session</em> as cards — date, overall score badge, weight used, verdict (short coaching note). If annotated_frame_url is non-null: show annotated frame image; if null (demo): show a placeholder. Capped at 3, no scroll/load more.</li>
+          </ul>
+          <strong>Phase 2 — AI content (renders after haiku_call_2_complete SSE event):</strong>
+          <ul class="desc-list">
+            <li><strong>Form Score donut text:</strong> Show overall score with progress direction badge ("Progress ↑ / ↓ / Stable") — direction from progression.ai_verdict.progress_direction</li>
+            <li><strong>AI Verdict card:</strong> Full-width text card — progression.ai_verdict.progression_verdict</li>
+            <li><strong>Your Focus This Week card:</strong> Icon + single string — progression.ai_verdict.focus_this_week</li>
+            <li><strong>Key Insights trend sentences:</strong> Below each row's score comparison, show the coaching observation text from Haiku — posture_trend / stability_trend / range_of_motion_trend / movement_quality_trend. Each is a short sentence (max 80 chars), e.g. "Your posture has been consistent across your last 3 sessions." These appear only after SSE fires — show skeleton text placeholder while loading.</li>
+            <li>While AI content is loading: show skeleton loaders for the verdict card, focus card, and trend sentences. Key Insights arrows remain visible (computed from delta — unaffected by Haiku).</li>
+          </ul>
+          <strong>Edge case — no previous session (two triggers, same locked UI):</strong>
+          <ul class="desc-list">
+            <li><strong>Real-time path:</strong> SSE stream emits <code>haiku_call_2_no_history</code> → resolve skeleton loaders immediately → show locked state: "Complete another session to unlock your progress view"</li>
+            <li><strong>Late-open path:</strong> User opens Progression tab after SSE stream has closed → GET /progression/:session_id returns <code>available: false</code> → show same locked state</li>
+            <li>Both paths render the same locked UI — no broken layout, no error state</li>
           </ul>
         </div>
       </div>
@@ -279,23 +296,30 @@ h1 { font-size: 28px; font-weight: 800; color: #f8fafc; margin-bottom: 8px; }
       <div class="section">
         <div class="section-title">Acceptance Criteria</div>
         <ul class="criteria-list">
-          <li>Progression page successfully polls GET /form_analysis/{id}/status every 2 seconds</li>
-          <li>Past 3 sessions render correctly: form_score, weight, timestamp all visible</li>
-          <li>Weight recommendation displays with clear hold/progress/decrease messaging</li>
-          <li>Score trend calculated and displayed (e.g., "Score improved 5 points from last session")</li>
-          <li>Loading state shows while job_status is queued/running</li>
-          <li>Final results display instantly when job_status = complete</li>
-          <li>Error state shows meaningful message if job fails (not blank/broken UI)</li>
-          <li>Page works on desktop (1200px+) — mobile responsive handling in S1-W8-01b</li>
+          <li>GET /progression/:session_id called once on tab open — no polling</li>
+          <li>All Phase 1 components render immediately without waiting for AI verdict</li>
+          <li>Session comparison strip shows correct dates and scores for current vs previous session</li>
+          <li>"We've Told You" card always shows when available = true; renders all 2–3 bullet points from previous_next_session_focus</li>
+          <li>Key Insights: all 4 parameters shown with correct deltas and correct arrow direction/color</li>
+          <li>Rep chart: both session lines render from rep_scores arrays; spread badge correct</li>
+          <li>Progress Ladder: static image renders from progress_ladder_image_url — no broken image state for the 3 demo users</li>
+          <li>Form History: up to 3 past sessions shown, <strong>excluding the current session</strong>; each card displays date, overall score, weight used, verdict</li>
+          <li>Form History: annotated_frame_url null for demo — placeholder renders without breaking card layout</li>
+          <li>Phase 2 components show skeleton loaders until haiku_call_2_complete SSE fires</li>
+          <li>AI Verdict card, Focus This Week, and progress direction badge all populate correctly on SSE receipt</li>
+          <li>haiku_call_2_no_history SSE received → skeleton loaders resolve immediately → locked state shown ("Complete another session to unlock your progress view")</li>
+          <li>GET /progression returns available=false (late-open path) → same locked state rendered — no broken layout</li>
+          <li>Error state if Haiku Call 2 fails: show "Unable to generate progression summary" in the AI content area — Phase 1 remains visible</li>
         </ul>
       </div>
 
       <div class="section">
         <div class="section-title">Dependencies</div>
         <div class="section-content">
-          <span class="dep-badge">DEPENDS ON</span> S2-W8-03 (Job Status Endpoint must be live)<br>
-          <span class="dep-badge">DEPENDS ON</span> S2-W8-02 (Haiku Call 2 async job pipeline)<br>
-          <span class="dep-badge">DEPENDS ON</span> S3-W8-02 (Test data with past sessions for realistic display)
+          <span class="dep-badge">DEPENDS ON</span> S2-W8-15 (GET /progression/:session_id endpoint)<br>
+          <span class="dep-badge">DEPENDS ON</span> S2-W8-02 (Haiku Call 2 async job — generates AI verdict fields)<br>
+          <span class="dep-badge">DEPENDS ON</span> S2-W8-04 (SSE haiku_call_2_complete event to trigger Phase 2 render)<br>
+          <span class="dep-badge">DEPENDS ON</span> S3-W8-02 (Test data + progress_ladder_image_url seeded for 3 users)
         </div>
       </div>
     </div>
@@ -306,21 +330,23 @@ h1 { font-size: 28px; font-weight: 800; color: #f8fafc; margin-bottom: 8px; }
     <div class="task-header-bar">
       <div class="task-badge badge-todo">◯ To Do</div>
       <div class="task-id">S1-W8-01b</div>
-      <div class="task-title">Progression Page — Styling + Animations</div>
+      <div class="task-title">Progression Tab — Styling + Skeleton States</div>
       <div class="task-priority priority-high">HIGH</div>
     </div>
     <div class="task-body">
       <div class="section">
         <div class="section-title">Description</div>
         <div class="section-content">
-          Apply CSS styling and animations to the progression page. Build visual components for weight progression metrics and ensure full mobile responsiveness across all screen sizes.
+          Style all Progression tab components to match the mockup. Build skeleton loader states for Phase 2 AI content. Ensure mobile responsiveness.
           <ul class="desc-list">
-            <li>Design and style weight progression chart (weight vs form score, X-axis = sessions, Y-axis = score)</li>
-            <li>Create recommendation callout box with color coding: hold = yellow, progress = green, decrease = orange</li>
-            <li>Add smooth animations when metrics update (fade-in, slide-in effects)</li>
-            <li>Implement mobile breakpoints: responsive grid for <1200px, full stack layout for <768px</li>
-            <li>Ensure session history table is scrollable on small screens</li>
-            <li>Accessibility: proper contrast ratios, alt text, keyboard navigation</li>
+            <li><strong>Key Insights rows:</strong> Coloured circle icon, parameter name, score A → B, coloured arrow badge (green ↑ / red ↓ / grey —), expandable chevron</li>
+            <li><strong>Rep-by-Rep chart:</strong> Two overlaid lines — "Last Session" dashed, "This Session" solid. Legend bottom-left. Spread badge top-right (purple pill). Smooth curve.</li>
+            <li><strong>Session comparison strip:</strong> Two thumbnail cards with date label and score badge. Current session visually highlighted.</li>
+            <li><strong>"We've Told You" card:</strong> Distinct callout style — left border accent, italic header, bulleted body text</li>
+            <li><strong>Progress Ladder image block:</strong> Full-width image container, rounded corners. Renders seeded image as-is — no data overlay.</li>
+            <li><strong>Skeleton loaders (Phase 2):</strong> Animated shimmer for Form Score donut text, AI Verdict card, Your Focus This Week card. Skeleton height matches real content height.</li>
+            <li><strong>Progress direction badge:</strong> "Progress ↑" = green pill, "Progress ↓" = red pill, "Stable" = grey pill. Sits on Form Score donut.</li>
+            <li>Mobile: full single-column stack. Rep chart scrollable horizontally if reps &gt; 8.</li>
           </ul>
         </div>
       </div>
@@ -328,21 +354,21 @@ h1 { font-size: 28px; font-weight: 800; color: #f8fafc; margin-bottom: 8px; }
       <div class="section">
         <div class="section-title">Acceptance Criteria</div>
         <ul class="criteria-list">
-          <li>Weight progression chart renders with correct data points and trends</li>
-          <li>Recommendation callout shows correct color: green for increase, yellow for hold, orange for decrease</li>
-          <li>Animations smooth (60fps, no jank) on metric updates</li>
-          <li>Desktop layout (1200px+): multi-column with chart on left, metrics on right</li>
-          <li>Tablet layout (768px–1200px): 2-column, chart and metrics stack vertically</li>
-          <li>Mobile layout (<768px): full-width single column, chart below metrics</li>
-          <li>All text readable on mobile (font-size minimum 12px for body text)</li>
-          <li>No visual regressions in existing pages after CSS changes</li>
+          <li>Key Insights arrow colors correct: green positive delta, red negative, grey zero</li>
+          <li>Rep chart dual-line renders — both sessions visible and distinguishable</li>
+          <li>Spread badge displays correct integer (max − min of current session rep_scores)</li>
+          <li>Progress Ladder image renders at full width, no distortion</li>
+          <li>Skeleton loaders animate (shimmer) while Phase 2 loads; disappear and fade in real content on SSE receipt</li>
+          <li>Progress direction badge correct color and label for all three states</li>
+          <li>Mobile: all components single-column, no horizontal overflow except chart</li>
+          <li>No visual regressions on Analytics tab or other existing screens</li>
         </ul>
       </div>
 
       <div class="section">
         <div class="section-title">Dependencies</div>
         <div class="section-content">
-          <span class="dep-badge">DEPENDS ON</span> S1-W8-01a (Display logic complete, styling applied on top)
+          <span class="dep-badge">DEPENDS ON</span> S1-W8-01a (Display logic complete — styling applied on top)
         </div>
       </div>
     </div>
@@ -395,6 +421,132 @@ h1 { font-size: 28px; font-weight: 800; color: #f8fafc; margin-bottom: 8px; }
       </div>
     </div>
   </div>
+
+  <!-- S1-W8-03 -->
+  <div class="task">
+    <div class="task-header-bar">
+      <div class="task-badge badge-todo">◯ To Do</div>
+      <div class="task-id">S1-W8-03</div>
+      <div class="task-title">user_profile Schema + Render annotated_frame_url &amp; ladder_url on Results &amp; Home Screens</div>
+      <div class="task-priority priority-medium">MEDIUM</div>
+    </div>
+    <div class="task-body">
+
+      <div class="section">
+        <div class="section-title">Overview</div>
+        <div class="section-content">
+          Two-part task. Part 1 adds the required columns to <code>user_profile</code>. Part 2 fetches those URLs and renders them on the frontend. Both can be worked in parallel once Part 1 migration is applied.
+        </div>
+      </div>
+
+      <!-- PART 1 -->
+      <div class="section">
+        <div class="section-title">Part 1 — DB Schema: Add Columns to user_profile</div>
+        <div class="section-content">
+          Add two TEXT columns to the <code>user_profile</code> table. Both are nullable — existing rows are unaffected.<br><br>
+          <strong>Columns to add:</strong>
+          <ul class="desc-list">
+            <li><code>annotated_frame_url</code> TEXT — GCS URL of the annotated worst-rep frame for the user's most recent session. Manually populated for demo (see S3-W8-04). Post-demo: written automatically by the OpenCV Part 2 pipeline.</li>
+            <li><code>ladder_url</code> TEXT — GCS URL of the static progress ladder graph image (one per demo user). Manually uploaded for demo. Used on both the Home screen and the Progression tab.</li>
+          </ul>
+          <strong>Migration SQL:</strong>
+          <pre style="background: #0a0f18; padding: 10px; border-radius: 4px; font-size: 11px; color: #a5f3fc; overflow-x: auto;">ALTER TABLE user_profile
+ADD COLUMN annotated_frame_url TEXT DEFAULT NULL,
+ADD COLUMN ladder_url TEXT DEFAULT NULL;</pre>
+          <strong>Note:</strong> S3-W8-03 already adds <code>progress_ladder_image_url</code> to <code>user_profile</code>. Confirm with S3 whether <code>ladder_url</code> replaces that column or is added alongside it. Use whichever name is agreed, and update S2-W8-15 (GET /progression endpoint) to match.
+        </div>
+      </div>
+
+      <!-- PART 2 -->
+      <div class="section">
+        <div class="section-title">Part 2 — Frontend: Fetch &amp; Render Both URLs</div>
+        <div class="section-content">
+          <strong>One API endpoint fetches both fields in a single query:</strong>
+          <pre style="background: #0a0f18; padding: 10px; border-radius: 4px; font-size: 11px; color: #a5f3fc; overflow-x: auto;">GET /api/users/:userId/profile-images
+
+SQL:
+  SELECT annotated_frame_url, ladder_url
+  FROM user_profile
+  WHERE user_id = $1;
+
+Response:
+  {
+    "annotated_frame_url": "https://storage.googleapis.com/..." | null,
+    "ladder_url": "https://storage.googleapis.com/..." | null
+  }</pre>
+          The GCS bucket is <strong>public</strong>. No auth headers or signed URL logic needed — the browser loads both images like any standard image URL.<br><br>
+
+          <strong>annotated_frame_url — Analysis results screen:</strong><br>
+          Show after Haiku Call 1 completes. Fetch fires in parallel with Haiku Call 1 — does not wait for Haiku to finish. Placement: below or alongside form score and coaching text. Label: <strong>"Your worst rep — bottom position"</strong>.
+          <pre style="background: #0a0f18; padding: 10px; border-radius: 4px; font-size: 11px; color: #a5f3fc; overflow-x: auto;">{annotated_frame_url ? (
+  &lt;div className="annotated-frame-card"&gt;
+    &lt;p&gt;Your worst rep — bottom position&lt;/p&gt;
+    &lt;Image src={annotated_frame_url} alt="Annotated frame"
+      width={600} height={400}
+      style={{ width: '100%', height: 'auto', borderRadius: '8px' }}
+      onError={showPlaceholder}
+    /&gt;
+  &lt;/div&gt;
+) : (
+  &lt;div className="annotated-frame-placeholder"&gt;Frame not available&lt;/div&gt;
+)}</pre>
+
+          <strong>ladder_url — Home screen &amp; Progression tab:</strong><br>
+          Render as a full-width static image. No data overlay or dot logic — just the image as-is. Used in two places: (1) Progress Ladder section on the Home screen; (2) Progress Ladder block on the Progression tab (already referenced in S1-W8-01a as <code>progress_ladder_image_url</code> — use the same field, just sourced from this endpoint).
+          <pre style="background: #0a0f18; padding: 10px; border-radius: 4px; font-size: 11px; color: #a5f3fc; overflow-x: auto;">{ladder_url ? (
+  &lt;Image src={ladder_url} alt="Progress ladder"
+    width={600} height={300}
+    style={{ width: '100%', height: 'auto', borderRadius: '8px' }}
+    onError={showPlaceholder}
+  /&gt;
+) : (
+  &lt;div className="ladder-placeholder"&gt;Progress graph not yet available&lt;/div&gt;
+)}</pre>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Null / Loading States (both images)</div>
+        <div class="section-content">
+          <ul class="desc-list">
+            <li><strong>Fetch in progress:</strong> Show skeleton loader in the image area</li>
+            <li><strong>URL is null:</strong> Show a text placeholder — no broken image icon</li>
+            <li><strong>Image fails to load:</strong> Use <code>onError</code> handler to swap to placeholder — no broken image icon at any point</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Testing Without Live Data</div>
+        <div class="section-content">
+          DB population happens next week (S3-W8-04). To test now: temporarily hardcode a public image URL in the API response. Confirm both images load at full width, placeholders render when null, no broken image icons appear. Remove the hardcode once S3-W8-04 seeds the real URLs.
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Acceptance Criteria</div>
+        <ul class="criteria-list">
+          <li>Part 1: annotated_frame_url TEXT and ladder_url TEXT columns added to user_profile (nullable, no downtime)</li>
+          <li>Part 1: Column names confirmed with S3 — consistent with S3-W8-03 and S2-W8-15</li>
+          <li>Part 2: GET /api/users/:userId/profile-images endpoint returns both fields from user_profile</li>
+          <li>Part 2: annotated_frame_url renders on Analysis results screen after Haiku Call 1 — fetch fires in parallel, does not wait for Haiku</li>
+          <li>Part 2: ladder_url renders on Home screen Progress Ladder section and Progression tab Progress Ladder block</li>
+          <li>Skeleton loader shown while fetch is in progress for both images</li>
+          <li>Placeholder shown when either URL is null or image fails to load — no broken image icon at any point</li>
+          <li>No auth headers needed — GCS is public, both images load like standard image URLs</li>
+        </ul>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Dependencies</div>
+        <div class="section-content">
+          <span class="dep-badge">DEPENDS ON</span> S3-W8-04 (annotated_frame_url &amp; ladder_url populated in user_profile for demo users — needed for real image testing, not to build the logic)<br>
+          <strong style="color:#64748b; font-size:11px;">Note: this task does not depend on OpenCV Part 2 or Haiku Call 1 completing — both fields are pre-stored URLs read directly from user_profile.</strong>
+        </div>
+      </div>
+
+    </div>
+  </div>
 </div>
 
 <!-- ============ SQUAD 2 ============ -->
@@ -402,7 +554,7 @@ h1 { font-size: 28px; font-weight: 800; color: #f8fafc; margin-bottom: 8px; }
   <div class="squad-header">
     <div class="squad-dot s2"></div>
     <div class="squad-title">Squad 2 — Backend</div>
-    <div class="squad-meta">5 tasks</div>
+    <div class="squad-meta">7 tasks</div>
   </div>
 
   <!-- S2-W8-01 -->
@@ -457,55 +609,79 @@ h1 { font-size: 28px; font-weight: 800; color: #f8fafc; margin-bottom: 8px; }
     <div class="task-header-bar">
       <div class="task-badge badge-todo">◯ To Do</div>
       <div class="task-id">S2-W8-02</div>
-      <div class="task-title">Haiku Call 2 — Async Job Pipeline</div>
+      <div class="task-title">Haiku Call 2 — Async Job Pipeline (Progression Analysis)</div>
       <div class="task-priority priority-high">HIGH</div>
     </div>
     <div class="task-body">
       <div class="section">
+        <div class="section-title">Scope Note — What Changed from Earlier Draft</div>
+        <div class="section-content">
+          <strong>Trigger changed:</strong> Haiku Call 2 fires from Haiku 1 SSE event — independently and in parallel. It does NOT wait for OpenCV Part 2 (which is out of demo scope).<br>
+          <strong>MD files:</strong> S3-W8-01 (coaching rules MD files) is active. Haiku Call 2 injects these files to ground weight_recommendation in PT rules.<br>
+          <strong>Output unchanged in intent:</strong> Produces a weight progression recommendation (hold / increase / decrease) plus session comparison analysis.
+        </div>
+      </div>
+
+      <div class="section">
         <div class="section-title">Description</div>
         <div class="section-content">
-          Implement the complete async job pipeline for Haiku Call 2. This runs in the background after Haiku Call 1 completes, generating weight progression recommendations and personalized coaching.
-          <ul class="desc-list">
-            <li><strong>Job Trigger:</strong> When POST /upload completes (Haiku Call 1 done), immediately enqueue Cloud Tasks job for this analysis_id</li>
-            <li><strong>Job Worker Process:</strong>
-              <ol style="margin-top: 6px; margin-left: 16px;">
-                <li>Fetch form_analysis_results record for analysis_id</li>
-                <li>Query database for past 3 sessions for same user + exercise</li>
-                <li>Fetch 5–10 .md coaching files for progression context from S3</li>
-                <li>Assemble Haiku Call 2 prompt: current form score + weight + past session data + coaching cues</li>
-                <li>Call Claude Haiku 4.5 API with structured prompt</li>
-                <li>Parse response: progression_recommendation + coaching_output</li>
-                <li>Store result in form_analysis_results.haiku_call_2_output</li>
-                <li>Update job_status to 'complete', set completed_at timestamp</li>
-              </ol>
-            </li>
-            <li>Job timeout: 120 seconds maximum. If exceeds, mark as timeout</li>
-            <li>Implement logging at each step for debugging</li>
-          </ul>
+          <strong>Job Trigger:</strong> Fires immediately when Haiku Call 1 SSE event fires (parallel to OpenCV Part 2 — does not wait for it).<br><br>
+          <strong>Pre-condition check:</strong> Query DB for previous session (same user_id + exercise_id, ordered by created_at DESC, offset 1). If no previous session exists → write available = false to progression_results → emit <code>haiku_call_2_no_history</code> SSE event → stop job cleanly. No error state. Frontend uses this event to resolve the skeleton loader and show the appropriate empty/locked state.<br><br>
+          <strong>Job Worker Process (when previous session exists):</strong>
+          <ol style="margin-top: 6px; margin-left: 16px;">
+            <li>Fetch current session from form_analysis_results: all 4 parameter scores, overall_form_score, rep_scores[], weight_used (from form_analyses)</li>
+            <li>Fetch previous session: same fields + next_session_focus[] (for "We've Told You" context)</li>
+            <li>Assemble Haiku Call 2 prompt: both sessions' scores, both weights, previous next_session_focus. Weight progression reasoning is inline — no external MD files.</li>
+            <li>Call Claude Haiku 4.5 API</li>
+            <li>Parse 4-field response</li>
+            <li>Write to progression_results table (see S3-W8-03 for schema)</li>
+            <li>Update job_status to 'complete', emit haiku_call_2_complete SSE event with full output payload</li>
+          </ol>
+          <strong>Haiku Call 2 Output Schema (8 fields):</strong>
+          <pre style="background: #0a0f18; padding: 10px; border-radius: 4px; font-size: 11px; color: #a5f3fc; overflow-x: auto;">{
+  "progression_verdict": "2-3 sentence comparison of current vs previous session",
+  "progress_direction": "up | down | stable",
+  "weight_recommendation": {
+    "action": "hold | increase | decrease",
+    "target_weight_kg": 20.0,
+    "reason": "1 sentence explanation"
+  },
+  "focus_this_week": "Single actionable recommendation for next training day",
+  "posture_trend": "short coaching observation, max 80 chars",
+  "stability_trend": "short coaching observation, max 80 chars",
+  "range_of_motion_trend": "short coaching observation, max 80 chars",
+  "movement_quality_trend": "short coaching observation, max 80 chars"
+}</pre>
+          <strong>Weight recommendation logic Haiku reasons through:</strong> current overall score, form consistency (rep spread), whether faults improved or regressed vs previous session, and weight used in both sessions.<br><br>
+          <strong>Pipeline position:</strong> Haiku 1 SSE fires → Haiku Call 2 starts (independent, no OpenCV dependency).
         </div>
       </div>
 
       <div class="section">
         <div class="section-title">Acceptance Criteria</div>
         <ul class="criteria-list">
-          <li>Cloud Tasks job enqueued immediately when POST /upload completes</li>
-          <li>Job status transitions correctly: queued → running → complete</li>
-          <li>Past 3 sessions retrieved correctly from database</li>
-          <li>MD coaching files loaded from S3 without errors</li>
-          <li>Haiku 4.5 API called with complete context (current + history + coaching)</li>
-          <li>Progression recommendation and coaching output stored in haiku_call_2_output JSONB</li>
-          <li>Job completes within 120 seconds (test with realistic video sizes)</li>
-          <li>If timeout, job_status marked as 'timeout' with error message</li>
-          <li>Logs show job start, context fetch, API call, result storage (all timestamps)</li>
-          <li>Test with at least 3 different form videos to confirm end-to-end flow</li>
+          <li>Job enqueued immediately on Haiku 1 SSE event</li>
+          <li>If no previous session: progression_results row written with available=false AND <code>haiku_call_2_no_history</code> SSE event emitted — job exits cleanly, no error state</li>
+          <li>Previous session correctly identified: same user_id + exercise_id, immediately prior by created_at</li>
+          <li>Haiku prompt includes: both sessions' 4 parameter scores + overall, both weights, previous next_session_focus</li>
+          <li>Haiku returns all 8 fields: progression_verdict, progress_direction, weight_recommendation (action + target_weight_kg + reason), focus_this_week, posture_trend, stability_trend, range_of_motion_trend, movement_quality_trend</li>
+          <li>posture_trend, stability_trend, range_of_motion_trend, movement_quality_trend are text observation sentences (max 80 chars each) — not enums</li>
+          <li>weight_recommendation.action is always one of: hold | increase | decrease</li>
+          <li>Result written to progression_results table (S3-W8-03 schema)</li>
+          <li>haiku_call_2_complete SSE event emitted with full output payload</li>
+          <li>Job status transitions: queued → running → complete (or failed on error)</li>
+          <li>Job completes within 90 seconds</li>
+          <li>Tested with 3 demo users across at least 2 sessions each</li>
         </ul>
       </div>
 
       <div class="section">
         <div class="section-title">Dependencies</div>
         <div class="section-content">
-          <span class="dep-badge">DEPENDS ON</span> S2-W8-01 (Schema updated with job columns)<br>
-          <span class="dep-badge">DEPENDS ON</span> S3-W8-01 (MD coaching files available in S3)
+          <span class="dep-badge">DEPENDS ON</span> S2-W8-01 (Schema with job tracking columns)<br>
+          <span class="dep-badge">DEPENDS ON</span> S3-W8-03 (progression_results table must exist to write output)<br>
+          <span class="dep-badge">DEPENDS ON</span> S3-W8-01 (MD coaching files injected into Haiku Call 2 prompt)<br>
+          <span class="dep-badge">DEPENDS ON</span> S3-W8-05 (Haiku Call 2 prompt template must exist before job can run)
         </div>
       </div>
     </div>
@@ -523,9 +699,10 @@ h1 { font-size: 28px; font-weight: 800; color: #f8fafc; margin-bottom: 8px; }
       <div class="section">
         <div class="section-title">Description</div>
         <div class="section-content">
-          GET /form_analysis/{id}/haiku-status — Return real-time status of Haiku Call 2 async job.
+          GET /form_analysis/{id}/haiku-status — Return real-time status of Haiku Call 2 async job. Updated output shape to match new progression analysis scope.
           <ul class="desc-list">
-            <li>Returns: <code>haiku_call_2_status, queued_at, started_at, completed_at, error, haiku_call_2_output</code></li>
+            <li>Returns: <code>haiku_call_2_status, queued_at, started_at, completed_at, error</code></li>
+            <li>When status = complete: also returns full Haiku Call 2 output — all 8 fields per <strong>S2-W8-02 output schema</strong></li>
             <li>Status values: queued | running | complete | failed</li>
             <li>Response time &lt;50ms</li>
           </ul>
@@ -535,7 +712,7 @@ h1 { font-size: 28px; font-weight: 800; color: #f8fafc; margin-bottom: 8px; }
         <div class="section-title">Acceptance Criteria</div>
         <ul class="criteria-list">
           <li>Returns correct status at each stage</li>
-          <li>Includes haiku_call_2_output (weight recommendation) when status = complete</li>
+          <li>When status = complete: returns all 8 fields per S2-W8-02 output schema</li>
           <li>Includes error message when status = failed</li>
           <li>Response time &lt;50ms</li>
         </ul>
@@ -583,17 +760,19 @@ h1 { font-size: 28px; font-weight: 800; color: #f8fafc; margin-bottom: 8px; }
       <div class="section">
         <div class="section-title">Scope: New SSE Event Types (Haiku Call 2)</div>
         <div class="section-content">
-          <strong>4 new events to emit:</strong>
+          <strong>5 new events to emit:</strong>
           <ul class="desc-list">
             <li><code>haiku_call_2_queued</code> — Progression job enqueued (with initial ETA)</li>
             <li><code>haiku_call_2_started</code> — Progression job execution began</li>
             <li><code>haiku_call_2_complete</code> — Progression job finished; output ready</li>
+            <li><code>haiku_call_2_no_history</code> — Pre-condition check found no previous session; progression unavailable. Frontend resolves skeleton loaders and shows appropriate empty/locked state.</li>
             <li><code>job_failed</code> — Job failed (for haiku_call_2); error reason included</li>
           </ul>
           <strong>Event emission points:</strong>
           <ul class="desc-list">
             <li>When Haiku Call 1 completes, enqueue Haiku Call 2 → emit <code>haiku_call_2_queued</code></li>
             <li>When job enters <code>running</code> state → emit <code>haiku_call_2_started</code></li>
+            <li>Pre-condition check: no previous session found → emit <code>haiku_call_2_no_history</code> (job ends here cleanly)</li>
             <li>When job completes → emit <code>haiku_call_2_complete</code> with output payload</li>
             <li>On failure → emit <code>job_failed</code> with error_code + job_type="haiku_call_2"</li>
           </ul>
@@ -615,7 +794,7 @@ h1 { font-size: 28px; font-weight: 800; color: #f8fafc; margin-bottom: 8px; }
         <div class="section-content">
           <strong>1. Define Event Contract</strong>
           <ul class="desc-list">
-            <li>Document all 4 new event types in <code>FE_SSE_and_Errors.md</code> (update from W7)</li>
+            <li>Document all 5 new event types in <code>FE_SSE_and_Errors.md</code> (update from W7)</li>
             <li>Define payload schema for each event</li>
             <li>Confirm event ordering and timing expectations with Squad 1</li>
           </ul>
@@ -624,6 +803,7 @@ h1 { font-size: 28px; font-weight: 800; color: #f8fafc; margin-bottom: 8px; }
             <li>Create <code>emit_job_event()</code> helper in backend (reuses existing SSE stream writer)</li>
             <li>Modify <code>job_runner.py</code> to emit <code>haiku_call_2_queued</code> when job is enqueued</li>
             <li>Emit <code>haiku_call_2_started</code> when job execution begins</li>
+            <li>Emit <code>haiku_call_2_no_history</code> if pre-condition check fails (no previous session)</li>
             <li>Emit <code>haiku_call_2_complete</code> when job finishes; include output payload</li>
             <li>Emit <code>job_failed</code> on failure; include error_code + job_type="haiku_call_2"</li>
           </ul>
@@ -647,7 +827,8 @@ h1 { font-size: 28px; font-weight: 800; color: #f8fafc; margin-bottom: 8px; }
       <div class="section">
         <div class="section-title">Acceptance Criteria</div>
         <ul class="criteria-list">
-          <li>All 4 new event types emit correctly (haiku_call_2_queued/started/complete, job_failed with job_type="haiku_call_2")</li>
+          <li>All 5 new event types emit correctly: haiku_call_2_queued / started / complete / no_history / job_failed (with job_type="haiku_call_2")</li>
+          <li>haiku_call_2_no_history fires when pre-condition check finds no previous session (not an error — job exits cleanly)</li>
           <li>Events appear in correct order and timing</li>
           <li>Event payloads match documented schema; all required fields present</li>
           <li>Frontend receives and renders events in real time</li>
@@ -666,8 +847,9 @@ h1 { font-size: 28px; font-weight: 800; color: #f8fafc; margin-bottom: 8px; }
           Once S2-W8-04 is complete, Squad 1 will:
           <ul class="desc-list">
             <li>Watch SSE stream for <code>haiku_call_2_*</code> events</li>
-            <li>Show progress UI in Tab 2: "Generating recommendations..." → "Ready" (once <code>haiku_call_2_complete</code> arrives)</li>
-            <li>Display final weight recommendation output once job completes</li>
+            <li>Show progress UI in Tab 2: "Generating recommendations..." skeleton → "Ready" (on <code>haiku_call_2_complete</code>)</li>
+            <li>On <code>haiku_call_2_no_history</code>: resolve skeleton and show "Complete another session to unlock your progress view" (not an error — no retry)</li>
+            <li>Display full progression output once job completes</li>
           </ul>
         </div>
       </div>
@@ -805,36 +987,31 @@ h1 { font-size: 28px; font-weight: 800; color: #f8fafc; margin-bottom: 8px; }
       <div class="section">
         <div class="section-title">Acceptance Criteria</div>
         <ul class="criteria-list">
-          <li>All exception types → error_code mapping correct (Haiku + OpenCV)</li>
+          <li>All exception types → error_code mapping correct for Haiku Call 2</li>
           <li>Retryable vs. non-retryable categorized correctly for each error</li>
           <li>Haiku: 3 retries with 1s, 3s, 9s backoff for retryable errors</li>
-          <li>OpenCV: 2 retries with 2s, 5s backoff for retryable errors</li>
           <li>Non-retryable errors fail immediately (no retry attempt)</li>
-          <li>Hard timeout enforced: Haiku at 120s, OpenCV at 60s — no retry on timeout</li>
-          <li>Per-operation timeouts set: Haiku API 45s, GCS 30s, S3 10s</li>
-          <li>S3 coaching unavailable → generic coaching used (job continues)</li>
+          <li>Hard timeout enforced: Haiku Call 2 at 120s — no retry on timeout</li>
+          <li>Per-operation timeouts set: Haiku API 45s</li>
           <li>Every error logged: job_id, error_code, exception_type, attempt, elapsed_seconds, traceback</li>
           <li>CloudLogging dashboard queryable by error_code, job_type, analysis_id</li>
           <li>Frontend receives { error_code, error_message, retryable } in error responses</li>
           <li>job_failed SSE event includes job_type to identify which job failed</li>
           <li>Error message never shown to user (internal log only) — frontend maps error_code to message</li>
-          <li>OpenCV failures don't block Tab 1 (coaching visible, image placeholder empty)</li>
-          <li>Manual E2E test: upload video, job fails, error surfaces on frontend with correct message</li>
+          <li>Manual E2E test: upload video, Haiku Call 2 job fails, error surfaces on frontend with correct message</li>
         </ul>
       </div>
 
       <div class="section">
         <div class="section-title">Testing Checklist</div>
         <div class="section-content">
-          <strong>Unit Tests:</strong> Exception → error_code mapping (20+ error types) · Timeout detection · Backoff calculation · Fallback on S3 failure<br><br>
-          <strong>Integration Tests:</strong> Haiku timeout (retry succeeds) · All 3 retries fail → job_failed event · OpenCV GCS failure (2 retries) → success · Hard timeout (no retry) · S3 unavailable → generic coaching<br><br>
+          <strong>Unit Tests:</strong> Exception → error_code mapping for all Haiku Call 2 error types · Timeout detection · Backoff calculation<br><br>
+          <strong>Integration Tests:</strong> Haiku timeout (retry succeeds) · All 3 retries fail → job_failed event · Hard timeout (no retry)<br><br>
           <strong>Manual E2E Tests:</strong>
           <ul class="desc-list">
-            <li>Upload video → both jobs succeed → SSE progress events</li>
+            <li>Upload video → Haiku Call 2 succeeds → SSE progress events → Tab 2 shows recommendations</li>
             <li>Haiku timeout (retry succeeds) → observe 1s sleep + retry → Tab 2 shows recommendations</li>
-            <li>OpenCV GCS failure (retries fail) → Tab 1 visible, image placeholder empty</li>
-            <li>S3 coaching unavailable → generic coaching used → Tab 2 shows recommendations</li>
-            <li>Hard timeout (>120s) → immediate failure, no retry</li>
+            <li>Hard timeout (&gt;120s) → immediate failure, no retry, error state in Tab 2</li>
           </ul>
         </div>
       </div>
@@ -848,7 +1025,6 @@ h1 { font-size: 28px; font-weight: 800; color: #f8fafc; margin-bottom: 8px; }
             <li>For <code>haiku_call_2</code> failures: show error in Tab 2 · retryable="true" → "Try again" button · retryable="false" → "Re-film and upload" button</li>
             <li>Map error_code to user-facing message (from FE_SSE_and_Errors.md error lookup table)</li>
             <li>Never display error_message field (internal log only)</li>
-            <li><strong>Note:</strong> OpenCV Part 2 error handling is scoped separately in S2-W8-13 (Week 9+)</li>
           </ul>
         </div>
       </div>
@@ -864,6 +1040,258 @@ h1 { font-size: 28px; font-weight: 800; color: #f8fafc; margin-bottom: 8px; }
       </div>
     </div>
   </div>
+
+  <!-- S2-W8-15 -->
+  <div class="task">
+    <div class="task-header-bar">
+      <div class="task-badge badge-todo">◯ To Do</div>
+      <div class="task-id">S2-W8-15</div>
+      <div class="task-title">GET /progression/:session_id — Progression Tab API Endpoint</div>
+      <div class="task-priority priority-high">HIGH</div>
+    </div>
+    <div class="task-body">
+      <div class="section">
+        <div class="section-title">Description</div>
+        <div class="section-content">
+          Single endpoint that returns everything S1 needs to render the full Progression tab. <strong>Called exactly once on tab open — never called again.</strong> No polling.<br><br>
+          <strong>How ai_verdict reaches the frontend:</strong> This endpoint returns <code>ai_verdict: null</code> when Haiku Call 2 has not yet completed. The frontend keeps Phase 2 skeleton loaders active. When Haiku Call 2 finishes, S2 emits the <code>haiku_call_2_complete</code> SSE event (S2-W8-04) carrying the full ai_verdict JSON payload. The frontend uses that SSE payload to populate Phase 2 — it does <strong>not</strong> re-call this endpoint. This endpoint and SSE are two separate channels: endpoint delivers computed data once, SSE delivers AI output when ready.<br><br>
+          <ul class="desc-list">
+            <li>If no previous session: return <code>{ available: false }</code> — S1 hides tab or shows locked state</li>
+            <li>Compute deltas at query time: <code>delta = current_score − previous_score</code> for each of 4 parameters</li>
+            <li>Compute spread at query time: <code>max(rep_scores) − min(rep_scores)</code> for current session</li>
+            <li>Pull <code>previous_next_session_focus</code> from previous session's form_analysis_results coaching_output field</li>
+            <li>Pull <code>progress_ladder_image_url</code> from user_profile for current user</li>
+            <li>Pull <code>ai_verdict</code> from progression_results — return null if Haiku Call 2 not yet complete. Frontend uses this null to know skeleton loaders should stay active until the SSE fires.</li>
+            <li>Form history: last 3 sessions <strong>excluding the current session</strong> for same user_id + exercise_id (ordered by created_at DESC, offset by 1) — fields: date, overall_score, weight_used (from form_analyses), annotated_frame_url (from form_analysis_results — null until OpenCV Part 2 is implemented), verdict (short coaching note from haiku_call_1_output — confirm exact field name with S2)</li>
+          </ul>
+          <strong>Full response shape:</strong>
+          <pre style="background: #0a0f18; padding: 10px; border-radius: 4px; font-size: 11px; color: #a5f3fc; overflow-x: auto;">{
+  "available": true,
+  "current_session": { "date", "overall", "posture", "stability",
+    "movement_quality", "range_of_motion", "rep_scores": [], "spread" },
+  "previous_session": { same fields + "next_session_focus": [] },
+  "deltas": { "posture", "stability", "movement_quality", "range_of_motion" },
+  "previous_next_session_focus": ["point 1", "point 2", "point 3"],
+  "progress_ladder_image_url": "https://...",
+  "ai_verdict": {                   // null until Haiku Call 2 completes — full 8-field schema defined in S2-W8-02
+    "progression_verdict": "...",
+    "progress_direction": "...",
+    "focus_this_week": "...",
+    "weight_recommendation": { ... },
+    "posture_trend": "coaching observation sentence, max 80 chars",
+    "stability_trend": "coaching observation sentence, max 80 chars",
+    "range_of_motion_trend": "coaching observation sentence, max 80 chars",
+    "movement_quality_trend": "coaching observation sentence, max 80 chars"
+  },
+  "form_history": [                 // last 3 sessions EXCLUDING current, newest first
+    {
+      "date": "2026-05-20",
+      "overall_score": 78,
+      "weight_used": 20.0,           // from form_analyses
+      "annotated_frame_url": "...",  // null until OpenCV Part 2 post-demo
+      "verdict": "..."               // short coaching note from haiku_call_1_output — confirm field name with S2
+    }
+  ]
+}</pre>
+        </div>
+      </div>
+      <div class="section">
+        <div class="section-title">Acceptance Criteria</div>
+        <ul class="criteria-list">
+          <li>Returns <code>{ available: false }</code> when no previous session exists for user + exercise</li>
+          <li>Deltas computed correctly for all 4 parameters</li>
+          <li>Spread computed correctly from current session rep_scores array</li>
+          <li>previous_next_session_focus returns the array from the previous session's coaching_output</li>
+          <li>progress_ladder_image_url returns the URL from user_profile (or null if not seeded)</li>
+          <li>ai_verdict returns null if progression_results row doesn't exist yet or not complete</li>
+          <li>form_history returns last 3 sessions <strong>excluding current</strong> (newest first), each with: date, overall_score, weight_used, annotated_frame_url (nullable), verdict</li>
+          <li>form_history query: same user_id + exercise_id, ordered by created_at DESC, offset 1 (skips current session)</li>
+          <li>weight_used sourced from form_analyses table (joined by analysis_id)</li>
+          <li>annotated_frame_url returns null for demo (OpenCV Part 2 deferred) — S1 must handle null gracefully (placeholder or no image)</li>
+          <li>verdict field confirmed with S2 (exact key from haiku_call_1_output JSONB)</li>
+          <li>Response time &lt;100ms (no AI calls — pure DB reads)</li>
+          <li>Tested with all 3 demo users</li>
+          <li>Returns consistent shape whether ai_verdict is null or populated</li>
+          <li>ai_verdict: null signals to frontend that skeleton loaders stay active — SSE haiku_call_2_complete (S2-W8-04) carries the full payload and triggers Phase 2 render without re-calling this endpoint</li>
+        </ul>
+      </div>
+      <div class="section">
+        <div class="section-title">Dependencies</div>
+        <div class="section-content">
+          <span class="dep-badge">DEPENDS ON</span> S3-W8-03 (progression_results table + user_profile migration must exist)<br>
+          <span class="dep-badge">DEPENDS ON</span> S3-W8-02 (Test data + progress_ladder_image_url seeded for 3 users)
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- S2-W8-16 -->
+  <div class="task">
+    <div class="task-header-bar">
+      <div class="task-badge badge-todo">◯ To Do</div>
+      <div class="task-id">S2-W8-16</div>
+      <div class="task-title">GET /progression — SQL: Assemble Current vs Previous Session Comparison Data</div>
+      <div class="task-priority priority-high">HIGH</div>
+    </div>
+    <div class="task-body">
+
+      <div class="section">
+        <div class="section-title">What This Is</div>
+        <div class="section-content">
+          The GET /progression/:session_id endpoint (S2-W8-15) defines the response shape. This task defines the exact SQL queries that assemble the data — specifically how to pull current session and previous session fields from <code>form_analysis_results</code> (including JSONB extraction from <code>haiku_call_1_output</code>) and combine them into the comparison payload the frontend needs to render the Progression tab.
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Query 1 — Current Session</div>
+        <div class="section-content">
+          Pull all fields for the current session using the <code>analysis_id</code> passed to the endpoint:
+          <pre style="background: #0a0f18; padding: 10px; border-radius: 4px; font-size: 11px; color: #a5f3fc; overflow-x: auto;">SELECT
+  far.id                                              AS analysis_id,
+  far.created_at                                      AS date,
+  fa.weight_value,
+  fa.weight_unit,
+  far.haiku_call_1_output->>'overall_form_score'      AS overall_score,
+  far.haiku_call_1_output->'summary'->>'posture'      AS posture_score,
+  far.haiku_call_1_output->'summary'->>'stability'    AS stability_score,
+  far.haiku_call_1_output->'summary'->>'range_of_motion'   AS range_of_motion_score,
+  far.haiku_call_1_output->'summary'->>'movement_quality'  AS movement_quality_score,
+  far.haiku_call_1_output->'per_rep_scores'           AS rep_scores
+FROM form_analysis_results far
+JOIN form_analyses fa ON fa.id = far.analysis_id
+WHERE far.id = $1;
+
+-- Note: annotated_frame_url for the current session comes from user_profile, NOT this table.
+-- See Query 3 below.</pre>
+          <strong>Note on weight:</strong> <code>weight_value</code> and <code>weight_unit</code> come from the <code>form_analyses</code> table (joined on <code>analysis_id</code>), not from <code>form_analysis_results</code>. Confirm the exact join key with the existing S2 schema.<br><br>
+          <strong>Note on JSONB keys:</strong> Exact key names inside <code>haiku_call_1_output</code> must be confirmed against the Haiku Call 1 output schema. The names above match the scope doc — verify before shipping.
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Query 2 — Previous Session</div>
+        <div class="section-content">
+          Pull the same fields for the most recent prior session for the same user + exercise, excluding the current session:
+          <pre style="background: #0a0f18; padding: 10px; border-radius: 4px; font-size: 11px; color: #a5f3fc; overflow-x: auto;">SELECT
+  far.id                                              AS analysis_id,
+  far.created_at                                      AS date,
+  fa.weight_value,
+  fa.weight_unit,
+  far.haiku_call_1_output->>'overall_form_score'      AS overall_score,
+  far.haiku_call_1_output->'summary'->>'posture'      AS posture_score,
+  far.haiku_call_1_output->'summary'->>'stability'    AS stability_score,
+  far.haiku_call_1_output->'summary'->>'range_of_motion'   AS range_of_motion_score,
+  far.haiku_call_1_output->'summary'->>'movement_quality'  AS movement_quality_score,
+  far.haiku_call_1_output->'per_rep_scores'           AS rep_scores,
+  far.haiku_call_1_output->>'next_session_focus'      AS what_we_told_you,
+  far.annotated_frame_url
+FROM form_analysis_results far
+JOIN form_analyses fa ON fa.id = far.analysis_id
+WHERE fa.user_id  = $1
+  AND fa.exercise_id = $2
+  AND far.id != $3
+ORDER BY far.created_at DESC
+LIMIT 1;</pre>
+          <strong>Key difference from current session query:</strong> also pulls <code>next_session_focus</code> — this is the "What We Told You" text shown at the top of the Progression tab.<br><br>
+          <strong>Edge case:</strong> If <code>next_session_focus</code> is null on the previous session (e.g. Call 1 failed to produce it), return null. Frontend hides the "What We Told You" card rather than showing an empty one.
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Query 3 — Current Session Annotated Frame</div>
+        <div class="section-content">
+          The current session's annotated frame and the progress ladder image both come from <code>user_profile</code>. Pull both in a single query — no reason to hit the table twice:
+          <pre style="background: #0a0f18; padding: 10px; border-radius: 4px; font-size: 11px; color: #a5f3fc; overflow-x: auto;">SELECT annotated_frame_url, ladder_url
+FROM user_profile
+WHERE user_id = $1;</pre>
+          <strong>Field name note:</strong> S3-W8-03 uses <code>progress_ladder_image_url</code> for this column; S1-W8-03 and the scope doc use <code>ladder_url</code>. Confirm the agreed column name with S3 before running this query — use whichever name was applied in the migration.<br><br>
+          The previous session's annotated frame comes from Query 2 (<code>form_analysis_results.annotated_frame_url</code>). All three image URLs are passed to the frontend in the same response payload.
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Computed Fields (in application code, not SQL)</div>
+        <div class="section-content">
+          After running the queries, compute these in the backend before returning the response — do not compute in SQL:
+          <ul class="desc-list">
+            <li><strong>Deltas:</strong> <code>delta = current_score − previous_score</code> for each of the 4 parameters (posture, stability, range_of_motion, movement_quality). Returns a positive or negative integer.</li>
+            <li><strong>Rep spread:</strong> <code>spread = max(rep_scores) − min(rep_scores)</code> for the current session only. Returns an integer. Used to render the spread badge on the Rep-by-Rep chart.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">What the Endpoint Returns (assembled payload)</div>
+        <div class="section-content">
+          <pre style="background: #0a0f18; padding: 10px; border-radius: 4px; font-size: 11px; color: #a5f3fc; overflow-x: auto;">{
+  "available": true,
+  "current_session": {
+    "date": "2026-05-28",
+    "overall_score": 84,
+    "posture_score": 80,
+    "stability_score": 88,
+    "range_of_motion_score": 82,
+    "movement_quality_score": 86,
+    "rep_scores": [85, 83, 80, 78],
+    "spread": 7,
+    "weight_value": 20,
+    "weight_unit": "kg",
+    "annotated_frame_url": "...",  // from user_profile
+    "ladder_url": "..."            // from user_profile — progress ladder graph image
+  },
+  "previous_session": {
+    "date": "2026-05-21",
+    "overall_score": 76,
+    "posture_score": 72,
+    "stability_score": 80,
+    "range_of_motion_score": 74,
+    "movement_quality_score": 78,
+    "rep_scores": [78, 75, 72, 70],
+    "weight_value": 18,
+    "weight_unit": "kg",
+    "annotated_frame_url": "...",  // from form_analysis_results
+    "what_we_told_you": "Focus on keeping your chest up at the bottom of the squat."
+  },
+  "deltas": {
+    "posture": 8,
+    "stability": 8,
+    "range_of_motion": 8,
+    "movement_quality": 8
+  }
+}</pre>
+          <strong>Note:</strong> <code>ai_verdict</code>, <code>progress_ladder_image_url</code>, and <code>form_history</code> are also returned by S2-W8-15 in the same endpoint — those fields are defined there. This task covers only the current vs previous session comparison data above.
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Acceptance Criteria</div>
+        <ul class="criteria-list">
+          <li>Query 1 returns all current session fields including JSONB-extracted scores and rep_scores array</li>
+          <li>Query 2 returns all previous session fields including what_we_told_you (next_session_focus) and annotated_frame_url</li>
+          <li>Query 3 returns current session annotated_frame_url from user_profile</li>
+          <li>Deltas computed correctly for all 4 parameters (current − previous, signed integer)</li>
+          <li>Rep spread computed correctly (max − min of current session rep_scores)</li>
+          <li>what_we_told_you returns null if next_session_focus missing — frontend hides the card, no error</li>
+          <li>Both annotated_frame_url values included in response — current from user_profile (Query 3), previous from form_analysis_results (Query 2)</li>
+          <li>ladder_url returned from user_profile in same Query 3 — no separate DB call</li>
+          <li>ladder_url column name confirmed with S3 (may be progress_ladder_image_url per S3-W8-03)</li>
+          <li>JSONB key names confirmed against actual Haiku Call 1 output schema before shipping</li>
+          <li>Tested with all 3 demo users — correct previous session identified in each case</li>
+          <li>Response time &lt;100ms (3 simple DB reads + application-layer computation)</li>
+        </ul>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Dependencies</div>
+        <div class="section-content">
+          <span class="dep-badge">DEPENDS ON</span> S2-W8-15 (endpoint shell — this task defines the SQL that powers it)<br>
+          <span class="dep-badge">DEPENDS ON</span> S3-W8-00 (user_profile additional fields must exist for Query 3)<br>
+          <span class="dep-badge">DEPENDS ON</span> S3-W8-02 (test data seeded so queries can be verified against real rows)
+        </div>
+      </div>
+
+    </div>
+  </div>
 </div>
 
 <!-- ============ SQUAD 3 ============ -->
@@ -871,7 +1299,66 @@ h1 { font-size: 28px; font-weight: 800; color: #f8fafc; margin-bottom: 8px; }
   <div class="squad-header">
     <div class="squad-dot s3"></div>
     <div class="squad-title">Squad 3 — Data</div>
-    <div class="squad-meta">2 tasks</div>
+    <div class="squad-meta">5 active tasks</div>
+  </div>
+
+  <!-- S3-W8-03 -->
+  <div class="task">
+    <div class="task-header-bar">
+      <div class="task-badge badge-todo">◯ To Do</div>
+      <div class="task-id">S3-W8-03</div>
+      <div class="task-title">DB Schema — progression_results table + user_profile migration</div>
+      <div class="task-priority priority-high">HIGH</div>
+    </div>
+    <div class="task-body">
+      <div class="section">
+        <div class="section-title">Description</div>
+        <div class="section-content">
+          Two migrations required for the Progression screen.<br><br>
+          <strong>Migration 1: Create progression_results table</strong>
+          <ul class="desc-list">
+            <li><code>id</code> — primary key</li>
+            <li><code>session_id</code> — FK to form_analysis_results (current session)</li>
+            <li><code>compared_to_session_id</code> — FK to form_analysis_results (previous session)</li>
+            <li><code>available</code> (boolean) — false if no previous session existed at job time</li>
+            <li><code>progression_verdict</code> (text, nullable) — Haiku Call 2 output</li>
+            <li><code>progress_direction</code> (enum: up | down | stable, nullable) — overall session trend</li>
+            <li><code>focus_this_week</code> (text, nullable)</li>
+            <li><code>posture_trend</code> (TEXT, nullable) — short coaching observation sentence from Haiku, max 80 chars</li>
+            <li><code>stability_trend</code> (TEXT, nullable) — short coaching observation sentence, max 80 chars</li>
+            <li><code>range_of_motion_trend</code> (TEXT, nullable) — short coaching observation sentence, max 80 chars</li>
+            <li><code>movement_quality_trend</code> (TEXT, nullable) — short coaching observation sentence, max 80 chars</li>
+            <li><code>weight_recommendation</code> (JSONB, nullable) — stores action, target_weight_kg, reason</li>
+            <li><code>computed_at</code> (timestamp UTC)</li>
+          </ul>
+          <strong>Migration 2: Add column to user_profile table</strong>
+          <ul class="desc-list">
+            <li><code>progress_ladder_image_url</code> (text, nullable) — GCS or CDN URL of static progress ladder image per user</li>
+            <li>Nullable safe — existing users unaffected</li>
+          </ul>
+        </div>
+      </div>
+      <div class="section">
+        <div class="section-title">Acceptance Criteria</div>
+        <ul class="criteria-list">
+          <li>progression_results table created with all 13 columns and correct types</li>
+          <li>session_id and compared_to_session_id are FK constraints pointing to form_analysis_results</li>
+          <li><code>progress_direction</code> stored as enum (up | down | stable)</li>
+          <li><code>posture_trend</code>, <code>stability_trend</code>, <code>range_of_motion_trend</code>, <code>movement_quality_trend</code> stored as TEXT — short coaching observation sentences (max 80 chars), not enums</li>
+          <li>weight_recommendation stored as JSONB (action, target_weight_kg, reason)</li>
+          <li>progress_ladder_image_url column added to user_profile (nullable)</li>
+          <li>Both migrations tested in staging — no downtime, no data corruption</li>
+          <li>Migrations committed to git with descriptive messages</li>
+          <li>Backward compatible: existing records queryable with new columns returning null</li>
+        </ul>
+      </div>
+      <div class="section">
+        <div class="section-title">Dependencies</div>
+        <div class="section-content">
+          No upstream dependencies — start immediately, blocks S2-W8-02 and S2-W8-15
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- S3-W8-01 -->
@@ -879,43 +1366,33 @@ h1 { font-size: 28px; font-weight: 800; color: #f8fafc; margin-bottom: 8px; }
     <div class="task-header-bar">
       <div class="task-badge badge-todo">◯ To Do</div>
       <div class="task-id">S3-W8-01</div>
-      <div class="task-title">MD Files — Weight/Progression Coaching Content</div>
+      <div class="task-title">MD Files — Weight Progression Coaching Rules</div>
       <div class="task-priority priority-high">HIGH</div>
     </div>
     <div class="task-body">
       <div class="section">
         <div class="section-title">Description</div>
         <div class="section-content">
-          Curate comprehensive coaching content in .md files that guide weight progression decisions. These files are injected into Haiku Call 2 prompts to ground coaching recommendations in PT expertise.
+          Curate markdown files encoding PT rules for weight progression decisions. These are injected into the Haiku Call 2 prompt to ground the weight_recommendation output in expert criteria — so Haiku doesn't guess when to hold vs increase vs decrease.<br><br>
+          Scope for demo: 3 focused files (smaller than originally drafted — Haiku Call 2 prompt is lean).
           <ul class="desc-list">
-            <li>Create 5–10 markdown files covering weight progression rules and form cues</li>
-            <li>File 1: "When to Hold Weight" — form inconsistent, technique gaps, joint stress signals</li>
-            <li>File 2: "When to Progress Weight" — form consistently good (score 85+), stable reps (3+), symmetry on both sides</li>
-            <li>File 3: "How Much to Increase" — typical increments (5–10 lbs), adaptive by exercise type</li>
-            <li>File 4: "When to Decrease Weight" — form breaks down, joint pain, compensation patterns</li>
-            <li>File 5: "Form Cues for Goblet Squat" — strong hip drive, chest up, knees tracking over toes, depth consistency</li>
-            <li>Additional files: progression psychology, periodization principles, rep targets</li>
-            <li>Commit all files to /coaching_content/ folder in repo</li>
-            <li>Make accessible to S2-W8-02 for prompt injection</li>
+            <li><strong>File 1 — When to Hold Weight:</strong> overall score below 75, rep spread &gt;15pts (inconsistent form), any severe fault present, first session at this weight</li>
+            <li><strong>File 2 — When to Increase Weight:</strong> overall score ≥80 across 2+ consecutive sessions at same weight, rep spread &lt;10pts (consistent form), no severe faults</li>
+            <li><strong>File 3 — When to Decrease Weight:</strong> score dropped &gt;10pts vs previous session at same weight, severe fault appeared that wasn't present before, user reported pain</li>
+            <li>Each file: 200–300 words max. Plain language, no jargon. Written so an LLM can apply the rules directly.</li>
+            <li>Commit to /coaching_content/ in repo — must be readable by S2-W8-02 job worker</li>
           </ul>
         </div>
       </div>
-
       <div class="section">
         <div class="section-title">Acceptance Criteria</div>
         <ul class="criteria-list">
-          <li>At least 5 .md files created with coaching content</li>
-          <li>"When to Hold" file covers 3+ scenarios preventing progression</li>
-          <li>"When to Progress" file lists clear conditions (form score threshold, rep count, symmetry)</li>
-          <li>Progression increment recommendations are specific and evidence-based</li>
-          <li>Form cues are biomechanically accurate and observable</li>
-          <li>All files written in clear, coach-friendly language</li>
-          <li>Files committed to /coaching_content/ folder with descriptive names</li>
-          <li>S2-W8-02 can retrieve and load files for prompt injection</li>
-          <li>No formatting errors that would break Haiku prompt assembly</li>
+          <li>3 MD files created: hold / increase / decrease — each 200–300 words</li>
+          <li>Rules are specific and numeric (e.g. "score ≥80", "rep spread &lt;10pts") — not vague guidelines</li>
+          <li>Files committed to /coaching_content/ folder in repo</li>
+          <li>S2-W8-02 job worker can read files at runtime without errors</li>
         </ul>
       </div>
-
       <div class="section">
         <div class="section-title">Dependencies</div>
         <div class="section-content">
@@ -937,20 +1414,28 @@ h1 { font-size: 28px; font-weight: 800; color: #f8fafc; margin-bottom: 8px; }
       <div class="section">
         <div class="section-title">Description</div>
         <div class="section-content">
-          Process video recordings from Week 7 through the full MediaPipe + Haiku Call 1 pipeline, and seed results into the database. This creates realistic test data with longitudinal context (multiple sessions with varying weights).
+          Process video recordings from Week 7 through the full MediaPipe + Haiku Call 1 pipeline, and seed results into the database. This creates realistic test data with longitudinal context. Also seeds the progress_ladder_image_url for 3 demo users.
           <ul class="desc-list">
             <li>Source: 2 users × 5–7 videos from S3-W7-04 (existing test recordings)</li>
             <li>For each video:
               <ol style="margin-top: 6px; margin-left: 16px;">
                 <li>Run through MediaPipe pipeline (frame selection, quality gate check, biomechanics calculation)</li>
-                <li>Run through Haiku Call 1 (form score, positive observations, critical observations)</li>
+                <li>Run through Haiku Call 1 (form score, 4 parameter scores, rep_scores, coaching_output with next_session_focus)</li>
                 <li>Save to form_analyses table (video metadata: user_id, exercise_id, weight, timestamp)</li>
-                <li>Save to form_analysis_results table (form score, biomechanics JSON, haiku_call_1_output)</li>
+                <li>Save to form_analysis_results table (all 4 parameter scores, rep_scores[], coaching_output JSONB)</li>
               </ol>
             </li>
+            <li>Ensure <code>next_session_focus</code> field is populated in coaching_output for at least 2 sessions per user — this powers the "We've Told You" card</li>
             <li>Seed with realistic progression: User 1: 15 lbs → 20 lbs → 25 lbs; User 2: 10 lbs → 15 lbs → 20 lbs</li>
             <li>Assign all data to user_001, user_002, user_003 (hardcoded demo IDs)</li>
-            <li>Result: 10–14 realistic past sessions across 3 users for progression testing</li>
+            <li>Result: 10–14 realistic past sessions across 3 users</li>
+          </ul>
+          <strong>Progress Ladder Image Seeding (new):</strong>
+          <ul class="desc-list">
+            <li>Create or source 3 static progress ladder images (one per demo user) — can be simple screenshots or illustrations showing weight progression milestones</li>
+            <li>Upload each image to GCS or CDN — obtain public URL</li>
+            <li>UPDATE user_profile SET progress_ladder_image_url = '...' WHERE user_id = 'user_001' (repeat for 002, 003)</li>
+            <li>Must be seeded before S2-W8-15 (endpoint) is tested — endpoint reads from user_profile</li>
           </ul>
         </div>
       </div>
@@ -958,15 +1443,15 @@ h1 { font-size: 28px; font-weight: 800; color: #f8fafc; margin-bottom: 8px; }
       <div class="section">
         <div class="section-title">Acceptance Criteria</div>
         <ul class="criteria-list">
-          <li>All 2 users' videos successfully processed through MediaPipe (no crashes, timeouts)</li>
-          <li>Quality gate passes for all videos (if any fail, document why)</li>
-          <li>form_analyses records created for each video with correct metadata</li>
-          <li>form_analysis_results records contain form_score, biomechanics JSON, haiku_call_1_output</li>
+          <li>All videos processed through MediaPipe + Haiku Call 1 successfully</li>
+          <li>form_analysis_results records contain all 4 parameter scores, rep_scores[], and coaching_output with next_session_focus</li>
+          <li>At least 2 sessions per user have non-null next_session_focus (needed for "We've Told You" card)</li>
           <li>Data seeded under user_001, user_002, user_003</li>
-          <li>Weight progression realistic (5 lbs increments per session)</li>
           <li>Timestamps vary (different days, not all same time)</li>
-          <li>Database queries confirm 10–14 records across 3 users</li>
-          <li>S1-W8-01a can query and display past 3 sessions for each user correctly</li>
+          <li>Database confirms 10–14 records across 3 users</li>
+          <li>progress_ladder_image_url populated in user_profile for all 3 demo users</li>
+          <li>Progress ladder images load correctly via the stored URL (no broken links)</li>
+          <li>GET /progression/:session_id returns the image URL correctly for each demo user</li>
           <li>No duplicate records or orphaned data</li>
         </ul>
       </div>
@@ -979,81 +1464,158 @@ h1 { font-size: 28px; font-weight: 800; color: #f8fafc; margin-bottom: 8px; }
       </div>
     </div>
   </div>
-</div>
 
-<!-- ============ OPENCV PART 2 (CROSS-SQUAD INITIATIVE) ============ -->
-<div class="squad-section">
-  <div class="squad-header">
-    <div class="squad-dot s3"></div>
-    <div class="squad-title">OpenCV Part 2 — Save BGR Frame to GCS</div>
-    <div class="squad-meta">9 subtasks</div>
-  </div>
-
-  <div style="background: #1a1f2e; border: 1px solid #0e7490; border-radius: 8px; padding: 16px; margin-bottom: 24px;">
-    <p style="font-size: 12px; color: #22d3ee; margin-bottom: 8px;"><strong>Reference:</strong> projects/Kinetic/OPENCV_PART2_INPUTS.html</p>
-    <p style="font-size: 12px; color: #cbd5e1; line-height: 1.6;">
-      S3 produces raw BGR frame from biomechanics and annotates it with skeleton overlay, angles, and form assessment labels. S2 then encodes and saves to GCS. Runs asynchronously after Haiku Call 1 completes. Database schema → S2 persistence logic → async trigger → S3 annotation → S2 GCS storage.
-    </p>
-  </div>
-
-  <!-- S2-W8-06 -->
+  <!-- S3-W8-04 -->
   <div class="task">
     <div class="task-header-bar">
       <div class="task-badge badge-todo">◯ To Do</div>
-      <div class="task-id">S2-W8-06</div>
-      <div class="task-title">Update form_analysis_results DB Schema</div>
+      <div class="task-id">S3-W8-04</div>
+      <div class="task-title">Manual OpenCV Annotation — Seed annotated_frame_url for Demo</div>
       <div class="task-priority priority-high">HIGH</div>
     </div>
     <div class="task-body">
       <div class="section">
         <div class="section-title">Description</div>
         <div class="section-content">
-          Add new JSONB and TEXT columns to form_analysis_results table to store biomechanics data and annotated frame output URL.
+          Demo workaround — run OpenCV annotation script manually on existing session videos to populate <code>annotated_frame_url</code> before the full async pipeline is live. Covers all 3 demo users so Form History cards render with real annotated images on Thursday.<br><br>
           <ul class="desc-list">
-            <li>Add <code>biomechanics_json</code> (JSONB) — per-frame biomechanics data (angles, MediaPipe landmarks, labels)</li>
-            <li>Add <code>annotated_frame_url</code> (TEXT) — GCS URL of annotated frame with skeleton overlay, angles, and labels</li>
-            <li>Both columns nullable, safe for backfill</li>
-            <li>Create index on analysis_id for fast biomechanics queries</li>
+            <li>Run OpenCV annotation script manually on all seeded sessions (user_001, user_002, user_003)</li>
+            <li>Generate annotated frame for <strong>worst rep</strong> per session (frame with lowest rep score)</li>
+            <li>Hand off annotated frames to Squad 2 to upload to GCS</li>
+            <li>Squad 2 generates GCS URLs and returns them to Squad 3</li>
+            <li>Save <code>annotated_frame_url</code> in <code>form_analysis_results</code> for each session</li>
+            <li>Also save the most recent annotated URL in <code>user_profile</code> table as a reference image (or <code>progress_ladder_image_url</code> if appropriate)</li>
+            <li>Post-demo: this manual step is replaced by the OpenCV Part 2 async pipeline (OCV-S3-02 / OCV-S2-01)</li>
           </ul>
         </div>
       </div>
       <div class="section">
         <div class="section-title">Acceptance Criteria</div>
         <ul class="criteria-list">
-          <li>biomechanics_json JSONB column added and indexed</li>
-          <li>annotated_frame_url TEXT column added</li>
-          <li>Migration tested in staging, deployed to production</li>
-          <li>No data corruption or downtime</li>
-          <li>Query performance verified</li>
+          <li>OpenCV annotation script run manually on all seeded sessions for user_001, user_002, user_003</li>
+          <li>Annotated frame generated for worst rep per session</li>
+          <li>All frames uploaded to GCS by Squad 2 — GCS URLs confirmed working</li>
+          <li>annotated_frame_url populated in form_analysis_results for each seeded session</li>
+          <li>URL saved in user_profile table</li>
+          <li>All URLs verified as loading correctly (no broken image state)</li>
+          <li>Form History cards render annotated images correctly in the Progression tab</li>
         </ul>
       </div>
       <div class="section">
         <div class="section-title">Dependencies</div>
-        <div class="section-content">No upstream dependencies</div>
+        <div class="section-content">
+          <span class="dep-badge">DEPENDS ON</span> S3-W8-02 (seeded sessions must exist before annotation can run)
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- OCV2-01 -->
+  <!-- S3-W8-05 -->
   <div class="task">
     <div class="task-header-bar">
       <div class="task-badge badge-todo">◯ To Do</div>
-      <div class="task-id">S2-W8-07</div>
-      <div class="task-title">S2 Pre-Save Logic — Biomechanics → DB</div>
+      <div class="task-id">S3-W8-05</div>
+      <div class="task-title">Haiku Call 2 — System &amp; User Prompt Design</div>
       <div class="task-priority priority-high">HIGH</div>
     </div>
     <div class="task-body">
       <div class="section">
         <div class="section-title">Description</div>
         <div class="section-content">
-          Implement S2 logic to pre-save biomechanics_json to form_analysis_results BEFORE calling Haiku Call 1. This ensures data persists even if Haiku fails.
+          Write the Haiku Call 2 system prompt and user prompt template. The system prompt defines Haiku's role, output format (JSON), and rules. The user prompt template has placeholders for all dynamic inputs injected at job runtime by S2-W8-02. Must reliably produce all 8 output fields defined in the S2-W8-02 output schema.<br><br>
           <ul class="desc-list">
-            <li>S2 receives biomechanics_json from biomechanics script</li>
-            <li>INSERT into form_analysis_results with biomechanics_json (Step 1)</li>
-            <li>Call Haiku Call 1 with biomechanics_json as input (Step 2)</li>
-            <li>UPDATE form_analysis_results with haiku_call_1_output (Step 3)</li>
-            <li>Wrap in transaction for atomicity</li>
+            <li><strong>System prompt:</strong> defines role (exercise progression coach), output format (strict JSON), field-by-field rules for each of the 8 output fields</li>
+            <li><strong>User prompt template placeholders:</strong>
+              <ul style="margin-top:6px;margin-left:16px;">
+                <li>Current session: 4 parameter scores + overall, weight used</li>
+                <li>Previous session: 4 parameter scores + overall, weight used, next_session_focus</li>
+                <li>MD coaching rules (from S3-W8-01 files) — injected inline</li>
+              </ul>
+            </li>
+            <li>Test with at least 2 sample session pairs (one improvement, one regression) before handoff</li>
+            <li>Commit prompt files to <code>/coaching_content/</code> or <code>/prompts/</code> in repo — S2-W8-02 job worker loads them at runtime</li>
           </ul>
+        </div>
+      </div>
+      <div class="section">
+        <div class="section-title">Acceptance Criteria</div>
+        <ul class="criteria-list">
+          <li>System prompt written and reviewed</li>
+          <li>User prompt template covers all required input fields (current + previous session scores, both weights, previous next_session_focus, MD coaching rules)</li>
+          <li>Prompt reliably returns all 8 fields: progression_verdict, progress_direction, weight_recommendation (action + target_weight_kg + reason), focus_this_week, posture_trend, stability_trend, range_of_motion_trend, movement_quality_trend</li>
+          <li>Output is valid parseable JSON matching S2-W8-02 schema</li>
+          <li>Tested with at least 2 sample session pairs (improvement + regression)</li>
+          <li>Prompt files committed to /coaching_content/ or /prompts/ in repo</li>
+          <li>S2-W8-02 job worker can load prompt file at runtime without errors</li>
+        </ul>
+      </div>
+      <div class="section">
+        <div class="section-title">Dependencies</div>
+        <div class="section-content">
+          <span class="dep-badge">DEPENDS ON</span> S3-W8-01 (MD coaching files must exist to inject into user prompt)
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<!-- ============ POST-DEMO BACKLOG — OpenCV Part 2 ============ -->
+<div class="squad-section" style="opacity:0.65;">
+  <div class="squad-header" style="border-bottom-color:#2d3748;">
+    <div class="squad-dot" style="background:#475569;"></div>
+    <div class="squad-title" style="color:#64748b;">Post-Demo Backlog — OpenCV Part 2</div>
+    <div class="squad-meta">10 tasks deferred · Resume Week 9+</div>
+  </div>
+  <div style="font-size:12px;color:#64748b;margin-bottom:16px;padding:10px;background:#0d1117;border-left:3px solid #475569;border-radius:4px;">
+    OpenCV Part 2 (frame annotation pipeline) is out of scope for the Week 8 demo. All tasks below are preserved for post-demo implementation. No action required before Thursday merge. Tasks are sequenced correctly — resume in this order in Week 9.
+  </div>
+
+  <!-- S2-W8-06 — DEFERRED -->
+  <div class="task">
+    <div class="task-header-bar">
+      <div class="task-badge badge-deferred">⊘ Deferred</div>
+      <div class="task-id">S2-W8-06</div>
+      <div class="task-title">DB Schema — Add biomechanics_json &amp; annotated_frame_url to form_analysis_results</div>
+      <div class="task-priority priority-medium">POST-DEMO</div>
+    </div>
+    <div class="task-body">
+      <div class="section">
+        <div class="section-title">Description</div>
+        <div class="section-content">
+          Add two nullable columns to form_analysis_results: <code>biomechanics_json</code> (JSONB) for per-frame biomechanics data and <code>annotated_frame_url</code> (TEXT) for the GCS URL of the annotated frame. Create index on analysis_id. Both columns safe for backfill (existing rows get NULL).
+        </div>
+      </div>
+      <div class="section">
+        <div class="section-title">Acceptance Criteria</div>
+        <ul class="criteria-list">
+          <li>biomechanics_json JSONB column added and indexed</li>
+          <li>annotated_frame_url TEXT column added (nullable)</li>
+          <li>Migration tested in staging, deployed to production</li>
+          <li>No data corruption or downtime</li>
+        </ul>
+      </div>
+      <div class="section">
+        <div class="section-title">Dependencies</div>
+        <div class="section-content">No upstream dependencies — can start immediately when unblocked post-demo</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- S2-W8-07 — DEFERRED -->
+  <div class="task">
+    <div class="task-header-bar">
+      <div class="task-badge badge-deferred">⊘ Deferred</div>
+      <div class="task-id">S2-W8-07</div>
+      <div class="task-title">S2 Pre-Save Logic — biomechanics_json → DB Before Haiku Call 1</div>
+      <div class="task-priority priority-medium">POST-DEMO</div>
+    </div>
+    <div class="task-body">
+      <div class="section">
+        <div class="section-title">Description</div>
+        <div class="section-content">
+          Implement S2 logic to pre-save biomechanics_json to form_analysis_results BEFORE calling Haiku Call 1. Ensures biomechanics data persists even if Haiku fails. Wrap INSERT → Haiku call → UPDATE in a single transaction.
         </div>
       </div>
       <div class="section">
@@ -1061,232 +1623,166 @@ h1 { font-size: 28px; font-weight: 800; color: #f8fafc; margin-bottom: 8px; }
         <ul class="criteria-list">
           <li>Biomechanics JSON saved before Haiku call</li>
           <li>Transaction ensures atomic save + update</li>
-          <li>Tested with sample analysis sessions</li>
           <li>No data loss if Haiku fails</li>
-          <li>Performance acceptable</li>
+          <li>Performance acceptable (no added latency)</li>
         </ul>
       </div>
       <div class="section">
         <div class="section-title">Dependencies</div>
-        <div class="section-content"><span class="dep-badge">DEPENDS ON</span> OCV2-00 (Schema updated)</div>
+        <div class="section-content"><span class="dep-badge">DEPENDS ON</span> S2-W8-06 (Schema columns must exist)</div>
       </div>
     </div>
   </div>
 
-  <!-- S2-W8-08 -->
+  <!-- S2-W8-08 — DEFERRED -->
   <div class="task">
     <div class="task-header-bar">
-      <div class="task-badge badge-todo">◯ To Do</div>
+      <div class="task-badge badge-deferred">⊘ Deferred</div>
       <div class="task-id">S2-W8-08</div>
-      <div class="task-title">Trigger Async OpenCV Part 2 After Haiku</div>
-      <div class="task-priority priority-high">HIGH</div>
+      <div class="task-title">Trigger Async OpenCV Part 2 After Haiku Call 1</div>
+      <div class="task-priority priority-medium">POST-DEMO</div>
     </div>
     <div class="task-body">
       <div class="section">
         <div class="section-title">Description</div>
         <div class="section-content">
-          Set up async trigger to invoke OpenCV Part 2 after Haiku Call 1 output is saved to form_analysis_results. Use Cloud Tasks, Pub/Sub, or direct lambda invoke.
+          Set up async trigger to invoke OpenCV Part 2 after Haiku Call 1 results are saved. Non-blocking. Use Cloud Tasks, Pub/Sub, or direct lambda invoke. Passes user_id, analysis_id, exercise_id.
         </div>
       </div>
       <div class="section">
         <div class="section-title">Acceptance Criteria</div>
         <ul class="criteria-list">
-          <li>Async trigger fires after Haiku results saved</li>
-          <li>Analysis parameters (user_id, analysis_id, exercise_id) passed</li>
-          <li>Non-blocking (doesn't wait for OpenCV completion)</li>
-          <li>OpenCV Part 2 can run independently with retry capability</li>
+          <li>Async trigger fires after Haiku Call 1 results saved</li>
+          <li>user_id, analysis_id, exercise_id passed to OpenCV job</li>
+          <li>Non-blocking — caller does not wait for OpenCV completion</li>
+          <li>OpenCV Part 2 runs independently; does NOT trigger or block Haiku Call 2</li>
         </ul>
       </div>
       <div class="section">
         <div class="section-title">Dependencies</div>
-        <div class="section-content"><span class="dep-badge">DEPENDS ON</span> OCV2-01 (S2 save logic)</div>
+        <div class="section-content"><span class="dep-badge">DEPENDS ON</span> S2-W8-07 (S2 save logic)</div>
       </div>
     </div>
   </div>
 
-  <!-- S2-W8-09 -->
+  <!-- S2-W8-09 — DEFERRED -->
   <div class="task">
     <div class="task-header-bar">
-      <div class="task-badge badge-todo">◯ To Do</div>
+      <div class="task-badge badge-deferred">⊘ Deferred</div>
       <div class="task-id">S2-W8-09</div>
-      <div class="task-title">OpenCV Part 2 — Query & Fetch Data</div>
-      <div class="task-priority priority-high">HIGH</div>
+      <div class="task-title">OpenCV Part 2 Job — Enqueue, Fetch Data, Extract Frame</div>
+      <div class="task-priority priority-medium">POST-DEMO</div>
     </div>
     <div class="task-body">
       <div class="section">
         <div class="section-title">Description</div>
         <div class="section-content">
-          Enqueue and execute async job that queries <code>biomechanics_json</code> for worst-performing rep, downloads video from GCS, and extracts frame at timestamp for annotation.
-          <ul class="desc-list">
-            <li><strong>Step 1: Enqueue Job (after Haiku Call 1 saves)</strong>
-              <ol style="margin-top: 6px; margin-left: 16px;">
-                <li>Write to DB: <code>opencv_part_2_status = "queued"</code>, <code>opencv_part_2_queued_at = NOW()</code></li>
-                <li>Enqueue Cloud Tasks job with analysis_id, user_id</li>
-              </ol>
-            </li>
-            <li><strong>Step 2: Worker Executes Job</strong>
-              <ol style="margin-top: 6px; margin-left: 16px;">
-                <li>Write to DB: <code>opencv_part_2_status = "running"</code>, <code>opencv_part_2_started_at = NOW()</code></li>
-                <li>Query DB: fetch <code>worst_rep_index</code> and <code>biomechanics_json</code> for this analysis_id</li>
-                <li>Use <code>worst_rep_index</code> to get rep: <code>biomechanics_json.reps[worst_rep_index]</code></li>
-                <li>Extract bottom keyframe index: <code>keyframe_indices.bottom</code> (the lowest point of the squat)</li>
-                <li>Extract frame image: <code>reps[worst_rep_index].frames[bottom_keyframe_index]</code> (image data already in biomechanics_json)</li>
-                <li>Collect all rep fields: <code>form_score</code>, <code>scorecard</code> (angles), <code>coaching_dimensions</code>, <code>symmetry</code>, <code>phases</code></li>
-                <li>Pass to S3/OpenCV: frame image + all rep fields for annotation overlay (S2-W8-13)</li>
-              </ol>
-            </li>
-            <li><strong>Step 3: On Success</strong>
-              <ol style="margin-top: 6px; margin-left: 16px;">
-                <li>Write to DB: <code>opencv_part_2_status = "complete"</code>, <code>opencv_part_2_completed_at = NOW()</code></li>
-                <li><strong>Trigger S2-W8-02 (Haiku Call 2) job to start</strong></li>
-              </ol>
-            </li>
-            <li><strong>Step 3b: On Failure</strong>
-              <ol style="margin-top: 6px; margin-left: 16px;">
-                <li>Write to DB: <code>opencv_part_2_status = "failed"</code>, <code>opencv_part_2_error = "{error_message}"</code>, <code>opencv_part_2_completed_at = NOW()</code></li>
-                <li>Do NOT trigger Haiku Call 2</li>
-              </ol>
-            </li>
-          </ul>
+          Enqueue and execute async job: query biomechanics_json for worst-performing rep, extract bottom keyframe, pass frame + rep data to S3 for annotation. Track status (queued → running → complete/failed) in form_analysis_results. On success, emit <code>opencv_complete</code> SSE event. Haiku Call 2 runs independently in parallel — this job does NOT trigger it.
         </div>
       </div>
       <div class="section">
         <div class="section-title">Acceptance Criteria</div>
         <ul class="criteria-list">
-          <li>Job enqueued in Cloud Tasks immediately after Haiku Call 1 saves</li>
-          <li><code>opencv_part_2_status</code> transitions: queued → running → complete (or failed)</li>
-          <li><code>opencv_part_2_queued_at</code>, <code>_started_at</code>, <code>_completed_at</code> timestamps recorded</li>
-          <li>Worst rep correctly identified by lowest <code>form_score</code> in biomechanics_json</li>
-          <li>Video successfully downloaded from GCS without errors</li>
-          <li>Frame extracted at correct timestamp (±100ms tolerance)</li>
-          <li>Frame bytes passed to S3 for annotation</li>
-          <li>On failure: <code>opencv_part_2_status = "failed"</code> and <code>opencv_part_2_error</code> populated with error message</li>
-          <li><strong>On success: S2-W8-02 (Haiku Call 2) job automatically triggered</strong></li>
-          <li>Latency: frame extraction + pass-off completes in &lt;8 seconds</li>
+          <li>opencv_part_2_status transitions: queued → running → complete (or failed)</li>
+          <li>Worst rep identified by lowest form_score in biomechanics_json</li>
+          <li>Bottom keyframe extracted from biomechanics_json (not re-downloaded from video)</li>
+          <li>Frame + rep fields passed to S3 annotation (S3-W8-03 / S3-W8-04)</li>
+          <li>opencv_complete SSE event emitted on success</li>
+          <li>Does NOT block or trigger Haiku Call 2 (parallel, independent)</li>
+          <li>Latency: &lt;8 seconds for frame extraction + pass-off</li>
         </ul>
       </div>
       <div class="section">
         <div class="section-title">Dependencies</div>
         <div class="section-content">
-          <span class="dep-badge">DEPENDS ON</span> S2-W8-01 (schema with opencv_part_2_* fields)<br>
-          <span class="dep-badge">BLOCKS</span> S2-W8-02 (Haiku Call 2 cannot start until this completes)
-        </div>
-      </div>
-      <div class="section">
-        <div class="section-title">Database Writes</div>
-        <div class="section-content">
-          <code>form_analysis_results.opencv_part_2_status</code> (queued → running → complete/failed)<br>
-          <code>form_analysis_results.opencv_part_2_queued_at</code> (timestamp)<br>
-          <code>form_analysis_results.opencv_part_2_started_at</code> (timestamp)<br>
-          <code>form_analysis_results.opencv_part_2_completed_at</code> (timestamp)<br>
-          <code>form_analysis_results.opencv_part_2_error</code> (error message on failure)
+          <span class="dep-badge">DEPENDS ON</span> S2-W8-06 (schema with opencv_part_2_* fields)<br>
+          <span class="dep-badge">DEPENDS ON</span> S2-W8-08 (async trigger routes job here)
         </div>
       </div>
     </div>
   </div>
 
-  <!-- S2-W8-12 -->
+  <!-- S2-W8-12 — DEFERRED -->
   <div class="task">
     <div class="task-header-bar">
-      <div class="task-badge badge-todo">◯ To Do</div>
+      <div class="task-badge badge-deferred">⊘ Deferred</div>
       <div class="task-id">S2-W8-12</div>
-      <div class="task-title">Annotated Frame — Notify Frontend via SSE + Save to GCS & DB</div>
-      <div class="task-priority priority-high">HIGH</div>
+      <div class="task-title">Annotated Frame — SSE Notify + GCS Save + DB Update</div>
+      <div class="task-priority priority-medium">POST-DEMO</div>
     </div>
     <div class="task-body">
       <div class="section">
         <div class="section-title">Description</div>
         <div class="section-content">
-          Receive annotated frame_bgr from S3-W8-04. Execute two parallel actions: (1) emit SSE frame_ready event to notify frontend with base64-encoded frame data, and (2) encode as JPEG, upload to GCS, and store URL in form_analysis_results.
-          <ul class="desc-list">
-            <li><strong>Action 1: Emit SSE Event to Frontend</strong>
-              <ol style="margin-top: 6px; margin-left: 16px;">
-                <li>Receive annotated frame_bgr from S3</li>
-                <li>Encode frame to base64</li>
-                <li>Emit SSE event <code>frame_ready</code> with payload: frame_data (base64), analysis_id, user_id, exercise_id, worst_rep_index, timestamp_ms, annotation metadata</li>
-                <li>Frontend receives and displays immediately (no blocking on GCS upload)</li>
-              </ol>
-            </li>
-            <li><strong>Action 2: Save to GCS & DB (Parallel to Action 1)</strong>
-              <ol style="margin-top: 6px; margin-left: 16px;">
-                <li>Encode annotated frame_bgr to JPEG (quality 95)</li>
-                <li>Upload to GCS with path: <code>{bucket}/{user_id}/{analysis_id}/annotated_frame.jpg</code></li>
-                <li>Receive GCS URL from upload response</li>
-                <li>Store URL in <code>form_analysis_results.annotated_frame_url</code> field</li>
-                <li>Implement retry logic: exponential backoff on transient failures (max 3 retries)</li>
-              </ol>
-            </li>
-          </ul>
+          Receive annotated frame_bgr from S3 (S3-W8-04). Execute two parallel actions: (1) emit <code>frame_ready</code> SSE event with base64-encoded frame so frontend can display immediately; (2) encode as JPEG, upload to GCS, store URL in form_analysis_results.annotated_frame_url. Retry on GCS failure (max 3 retries, exponential backoff).
         </div>
       </div>
       <div class="section">
         <div class="section-title">Acceptance Criteria</div>
         <ul class="criteria-list">
-          <li>Annotated frame_bgr successfully received from S3 in expected format</li>
-          <li><strong>SSE frame_ready event emitted immediately with base64 frame data</strong></li>
-          <li><strong>Frontend receives and can display frame without waiting for GCS upload</strong></li>
-          <li>Frame encoded as JPEG (quality 95)</li>
-          <li>Uploaded to GCS successfully</li>
-          <li>GCS URL stored in form_analysis_results.annotated_frame_url field</li>
-          <li>URL is valid and accessible</li>
-          <li>Retry logic works: transient failures trigger exponential backoff</li>
-          <li>Both actions (SSE + GCS) complete, no race conditions</li>
-          <li>Tested with multiple annotated frames and users</li>
+          <li>frame_ready SSE event emitted immediately on receipt of annotated frame</li>
+          <li>Frontend can display frame without waiting for GCS upload</li>
+          <li>Frame encoded as JPEG (quality 95) and uploaded to GCS</li>
+          <li>GCS URL stored in form_analysis_results.annotated_frame_url</li>
+          <li>Retry logic: exponential backoff on transient GCS failures (max 3)</li>
+          <li>No race conditions between SSE action and GCS action</li>
         </ul>
       </div>
       <div class="section">
         <div class="section-title">Dependencies</div>
-        <div class="section-content"><span class="dep-badge">DEPENDS ON</span> S3-W8-04 (Annotated frame_bgr from S3)<br>
-        <span class="dep-badge">DEPENDS ON</span> S2-W8-06 (annotated_frame_url column in schema)</div>
+        <div class="section-content">
+          <span class="dep-badge">DEPENDS ON</span> S3-W8-04 (annotated frame_bgr from S3)<br>
+          <span class="dep-badge">DEPENDS ON</span> S2-W8-06 (annotated_frame_url column in schema)
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- S2-W8-13 -->
+  <!-- S2-W8-13 — DEFERRED -->
   <div class="task">
     <div class="task-header-bar">
-      <div class="task-badge badge-todo">◯ To Do</div>
+      <div class="task-badge badge-deferred">⊘ Deferred</div>
       <div class="task-id">S2-W8-13</div>
-      <div class="task-title">Error Handling & Retry Logic</div>
-      <div class="task-priority priority-high">HIGH</div>
+      <div class="task-title">OpenCV Part 2 — Error Handling &amp; Retry Logic</div>
+      <div class="task-priority priority-medium">POST-DEMO</div>
     </div>
     <div class="task-body">
       <div class="section">
         <div class="section-title">Description</div>
         <div class="section-content">
-          Implement robust error handling and retry logic. Handle video not found, biomechanics missing, frame extraction failures, annotation errors, GCS upload failures.
+          Implement robust error handling and retry logic for the OpenCV Part 2 async pipeline. Cover: biomechanics data missing, frame extraction failure, annotation errors, GCS upload failures. OpenCV failures must not block Tab 1 — coaching still displays, image slot shows placeholder.
         </div>
       </div>
       <div class="section">
         <div class="section-title">Acceptance Criteria</div>
         <ul class="criteria-list">
-          <li>Graceful handling of missing data</li>
+          <li>Graceful handling of all failure modes (missing data, GCS timeout, annotation error)</li>
           <li>Retry logic with exponential backoff (max 3 retries)</li>
-          <li>Error logs written to CloudWatch</li>
-          <li>Analysis status reflects success/failure</li>
+          <li>Error logs written to CloudLogging with analysis_id and error type</li>
+          <li>OpenCV failures do not block Tab 1 — image placeholder shown, coaching visible</li>
           <li>No silent failures</li>
         </ul>
       </div>
       <div class="section">
         <div class="section-title">Dependencies</div>
-        <div class="section-content"><span class="dep-badge">DEPENDS ON</span> S2-W8-12 (GCS save)</div>
+        <div class="section-content"><span class="dep-badge">DEPENDS ON</span> S2-W8-12 (GCS save + SSE complete)</div>
       </div>
     </div>
   </div>
 
-  <!-- S3-W8-03 -->
+  <!-- OCV-S3-01 — DEFERRED -->
   <div class="task">
     <div class="task-header-bar">
-      <div class="task-badge badge-todo">◯ To Do</div>
-      <div class="task-id">S3-W8-03</div>
-      <div class="task-title">Squad 3 — Biomechanics JSON Generation</div>
-      <div class="task-priority priority-high">HIGH</div>
+      <div class="task-badge badge-deferred">⊘ Deferred</div>
+      <div class="task-id">OCV-S3-01</div>
+      <div class="task-title">Squad 3 — Produce biomechanics_json (Bottom Frame Per Rep)</div>
+      <div class="task-priority priority-medium">POST-DEMO</div>
     </div>
     <div class="task-body">
       <div class="section">
         <div class="section-title">Description</div>
         <div class="section-content">
-          Squad 3 to identify the bottom-most frame for each rep and produce biomechanics_json with required structure: frame_index, frame_bgr, camera_view, norm_pose (MediaPipe landmarks), angles, labels, classifications, rep_number.
+          Squad 3 identifies the bottom-most frame for each rep and produces biomechanics_json with the required structure: frame_index, frame_bgr (base64), camera_view, norm_pose (MediaPipe 33 joints × 3), angles (knee, hip, back), labels (back_label, valgus_label, depth_classification, dorsiflexion_status), rep_number. Full schema in OPENCV_PART2_INPUTS.md.
         </div>
       </div>
       <div class="section">
@@ -1294,130 +1790,118 @@ h1 { font-size: 28px; font-weight: 800; color: #f8fafc; margin-bottom: 8px; }
         <ul class="criteria-list">
           <li>Bottom frame correctly identified per rep</li>
           <li>MediaPipe landmarks extracted (33 joints × 3 coords)</li>
-          <li>All angle values populated (degrees)</li>
-          <li>All label fields populated</li>
-          <li>frame_bgr serialized as base64</li>
-          <li>Tested with sample videos</li>
+          <li>All angle values populated in degrees</li>
+          <li>All label fields populated (or null where not applicable)</li>
+          <li>frame_bgr serialized as base64 string</li>
+          <li>Tested with sample front + side camera videos</li>
         </ul>
       </div>
       <div class="section">
         <div class="section-title">Dependencies</div>
-        <div class="section-content">No upstream dependencies (parallel work)</div>
+        <div class="section-content">No upstream dependencies — can start in parallel with OCV-S2-01</div>
       </div>
     </div>
   </div>
 
-  <!-- S3-W8-04 -->
+  <!-- OCV-S3-02 — DEFERRED -->
   <div class="task">
     <div class="task-header-bar">
-      <div class="task-badge badge-todo">◯ To Do</div>
-      <div class="task-id">S3-W8-04</div>
-      <div class="task-title">Annotate Frame with Skeleton, Angles & Labels</div>
-      <div class="task-priority priority-high">HIGH</div>
+      <div class="task-badge badge-deferred">⊘ Deferred</div>
+      <div class="task-id">OCV-S3-02</div>
+      <div class="task-title">Squad 3 — Annotate Frame (Skeleton, Angles, Color Labels)</div>
+      <div class="task-priority priority-medium">POST-DEMO</div>
     </div>
     <div class="task-body">
       <div class="section">
         <div class="section-title">Description</div>
         <div class="section-content">
-          <strong>S3 executes annotation work:</strong> Annotate the extracted frame with skeleton overlay (from MediaPipe landmarks), angle values, classification labels, and color-coded form assessment.
-          <ul class="desc-list">
-            <li>Skeleton: draw lines between MediaPipe joints</li>
-            <li>Angles: label knee_angle, hip_angle, back_angle_value near joints</li>
-            <li>Labels: display back_label, valgus_label, depth_classification, dorsiflexion_status</li>
-            <li>Color-coding: green (good) / amber (borderline) / red (out of range)</li>
-            <li>Output: annotated frame_bgr (BGR color space, original resolution)</li>
-          </ul>
-          <strong>Handoff to S2:</strong> Once annotation is complete, share annotated frame_bgr with S2 immediately. S2 will:
-          <ul class="desc-list">
-            <li>Emit SSE frame_ready event to frontend with base64-encoded frame data (for instant display)</li>
-            <li>Encode frame as JPEG and upload to GCS</li>
-            <li>Store GCS URL in form_analysis_results.annotated_frame_url (for persistent storage)</li>
-          </ul>
+          Annotate the worst-rep frame with skeleton overlay (MediaPipe joints), angle values near joints, classification labels (back, valgus, depth, dorsiflexion), and color-coding (green / amber / red based on hardcoded thresholds). Output annotated frame_bgr and pass to S2 immediately for SSE + GCS handling.
         </div>
       </div>
       <div class="section">
         <div class="section-title">Acceptance Criteria</div>
         <ul class="criteria-list">
-          <li>Skeleton drawn from MediaPipe landmarks</li>
-          <li>All angles labeled and visible</li>
-          <li>Classification labels displayed</li>
-          <li>Color-coding applied correctly based on thresholds</li>
-          <li>Annotations readable and not overlapping</li>
-          <li>Works on front & side camera views</li>
-          <li>Annotated frame_bgr passed to S2 in expected format</li>
-          <li>Handoff to S2 is immediate (no delays)</li>
+          <li>Skeleton drawn from MediaPipe landmarks (standard COCO connections)</li>
+          <li>Knee, hip, back angles labeled near respective joints</li>
+          <li>Classification labels rendered top-left (back_label, valgus_label, depth_classification, dorsiflexion_status)</li>
+          <li>Color-coding applied: green / amber / red using hardcoded thresholds from OPENCV_PART2_INPUTS.md</li>
+          <li>Annotations readable, non-overlapping on front + side views</li>
+          <li>Annotated frame_bgr passed to S2 immediately after annotation completes</li>
         </ul>
       </div>
       <div class="section">
         <div class="section-title">Dependencies</div>
-        <div class="section-content"><span class="dep-badge">DEPENDS ON</span> S3-W8-03 (Biomechanics frame_bgr available)</div>
+        <div class="section-content"><span class="dep-badge">DEPENDS ON</span> OCV-S3-01 (biomechanics_json with frame_bgr + landmarks available)</div>
       </div>
     </div>
   </div>
 
-  <!-- S3-W8-05 (was S3-W8-04) -->
+  <!-- OCV-S3-03 — DEFERRED -->
   <div class="task">
     <div class="task-header-bar">
-      <div class="task-badge badge-todo">◯ To Do</div>
-      <div class="task-id">S3-W8-05</div>
-      <div class="task-title">E2E Integration Testing</div>
-      <div class="task-priority priority-high">HIGH</div>
+      <div class="task-badge badge-deferred">⊘ Deferred</div>
+      <div class="task-id">OCV-S3-03</div>
+      <div class="task-title">E2E Integration Testing — Full OpenCV Part 2 Pipeline</div>
+      <div class="task-priority priority-medium">POST-DEMO</div>
     </div>
     <div class="task-body">
       <div class="section">
         <div class="section-title">Description</div>
         <div class="section-content">
-          Test complete end-to-end flow: Biomechanics → S2 save → Haiku Call 1 → Async OpenCV Part 2 → Frame annotation → GCS storage. Test with front & side camera views, multiple users, and error scenarios.
+          Test complete flow: Biomechanics → S2 pre-save → Haiku Call 1 → Async trigger → OpenCV Part 2 job → S3 annotation → S2 GCS save + SSE. Test with front + side camera views, multiple users, and error scenarios.
         </div>
       </div>
       <div class="section">
         <div class="section-title">Acceptance Criteria</div>
         <ul class="criteria-list">
-          <li>Biomechanics data saved to DB</li>
-          <li>Haiku Call 1 completes successfully</li>
-          <li>OpenCV Part 2 triggered and runs</li>
-          <li>Annotated frame generated correctly</li>
-          <li>Frame URL saved and loads in frontend</li>
-          <li>No data loss or corruption</li>
-          <li>Performance <5 min end-to-end</li>
+          <li>biomechanics_json saved to DB before Haiku Call 1</li>
+          <li>Haiku Call 1 completes; OpenCV Part 2 async trigger fires</li>
+          <li>Worst rep correctly identified and frame extracted</li>
+          <li>Annotated frame generated and saved to GCS</li>
+          <li>frame_ready SSE event emitted; frontend displays annotated frame</li>
+          <li>annotated_frame_url stored in DB and loads correctly</li>
+          <li>No data loss or corruption across full pipeline</li>
+          <li>Performance: &lt;5 min end-to-end</li>
         </ul>
       </div>
       <div class="section">
         <div class="section-title">Dependencies</div>
-        <div class="section-content"><span class="dep-badge">DEPENDS ON</span> S2-W8-13 (Error handling complete)<br>
-        <span class="dep-badge">DEPENDS ON</span> S3-W8-04 (Annotation complete)</div>
+        <div class="section-content">
+          <span class="dep-badge">DEPENDS ON</span> S2-W8-13 (Error handling complete)<br>
+          <span class="dep-badge">DEPENDS ON</span> OCV-S3-02 (Annotation complete)
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- S3-W8-06 (was S3-W8-05) -->
+  <!-- OCV-S3-04 — DEFERRED -->
   <div class="task">
     <div class="task-header-bar">
-      <div class="task-badge badge-todo">◯ To Do</div>
-      <div class="task-id">S3-W8-06</div>
-      <div class="task-title">Documentation & Production Deployment</div>
-      <div class="task-priority priority-high">HIGH</div>
+      <div class="task-badge badge-deferred">⊘ Deferred</div>
+      <div class="task-id">OCV-S3-04</div>
+      <div class="task-title">Documentation &amp; Production Deployment — OpenCV Part 2</div>
+      <div class="task-priority priority-medium">POST-DEMO</div>
     </div>
     <div class="task-body">
       <div class="section">
         <div class="section-title">Description</div>
         <div class="section-content">
-          Document OpenCV Part 2 implementation, deploy to production, and create operational runbooks. Set up monitoring, alarms, and team training.
+          Document OpenCV Part 2 implementation (architecture, data flow, error paths), deploy to production, create operational runbook (troubleshooting, manual trigger, CloudLogging queries, rollback), set up CloudLogging alarms, and brief team.
         </div>
       </div>
       <div class="section">
         <div class="section-title">Acceptance Criteria</div>
         <ul class="criteria-list">
-          <li>Implementation documented</li>
-          <li>Operational runbook created</li>
-          <li>Deployed to production</li>
-          <li>Monitoring + alarms configured</li>
-          <li>Team trained on troubleshooting</li>
+          <li>Architecture + data flow documented</li>
+          <li>Operational runbook created and reviewed</li>
+          <li>Deployed to production with smoke tests passing</li>
+          <li>CloudLogging alarms configured (error rate, latency, queue depth)</li>
+          <li>Team briefed on troubleshooting flow</li>
         </ul>
       </div>
       <div class="section">
         <div class="section-title">Dependencies</div>
-        <div class="section-content"><span class="dep-badge">DEPENDS ON</span> S3-W8-04 (E2E testing complete)</div>
+        <div class="section-content"><span class="dep-badge">DEPENDS ON</span> OCV-S3-03 (E2E testing complete)</div>
       </div>
     </div>
   </div>
@@ -1425,26 +1909,32 @@ h1 { font-size: 28px; font-weight: 800; color: #f8fafc; margin-bottom: 8px; }
 
 <!-- ============ DEPENDENCY MAP ============ -->
 <div class="summary-section">
-  <div class="summary-title">Cross-Squad Dependency Map</div>
+  <div class="summary-title">Cross-Squad Dependency Map — Week 8 Active Tasks</div>
   <div class="dep-grid">
-    <div class="dep-flow">S2-W8-01 (Schema) → S2-W8-02 (Async Job)</div>
-    <div class="dep-flow">S2-W8-02 (Async Job) → S2-W8-03 (Status Endpoint)</div>
-    <div class="dep-flow">S2-W8-02 (Async Job) → S2-W8-04 (SSE Events)</div>
-    <div class="dep-flow">S2-W8-02 (Async Job) → S2-W8-05 (Error Handling)</div>
-    <div class="dep-flow">S3-W8-01 (MD Files) → S2-W8-02 (Injected into Haiku prompt)</div>
-    <div class="dep-flow">S2-W8-03 (Status Endpoint) → S1-W8-01a (Frontend polling)</div>
-    <div class="dep-flow">S3-W8-02 (Test Data) → S1-W8-01a (Past sessions display)</div>
-    <div class="dep-flow">S2-W8-02 (Async Job) → S1-W8-01a (Results to display)</div>
-    <div class="dep-flow">OCV2-00 (DB Schema) → OCV2-01 (S2 Save)</div>
-    <div class="dep-flow">OCV2-01 (S2 Save) → S2-W8-08 (Async Trigger)</div>
-    <div class="dep-flow">S3-W8-03 (Biomechanics frame_bgr) → S3-W8-04 (Annotate frame)</div>
-    <div class="dep-flow">S3-W8-04 (Annotated frame_bgr) → S2-W8-12 (GCS upload + store URL)</div>
-    <div class="dep-flow">S2-W8-06 (Schema: biomechanics_json) → S2-W8-12 (Store URL in biomechanics_JSON)</div>
-    <div class="dep-flow">S2-W8-12 (GCS Save) → S2-W8-13 (Error Handling)</div>
-    <div class="dep-flow">S2-W8-13 (Error Handling) → S3-W8-05 (E2E Testing)</div>
-    <div class="dep-flow">S2-W8-12 (GCS Save) → S2-W8-13 (Error Handling)</div>
-    <div class="dep-flow">S2-W8-13 (Error Handling) → S3-W8-04 (E2E Testing)</div>
-    <div class="dep-flow">S3-W8-04 (E2E Testing) → S3-W8-05 (Deploy + Docs)</div>
+    <div class="dep-flow">S3-W8-03 (progression_results table + user_profile migration) — no deps, start immediately</div>
+    <div class="dep-flow">S2-W8-01 (Schema: job tracking columns) → S2-W8-02 (Haiku Call 2 job)</div>
+    <div class="dep-flow">S3-W8-03 (progression_results table) → S2-W8-02 (Haiku Call 2 writes output here)</div>
+    <div class="dep-flow">Haiku 1 SSE event fires → S2-W8-02 (Haiku Call 2) — fires independently, no OpenCV dependency</div>
+    <div class="dep-flow">S2-W8-02 (Haiku Call 2) → S2-W8-03 (Status Endpoint reflects output shape)</div>
+    <div class="dep-flow">S2-W8-02 (Haiku Call 2) → S2-W8-04 (SSE haiku_call_2_complete event)</div>
+    <div class="dep-flow">S2-W8-02 (Haiku Call 2) → S2-W8-05 (Error handling wraps job)</div>
+    <div class="dep-flow">S3-W8-03 (progression_results + user_profile) → S2-W8-15 (GET /progression/:session_id endpoint)</div>
+    <div class="dep-flow">S2-W8-15 (endpoint shell) + S3-W8-00 (user_profile fields) + S3-W8-02 (test data) → S2-W8-16 (SQL: current vs previous session comparison assembly)</div>
+    <div class="dep-flow">S2-W8-16 (comparison SQL) → S1-W8-01a (Progression tab renders current vs previous session data)</div>
+    <div class="dep-flow">S3-W8-02 (Test data + image seeding) → S2-W8-15 (endpoint testable with demo data)</div>
+    <div class="dep-flow">S2-W8-15 (GET /progression endpoint) → S1-W8-01a (Progression tab calls this once on open)</div>
+    <div class="dep-flow">S2-W8-04 (SSE haiku_call_2_complete) → S1-W8-01a (Phase 2 render trigger)</div>
+    <div class="dep-flow">S3-W8-02 (progress_ladder_image_url seeded) → S1-W8-01a (Progress Ladder image renders)</div>
+    <div class="dep-flow">S3-W8-02 (Test data seeded) → S1-W8-02 (Home + Profile screens have data to display)</div>
+    <div class="dep-flow">S3-W8-01 (MD coaching files) — no deps, start immediately</div>
+    <div class="dep-flow">S3-W8-01 (MD coaching files) → S3-W8-05 (files injected into Haiku Call 2 prompt template)</div>
+    <div class="dep-flow">S3-W8-05 (Haiku Call 2 prompt template) → S2-W8-02 (job worker loads prompt at runtime)</div>
+    <div class="dep-flow">S3-W8-02 (seeded sessions) → S3-W8-04 (sessions must exist before manual annotation)</div>
+    <div class="dep-flow">S3-W8-04 (annotated_frame_url seeded) → S1-W8-01a (Form History cards render annotated images)</div>
+    <div class="dep-flow">S1-W8-03 Part 1 (annotated_frame_url + ladder_url columns added to user_profile) → S1-W8-03 Part 2 (frontend renders both images)</div>
+    <div class="dep-flow">S3-W8-04 (URLs seeded in user_profile) → S1-W8-03 Part 2 (real images available to test against — logic buildable beforehand with hardcoded test URL)</div>
+    <div class="dep-flow">S1-W8-03 (ladder_url) → S1-W8-01a (Progression tab Progress Ladder block) + S1-W8-02 (Home screen Progress Ladder section)</div>
+    <div class="dep-flow" style="color:#475569;border-left-color:#2d3748;">— OpenCV Part 2 (S2-W8-06 through S3-W8-06) DEFERRED to post-demo — see Post-Demo Backlog above —</div>
   </div>
 </div>
 
@@ -1452,10 +1942,10 @@ h1 { font-size: 28px; font-weight: 800; color: #f8fafc; margin-bottom: 8px; }
 <div class="merge">
   <div class="merge-title">Thursday Merge Target</div>
   <div class="merge-desc">
-    <strong>Squad 1:</strong> Progression page live and polling successfully • Home screen shows session history with re-upload links • Profile screen connected to 3 demo users with localStorage persistence<br><br>
-    <strong>Squad 2:</strong> Schema migrations applied • Haiku Call 2 async job queue operational (queued → running → complete cycle tested) • Job status endpoint responding <50ms • SSE events firing in real time • Error handling + retry logic in place (tested with simulated failures) • S2 pre-save biomechanics_json logic implemented with transaction support<br><br>
-    <strong>Squad 3:</strong> 5+ .md coaching files finalized and committed • Test data seeded: 10–14 realistic past sessions across user_001/002/003 with progressive weights and varying form scores • Biomechanics JSON generation spec finalized, implementation underway<br><br>
-    <strong>OpenCV Part 2:</strong> Database schema updated with biomechanics_json + annotated_frame_url columns • Task structure created (9 subtasks: S2-W8-06 → S2-W8-13, S3-W8-03 → S3-W8-06) • S3 annotation pipeline defined • S2 GCS storage with retry logic planned • S3 annotation + S2 GCS storage integration ready for squad execution
+    <strong>Squad 1:</strong> Progression tab live — Phase 1 (computed data) renders immediately, Phase 2 (AI verdict) loads on SSE receipt with skeleton states • "We've Told You" card, Key Insights rows, Rep chart, Form History, Progress Ladder image all rendering correctly • Home screen shows session history • Profile screen connected to 3 demo users<br><br>
+    <strong>Squad 2:</strong> S3-W8-03 migrations applied (progression_results table + user_profile.progress_ladder_image_url) • S2-W8-15 GET /progression/:session_id endpoint live and tested • Haiku Call 2 async job triggers from Haiku 1 SSE — queued → running → complete cycle tested • Output: progression_verdict, progress_direction, focus_this_week written to progression_results • SSE haiku_call_2_complete event fires • Error handling in place<br><br>
+    <strong>Squad 3:</strong> S3-W8-01 complete: MD coaching files (hold / increase / decrease) committed to /coaching_content/ • S3-W8-02 complete: test data seeded — 10–14 sessions across user_001/002/003 with next_session_focus populated in coaching_output • S3-W8-03 migrations applied • S3-W8-04 complete: annotated_frame_url seeded for all demo sessions (manual OpenCV workaround) — Form History cards have images • S3-W8-05 complete: Haiku Call 2 prompt template committed to /coaching_content/ or /prompts/ and loadable by job worker<br><br>
+    <strong style="color:#ef4444;">OpenCV Part 2 — NOT in demo scope:</strong> All tasks (S2-W8-06 through S3-W8-06) deferred to post-demo. Full pipeline spec preserved in Post-Demo Backlog section. No action before Thursday.
   </div>
 </div>
 
