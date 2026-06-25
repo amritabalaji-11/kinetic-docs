@@ -21,6 +21,9 @@
 ### "I want to understand how modules connect"
 → [INTEGRATION_GUIDE.md](./INTEGRATION_GUIDE.md) (15 min - data flow)
 
+### "I need to check tech requirements / set up my environment"
+→ [START_HERE.md#-before-you-start-tech-requirements](./START_HERE.md#-before-you-start-tech-requirements) (tech stack overview) + [ARCHITECTURE/SYSTEM_OVERVIEW.md#-technology-stack](./ARCHITECTURE/SYSTEM_OVERVIEW.md#-technology-stack) (full reference)
+
 ### "I need detailed info about [specific module]"
 → [MODULES/](./MODULES/) folder (module-level deep dives)
 
@@ -41,7 +44,7 @@ Documentation2/
 ├── 📊 MODULE_BREAKDOWN.md
 │
 ├── 🏗️ ARCHITECTURE/
-│   ├── SYSTEM_OVERVIEW.md (complete architecture)
+│   ├── SYSTEM_OVERVIEW.md (complete architecture + tech stack)
 │   └── DECISIONS.md (why we built it this way)
 │
 ├── 🔧 MODULES/
@@ -71,8 +74,8 @@ Documentation2/
 
 | Document | Purpose | Time | For Whom |
 |----------|---------|------|----------|
-| **START_HERE.md** | Entry point, pick your path | 10-15m | Everyone |
-| **ARCHITECTURE/SYSTEM_OVERVIEW.md** | How everything connects | 30-45m | All developers |
+| **START_HERE.md** | Entry point, pick your path, tech requirements | 10-15m | Everyone |
+| **ARCHITECTURE/SYSTEM_OVERVIEW.md** | How everything connects, full tech stack | 30-45m | All developers |
 | **ARCHITECTURE/DECISIONS.md** | Why we chose this architecture | 15-20m | All developers |
 
 ### Status & Planning (Before Starting Work)
@@ -170,6 +173,7 @@ Core product (video upload → form coaching) is production-ready. Just missing:
 | Question | Answer Location |
 |----------|-----------------|
 | What is Kinetic? | [START_HERE.md](./START_HERE.md) |
+| What tech do I need? | [START_HERE.md#-before-you-start](./START_HERE.md#-before-you-start-tech-requirements) or [ARCHITECTURE/SYSTEM_OVERVIEW.md#-technology-stack](./ARCHITECTURE/SYSTEM_OVERVIEW.md#-technology-stack) |
 | How does the system work? | [ARCHITECTURE/SYSTEM_OVERVIEW.md](./ARCHITECTURE/SYSTEM_OVERVIEW.md) |
 | Why this architecture? | [ARCHITECTURE/DECISIONS.md](./ARCHITECTURE/DECISIONS.md) |
 | What's built? | [IMPLEMENTATION_STATUS.md](./IMPLEMENTATION_STATUS.md) |

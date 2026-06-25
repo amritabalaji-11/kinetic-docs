@@ -418,6 +418,68 @@ run_haiku_call_1(biomechanics)
 
 ---
 
+## 🔧 Technology Stack
+
+### Backend
+
+| Technology | Version | Purpose |
+|------------|---------|---------|
+| Python | 3.14.2 | Runtime |
+| FastAPI | 0.136.0 | Web framework |
+| Uvicorn | 0.44.0 | ASGI server |
+| Pydantic | 2.12.5 | Data validation |
+| MongoDB | latest | Database |
+| PyMongo | 4.17.0 | MongoDB driver |
+| python-dotenv | 1.2.2 | Environment config |
+| Anthropic OpenAI | 2.32.0 | LLM API client |
+| LangChain Community | 0.4.1 | LLM integrations |
+| LangChain HuggingFace | 1.2.2 | HF model support |
+| LangChain Ollama | 1.1.0 | Local LLM support |
+| Sentence Transformers | 5.4.1 | Embeddings |
+| FAISS | 1.13.2 (CPU) | Vector search |
+| Ollama | 0.6.1 | Local LLM runtime |
+| Transformers | 5.5.4 | HF model library |
+| Torch | 2.11.0 | Deep learning framework |
+| Datasets | 4.8.4 | Dataset loading |
+| MediaPipe | (via pose_landmarker) | Pose detection |
+| Prometheus Client | 0.25.0 | Metrics |
+| PyPDF | 6.10.2 | PDF processing |
+| OpenPyXL | 3.1.5 | Excel processing |
+| DirtyJSON | 1.0.8 | Lenient JSON parsing |
+| Pytest | 9.0.2 | Testing framework |
+| Docker | 3.9 | Containerization |
+
+### Frontend
+
+| Technology | Version | Purpose |
+|------------|---------|---------|
+| Node.js | 24.12.0 (LTS) | Runtime |
+| npm | 11.6.2 | Package manager |
+| Vercel | (deployment) | Hosting (not working yet) |
+| React | (check package.json) | UI framework |
+
+### Testing
+
+| Technology | Version | Purpose |
+|------------|---------|---------|
+| Pytest | 9.0.2 | Python testing |
+| FastAPI TestClient | (with FastAPI) | API testing |
+| MongoDB Test DB | (local) | Test database |
+
+### Infrastructure
+
+| Technology | Version | Purpose |
+|------------|---------|---------|
+| Docker | 3.9 | Containerization |
+| Docker Compose | (latest) | Multi-container orchestration |
+| Bash/Zsh | (system) | Startup scripts |
+
+---
+
+**Note**: Exact versions matter for compatibility. Use these versions when setting up your development environment or onboarding new team members.
+
+---
+
 ## What's Next
 
 Before building anything new, refer to [IMPLEMENTATION_STATUS.md](../IMPLEMENTATION_STATUS.md) to understand:
