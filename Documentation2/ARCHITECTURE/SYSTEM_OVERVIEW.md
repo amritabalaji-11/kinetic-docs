@@ -420,63 +420,83 @@ run_haiku_call_1(biomechanics)
 
 ## 🔧 Technology Stack
 
-### Backend
+### Currently in Use (Verified)
+
+#### Backend
+
+| Technology | Actual Version | Purpose |
+|------------|--------|---------|
+| **Python** | 3.14.3 | Runtime |
+| **FastAPI** | 0.136.3 | Web framework |
+| **Uvicorn** | 0.49.0 | ASGI server |
+| **Pydantic** | 2.13.4 | Data validation |
+| **Anthropic SDK** | 0.109.1 | Claude API client |
+| **MediaPipe** | 0.10.35 | Pose detection (33 landmarks) |
+| **OpenCV** | 4.13.0.92 | Video processing |
+| **NumPy** | 2.4.6 | Numerical computing |
+| **Pillow** | 12.2.0 | Image processing |
+| **Google Cloud Storage** | 3.11.0 | Video storage |
+| **databases** | 0.9.0 | Async DB abstraction |
+| **aiosqlite** | 0.22.1 | Async SQLite |
+| **python-dotenv** | 1.2.2 | Env config |
+| **python-multipart** | 0.0.32 | Form data parsing |
+| **SQLAlchemy** | 2.0.50 | ORM layer |
+| **Matplotlib** | 3.10.9 | Visualization (debugging) |
+
+#### Frontend
+
+| Technology | Actual Version | Purpose |
+|------------|--------|---------|
+| **Node.js** | 24.14.0 (LTS) | Runtime |
+| **npm** | 11.9.0 | Package manager |
+| **React** | 18.3.1 | UI framework |
+| **React Router** | 7.15.0 | Client routing |
+| **Vite** | 5.4.10 | Build tool |
+| **Lucide React** | 1.14.0 | Icon library |
+| **Tailwind CSS** | 3.4.19 | Styling |
+| **ESLint** | 9.13.0 | Code linting |
+| **PostCSS** | 8.5.14 | CSS processing |
+| **Autoprefixer** | 10.5.0 | CSS vendor prefixes |
+
+#### External Services
+
+| Service | Purpose |
+|---------|---------|
+| **Anthropic Claude API** | Form & progression coaching |
+| **Google Cloud Storage** | Video upload & storage |
+| **Google Cloud Platform** | Infrastructure |
+
+#### Database
 
 | Technology | Version | Purpose |
 |------------|---------|---------|
-| Python | 3.14.2 | Runtime |
-| FastAPI | 0.136.0 | Web framework |
-| Uvicorn | 0.44.0 | ASGI server |
-| Pydantic | 2.12.5 | Data validation |
-| MongoDB | latest | Database |
-| PyMongo | 4.17.0 | MongoDB driver |
-| python-dotenv | 1.2.2 | Environment config |
-| Anthropic OpenAI | 2.32.0 | LLM API client |
-| LangChain Community | 0.4.1 | LLM integrations |
-| LangChain HuggingFace | 1.2.2 | HF model support |
-| LangChain Ollama | 1.1.0 | Local LLM support |
-| Sentence Transformers | 5.4.1 | Embeddings |
-| FAISS | 1.13.2 (CPU) | Vector search |
-| Ollama | 0.6.1 | Local LLM runtime |
-| Transformers | 5.5.4 | HF model library |
-| Torch | 2.11.0 | Deep learning framework |
-| Datasets | 4.8.4 | Dataset loading |
-| MediaPipe | (via pose_landmarker) | Pose detection |
-| Prometheus Client | 0.25.0 | Metrics |
-| PyPDF | 6.10.2 | PDF processing |
-| OpenPyXL | 3.1.5 | Excel processing |
-| DirtyJSON | 1.0.8 | Lenient JSON parsing |
-| Pytest | 9.0.2 | Testing framework |
-| Docker | 3.9 | Containerization |
-
-### Frontend
-
-| Technology | Version | Purpose |
-|------------|---------|---------|
-| Node.js | 24.12.0 (LTS) | Runtime |
-| npm | 11.6.2 | Package manager |
-| Vercel | (deployment) | Hosting (not working yet) |
-| React | (check package.json) | UI framework |
-
-### Testing
-
-| Technology | Version | Purpose |
-|------------|---------|---------|
-| Pytest | 9.0.2 | Python testing |
-| FastAPI TestClient | (with FastAPI) | API testing |
-| MongoDB Test DB | (local) | Test database |
-
-### Infrastructure
-
-| Technology | Version | Purpose |
-|------------|---------|---------|
-| Docker | 3.9 | Containerization |
-| Docker Compose | (latest) | Multi-container orchestration |
-| Bash/Zsh | (system) | Startup scripts |
+| **SQLite** | 3.46+ (via aiosqlite) | Current dev database |
+| **Async abstraction** | databases 0.9.0 | DB-agnostic access layer |
 
 ---
 
-**Note**: Exact versions matter for compatibility. Use these versions when setting up your development environment or onboarding new team members.
+### Planned for MVP Features (Not Yet Implemented)
+
+You plan to add these technologies for upcoming features:
+
+| Feature # | Technology | Purpose | Status |
+|-----------|-----------|---------|--------|
+| **#1: Auth** | Google OAuth SDK | Google Sign-In | Design phase |
+| **#2: Exercises** | (None new) | Master exercises table | Design phase |
+| **#3: Workout Backend** | (Current stack) | API endpoints + persistence | Blocked by #2 |
+| **#4: RAG Injection** | LangChain, Sentence-Transformers, FAISS | Exercise content search | Planning |
+| **Database** | MongoDB + PyMongo | Replace SQLite for production | Future |
+| **Testing** | Pytest | Automated tests | Not started |
+| **GPU Optimization** | Torch, CUDA/Metal | MediaPipe GPU support | Future |
+
+---
+
+### Key Architecture Notes
+
+- **Database Strategy**: Currently uses SQLite (file-based) via async layer. Switch to MongoDB when implementing feature #3 (Workout Backend).
+- **Version Pinning**: `requirements.txt` doesn't pin versions (uses compatible ranges). Consider pinning for production.
+- **Why minimal tech debt**: Core system is intentionally lightweight to allow team flexibility when adding MVP features.
+- **Verification**: These versions were verified against actual `pip list` and `package.json` as of June 25, 2026.
 
 ---
 

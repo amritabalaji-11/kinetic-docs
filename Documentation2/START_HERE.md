@@ -29,15 +29,15 @@ User sees Tab 2: "Great progress! Increase to 18kg next time"
 
 ## ⚙️ Before You Start: Tech Requirements
 
-**Make sure you have these versions installed** (exact versions matter for compatibility):
+**Make sure you have these versions installed**:
 
-| Category | Required | Current |
-|----------|----------|---------|
-| **Backend** | Python 3.14.2, FastAPI 0.136.0, MongoDB (latest) | Check [Tech Stack](./ARCHITECTURE/SYSTEM_OVERVIEW.md#-technology-stack) |
-| **Frontend** | Node.js 24.12.0 (LTS), npm 11.6.2 | Check [Tech Stack](./ARCHITECTURE/SYSTEM_OVERVIEW.md#-technology-stack) |
-| **Infrastructure** | Docker 3.9, Docker Compose | Check [Tech Stack](./ARCHITECTURE/SYSTEM_OVERVIEW.md#-technology-stack) |
+| Category | Required |
+|----------|----------|
+| **Backend** | Python 3.14+, FastAPI 0.136+ |
+| **Frontend** | Node.js 24.14.0 (LTS), npm 11.9.0+ |
+| **Database** | SQLite 3.46+ (included with Python) |
 
-→ **[Full Tech Stack Reference](./ARCHITECTURE/SYSTEM_OVERVIEW.md#-technology-stack)** (includes all dependencies with versions)
+→ **[Full Verified Tech Stack](./ARCHITECTURE/SYSTEM_OVERVIEW.md#-technology-stack)** (all dependencies with exact versions verified from codebase)
 
 ---
 
