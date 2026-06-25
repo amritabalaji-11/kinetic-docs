@@ -470,8 +470,8 @@ run_haiku_call_1(biomechanics)
 
 | Technology | Version | Purpose |
 |------------|---------|---------|
-| **SQLite** | 3.46+ (via aiosqlite) | Current dev database |
-| **Async abstraction** | databases 0.9.0 | DB-agnostic access layer |
+| **SQLite** | 3.46+ (via aiosqlite) | Primary database |
+| **databases** | 0.9.0 | Async DB abstraction layer |
 
 ---
 
@@ -485,7 +485,6 @@ You plan to add these technologies for upcoming features:
 | **#2: Exercises** | (None new) | Master exercises table | Design phase |
 | **#3: Workout Backend** | (Current stack) | API endpoints + persistence | Blocked by #2 |
 | **#4: RAG Injection** | LangChain, Sentence-Transformers, FAISS | Exercise content search | Planning |
-| **Database** | MongoDB + PyMongo | Replace SQLite for production | Future |
 | **Testing** | Pytest | Automated tests | Not started |
 | **GPU Optimization** | Torch, CUDA/Metal | MediaPipe GPU support | Future |
 
@@ -493,7 +492,8 @@ You plan to add these technologies for upcoming features:
 
 ### Key Architecture Notes
 
-- **Database Strategy**: Currently uses SQLite (file-based) via async layer. Switch to MongoDB when implementing feature #3 (Workout Backend).
+- **Database**: SQLite with `databases` abstraction layer for async access
+- **Why SQLite**: Lightweight, no separate DB server needed, perfect for MVP phase
 - **Version Pinning**: `requirements.txt` doesn't pin versions (uses compatible ranges). Consider pinning for production.
 - **Why minimal tech debt**: Core system is intentionally lightweight to allow team flexibility when adding MVP features.
 - **Verification**: These versions were verified against actual `pip list` and `package.json` as of June 25, 2026.

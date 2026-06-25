@@ -29,15 +29,15 @@ User sees Tab 2: "Great progress! Increase to 18kg next time"
 
 ## ⚙️ Before You Start: Tech Requirements
 
-**Make sure you have these versions installed**:
+**Make sure you have these installed**:
 
-| Category | Required |
-|----------|----------|
+| Component | Required |
+|-----------|----------|
 | **Backend** | Python 3.14+, FastAPI 0.136+ |
 | **Frontend** | Node.js 24.14.0 (LTS), npm 11.9.0+ |
-| **Database** | SQLite 3.46+ (included with Python) |
+| **Database** | SQLite (included with Python) |
 
-→ **[Full Verified Tech Stack](./ARCHITECTURE/SYSTEM_OVERVIEW.md#-technology-stack)** (all dependencies with exact versions verified from codebase)
+→ **[Full Tech Stack Reference](./ARCHITECTURE/SYSTEM_OVERVIEW.md#-technology-stack)** (all dependencies with exact verified versions)
 
 ---
 
