@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kinetic PM Action Checklist</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .status-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .status-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .status-card h3 {
+            font-size: 2em;
+            margin: 10px 0;
+        }
+
+        .status-card p {
+            opacity: 0.9;
+            font-size: 0.9em;
+        }
+
+        .task-section {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 25px;
+            margin: 25px 0;
+            border-left: 5px solid #667eea;
+        }
+
+        .task-section h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .task-priority {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: bold;
+            margin-left: auto;
+        }
+
+        .priority-critical {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .task-details {
+            background: white;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 15px 0;
+        }
+
+        .task-details strong {
+            color: #667eea;
+        }
+
+        .checklist {
+            list-style: none;
+            margin: 15px 0;
+        }
+
+        .checklist li {
+            padding: 12px;
+            margin: 8px 0;
+            background: white;
+            border-left: 3px solid #667eea;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .checklist li:hover {
+            background: #f0f3ff;
+            transform: translateX(5px);
+        }
+
+        .checklist input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: #667eea;
+        }
+
+        .checklist input[type="checkbox"]:checked + label {
+            text-decoration: line-through;
+            color: #999;
+        }
+
+        .checklist label {
+            flex: 1;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .owner-section {
+            background: #e7f3ff;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+
+        .owner-section strong {
+            color: #667eea;
+        }
+
+        .timeline {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+
+        .timeline strong {
+            color: #856404;
+        }
+
+        .impact-box {
+            background: #d4edda;
+            border: 2px solid #28a745;
+            border-radius: 6px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+
+        .impact-box strong {
+            color: #155724;
+        }
+
+        .footer {
+            background: #f8f9fa;
+            padding: 30px;
+            text-align: center;
+            color: #666;
+            border-top: 2px solid #e9ecef;
+        }
+
+        .footer p {
+            margin: 8px 0;
+        }
+
+        .print-note {
+            background: #e7f3ff;
+            border: 1px solid #667eea;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 20px 0;
+            font-size: 0.9em;
+        }
+
+        @media print {
+            body {
+                background: white;
+            }
+            .container {
+                box-shadow: none;
+            }
+            .checklist input[type="checkbox"] {
+                print-color-adjust: exact;
+                -webkit-print-color-adjust: exact;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📋 Kinetic MVP - PM Action Checklist</h1>
+            <p>Critical decisions needed before development can proceed</p>
+        </header>
+
+        <div class="content">
+            <!-- Status Cards -->
+            <div class="status-bar">
+                <div class="status-card">
+                    <div>🎯</div>
+                    <h3 id="completed">0</h3>
+                    <p>Tasks Completed</p>
+                </div>
+                <div class="status-card">
+                    <div>📝</div>
+                    <h3 id="total">2</h3>
+                    <p>Total Tasks</p>
+                </div>
+                <div class="status-card">
+                    <div>⏱️</div>
+                    <h3>Week 1</h3>
+                    <p>Target Timeline</p>
+                </div>
+            </div>
+
+            <div class="print-note">
+                ✅ <strong>Tip:</strong> Check items as you complete them. This checklist auto-saves in your browser. Print or share the URL with your team.
+            </div>
+
+            <!-- TASK 1 -->
+            <div class="task-section">
+                <h2>
+                    🏋️ Task 1: Define 3-5 Exercises for MVP
+                    <span class="task-priority priority-critical">CRITICAL</span>
+                </h2>
+
+                <div class="impact-box">
+                    <strong>🚫 Blocks:</strong> Feature #2 (Exercise Library) → Feature #3 (Workout Backend)<br>
+                    <strong>⏱️ Must complete before:</strong> Backend development can start
+                </div>
+
+                <div class="task-details">
+                    <strong>What to decide:</strong>
+                    <ul class="checklist">
+                        <li>
+                            <input type="checkbox" id="task1-1" onchange="updateProgress()">
+                            <label for="task1-1">Conduct market research (user preferences, competitor analysis)</label>
+                        </li>
+                        <li>
+                            <input type="checkbox" id="task1-2" onchange="updateProgress()">
+                            <label for="task1-2">Check MediaPipe feasibility for each exercise candidate</label>
+                        </li>
+                        <li>
+                            <input type="checkbox" id="task1-3" onchange="updateProgress()">
+                            <label for="task1-3">Select 3-5 exercises (consider progression difficulty)</label>
+                        </li>
+                        <li>
+                            <input type="checkbox" id="task1-4" onchange="updateProgress()">
+                            <label for="task1-4">Document exercise names, IDs, muscle groups</label>
+                        </li>
+                        <li>
+                            <input type="checkbox" id="task1-5" onchange="updateProgress()">
+                            <label for="task1-5">Identify equipment needed for each exercise</label>
+                        </li>
+                        <li>
+                            <input type="checkbox" id="task1-6" onchange="updateProgress()">
+                            <label for="task1-6">Determine camera angles needed (front, side, overhead)</label>
+                        </li>
+                        <li>
+                            <input type="checkbox" id="task1-7" onchange="updateProgress()">
+                            <label for="task1-7">Share final decision with team</label>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="owner-section">
+                    <strong>🔄 Owner Assignment:</strong><br>
+                    <input type="text" placeholder="Name / Slack handle" style="width: 100%; padding: 8px; margin-top: 10px; border: 1px solid #667eea; border-radius: 4px;">
+                </div>
+
+                <div class="timeline">
+                    <strong>📅 Timeline:</strong> This week (before trainer booking)<br>
+                    <strong>📤 Deliverable:</strong> Exercises.md with final list
+                </div>
+
+                <div class="task-details" style="background: #fff8e1; border-left: 3px solid #ffc107;">
+                    <strong>💡 Recommended Approach:</strong>
+                    <ol style="margin-left: 20px; margin-top: 10px;">
+                        <li>Start with 3 exercises (goblet squat, barbell squat, deadlift - already proven)</li>
+                        <li>Add 2 more from: leg press, Romanian deadlift, or dumbbell row</li>
+                        <li>Validate each works with current MediaPipe (skeleton detection, angle accuracy)</li>
+                    </ol>
+                </div>
+            </div>
+
+            <!-- TASK 2 -->
+            <div class="task-section">
+                <h2>
+                    🎥 Task 2: Find Trainer for PT Videos
+                    <span class="task-priority priority-critical">CRITICAL</span>
+                </h2>
+
+                <div class="impact-box">
+                    <strong>🎯 Enables:</strong> Form cues, coaching reference content, visual learning<br>
+                    <strong>⏱️ Needed before:</strong> Feature #6 (PT Videos) and Feature #4 (RAG Injection)
+                </div>
+
+                <div class="task-details">
+                    <strong>What to do:</strong>
+                    <ul class="checklist">
+                        <li>
+                            <input type="checkbox" id="task2-1" onchange="updateProgress()">
+                            <label for="task2-1">Create trainer job description (fitness level, exercises, availability)</label>
+                        </li>
+                        <li>
+                            <input type="checkbox" id="task2-2" onchange="updateProgress()">
+                            <label for="task2-2">Identify candidate pool (local trainers, online creators, athletes)</label>
+                        </li>
+                        <li>
+                            <input type="checkbox" id="task2-3" onchange="updateProgress()">
+                            <label for="task2-3">Screen candidates (portfolio, form quality, availability)</label>
+                        </li>
+                        <li>
+                            <input type="checkbox" id="task2-4" onchange="updateProgress()">
+                            <label for="task2-4">Negotiate terms (payment, timeline, usage rights)</label>
+                        </li>
+                        <li>
+                            <input type="checkbox" id="task2-5" onchange="updateProgress()">
+                            <label for="task2-5">Plan filming schedule (dates, locations, equipment)</label>
+                        </li>
+                        <li>
+                            <input type="checkbox" id="task2-6" onchange="updateProgress()">
+                            <label for="task2-6">Define video specs (resolution, angles, rep count)</label>
+                        </li>
+                        <li>
+                            <input type="checkbox" id="task2-7" onchange="updateProgress()">
+                            <label for="task2-7">Confirm contract & start production</label>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="owner-section">
+                    <strong>🔄 Owner Assignment:</strong><br>
+                    <input type="text" placeholder="Name / Slack handle" style="width: 100%; padding: 8px; margin-top: 10px; border: 1px solid #667eea; border-radius: 4px;">
+                </div>
+
+                <div class="timeline">
+                    <strong>📅 Timeline:</strong> Start this week, complete by end of Week 2<br>
+                    <strong>📤 Deliverable:</strong> Signed contract + filming schedule
+                </div>
+
+                <div class="task-details" style="background: #fff8e1; border-left: 3px solid #ffc107;">
+                    <strong>💡 Video Specs:</strong>
+                    <ul style="margin-left: 20px; margin-top: 10px;">
+                        <li><strong>Per Exercise:</strong> 3 videos (front view, side view, fault demonstration)</li>
+                        <li><strong>Resolution:</strong> 1080p minimum (for clarity)</li>
+                        <li><strong>Content:</strong> 5-8 clean reps per angle, multiple speeds</li>
+                        <li><strong>Hosting:</strong> Upload to GCS or YouTube</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Critical Path -->
+            <div style="background: #e8f5e9; border: 2px solid #28a745; border-radius: 8px; padding: 20px; margin: 30px 0;">
+                <h3 style="color: #155724; margin-bottom: 15px;">🚀 Critical Path: What Happens When Tasks Complete</h3>
+                <div style="color: #1b5e20; line-height: 1.8;">
+                    <strong>After Task 1 (Exercises decided):</strong><br>
+                    ✅ Feature #2 can start → Create exercise master table<br>
+                    ✅ Feature #3 can start → Build workout backend APIs<br>
+                    <br>
+                    <strong>After Task 2 (Trainer hired & filming done):</strong><br>
+                    ✅ Feature #6 completes → PT videos available<br>
+                    ✅ Feature #4 can start → RAG injection with exercise content<br>
+                    ✅ Feature #8 works → Form cues in workout logger<br>
+                </div>
+            </div>
+
+            <!-- Team Meeting -->
+            <div style="background: #e3f2fd; border: 2px solid #667eea; border-radius: 8px; padding: 20px; margin: 30px 0;">
+                <h3 style="color: #1565c0; margin-bottom: 15px;">📅 Suggested Team Meeting</h3>
+                <p><strong>When:</strong> This week (Day 1-2)</p>
+                <p><strong>Who:</strong> PMs, backend lead, frontend lead</p>
+                <p><strong>Agenda:</strong></p>
+                <ul style="margin-left: 20px; margin-top: 10px; color: #1565c0;">
+                    <li>Review exercise options & vote on final 3-5</li>
+                    <li>Discuss trainer requirements & budget</li>
+                    <li>Lock timeline for Features #1-4</li>
+                    <li>Assign owners to both PM tasks</li>
+                    <li>Review documentation (MVP_FEATURE_ROADMAP.html)</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>🎯 <strong>Kinetic MVP - PM Action Checklist</strong></p>
+            <p>Print this or share the link with your team</p>
+            <p style="margin-top: 20px; font-size: 0.85em; color: #999;">
+                Last updated: June 25, 2026 |
+                <a href="https://github.com/amritabalaji-11/kinetic-docs/tree/main/Documentation2" style="color: #667eea; text-decoration: none;">View all Documentation</a>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Load saved state from localStorage
+        function loadState() {
+            const saved = localStorage.getItem('kinetic-pm-checklist');
+            if (saved) {
+                const state = JSON.parse(saved);
+                Object.keys(state).forEach(key => {
+                    const element = document.getElementById(key);
+                    if (element && element.type === 'checkbox') {
+                        element.checked = state[key];
+                    }
+                });
+            }
+            updateProgress();
+        }
+
+        // Save state to localStorage and update progress
+        function updateProgress() {
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+            const state = {};
+            let completed = 0;
+
+            checkboxes.forEach(checkbox => {
+                state[checkbox.id] = checkbox.checked;
+                if (checkbox.checked) completed++;
+            });
+
+            localStorage.setItem('kinetic-pm-checklist', JSON.stringify(state));
+            document.getElementById('completed').textContent = completed;
+        }
+
+        // Load on page load
+        window.onload = loadState;
+    </script>
+</body>
+</html>
